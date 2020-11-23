@@ -1,8 +1,7 @@
-# Number-Theory-Playground
+# Number Theory Playground
 This project has been worked on solo and currently consists of 2 Java programs, one for a command line interface and the other for a 
 graphical user interface. In each version, the user can go to different sections. Each section can teach the user about and do calculations 
-for number theory concepts. I am currently working on a website version of this project. I will first make a vanilla JavaScript version and 
-then possibly a Vue.js version.
+for number theory concepts. I am currently working on a website version of this project.
 
 ## All the sections:
 - One that teaches the user about prime numbers and allows for input of a valid number and the program outputs the first 30 prime numbers that appear after that number

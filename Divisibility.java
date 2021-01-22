@@ -1,41 +1,31 @@
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
- * Utility class consisting of methods related to divisibility. There is another method for getting divisibility info
- * from using the number's prime factorization and this method is in the PrimeFactorization utility class.
+ * Utility class consisting of methods related to divisibility.
  */
 public class Divisibility {
-    public static String[] getSectionInfo() {
-        return new String[] {
-                "The factors of a number are all the numbers that can evenly divide that number.",
-                "Some special tricks can be used to find some of the factors of a number. If the sum of the digits of " +
-                        "a number is",
+    public static String getSectionInfo() {
+        return "The factors of a number are all the numbers that can evenly divide that number. Some special " +
+                "tricks can be used to find some of the factors of a number. If the sum of the digits of a number is " +
                 "divisible by 3, then that number is divisible by 3. If the sum of the digits of a number is divisible " +
-                        "by 9,",
-                "then that number is divisible by 9. If a number is even and divisible by 3, then it is also divisible " +
-                        "by 6.",
-                "If the last 2 digits of a number is divisible by 4, then that number is divisible by 4. If the last " +
-                        "3 digits",
-                "of a number is divisible by 8, then that number is divisible by 8. If a number is divisible by both " +
-                        "3 and 4",
-                "then it is also divisible by 12.",
-                "Another way you can tell what factors a number has and how many factors it has is by looking at it's " +
-                        "prime factorization.",
-                "To find the number of factors, you take all the powers of the prime factors, add 1 to each and then " +
-                        "multiply them all together.",
-                "All the \"sub-factorizations\" of this prime factorization are the prime factorizations of all the " +
-                        "factors.",
-                "Some examples of \"sub-factorizations\" are 2 and 2 * 3 in the prime factorization 2 * 3 * 5."
-        };
+                "by 9, then that number is divisible by 9. If a number is even and divisible by 3, then it is also " +
+                "divisible by 6. If the last 2 digits of a number is divisible by 4, then that number is divisible by " +
+                "4. If the last 3 digits of a number is divisible by 8, then that number is divisible by 8. If a " +
+                "number is divisible by both 3 and 4 then it is also divisible by 12. Another way you can tell what " +
+                "factors a number has and how many factors it has is by looking at it's prime factorization. To find " +
+                "the number of factors, you take all the powers of the prime factors, add 1 to each and then multiply " +
+                "them all together. All the \"sub-factorizations\" of this prime factorization are the prime " +
+                "factorizations of all the factors. Some examples of \"sub-factorizations\" are 2 and 2 * 3 in " +
+                "the prime factorization 2 * 3 * 5.";
     }
 
     /**
      * @return An ArrayList of Strings that contain info about what numbers the argument number is divisible by.
      * This info is acquired by using special tricks.
      */
-    public static ArrayList<String> getDivisInfoViaTricks(int number) {
+    public static Collection<String> getDivisInfoViaTricks(int number) {
         ArrayList<String> divisInfo = new ArrayList<>();
-        divisInfo.add("Info acquired from special tricks:");
         boolean isEven = number % 2 == 0;
         if (!isEven) {
             divisInfo.add(number + " is not even so it cannot be divisible by any even numbers");
@@ -99,5 +89,14 @@ public class Divisibility {
             sum += digit;
         }
         return sum;
+    }
+
+    /**
+     * @return An ArrayList of Strings that consists of divisibility info about the argument number. This info is
+     * acquired by looking at the prime factorization of the argument number.
+     * @throws IllegalArgumentException if the argument number is less than 2.
+     */
+    public static Collection<String> getDivisInfoViaPf(int number) {
+        return new PrimeFactorization(number).getFactorsInfo();
     }
 }

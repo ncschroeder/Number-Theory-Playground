@@ -1,473 +1,361 @@
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Launcher for the Number Theory Playground Command Line Interface.
  */
 public class NTPCLI {
-    final static Random random = new Random();
-    final static Scanner inputReader = new Scanner(System.in);
-
-    /**
-     * Interacts with the user about which section to go to.
-     */
     public static void main(String[] args) {
-        System.out.println("Welcome to the command line version of the Number Theory Playground");
+        new NTPCLI();
+    }
+
+    Scanner inputReader = new Scanner(System.in);
+    Random random = new Random();
+
+    NTPCLI() {
+        goToMenu();
+    }
+
+    void goToMenu() {
+        System.out.println("\nWelcome to the command line version of the Number Theory Playground\n");
+        String menuString = "You're at the main menu. Which section would you like to go to?" +
+                "\n(1) Prime Numbers" +
+                "\n(2) Twin Prime Numbers" +
+                "\n(3) Prime Factorization" +
+                "\n(4) Divisibility" +
+                "\n(5) GCD and LCM" +
+                "\n(6) Goldbach Conjecture" +
+                "\n(7) Pythagorean Triples" +
+                "\n(8) Exit" +
+                "\nEnter your choice: ";
+
         while (true) {
-            System.out.print(
-                    "\nWould you like to:" +
-                    "\n(1) Find prime numbers" +
-                    "\n(2) Find twin primes" +
-                    "\n(3) Get a number's prime factorization" +
-                    "\n(4) Get a number's divisibility information" +
-                    "\n(5) Get GCD and LCM information" +
-                    "\n(6) Get a number's Goldbach pairs" +
-                    "\n(7) Find Pythagorean triples" +
-                    "\n(8) Exit" +
-                    "\nEnter your choice: "
-            );
-            String input = inputReader.nextLine();
-            switch (input) {
+            System.out.print(menuString);
+            switch (inputReader.nextLine()) {
                 case "1":
-                    primesSection();
+                    goToSection(Section.PRIMES);
                     break;
+
                 case "2":
-                    twinPrimesSection();
+                    goToSection(Section.TWIN_PRIMES);
                     break;
+
                 case "3":
-                    primeFactorizationSection();
+                    goToSection(Section.PRIME_FACTORIZATION);
                     break;
+
                 case "4":
-                    divisSection();
+                    goToSection(Section.DIVISIBILITY);
                     break;
+
                 case "5":
-                    gcdAndLcmSection();
+                    goToSection(Section.GCD_LCM);
                     break;
+
                 case "6":
-                    goldbachSection();
+                    goToSection(Section.GOLDBACH);
                     break;
+
                 case "7":
-                    pythagTriplesSection();
+                    goToSection(Section.PYTHAG_TRIPLES);
                     break;
+
                 case "8":
                     System.out.println("\nI hope you found this interesting");
-                    System.exit(0);
+                    return;
+
                 default:
-                    System.out.println("\nInvalid input");
-                    break;
+                    System.out.println("\nInvalid input\n");
             }
         }
     }
 
-    /**
-     * Interacts with the user about prime numbers.
-     */
-    static void primesSection() {
-        while (true) {
-            System.out.println(
-                    "\nType one of the following and press enter:" +
-                    "\nA number less than or equal to 1 billion to get the first 30 prime numbers after it" +
-                    "\n\"r\" to generate a random number and get the first 30 prime numbers after it" +
-                    "\n\"i\" for information about prime numbers" +
-                    "\n\"m\" to go to the menu"
-            );
-            int number;
-            String input = inputReader.nextLine();
-            switch (input.toLowerCase()) {
-                case "m": return;
+    void goToSection(Section section) {
+            String sectionChoicesString = getSectionChoicesString(section);
+            System.out.println();
 
-                case "i":
-                    System.out.println();
-                    for (String infoLine : Primes.getPrimesSectionInfo()) {
-                        System.out.println(infoLine);
-                    }
-                    break;
-
-                case "r":
-                    number = random.nextInt(1_000_000_000);
-                    System.out.println("\nThe primes after " + number + " are:");
-                    for (String primesLine : Primes.getPrimesAfter(number)) {
-                        System.out.println(primesLine);
-                    }
-                    break;
-
-                default:
-                    // If the user typed something that is not one of the above options, check if it's a number
-                    // in the valid range and display the appropriate calculations if it is.
-                    try {
-                        number = Integer.parseInt(input);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("\nInvalid input");
-                        break;
-                    }
-                    if (number <= 1_000_000_000) {
-                        System.out.println("\nThe primes after " + number + " are:");
-                        for (String primesLine : Primes.getPrimesAfter(number)) {
-                            System.out.println(primesLine);
-                        }
-                    } else {
-                        System.out.println("\nInvalid input");
-                    }
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Interacts with the user about twin primes.
-     */
-    static void twinPrimesSection() {
-        while (true) {
-            System.out.println(
-                    "\nType one of the following and press enter:" +
-                    "\nA number that is less than or equal to 1 billion to get the first 20 pairs of " +
-                    "twin primes after it" +
-                    "\n\"r\" to generate a random number and get the first 20 pairs of twin primes after it" +
-                    "\n\"i\" for information about twin primes" +
-                    "\n\"m\" to go to the menu"
-            );
-            int number;
-            String input = inputReader.nextLine();
-            switch (input.toLowerCase()) {
-                case "m": return;
-
-                case "i":
-                    System.out.println();
-                    for (String infoLine : Primes.getTwinPrimesSectionInfo()) {
-                        System.out.println(infoLine);
-                    }
-                    break;
-
-                case "r":
-                    number = random.nextInt(1_000_000_000);
-                    System.out.println("\nTwin primes after " + number + ":\n");
-                    for (String twinPrimesLine : Primes.getTwinPrimesAfter(number)) {
-                        System.out.println(twinPrimesLine);
-                    }
-                    break;
-
-                default:
-                    // If the user typed something that is not one of the above options, check if it's a number
-                    // in the valid range and display the appropriate calculations if it is.
-                    try {
-                        number = Integer.parseInt(input);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("\nInvalid input");
-                        continue;
-                    }
-                    if (number <= 1_000_000_000) {
-                        System.out.println("\nTwin primes after " + number + ":\n");
-                        for (String twinPrimesLine : Primes.getTwinPrimesAfter(number)) {
-                            System.out.println(twinPrimesLine);
-                        }
-                    } else {
-                        System.out.println("\nInvalid input");
-                    }
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Interacts with the user about prime factorizations.
-     */
-    static void primeFactorizationSection() {
-        while (true) {
-            System.out.println(
-                    "\nType one of the following and press enter:" +
-                    "\nA number to get it's prime factorization. This number should be greater than or " +
-                    "equal to 2 and less than or equal to 10 million" +
-                    "\n\"r\" to generate a random number and get it's prime factorization" +
-                    "\n\"i\" for information about prime factorizations" +
-                    "\n\"m\" to go to the menu"
-            );
-            int number;
-            String input = inputReader.nextLine();
-            switch (input) {
-                case "m": return;
-
-                case "i":
-                    System.out.println();
-                    for (String infoLine : PrimeFactorization.getSectionInfo()) {
-                        System.out.println(infoLine);
-                    }
-                    break;
-
-                case "r":
-                    // Generate a random number that is greater than or equal to 2 and less than or equal to 10 million
-                    number = Math.max(2, random.nextInt(10_000_000));
-                    System.out.println("\nPrime factorization for " + number + ":\n" +
-                            PrimeFactorization.getPfString(number));
-                    break;
-
-                default:
-                    // If the user typed something that is not one of the above options, check if it's a number
-                    // in the valid range and display the appropriate calculations if it is.
-                    try {
-                        number = Integer.parseInt(input);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("\nInvalid input");
-                        break;
-                    }
-                    if (number >= 2 && number <= 10_000_000) {
-                        System.out.println("\nPrime factorzation for " + number + ":\n" +
-                                PrimeFactorization.getPfString(number));
-                    } else {
-                        System.out.println("\nInvalid input");
-                    }
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Interacts with the user about divisibility.
-     */
-    static void divisSection() {
-        while (true) {
-            System.out.println(
-                    "\nType one of the following and press enter:" +
-                    "\nA number to get the divisibility info about it. This number should be greater than or equal " +
-                    "to 2 and less than or equal to 10 million" +
-                    "\n\"r\" to generate a random number and get the divisibility info of it" +
-                    "\n\"i\" for information about divisibility" +
-                    "\n\"m\" to go to the menu"
-            );
-            int number;
-            String input = inputReader.nextLine();
-            switch (input.toLowerCase()) {
-                case "m": return;
-
-                case "i":
-                    System.out.println();
-                    for (String infoLine : Divisibility.getSectionInfo()) {
-                        System.out.println(infoLine);
-                    }
-                    break;
-
-                case "r":
-                    // Generate a random number that is greater than or equal to 2 and less than or equal to 10 million
-                    number = Math.max(2, random.nextInt(10_000_000));
-                    System.out.println("\nDivisibility info for " + number + ":\n");
-                    for (String infoLine : Divisibility.getDivisInfoViaTricks(number)) {
-                        System.out.println(infoLine);
-                    }
-                    System.out.println();
-                    for (String infoLine : PrimeFactorization.getDivisInfo(number)) {
-                        System.out.println(infoLine);
-                    }
-                    break;
-
-                default:
-                    // If the user typed something that is not one of the above options, check if it's a number
-                    // in the valid range and display the appropriate calculations if it is.
-                    try {
-                        number = Integer.parseInt(input);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("\nInvalid input");
-                        continue;
-                    }
-                    if (number >= 2 && number <= 10_000_000) {
-                        System.out.println("\nDivisibility info for " + number + ":\n");
-                        for (String infoLine : Divisibility.getDivisInfoViaTricks(number)) {
-                            System.out.println(infoLine);
-                        }
+            while (true) {
+                System.out.println(sectionChoicesString);
+                String input = inputReader.nextLine().toLowerCase();
+                switch (input) {
+                    case "m":
                         System.out.println();
-                        for (String infoLine : PrimeFactorization.getDivisInfo(number)) {
-                            System.out.println(infoLine);
-                        }
-                    } else {
-                        System.out.println("\nInvalid input");
-                    }
-                    break;
-            }
-        }
-    }
+                        return;
 
-    /**
-     * Interacts with the user about GCDs and LCMs.
-     */
-    static void gcdAndLcmSection() {
-        while (true) {
-            System.out.println(
-                    "\nType one of the following and press enter:" +
-                    "\n2 numbers to get the GCD and LCM info for them. Have these numbers be greater than " +
-                    "or equal to 2 and less than or equal to 10 million and separated by a single space." +
-                    "\n\"r\" to generate 2 random numbers and get the GCD and LCM info for them" +
-                    "\n\"i\" for information about GCDs and LCMs" +
-                    "\n\"m\" to go to the menu"
-            );
-            int firstNumber, secondNumber;
-            String input = inputReader.nextLine();
-            switch (input.toLowerCase()) {
-                case "m": return;
-
-                case "i":
-                    System.out.println();
-                    for (String infoLine : GcdAndLcm.getSectionInfo()) {
-                        System.out.println(infoLine);
-                    }
-                    break;
-
-                case "r":
-                    // Generate random numbers that are greater than or equal to 2 and less than or equal to 10 million
-                    firstNumber = Math.max(2, random.nextInt(10_000_000));
-                    secondNumber = Math.max(2, random.nextInt(10_000_000));
-                    System.out.println("\nGCD and LCM info for " + firstNumber + " and " + secondNumber + ":\n");
-                    for (String infoLine : PrimeFactorization.getGcdAndLcmInfo(firstNumber, secondNumber)) {
-                        System.out.println(infoLine);
-                    }
-                    System.out.println();
-                    for (String infoLine : GcdAndLcm.getEuclideanInfo(firstNumber, secondNumber)) {
-                        System.out.println(infoLine);
-                    }
-                    break;
-
-                default:
-                    // If the user typed something that is not one of the above options, check if it's 2 numbers
-                    // in the valid range and separated by a single space and display the appropriate calculations 
-                    // if it is.
-                    String[] inputArray = input.split(" ");
-                    if (inputArray.length != 2) {
-                        System.out.println("\nInvalid input");
+                    case "i":
+                        System.out.println('\n' + getStringWithNewLineChars(section.getInfo()) + '\n');
                         break;
-                    }
-                    try {
-                        firstNumber = Integer.parseInt(inputArray[0]);
-                        secondNumber = Integer.parseInt(inputArray[1]);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("\nInvalid input");
-                        break;
-                    }
-                    if (firstNumber >= 2 && firstNumber <= 10_000_000 &&
-                            secondNumber >= 2 && secondNumber <= 10_000_000) {
-                        System.out.println("\nGCD and LCM info for " + firstNumber + " and " + secondNumber + ":\n");
-                        for (String infoLine : PrimeFactorization.getGcdAndLcmInfo(firstNumber, secondNumber)) {
-                            System.out.println(infoLine);
+
+                    default:
+                        int firstNumber = 0, secondNumber = 0;
+
+                        if (input.equals("r")) {
+                            // generate random numbers that are in the valid range
+                            firstNumber = Math.max(random.nextInt(section.getMaxInputInt()), section.getMinInputInt());
+                            // Goldbach section requires even number
+                            if (section == Section.GOLDBACH && firstNumber % 2 != 0) {
+                                firstNumber++;
+                            } else if (section == Section.GCD_LCM) {
+                                secondNumber = Math.max(random.nextInt(section.getMaxInputInt()), section.getMinInputInt());
+                            }
+                        } else {
+                            // Check input for number or numbers and validate that these numbers are in the appropriate range
+                            boolean inputError = false;
+                            try {
+                                if (section == Section.GCD_LCM) {
+                                    // gcd and lcm section has user enter 2 numbers separated by a space
+                                    if (input.isEmpty()) {
+                                        inputError = true;
+                                    } else {
+                                        String[] inputContents = input.split(" ");
+                                        if (inputContents.length != 2) {
+                                            inputError = true;
+                                        } else {
+                                            firstNumber = Integer.parseInt(inputContents[0]);
+                                            secondNumber = Integer.parseInt(inputContents[1]);
+                                            if (secondNumber < section.getMinInputInt() || secondNumber > section.getMaxInputInt()) {
+                                                inputError = true;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    firstNumber = Integer.parseInt(input);
+                                }
+
+                                // Goldbach section requires even number
+                                if (firstNumber < section.getMinInputInt() || firstNumber > section.getMaxInputInt() ||
+                                        (section == Section.GOLDBACH && firstNumber % 2 != 0)) {
+                                    inputError = true;
+                                }
+                            } catch (NumberFormatException ex) {
+                                // This block is reached if the user's input was not able to be parsed as an int
+                                inputError = true;
+                            }
+
+                            if (inputError) {
+                                System.out.println("\nInvalid input\n");
+                                continue;
+                            }
                         }
+
                         System.out.println();
-                        for (String infoLine : GcdAndLcm.getEuclideanInfo(firstNumber, secondNumber)) {
-                            System.out.println(infoLine);
-                        }
-                    } else {
-                        System.out.println("\nInvalid input");
-                    }
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Interacts with the user about the Goldbach conjecture.
-     */
-    static void goldbachSection() {
-        while (true) {
-            System.out.println(
-                    "\nType one of the following and press enter:" +
-                    "\nA number to get the pairs of prime numbers that sum to it. Have this " +
-                    "number be even, greater than or equal to 4, and less than or equal to 100 thousand" +
-                    "\n\"r\" to generate a random even number and get the pairs of prime numbers that sum to it" +
-                    "\n\"i\" for information about the Goldbach conjecture" +
-                    "\n\"m\" to go to the menu"
-            );
-            int number;
-            String input = inputReader.nextLine();
-            switch (input.toLowerCase()) {
-                case "m": return;
-
-                case "i":
-                    System.out.println();
-                    for (String infoLine : Goldbach.getSectionInfo()) {
-                        System.out.println(infoLine);
-                    }
-                    break;
-
-                case "r":
-                    // Generate a random number that is even, greater than or equal to 4, and less than or equal
-                    // to 100 thousand
-                    number = Math.max(4, random.nextInt(100_000));
-                    if (number % 2 != 0) {
-                        number++;
-                    }
-                    System.out.println("\nPairs of prime numbers that sum to " + number + ":\n");
-                    for (String pairsLine : Goldbach.getGoldbachPairs(number)) {
-                        System.out.println(pairsLine);
-                    }
-                    break;
-
-                default:
-                    // If the user typed something that is not one of the above options, validate it
-                    // and display the appropriate calculations if it's valid.
-                    try {
-                        number = Integer.parseInt(input);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("\nInvalid input");
+                        System.out.println(
+                                section == Section.GCD_LCM ? getDoubleInputAnswerString(section, firstNumber, secondNumber)
+                                        : getSingleInputAnswerString(section, firstNumber)
+                        );
+                        System.out.println();
                         break;
-                    }
-                    if (number >= 4 && number <= 100_000 && number % 2 == 0) {
-                        System.out.println("\nPairs of prime numbers that sum to " + number + ":\n");
-                        for (String pairsLine : Goldbach.getGoldbachPairs(number)) {
-                            System.out.println(pairsLine);
-                        }
-                    } else {
-                        System.out.println("\nInvalid input");
-                    }
-                    break;
+                }
             }
-        }
     }
 
     /**
-     * Interacts with the user about Pythagorean triples.
+     * @return A string that says what section the user is at and what inputs a user can provide for the section and
+     * what each input does.
      */
-    static void pythagTriplesSection() {
-        while (true) {
-            System.out.println(
-                    "\nType one of the following and press enter:" +
-                    "\nA number that is less than or equal to 1 thousand to get the first 10 Pythagorean " +
-                    "triples after it" +
-                    "\n\"r\" to generate a random number and get the first 10 Pythagorean triples after it" +
-                    "\n\"i\" for information about Pythagorean triples" +
-                    "\n\"m\" to go to the menu"
-            );
-            int number;
-            String input = inputReader.nextLine();
-            switch (input.toLowerCase()) {
-                case "m": return;
+    String getSectionChoicesString(Section section) {
+        StringBuilder sb = new StringBuilder("You're at the ");
+        switch (section) {
+            case PRIMES:
+            case DIVISIBILITY:
+                sb.append(section.toString().toLowerCase()).append(' ');
+                break;
 
-                case "i":
-                    System.out.println();
-                    for (String infoLine : PythagoreanTriples.getSectionInfo()) {
-                        System.out.println(infoLine);
-                    }
-                    break;
+            case TWIN_PRIMES:
+                sb.append("twin prime numbers ");
+                break;
 
-                case "r":
-                    number = random.nextInt(1_000);
-                    System.out.println("\nPythagorean triples after " + number + ":\n");
-                    for (String infoLine : PythagoreanTriples.getTriples(number)) {
-                        System.out.println(infoLine);
-                    }
-                    break;
+            case PRIME_FACTORIZATION:
+                sb.append("prime factorization ");
+                break;
 
-                default:
-                    // If the user typed something that is not one of the above options, check if it's a number
-                    // in the valid range and display the appropriate calculations if it is.
-                    try {
-                        number = Integer.parseInt(input);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("\nInvalid input");
-                        continue;
-                    }
-                    if (number <= 1_000) {
-                        System.out.println("\nPythagorean triples after " + number + ":\n");
-                        for (String triplesLine : PythagoreanTriples.getTriples(number)) {
-                            System.out.println(triplesLine);
-                        }
-                    } else {
-                        System.out.println("\nInvalid input");
-                    }
-            }
+            case GCD_LCM:
+                sb.append("GCD and LCM ");
+                break;
+
+            case GOLDBACH:
+                sb.append("Goldbach conjecture ");
+                break;
+
+            case PYTHAG_TRIPLES:
+                sb.append("Pythagorean triples ");
+                break;
         }
+        sb.append("section.\nType one of the following and press enter.\n");
+
+        switch (section) {
+            case PRIMES:
+                sb.append("A number to get the first 30 prime numbers after it. Have this number be greater than or ")
+                        .append("\n\tequal to 0 and less than or equal to 1 billion")
+                        .append("\n\"r\" to generate a random number and get the first 30 prime numbers after it")
+                        .append("\n\"i\" for information about prime numbers");
+                break;
+
+            case TWIN_PRIMES:
+                sb.append("A number that to get the first 20 pairs of twin primes after it. Have this number be ")
+                        .append("\n\tgreater than or equal to 0 and less than or equal to 1 billion")
+                        .append("\n\"r\" to generate a random number and get the first 20 pairs of twin primes after it")
+                        .append("\n\"i\" for information about twin primes");
+                break;
+
+            case PRIME_FACTORIZATION:
+                sb.append("A number to get it's prime factorization. Have this number should be greater than or ")
+                        .append("\n\tequal to 2 and less than or equal to 10 thousand")
+                        .append("\n\"r\" to generate a random number and get it's prime factorization")
+                        .append("\n\"i\" for information about prime factorizations");
+                break;
+
+            case DIVISIBILITY:
+                sb.append("A number to get the divisibility info about it. Have this number should be greater than ")
+                        .append("\n\tor equal to 2 and less than or equal to 10 thousand")
+                        .append("\n\"r\" to generate a random number and get the divisibility info of it")
+                        .append("\n\"i\" for information about divisibility");
+                break;
+
+            case GCD_LCM:
+                sb.append("2 numbers to get the GCD and LCM info for them. Have these numbers be greater than ")
+                        .append("\n\tor equal to 2 and less than or equal to 10 thousand and separated by a single space.")
+                        .append("\n\"r\" to generate 2 random numbers and get the GCD and LCM info for them")
+                        .append("\n\"i\" for information about GCDs and LCMs");
+                break;
+
+            case GOLDBACH:
+                sb.append("A number to get the pairs of prime numbers that sum to it. Have this ")
+                        .append("\n\tnumber be even, greater than or equal to 4, and less than or equal to 100 thousand")
+                        .append("\n\"r\" to generate a random even number and get the pairs of prime numbers that sum to it")
+                        .append("\n\"i\" for information about the Goldbach conjecture");
+                break;
+
+            case PYTHAG_TRIPLES:
+                sb.append("A number to get the first 10 Pythagorean triples after it. Have this number be greater ")
+                        .append("\n\tthan or equal to 0 and less than or equal to 1 thousand")
+                        .append("\n\"r\" to generate a random number and get the first 10 Pythagorean triples after it")
+                        .append("\n\"i\" for information about Pythagorean triples");
+                break;
+        }
+
+        sb.append("\n\"m\" to go to the menu");
+        return sb.toString();
+    }
+
+    /**
+     * @return A new string that is the same as the argument string but with new line characters inserted. Each portion
+     * of a string between new line characters is at most 90 characters long. A new line character will not be inserted
+     * in the middle of a word but instead will be inserted to replace whitespace.
+     */
+    String getStringWithNewLineChars(final String s) {
+        final int lineLength = 90;
+        StringBuilder sb = new StringBuilder(s);
+        int stringIndex = lineLength;
+        while (stringIndex < s.length()) {
+            while (sb.charAt(stringIndex) != ' ') {
+                stringIndex--;
+            }
+            sb.replace(stringIndex, stringIndex + 1, "\n");
+            stringIndex += lineLength;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * @return An answer string for sections that require the user to provide 1 input number.
+     */
+    String getSingleInputAnswerString(Section section, int number) {
+        StringBuilder sb = new StringBuilder();
+        switch (section) {
+            case PRIMES:
+                // Build string of first 30 primes after the argument number and have 6 primes be on each line
+                sb.append("The first 30 primes after ").append(number).append(" are");
+                List<Integer> primes = Primes.getPrimesAfter(number);
+                for (int i = 0; i < primes.size(); i++) {
+                    if (i % 6 == 0) {
+                        sb.append('\n');
+                    }
+                    sb.append(primes.get(i)).append("   ");
+                }
+                break;
+
+            case TWIN_PRIMES:
+                // Build string of first 20 pairs of twin primes after the argument number and have 4 pairs
+                // be on each line.
+                sb.append("The first 20 pairs of twin primes after ").append(number).append(" are");
+                List<String> twinPrimes = TwinPrimes.getTwinPrimesAfter(number);
+                for (int i = 0; i < twinPrimes.size(); i++) {
+                    if (i % 4 == 0) {
+                        sb.append('\n');
+                    }
+                    sb.append(twinPrimes.get(i)).append("   ");
+                }
+                break;
+
+            case PRIME_FACTORIZATION:
+                // Build string of the prime factorization of the argument number
+                sb.append("The prime factorization of ").append(number).append(" is ")
+                        .append(PrimeFactorization.getPfString(number));
+                break;
+
+            case DIVISIBILITY:
+                // Build string of divisibility info for the argument number
+                sb.append("Divisibility info for ").append(number)
+                        .append(" acquired by using special tricks");
+                Collection<String> tricksInfo = Divisibility.getDivisInfoViaTricks(number);
+                for (String infoLine : tricksInfo) {
+                    sb.append('\n').append(infoLine);
+                }
+                sb.append("\n\nInfo acquired from the prime factorization");
+                for (String infoLine : Divisibility.getDivisInfoViaPf(number)) {
+                    sb.append('\n').append(infoLine);
+                }
+                break;
+
+            case GOLDBACH:
+                // Build string of the prime number pairs that sum to the argument number and have 5 pairs be
+                // on each line.
+                sb.append("Prime number pairs that sum to ").append(number);
+                List<String> goldbachPrimePairs = Goldbach.getGoldbachPrimePairs(number);
+                for (int i = 0; i < goldbachPrimePairs.size(); i++) {
+                    if (i % 5 == 0) {
+                        sb.append('\n');
+                    }
+                    sb.append(goldbachPrimePairs.get(i)).append("   ");
+                }
+                break;
+
+            case PYTHAG_TRIPLES:
+                // Build string of the first 10 Pythagorean triples after the argument number
+                sb.append("The first 10 Pythagorean triples after ").append(number);
+                for (String triple : PythagoreanTriples.getPythagTriplesAfter(number)) {
+                    sb.append('\n').append(triple);
+                }
+                break;
+
+            default:
+                throw new IllegalArgumentException("invalid section: " + section);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * @return An answer string for sections that require the user provide 2 input numbers.
+     */
+    String getDoubleInputAnswerString(Section section, int firstNumber, int secondNumber) {
+        // Only section is the gcd and lcm section
+        if (section != Section.GCD_LCM) {
+            throw new IllegalArgumentException("invalid section: " + section);
+        }
+
+        // Build string of the GCD and LCM info for firstNumber and secondNumber
+        StringBuilder sb = new StringBuilder();
+        sb.append("GCD and LCM info for ").append(firstNumber).append(" and ")
+                .append(secondNumber).append(" acquired by the prime factorizations");
+        for (String infoLine : GcdAndLcm.getGcdAndLcmInfoViaPf(firstNumber, secondNumber)) {
+            sb.append('\n').append(infoLine);
+        }
+
+        sb.append("\n\nGCD info acquired from the Euclidean algorithm");
+        for (String infoLine : GcdAndLcm.getEuclideanInfo(firstNumber, secondNumber)) {
+            sb.append('\n').append(infoLine);
+        }
+
+        return sb.toString();
     }
 }

@@ -1,23 +1,25 @@
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class consisting of methods related to the Goldbach conjecture.
  */
 public class Goldbach {
-    public static String[] getSectionInfo() {
-        return new String[] {
-                "The Goldbach conjecture states that every even number greater than or equal to 4 can be ",
-                "expressed as the sum of 2 prime numbers. A conjecture is a statement that is believed to be ",
-                "true but has not been proven to be true."
-        };
+    public static String getSectionInfo() {
+        return "The Goldbach conjecture states that every even number greater than or equal to 4 can be " +
+                "expressed as the sum of 2 prime numbers. A conjecture is a statement that is believed to be " +
+                "true but has not been proven to be true. The Goldbach conjecture has been verified to be true " +
+                "for all even numbers greater than or equal to 4 and less than or equal to a very high number. " +
+                "I don't know this number off the top of my head but it's way, way bigger than the maximum " +
+                "number you are allowed to use for this section of this program.";
     }
 
     /**
-     * @return An ArrayList of Strings that contain the pairs of prime numbers that sum up to the argument number.
-     * Each String contains a max of 4 of these pairs.
-     * @throws IllegalArgumentException if the argument number is not even or is less than 4.
+     * @return A List of the prime number pairs that sum up to the argument number. In each entry of this List, there
+     * is a string consisting of 2 numbers separated by " and ".
+     * @throws IllegalArgumentException if the argument number is less than 4 or is not even.
      */
-    public static ArrayList<String> getGoldbachPairs(int number) {
+    public static List<String> getGoldbachPrimePairs(int number) {
         // Number must be even and greater than or equal to 4.
         if (number % 2 != 0 || number < 4) {
             throw new IllegalArgumentException("Can only get Goldbach pairs of an even number greater than or equal to 4");
@@ -30,14 +32,10 @@ public class Goldbach {
             return pairs;
         }
 
-        int count = 0;
-        StringBuilder pairsSb = new StringBuilder();
-
         // First, check if 3 and a prime number sum to the number. 3 is special because it and 2 are the only
         // prime numbers that are not either 1 below or 1 above a multiple of 6.
         if (Primes.isPrime(number - 3)) {
-            pairsSb.append("3 and ").append(number - 3).append("   ");
-            count++;
+            pairs.add("3 and " + (number - 3));
         }
 
         // Iterate through potential prime numbers, which are either 1 above or 1 below a multiple of 6. Check if
@@ -52,24 +50,12 @@ public class Goldbach {
             for (int i = 0; i < 2; i++) {
                 if (potentialPrime > upperBound) {
                     // End has been reached
-                    if (pairsSb.length() > 0) {
-                        pairs.add(pairsSb.toString());
-                    }
                     return pairs;
                 }
-
                 int otherPotentialPrime = number - potentialPrime;
                 if (Primes.isPrime(potentialPrime) && Primes.isPrime(otherPotentialPrime)) {
-                    pairsSb.append(potentialPrime).append(" and ").append(otherPotentialPrime).append("   ");
-                    count++;
-                    // Once pairsSb has 4 pairs, add these pairs to the pairs ArrayList and clear pairsSb to put
-                    // new pairs in.
-                    if (count % 4 == 0) {
-                        pairs.add(pairsSb.toString());
-                        pairsSb.delete(0, pairsSb.length());
-                    }
+                    pairs.add(potentialPrime + " and " + otherPotentialPrime);
                 }
-
                 if (i == 0) {
                     potentialPrime += 2;
                 }

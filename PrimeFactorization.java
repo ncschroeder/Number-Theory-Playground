@@ -36,11 +36,11 @@ public class PrimeFactorization {
         pfMap = new TreeMap<>();
 
         // Find all the prime factors and their powers and put these in pfMap. Divide the number variable by each
-        // prime factor that is found. When the number variable becomes 1, then the entire prime factorization
-        // has been found.
+        // prime factor that is found. When the number variable becomes 1, the entire prime factorization
+        // has been found. All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so first
+        // 2 and 3 will be checked to see if they're prime factors and then numbers that are either 1 above or 1 below
+        // a multiple of 6 will be checked.
 
-        // First, check if the number has 2 and 3 as prime factors. These are special cases since 2 and 3 are the
-        // only prime numbers that are not 1 above or 1 below a multiple of 6.
         for (int potentialPrimeFactor = 2; potentialPrimeFactor <= 3; potentialPrimeFactor++) {
             if (number % potentialPrimeFactor == 0) {
                 int power = 0;
@@ -55,7 +55,6 @@ public class PrimeFactorization {
             }
         }
 
-        // Iterate through potential prime numbers, which are either 1 below or 1 above a multiple of 6.
         for (int potentialPrimeFactor = 5; ; potentialPrimeFactor += 4) {
             for (int i = 0; i < 2; i++) {
                 if (number % potentialPrimeFactor == 0) {
@@ -98,8 +97,6 @@ public class PrimeFactorization {
         for (int primeFactor : pfMap.keySet()) {
             sb.append(primeFactor);
             int power = pfMap.get(primeFactor);
-
-            // Only display the power of a prime factor if the power is not 1
             if (power != 1) {
                 sb.append("^").append(power);
             }
@@ -157,9 +154,9 @@ public class PrimeFactorization {
         for (int primeFactor : pfMap.keySet()) {
             int power = pfMap.get(primeFactor);
             numberOfFactors *= (power + 1);
-            sb.append("(").append(power).append(" + 1) * ");
+            sb.append("(").append(power).append(" + 1) x ");
         }
-        // Delete last " * "
+        // Delete last " x " of the built string
         sb.delete(sb.length() - 3, sb.length());
         sb.append(" = ").append(numberOfFactors).append(" total factors.");
         info.add(sb.toString());
@@ -182,6 +179,7 @@ public class PrimeFactorization {
                 if (!factorPf.isForAPrimeNumber()) {
                     sb.append(" (").append(potentialFactor).append(")");
                 }
+                // Add space between each factor
                 sb.append("     ");
 
                 // Start a new line once the current line exceeds 60 characters
@@ -194,7 +192,6 @@ public class PrimeFactorization {
         if (sb.length() > 0) {
             info.add(sb.toString());
         }
-
         return info;
     }
 }

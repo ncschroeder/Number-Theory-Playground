@@ -13,22 +13,23 @@ public class Primes {
     }
 
     public static boolean isPrime(int number) {
-        // All numbers less than 2 are not prime.
+        // All numbers less than 2 are not prime
         if (number < 2) {
             return false;
         }
-        // 2 and 3 are prime.
+        // 2 and 3 are prime
         if (number <= 3) {
             return true;
-        }
-        if (number % 2 == 0 || number % 3 == 0) {
-            return false;
         }
 
         // Check if the argument number is divisible by any prime numbers less than or equal to the
         // floor of the square root of the argument number. If it is, then the argument number is not prime.
-        // With the exception of 2 and 3, all prime numbers are either 1 below or 1 above a multiple of 6.
-        // Iterate through these numbers and check for divisibility.
+        // All prime numbers besides 2 and 3 are either 1 below or 1 above a multiple of 6.
+
+        if (number % 2 == 0 || number % 3 == 0) {
+            return false;
+        }
+
         int highestNumberToCheck = (int) Math.sqrt(number);
         for (int potentialPrime = 5; ; potentialPrime += 4) {
             for (int i = 0; i < 2; i++) {
@@ -46,16 +47,19 @@ public class Primes {
     }
 
     /**
-     * @return A list of the first 30 prime numbers that appear after the argument number.
+     * @return A list of the first 30 prime numbers that are greater than or equal to the argument number.
      */
     public static List<Integer> getPrimesAfter(int number) {
         ArrayList<Integer> primes = new ArrayList<>(30);
-        int potentialPrime;
 
-        // First, check if 2 and 3 should be added to the primes list.
+        // All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6. This algorithm takes
+        // advantage of this.
+
+        int potentialPrime;
         if (number <= 5) {
-            // Make potentialPrime the first positive number that is 1 below a multiple of 6.
+            // Set potentialPrime to the first positive number that is 1 below a multiple of 6.
             potentialPrime = 5;
+
             if (number <= 2) {
                 primes.add(2);
             }
@@ -65,7 +69,7 @@ public class Primes {
         } else {
             switch (number % 6) {
                 case 0:
-                    // For numbers that are divisible by 6, check if the next number is prime and set potentialPrime
+                    // If the argument number is divisible by 6, check if the next number is prime and set potentialPrime
                     // to the next number that is 1 below a multiple of 6.
                     if (isPrime(number + 1)) {
                         primes.add(number + 1);
@@ -74,7 +78,7 @@ public class Primes {
                     break;
 
                 case 1:
-                    // For numbers that are 1 above a multiple of 6, check if this number is prime and set
+                    // If the argument number is 1 above a multiple of 6, check if this number is prime and set
                     // potentialPrime to the next number that is 1 below a multiple of 6.
                     if (isPrime(number)) {
                         primes.add(number);
@@ -83,7 +87,7 @@ public class Primes {
                     break;
 
                 default:
-                    // Have potentialPrime be the next number that is 1 below a multiple of 6
+                    // Set potentialPrime be the next number that is 1 below a multiple of 6
                     potentialPrime = number;
                     while ((potentialPrime + 1) % 6 != 0) {
                         potentialPrime++;
@@ -92,8 +96,7 @@ public class Primes {
             }
         }
 
-        // Iterate through potential prime numbers, which are numbers that are either 1 below or 1 above a multiple
-        // of 6, and check these numbers for primality.
+        // Check potential prime numbers for primality until 30 prime numbers are found
         for (;; potentialPrime += 4) {
             for (int i = 0; i < 2; i++) {
                 if (isPrime(potentialPrime)) {

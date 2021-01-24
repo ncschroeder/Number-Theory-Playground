@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Utility class consisting of methods related to divisibility.
@@ -21,10 +21,10 @@ public class Divisibility {
     }
 
     /**
-     * @return An ArrayList of Strings that contain info about what numbers the argument number is divisible by.
+     * @return An list of Strings that contain info about what numbers the argument number is divisible by.
      * This info is acquired by using special tricks.
      */
-    public static Collection<String> getDivisInfoViaTricks(int number) {
+    public static List<String> getDivisInfoViaTricks(int number) {
         ArrayList<String> divisInfo = new ArrayList<>();
         boolean isEven = number % 2 == 0;
         if (!isEven) {
@@ -92,11 +92,11 @@ public class Divisibility {
     }
 
     /**
-     * @return An ArrayList of Strings that consists of divisibility info about the argument number. This info is
+     * @return An list of Strings that consists of divisibility info about the argument number. This info is
      * acquired by looking at the prime factorization of the argument number.
      * @throws IllegalArgumentException if the argument number is less than 2.
      */
-    public static Collection<String> getDivisInfoViaPf(int number) {
+    public static List<String> getDivisInfoViaPf(int number) {
         return new PrimeFactorization(number).getFactorsInfo();
     }
 }

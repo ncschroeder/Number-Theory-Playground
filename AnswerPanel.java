@@ -22,6 +22,7 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
 
     /**
      * Displays the answer for sections that require the user to provide 1 input number.
+     * @throws IllegalArgumentException if the section argument is not for a section that requires 1 input number.
      */
     public void displaySingleInputAnswer(Section section, int number) {
         removeAll();
@@ -169,6 +170,7 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
 
     /**
      * Displays the answer for sections that require the user to provide 2 input numbers.
+     * @throws IllegalArgumentException if the section argument is not for a section that requires 2 input numbers.
      */
     public void displayDoubleInputAnswer(Section section, int firstNumber, int secondNumber) {
         // Only valid section is GCD and LCM

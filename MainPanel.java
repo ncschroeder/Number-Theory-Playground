@@ -15,6 +15,7 @@ public class MainPanel extends NumberTheoryPlaygroundPanel {
     JButton calcBtn = new JButton("Calculate");
     AnswerPanel answerPanel = new AnswerPanel();
     Section currentSection = Section.HOME;
+    int minInputInt, maxInputInt;
 
     public MainPanel() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -129,6 +130,9 @@ public class MainPanel extends NumberTheoryPlaygroundPanel {
             answerPanel.repaint();
 
             currentSection = Section.valueOf(e.getActionCommand());
+            minInputInt = currentSection.getMinInputInt();
+            maxInputInt = currentSection.getMaxInputInt();
+
             if (currentSection == Section.HOME) {
                 showHomeSection();
             } else {
@@ -208,13 +212,13 @@ public class MainPanel extends NumberTheoryPlaygroundPanel {
             // have even number.
             try {
                 firstNumber = Integer.parseInt(inputPanel1.getTextField().getText());
-                if (firstNumber < currentSection.getMinInputInt() || firstNumber > currentSection.getMaxInputInt() ||
+                if (firstNumber < minInputInt || firstNumber > maxInputInt ||
                         (currentSection == Section.GOLDBACH && firstNumber % 2 != 0)) {
                     inputError = true;
                 } else if (currentSection == Section.GCD_LCM) {
                     // GCD and LCM section is the only one that uses a second input number.
                     secondNumber = Integer.parseInt(inputPanel2.getTextField().getText());
-                    if (secondNumber < currentSection.getMinInputInt() || secondNumber > currentSection.getMaxInputInt()) {
+                    if (secondNumber < minInputInt || secondNumber > maxInputInt) {
                         inputError = true;
                     }
                 }
@@ -263,7 +267,7 @@ public class MainPanel extends NumberTheoryPlaygroundPanel {
             switch (actionToPerform) {
                 case "randomize":
                     // generate random number in valid range for current section
-                    int randomNumber = Math.max(random.nextInt(currentSection.getMaxInputInt()), currentSection.getMinInputInt());
+                    int randomNumber = Math.max(random.nextInt(maxInputInt), minInputInt);
                     // Goldbach section requires even number
                     if (currentSection == Section.GOLDBACH && randomNumber % 2 != 0) {
                         randomNumber++;
@@ -279,8 +283,8 @@ public class MainPanel extends NumberTheoryPlaygroundPanel {
                         return;
                     }
 
-                    if (currentInputNumber >= currentSection.getMaxInputInt() || currentInputNumber < currentSection.getMinInputInt()) {
-                        inputPanelToModify.getTextField().setText(String.valueOf(currentSection.getMinInputInt()));
+                    if (currentInputNumber >= maxInputInt || currentInputNumber < minInputInt) {
+                        inputPanelToModify.getTextField().setText(String.valueOf(minInputInt));
                     } else {
                         newInputNumber = currentInputNumber + 1;
                         // Make even number displayed for Goldbach section
@@ -299,8 +303,8 @@ public class MainPanel extends NumberTheoryPlaygroundPanel {
                         return;
                     }
 
-                    if (currentInputNumber <= currentSection.getMinInputInt() || currentInputNumber > currentSection.getMaxInputInt()) {
-                        inputPanelToModify.getTextField().setText(String.valueOf(currentSection.getMaxInputInt()));
+                    if (currentInputNumber <= minInputInt || currentInputNumber > maxInputInt) {
+                        inputPanelToModify.getTextField().setText(String.valueOf(maxInputInt));
                     } else {
                         newInputNumber = currentInputNumber - 1;
                         // Make even number displayed for Goldbach section

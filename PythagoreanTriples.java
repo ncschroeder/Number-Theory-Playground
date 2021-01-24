@@ -20,9 +20,9 @@ public class PythagoreanTriples {
         List<String> triples = new ArrayList<>(10);
 
         // sideLength represents one of the lengths of one of the two short sides of a right triangle.
-        // 3 is the lowest number to be in a pythagorean triple so make sideLength be at least that.
+        // 3 is the lowest number to be in a Pythagorean triple so make sideLength be at least that.
         int sideLength = Math.max(number, 3);
-        // otherLeglength represents the length of the other short side
+        // otherSideLength represents the length of the other short side. This needs to be a long to prevent overflow.
         long otherSideLength = sideLength + 1;
 
         while (true) {
@@ -35,8 +35,8 @@ public class PythagoreanTriples {
                 otherSideLength = sideLength + 1;
             } else {
                 if ((int) hypotLength == hypotLength) {
-                    // A Pythagorean triple has been found. Add a string to the triples list. This string will
-                    // consist of what the 3 numbers are and what their squares are in parentheses.
+                    // A Pythagorean triple has been found. Add a string to the triples list. This string
+                    // consists of what the 3 numbers are and what their squares are in parentheses.
                     triples.add(
                             sideLength + "^2 (" + (sideLength * sideLength) + ") + " + otherSideLength +
                             "^2 (" + (otherSideLength * otherSideLength) + ") = " + (int) hypotLength + "^2 (" +

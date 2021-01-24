@@ -70,82 +70,84 @@ public class NTPCLI {
     }
 
     void goToSection(Section section) {
-            String sectionChoicesString = getSectionChoicesString(section);
-            System.out.println();
+        int minInputInt = section.getMinInputInt();
+        int maxInputInt = section.getMaxInputInt();
+        String sectionChoicesString = getSectionChoicesString(section);
+        System.out.println();
 
-            while (true) {
-                System.out.println(sectionChoicesString);
-                String input = inputReader.nextLine().toLowerCase();
-                switch (input) {
-                    case "m":
-                        System.out.println();
-                        return;
+        while (true) {
+            System.out.println(sectionChoicesString);
+            String input = inputReader.nextLine().toLowerCase();
+            switch (input) {
+                case "m":
+                    System.out.println();
+                    return;
 
-                    case "i":
-                        System.out.println('\n' + getStringWithNewLineChars(section.getInfo()) + '\n');
-                        break;
+                case "i":
+                    System.out.println('\n' + getStringWithNewLineChars(section.getInfo()) + '\n');
+                    break;
 
-                    default:
-                        int firstNumber = 0, secondNumber = 0;
+                default:
+                    int firstNumber = 0, secondNumber = 0;
 
-                        if (input.equals("r")) {
-                            // generate random numbers that are in the valid range
-                            firstNumber = Math.max(random.nextInt(section.getMaxInputInt()), section.getMinInputInt());
-                            // Goldbach section requires even number
-                            if (section == Section.GOLDBACH && firstNumber % 2 != 0) {
-                                firstNumber++;
-                            } else if (section == Section.GCD_LCM) {
-                                secondNumber = Math.max(random.nextInt(section.getMaxInputInt()), section.getMinInputInt());
-                            }
-                        } else {
-                            // Check input for number or numbers and validate that these numbers are in the appropriate range
-                            boolean inputError = false;
-                            try {
-                                if (section == Section.GCD_LCM) {
-                                    // gcd and lcm section has user enter 2 numbers separated by a space
-                                    if (input.isEmpty()) {
+                    if (input.equals("r")) {
+                        // generate random numbers that are in the valid range
+                        firstNumber = Math.max(random.nextInt(maxInputInt), minInputInt);
+                        // Goldbach section requires even number
+                        if (section == Section.GOLDBACH && firstNumber % 2 != 0) {
+                            firstNumber++;
+                        } else if (section == Section.GCD_LCM) {
+                            // GCD and LCM section needs 2 numbers
+                            secondNumber = Math.max(random.nextInt(maxInputInt), minInputInt);
+                        }
+                    } else {
+                        // Check input for number or numbers and validate that these numbers are in the appropriate range
+                        boolean inputError = false;
+                        try {
+                            if (section == Section.GCD_LCM) {
+                                // GCD and LCM section has user enter 2 numbers separated by a space
+                                if (input.isEmpty()) {
+                                    inputError = true;
+                                } else {
+                                    String[] inputContents = input.split(" ");
+                                    if (inputContents.length != 2) {
                                         inputError = true;
                                     } else {
-                                        String[] inputContents = input.split(" ");
-                                        if (inputContents.length != 2) {
+                                        firstNumber = Integer.parseInt(inputContents[0]);
+                                        secondNumber = Integer.parseInt(inputContents[1]);
+                                        if (secondNumber < minInputInt || secondNumber > maxInputInt) {
                                             inputError = true;
-                                        } else {
-                                            firstNumber = Integer.parseInt(inputContents[0]);
-                                            secondNumber = Integer.parseInt(inputContents[1]);
-                                            if (secondNumber < section.getMinInputInt() || secondNumber > section.getMaxInputInt()) {
-                                                inputError = true;
-                                            }
                                         }
                                     }
-                                } else {
-                                    firstNumber = Integer.parseInt(input);
                                 }
+                            } else {
+                                firstNumber = Integer.parseInt(input);
+                            }
 
-                                // Goldbach section requires even number
-                                if (firstNumber < section.getMinInputInt() || firstNumber > section.getMaxInputInt() ||
-                                        (section == Section.GOLDBACH && firstNumber % 2 != 0)) {
-                                    inputError = true;
-                                }
-                            } catch (NumberFormatException ex) {
-                                // This block is reached if the user's input was not able to be parsed as an int
+                            // Goldbach section requires even number
+                            if (firstNumber < minInputInt || firstNumber > maxInputInt ||
+                                    (section == Section.GOLDBACH && firstNumber % 2 != 0)) {
                                 inputError = true;
                             }
-
-                            if (inputError) {
-                                System.out.println("\nInvalid input\n");
-                                continue;
-                            }
+                        } catch (NumberFormatException ex) {
+                            // This block is reached if the user's input was not able to be parsed as an int
+                            inputError = true;
                         }
 
-                        System.out.println();
-                        System.out.println(
-                                section == Section.GCD_LCM ? getDoubleInputAnswerString(section, firstNumber, secondNumber)
-                                        : getSingleInputAnswerString(section, firstNumber)
-                        );
-                        System.out.println();
-                        break;
-                }
+                        if (inputError) {
+                            System.out.println("\nInvalid input\n");
+                            continue;
+                        }
+                    }
+
+                    System.out.println();
+                    System.out.println(
+                            section == Section.GCD_LCM ? getDoubleInputAnswerString(section, firstNumber, secondNumber)
+                                    : getSingleInputAnswerString(section, firstNumber)
+                    );
+                    System.out.println();
             }
+        }
     }
 
     /**
@@ -258,6 +260,7 @@ public class NTPCLI {
 
     /**
      * @return An answer string for sections that require the user to provide 1 input number.
+     * @throws IllegalArgumentException if the section argument is not for a section that needs 1 input number.
      */
     String getSingleInputAnswerString(Section section, int number) {
         StringBuilder sb = new StringBuilder();
@@ -336,6 +339,7 @@ public class NTPCLI {
 
     /**
      * @return An answer string for sections that require the user provide 2 input numbers.
+     * @throws IllegalArgumentException if the section argument is not for a section that needs 2 input numbers.
      */
     String getDoubleInputAnswerString(Section section, int firstNumber, int secondNumber) {
         // Only section is the gcd and lcm section

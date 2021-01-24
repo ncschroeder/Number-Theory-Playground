@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Utility class consisting of methods related to GCDs and LCMs.
@@ -23,12 +20,11 @@ public class GcdAndLcm {
     }
 
     /**
-     * @return An ArrayList consisting of info about every iteration of the euclidean algorithm done on firstNumber
-     * and secondNumber. Every element of this ArrayList is info about a single iteration and there is another element
-     * about which number is the GCD at the end. An ArrayList is used since the amount of iterations varies.
+     * @return A list containing info about the Euclidean algorithm done on firstNumber and secondNumber. The strings in
+     * this list contain info about iterations and there is another string at the end about which number is the GCD.
      * @throws IllegalArgumentException if firstNumber or secondNumber is nonpositive.
      */
-    public static Collection<String> getEuclideanInfo(final int firstNumber, final int secondNumber) {
+    public static List<String> getEuclideanInfo(final int firstNumber, final int secondNumber) {
         if (firstNumber < 1 || secondNumber < 1) {
             throw new IllegalArgumentException("Can't find GCD for nonpositive numbers");
         }
@@ -60,7 +56,7 @@ public class GcdAndLcm {
     }
 
     /**
-     * @return An array of strings that contain info about the GCD and LCM of the two argument numbers. This info is
+     * @return An array of 4 strings that contain info about the GCD and LCM of the two argument numbers. This info is
      * acquired by looking at the prime factorizations of the two argument numbers.
      * @throws IllegalArgumentException if firstNumber is less than 2 or secondNumber is less than 2.
      */
@@ -71,18 +67,22 @@ public class GcdAndLcm {
         Map<Integer, Integer> pf1Map = pf1.toMap();
         Map<Integer, Integer> pf2Map = pf2.toMap();
 
-        // For all prime factors that are in both prime factorizations, a new entry will be created for both gcdPfMap
-        // and lcmPfMap and the key will be the prime factor. For gcdPfMap, the value will be the minimum of the
-        // 2 powers for that prime factor and for lcmPfMap, the value will be the maximum of the 2 powers.
-        // For prime factors that are unique to each prime factorization, a new entry will be created for only
-        // lcmPfMap and the value will be the power of that prime factor in the prime factorization it was in.
+        // The prime factorization of the GCD of 2 numbers contains all the prime factors that are in both of the prime
+        // factorizations of the 2 numbers. The power of each prime factor is the minimum of the 2 powers in the 2
+        // prime factorizations. If there are no common prime factors then the GCD is 1.
+
+        // The prime factorization of the LCM of 2 numbers contains all prime factors that are in either of the prime
+        // factorizations for the 2 numbers. If a prime factor is in both prime factorizations then the power of that
+        // prime factor in the LCM prime factorization is the max of the 2 powers in the 2 prime factorizations. If a
+        // prime factor is unique to 1 of the prime factorizations of the 2 numbers, then the power of that prime factor
+        // in the LCM prime factorization is the same as in the prime factorization for that 1 number.
         Map<Integer, Integer> gcdPfMap = new TreeMap<>();
         Map<Integer, Integer> lcmPfMap = new TreeMap<>();
 
         for (int primeFactor : pf1Map.keySet()) {
             int power1 = pf1Map.get(primeFactor);
             if (pf2Map.containsKey(primeFactor)) {
-                // Both prime factorizations have this prime factor
+                // Common prime factors
                 int power2 = pf2Map.get(primeFactor);
                 gcdPfMap.put(primeFactor, Math.min(power1, power2));
                 lcmPfMap.put(primeFactor, Math.max(power1, power2));

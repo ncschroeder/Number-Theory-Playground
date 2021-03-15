@@ -1,0 +1,67 @@
+doctype html
+html(lang='en-US')
+    head
+        title Number Theory Playground
+        meta(charset='utf-8')
+        link(rel='stylesheet' href='styles.css')
+        script(src='script.js' defer)
+    body
+        h1#mainHeading Number Theory Playground
+        nav#sectionBtns
+            button.sectionBtn#homeBtn Home
+            button.sectionBtn#primesBtn Prime Numbers
+            button.sectionBtn#twinPrimesBtn Twin Primes
+            button.sectionBtn#pfBtn Prime Factorization
+            button.sectionBtn#divisBtn Divisibility
+            button.sectionBtn#gcdLcmBtn GCD and LCM
+            button.sectionBtn#goldbachBtn Goldbach Conjecture
+            button.sectionBtn#pythagBtn Pythagorean Triples
+        h2#sectionHeading
+        p#sectionInfo
+        
+        #interactionContent(data-input-areas-visible='0')
+
+            #inputAreaContainer
+                div#inputArea1.inputArea
+                    input#inputBox1(type='number')
+                    button#randomBtn1 Randomize
+                    button#incrementBtn1 +
+                    button#decrementBtn1 -
+                div#inputArea2.inputArea
+                    input#inputBox2(type='number')
+                    button#randomBtn2 Randomize
+                    button#incrementBtn2 +
+                    button#decrementBtn2 -
+
+            #calcBtnContainer
+                button#calculateBtn(type='button') Calculate
+                //- input#calculateBtn(type='submit' value='submit')
+
+            #answerArea
+
+
+                        //- table.inputArea#inputArea1
+            //-     tr 
+            //-         td(colspan='2')
+            //-             input#inputBox1
+            //-     tr
+            //-         td(colspan='2')
+            //-             button#randomBtn1 Randomize
+            //-     tr 
+            //-         td
+            //-             button#incrementBtn1 +
+            //-         td 
+            //-             button#decrementBtn1 -
+            
+            //- table.inputArea#inputArea2
+            //-     tr 
+            //-         td(colspan='2')
+            //-             input#inputBox2
+            //-     tr
+            //-         td(colspan='2')
+            //-             button#randomBtn2 Randomize
+            //-     tr 
+            //-         td
+            //-             button#incrementBtn2 +
+            //-         td 
+            //-             button#decrementBtn2 -

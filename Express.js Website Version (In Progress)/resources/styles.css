@@ -1,0 +1,164 @@
+body {
+    background-color: rgb(0, 82, 78);
+    color: gainsboro;
+}
+
+h1, h2, h3 {
+    text-align: center;
+    width: 90%;
+    margin: 0.5em auto;
+}
+
+h1 {
+    color: rgb(255, 214, 81);
+    font-size: 3em;
+    font-family: 'Brush Script MT', cursive;
+}
+
+h2 {
+    margin: 0 auto;
+    width: min(90%, 10em);
+    color: skyblue;
+    font-size: 1.5em;
+}
+
+h3, caption {
+    color: coral;
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+#sectionBtns {
+    text-align: center;
+}
+
+#sectionBtns button {
+    font-family: 'Monaco', monospace;
+    font-size: 1em;
+    background-color: rgb(19, 0, 126);
+    margin: 1em;
+    outline-style: none;
+    color: white;
+    min-width: 5em;
+    min-height: 3em;
+}
+
+#sectionBtns button:hover {
+    color: greenyellow;
+    cursor: pointer;
+}
+
+p {
+    margin: 0 auto;
+    width: max-content;
+    max-width: min(90%, 40em);
+    font-family: 'Monaco', monospace;
+}
+
+ol, ul {
+    list-style-type: none;
+    width: max-content;
+    padding: 0em;
+}
+
+#inputAreaContainer {
+    display: flex;
+}
+
+.inputArea {
+    display: grid;
+    gap: 0.1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+/* Input box for both input areas */
+.inputArea input[type='number'] {
+    margin: auto;
+    width: 7em;
+    grid-column: 1 / 3;
+    grid-row: 1;
+}
+
+/* Randomize button for both input areas */
+.inputArea button:nth-child(2) {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    margin: auto;
+}
+
+/* Increment button for both input areas */
+.inputArea button:nth-child(3) {
+    grid-column: 1;
+    grid-row: 3;
+    margin-right: 0;
+    margin-left: auto;
+}
+
+/* Decrement button for both input areas */
+.inputArea button:nth-child(4) {
+    grid-column: 2;
+    grid-row: 3;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+#interactionContent[data-input-areas-visible='0'] {
+    visibility: hidden;
+}
+
+/* 1st input area when only it should be visible */
+#interactionContent[data-input-areas-visible='1'] .inputArea:nth-child(1) {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 2nd input area when only the 1st input area should be visible */
+#interactionContent[data-input-areas-visible='1'] .inputArea:nth-child(2) {
+    display: none;
+}
+
+/* 1st input area when both input areas should be visible */
+#interactionContent[data-input-areas-visible='2'] .inputArea:nth-child(1) {
+    margin-right: min(1em, 1%);
+    margin-left: auto;
+}
+
+/* 2nd input area when both input areas should be visible */
+#interactionContent[data-input-areas-visible='2'] .inputArea:nth-child(2) {
+    margin-left: min(1em, 1%);
+    margin-right: auto;
+}
+
+#calcBtnContainer {
+    text-align: center;
+    /* margin-top: 1em; */
+}
+
+/* List of primes, twin primes, factors for divis info, and goldbach prime pairs */
+.answerList {
+    display: flex;
+    gap: 1.5em;
+    flex-wrap: wrap;
+    width: min(40em, 90%);
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+#primesList {
+    /* display: grid;
+    grid-template-columns: repeat(8, auto);
+    margin: auto;
+    text-align: center;
+    gap: 1.5em;
+    max-width: 60%; */
+}
+
+#twinPrimesList {
+
+}
+
+#goldbachList {
+
+}

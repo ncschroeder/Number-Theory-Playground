@@ -12,10 +12,10 @@ for number theory concepts. I am currently working on a website version of this 
 - One that teaches the user about the Goldbach conjecture and allows for input of a valid number and the program outputs the pairs of prime numbers that sum to that number
 - One that teaches the user about Pythagorean triples and allows for input of a valid number and the program outputs the first 10 Pythagorean triples that appear after that number
 
-## Directions for running from command line
+## Directions for running Java versions from command line
 1. Have a java development kit that can compile a Java program that has all the Java features I used. My jdk is version 11.0.8.
 2. Download this repository
-3. Open a terminal and navigate to the directory where the repository was downloaded
+3. Open a terminal and navigate to the directory where the repository was downloaded and then into the repository folder and then the "Java Versions" folder
 4. Run command "javac *.java"
 5. Run command "java NTPGUI" for the GUI version or "java NTPCLI" for the command line version
 
@@ -28,3 +28,10 @@ I learned these other concepts from sources such as my discrete math textbook an
 Numberphile, Mathologer, 3blue1brown, and Zach Star. 
 I decided to use Java because it is a popular programming language that I had no familiarity with at the time. However, 
 I found Java easy to learn since some of the syntax is similar to C++, which I had some familiarity with. 
+
+## Thoughts on this project
+I liked that I got to implement the number theory concepts that enlightened me. I'd say they weren't hard to implement though it did require some thinking. The hardest concept to implement was 
+the part of the divisibility section where a number's prime factorization is used to find its factors. I had trouble making the graphical user interface with Java Swing, namely laying out all the content.
+As I did more and more research, I became more familiar with Java Swing and eventually was able to do what I wanted. I'm almost done with a website version of this project. I had some trouble laying
+out the content with HTML and CSS but came up with solutions by using CSS flexbox and grid. I originally had the calculation functions in the script that was attached to the HTML/pug document. I
+felt that it would be more professional to make an API for these functions so that's what I did after I researched and thought about how to do that.

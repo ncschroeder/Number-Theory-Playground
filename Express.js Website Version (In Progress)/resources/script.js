@@ -167,16 +167,11 @@
     });
 
     document.getElementById('calculateBtn').addEventListener('click', function() {
-        clearAnswerArea();
-
+        // console.log(inputBox1.value);
         // Do nothing if inputBox1 is empty
         if (inputBox1.value === '') {
             return;
         }
-
-        // function displayErrorMessageInAnswerArea() {
-        //     answerArea.innerText = 'Invalid input';
-        // }
 
         let inputNumber1 = Math.floor(inputBox1.value);
         if (inputNumber1 < minInputNumber) {
@@ -185,16 +180,6 @@
             inputNumber1 = minInputNumber;
         }
         inputBox1.value = inputNumber1;
-        // if (!Number.isInteger(inputNumber1)) {
-        //     inputNumber1 = Math.floor(inputNumber1);
-        //     inputBox1.value = inputNumber1;
-        // }
-        // if (inputNumber1)
-        // if (!Number.isSafeInteger(inputNumber1) || inputNumber1 < minInputNumber || inputNumber1 > maxInputNumber) {
-        //     // input error
-        //     displayErrorMessageInAnswerArea();
-        //     return;
-        // }
 
         let apiUrl;
         // gcd and lcm section is the only one to use 2 input boxes
@@ -211,79 +196,85 @@
                 inputNumber2 = maxInputNumber;
             }
             inputBox2.value = inputNumber2;
-            // if (!Number.isInteger(inputNumber2) || inputBox2.value === '' || inputNumber2 < minInputNumber || inputNumber2 > maxInputNumber) {
-            //     // input error
-            //     displayErrorMessageInAnswerArea();
-            //     return;
-            // }
-            apiUrl = `/calculations?section=gcdAndLcm&firstNumber=${firstNumber}&secondNumber=${secondNumber}`;
-            // apiUrl = `/calculations/${currentSection}/numbers/${inputNumber1}/${inputNumber2}`;
+            apiUrl = `/calculations?section=gcdAndLcm&firstNumber=${inputNumber1}&secondNumber=${inputNumber2}`;
         } else {
             // Goldbach section must have even number
             if (currentSection === 'goldbach' && inputNumber1 % 2 !== 0) {
                 inputNumber1++;
-                // if (inputNumber1 + 1 <= maxInputNumber) {
-                //     inputNumber1++;
-                // } else {
-                //     inputNumber1--;
-                // }
                 inputBox1.value = inputNumber1;
             }
             apiUrl = `calculations?section=${currentSection}&number=${inputNumber1}`;
-            // apiUrl = `/calculations/${currentSection}/number/${inputNumber1}`;
         }
 
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
+
+        function getErrorMessageNode() {
+            return document.createTextNode('Aw snap, there was a problem');
+        }
+
         xhr.onload = function() {
+            let newAnswerAreaElement;
             switch (currentSection) {
                 case 'primes': {
                     const primes = this.response;
-                    answerArea.appendChild(getPrimesElement(inputNumber1, primes));
-                    // answerArea.appendChild(getPrimesTable(inputNumber1, primes));
-                    return;
+                    newAnswerAreaElement = getPrimesElement(inputNumber1, primes);
+                    break;
                 }
                 
                 case 'twinPrimes': {
                     const twinPrimePairs = this.response;
-                    answerArea.appendChild(getTwinPrimesElement(inputNumber1, twinPrimePairs));
-                    return;
+                    newAnswerAreaElement = getTwinPrimesElement(inputNumber1, twinPrimePairs);
+                    break;
                 }
 
                 case 'primeFactorization': {
-                    const pfObject = this.response;
-                    answerArea.appendChild(getPfParagraph(inputNumber1, pfObject));
-                    return;
+                    const pfArray = this.response;
+                    newAnswerAreaElement = getPfElement(inputNumber1, pfArray);
+                    break;
                 }
 
                 case 'divisibility': {
                     const infoObject = this.response;
-                    answerArea.appendChild(getDivisInfoDiv(inputNumber1, infoObject));
-                    return;
+                    newAnswerAreaElement = getDivisInfoDiv(inputNumber1, infoObject);
+                    break;
                 }
 
                 case 'gcdAndLcm': {
                     const infoObject = this.response;
-                    answerArea.appendChild(getGcdAndLcmInfoDiv(inputNumber1, inputNumber2, infoObject));
-                    return;
+                    newAnswerAreaElement = getGcdAndLcmInfoDiv(inputNumber1, inputNumber2, infoObject);
+                    break;
                 }
 
                 case 'goldbach': {
                     const pairs = this.response;
-                    answerArea.appendChild(getGoldbachElement(inputNumber1, pairs));
-                    return;
+                    newAnswerAreaElement = getGoldbachElement(inputNumber1, pairs);
+                    break;
                 }
 
                 case 'pythagTriples': {
                     const triples = this.response;
-                    answerArea.appendChild(getPythagTriplesDiv(inputNumber1, triples));
-                    return;
+                    newAnswerAreaElement = getPythagTriplesDiv(inputNumber1, triples);
+                    break;
                 }
+
+                default:
+                    newAnswerAreaElement = getErrorMessageNode();
+            }
+
+            if (answerArea.firstChild) {
+                answerArea.replaceChild(newAnswerAreaElement, answerArea.firstChild);
+            } else {
+                answerArea.appendChild(newAnswerAreaElement);
             }
         }
 
         xhr.onerror = function() {
-            answerArea.innerText = 'Aw snap, there was a problem with the API request';
+            if (answerArea.firstChild) {
+                answerArea.replaceChild(getErrorMessageNode(), answerArea.firstChild);
+            } else {
+                answerArea.appendChild(getErrorMessageNode());
+            }
         }
 
         xhr.open('GET', apiUrl);
@@ -297,23 +288,39 @@
      * @returns {HTMLTableElement} An html table that consists of a caption and rows consisting of data entries. Each data entry
      * contains an element of primesArray. There are 5 data entries in each row.
      */
-    function getPrimesTable(number, primesArray) {
-        const table = document.createElement('table');
-        const caption = document.createElement('caption');
-        caption.innerText = `The first 30 primes after ${number} are`;
-        table.appendChild(caption);
+    // function getPrimesTable(number, primesArray) {
+    //     const table = document.createElement('table');
+    //     const caption = document.createElement('caption');
+    //     caption.innerText = `The first 30 primes after ${number} are`;
+    //     table.appendChild(caption);
 
-        let row = document.createElement('tr');
-        for (const prime of primesArray) {
-            const primeEntry = document.createElement('td');
-            primeEntry.innerText = prime;
-            row.appendChild(primeEntry);
-            if (row.children.length === 5) {
-                table.appendChild(row);
-                row = document.createElement('tr');
-            }
+    //     let row = document.createElement('tr');
+    //     for (const prime of primesArray) {
+    //         const primeEntry = document.createElement('td');
+    //         primeEntry.innerText = prime;
+    //         row.appendChild(primeEntry);
+    //         if (row.children.length === 5) {
+    //             table.appendChild(row);
+    //             row = document.createElement('tr');
+    //         }
+    //     }
+    //     return table;
+    // }
+
+    /**
+     * 
+     * @param {Array<any>} array 
+     * @returns An html ordered list element where each list item has an inner text of each element of the argument
+     * array.
+     */
+    function getOlFromArray(array) {
+        const ol = document.createElement('ol');
+        for (const element of array) {
+            const li = document.createElement('li');
+            li.innerText = element;
+            ol.appendChild(li);
         }
-        return table;
+        return ol;
     }
 
     /**
@@ -325,16 +332,19 @@
     function getPrimesElement(number, primesArray) {
         const div = document.createElement('div');
         const heading = document.createElement('h3');
-        heading.innerText = `The first 30 primes after ${number} are`;
+        heading.innerText = `The first 30 primes after ${getNumberStringWithCommas(number)} are`;
         div.appendChild(heading);
-        const ol = document.createElement('ol');
-        ol.setAttribute('class', 'answerList');
-        for (const prime of primesArray) {
-            const li = document.createElement('li');
-            li.innerText = prime;
-            ol.appendChild(li);
-        }
-        div.appendChild(ol);
+        const primesOl = getOlFromArray(primesArray);
+        primesOl.setAttribute('class', 'answerList');
+        div.appendChild(primesOl);
+        // const ol = document.createElement('ol');
+        // ol.setAttribute('class', 'answerList');
+        // for (const prime of primesArray) {
+        //     const li = document.createElement('li');
+        //     li.innerText = prime;
+        //     ol.appendChild(li);
+        // }
+        // div.appendChild(ol);
         return div;
     }
 
@@ -345,23 +355,23 @@
      * @returns {HTMLTableElement} An html table element that consists of a caption and rows of data entries. Each data entry 
      * contains an element of twinPrimesArray. There are 4 data entries in each row.
      */
-    function getTwinPrimesTable(number, twinPrimesArray) {
-        const table = document.createElement('table');
-        const caption = document.createElement('caption');
-        caption.innerText = `The first 20 pairs of twin prime numbers after ${number} are`;
-        table.appendChild(caption);
-        let row = document.createElement('tr');
-        for (const twinPrimePair of twinPrimesArray) {
-            const entry = document.createElement('td');
-            entry.innerText = twinPrimePair;
-            row.appendChild(entry);
-            if (row.children.length === 4) {
-                table.appendChild(row);
-                row = document.createElement('tr');
-            }
-        }
-        return table;
-    }
+    // function getTwinPrimesTable(number, twinPrimesArray) {
+    //     const table = document.createElement('table');
+    //     const caption = document.createElement('caption');
+    //     caption.innerText = `The first 20 pairs of twin prime numbers after ${number} are`;
+    //     table.appendChild(caption);
+    //     let row = document.createElement('tr');
+    //     for (const twinPrimePair of twinPrimesArray) {
+    //         const entry = document.createElement('td');
+    //         entry.innerText = twinPrimePair;
+    //         row.appendChild(entry);
+    //         if (row.children.length === 4) {
+    //             table.appendChild(row);
+    //             row = document.createElement('tr');
+    //         }
+    //     }
+    //     return table;
+    // }
 
     /**
      * 
@@ -372,16 +382,19 @@
     function getTwinPrimesElement(number, twinPrimesArray) {
         const div = document.createElement('div');
         const heading = document.createElement('h3');
-        heading.innerText = `The first 20 pairs of twin primes after ${number} are`;
+        heading.innerText = `The first 20 pairs of twin primes after ${getNumberStringWithCommas(number)} are`;
         div.appendChild(heading);
-        const ol = document.createElement('ol');
-        ol.setAttribute('class', 'answerList');
-        for (const pair of twinPrimesArray) {
-            const li = document.createElement('li');
-            li.innerText = pair;
-            ol.appendChild(li);
-        }
-        div.appendChild(ol);
+        const twinPrimesOl = getOlFromArray(twinPrimesArray);
+        twinPrimesOl.setAttribute('class', 'answerList');
+        div.appendChild(twinPrimesOl);
+        // const ol = document.createElement('ol');
+        // ol.setAttribute('class', 'answerList');
+        // for (const pair of twinPrimesArray) {
+        //     const li = document.createElement('li');
+        //     li.innerText = pair;
+        //     ol.appendChild(li);
+        // }
+        // div.appendChild(ol);
         return div;
     }
 
@@ -389,27 +402,43 @@
      * 
      * @param {object} pfObject An object representing a number's prime factorization. The keys are the prime factors and the 
      * values are the powers that those prime factors are raised to in the prime factorization of a number.
+     * @param {Array} pfArray
      * 
      * @returns A span element that contains the prime factors and powers of pfObject. The prime factors are displayed
      * as normal text. If a power is greater than 1, it is displayed in a superscript element following it's prime factor. Each 
      * prime factor and it's power if applicable is separated by an ' x '.
      */
-    function getPfSpan(pfObject) {
+    function getPfSpan(pfArray) {
         const span = document.createElement('span');
-        for (const primeFactor in pfObject) {
-            span.appendChild(document.createTextNode(primeFactor));
-            const power = pfObject[primeFactor];
+        for (let i = 0; i < pfArray.length; i++) {
+            const [primeFactor, power] = pfArray[i];
+            span.insertAdjacentText('beforeend', primeFactor);
             if (power != 1) {
                 // display power as superscript text
                 const supEl = document.createElement('sup');
                 supEl.innerText = power;
                 span.appendChild(supEl);
             }
-            span.appendChild(document.createTextNode(' x '));
+
+            // Add ' x ' between each prime factor and it's power
+            if (i !== pfArray.length - 1) {
+                span.insertAdjacentText('beforeend', ' x ');
+            }
         }
-        // Remove last ' x '
-        span.removeChild(span.lastChild);
         return span;
+        // for (const primeFactor of pfArray) {
+        //     span.appendChild(document.createTextNode(primeFactor));
+        //     const power = pfObject[primeFactor];
+        //     if (power != 1) {
+        //         // display power as superscript text
+        //         const supEl = document.createElement('sup');
+        //         supEl.innerText = power;
+        //         span.appendChild(supEl);
+        //     }
+        //     span.appendChild(document.createTextNode(' x '));
+        // }
+        // // Remove last ' x '
+        // span.removeChild(span.lastChild);
     }
 
     /**
@@ -418,26 +447,35 @@
      * @param {object} pfObject An object representing the argument number's prime factorization.
      * @returns An html p element that says what the prime factorization of the argument number is.
      */
-    function getPfParagraph(number, pfObject) {
-        const paragraph = document.createElement('p');
-        paragraph.style.textAlign = 'center';
-        paragraph.innerText = `The prime factorization of ${number} is`;
-        paragraph.appendChild(document.createElement('br'));
-        paragraph.appendChild(getPfSpan(pfObject));
-        // for (const primeFactor in pfObject) {
-        //     paragraph.appendChild(document.createTextNode(primeFactor));
-        //     const power = pfObject[primeFactor];
-        //     if (power != 1) {
-        //         // display power as superscript text
-        //         const supEl = document.createElement('sup');
-        //         supEl.innerText = power;
-        //         paragraph.appendChild(supEl);
-        //     }
-        //     paragraph.appendChild(document.createTextNode(' x '));
-        // }
-        // // Remove last ' x '
-        // paragraph.removeChild(paragraph.lastChild);
-        return paragraph;
+    // function getPfParagraph(number, pfObject) {
+    //     const paragraph = document.createElement('p');
+    //     paragraph.style.textAlign = 'center';
+    //     paragraph.innerText = `The prime factorization of ${number} is`;
+    //     paragraph.appendChild(document.createElement('br'));
+    //     paragraph.appendChild(getPfSpan(pfObject));
+    //     // for (const primeFactor in pfObject) {
+    //     //     paragraph.appendChild(document.createTextNode(primeFactor));
+    //     //     const power = pfObject[primeFactor];
+    //     //     if (power != 1) {
+    //     //         // display power as superscript text
+    //     //         const supEl = document.createElement('sup');
+    //     //         supEl.innerText = power;
+    //     //         paragraph.appendChild(supEl);
+    //     //     }
+    //     //     paragraph.appendChild(document.createTextNode(' x '));
+    //     // }
+    //     // // Remove last ' x '
+    //     // paragraph.removeChild(paragraph.lastChild);
+    //     return paragraph;
+    // }
+
+    function getPfElement(number, pfArray) {
+        const div = document.createElement('div');
+        const heading = document.createElement('h3');
+        heading.innerText = `The prime factorization of ${getNumberStringWithCommas(number)} is`;
+        div.appendChild(heading);
+        div.appendChild(getPfSpan(pfArray));
+        return div;
     }
 
     /**
@@ -450,7 +488,7 @@
         const div = document.createElement('div');
 
         const tricksHeading = document.createElement('h3');
-        tricksHeading.innerText = 'Divisility info acquired by using special tricks';
+        tricksHeading.innerText = 'Divisibility info acquired by using special tricks';
         div.appendChild(tricksHeading);
 
         const tricksParagraph = document.createElement('p');
@@ -458,68 +496,93 @@
         div.appendChild(tricksParagraph);
 
         const pfHeading = document.createElement('h3');
-        pfHeading.innerText = 'Info acquired from the prime factorzation';
+        pfHeading.innerText = 'Info acquired from the prime factorization';
         div.appendChild(pfHeading);
 
-        // const pfOL = document.createElement('ol');
-
         const {pfInfo} = infoObject;
-        // const pfObject = pfInfo[number];
         const pfInfoParagraph = document.createElement('p');
-        pfInfoParagraph.appendChild(document.createTextNode(`The prime factorization for ${number} is `));
-        // pfInfoParagraph.textContent += `The prime factorization for ${number} is `;
-        // let pfLi = document.createElement('li');
-        // pfLi.appendChild(document.createTextNode(`The prime factorization for ${number} is `));
+        const numberString = getNumberStringWithCommas(number);
+        pfInfoParagraph.insertAdjacentText('beforeend', `The prime factorization for ${numberString} is `);
+
         if (pfInfo.isPrime) {
-            pfInfoParagraph.appendChild(document.createTextNode(`${number}. ${pfInfo.numberOfFactorsInfo}`));
+            pfInfoParagraph.insertAdjacentText('beforeend', `${numberString}. ${numberString} is prime and doesn't have any factors other than itself and 1`);
             div.appendChild(pfInfoParagraph);
         } else {
             pfInfoParagraph.appendChild(getPfSpan(pfInfo.pf));
-            pfInfoParagraph.appendChild(document.createTextNode('. ' + pfInfo.numberOfFactorsInfo));
-            // pfInfoParagraph.textContent += '. ' + pfInfo.numberOfFactorsInfo;
+            pfInfoParagraph.insertAdjacentText('beforeend', `. ${pfInfo.numberOfFactorsInfo}`);
             div.appendChild(pfInfoParagraph);
 
+            const factorsHeading = document.createElement('h4');
+            factorsHeading.innerText = 'By looking at all the "sub-factorizations", we can see the factors are';
+            div.appendChild(factorsHeading);
+
+            const factorsOl = document.createElement('ol');
+            factorsOl.setAttribute('class', 'answerList');
+            const {factors} = pfInfo;
+            for (const factor of factors) {
+                const factorLi = document.createElement('li');
+                if (factor.isPrime) {
+                    factorLi.innerText = factor.number;
+                } else {
+                    factorLi.appendChild(getPfSpan(factor.pf));
+                    factorLi.insertAdjacentText('beforeend', ` (${factor.number})`);
+                }
+                factorsOl.appendChild(factorLi);
+            }
+            div.appendChild(factorsOl);
+        }
+        return div;
+    }
+
+            // for (const factor in factors) {
+            //     const factorLi = document.createElement('li');
+            //     if (factors[factor].isPrime) {
+            //         factorLi.innerText = factor;
+            //     } else {
+            //         const factorPfObject = factors[factor].pf;
+            //         factorLi.appendChild(getPfSpan(factorPfObject));
+            //         factorLi.insertAdjacentText('beforeend', ` (${factor})`);
+            //     }
+            //     factorsOl.appendChild(factorLi);
+            // }
+
             // Display factors and their prime factorizations in a table
-            const factorsTable = document.createElement('table');
+            // const factorsTable = document.createElement('table');
             // const caption = document.createElement('caption');
             // caption.innerText = 'By looking at all the "sub-factorizations, we can see the factors are';
             // factorsTable.appendChild(caption);
 
-            let row = document.createElement('tr');
-            // console.log(factors);
-            const {factors} = pfInfo;
-            for (const factor in factors) {
-                const factorEntry = document.createElement('td');
-                if (factors[factor].isPrime) {
-                    // factor is prime so just display the factor
-                    factorEntry.innerText = factor;
-                } else {
-                    const factorPfObject = factors[factor].pf;
-                    factorEntry.appendChild(getPfSpan(factorPfObject));
+            // let row = document.createElement('tr');
+            // // console.log(factors);
+            // const {factors} = pfInfo;
+            // for (const factor in factors) {
+            //     const factorEntry = document.createElement('td');
+            //     if (factors[factor].isPrime) {
+            //         // factor is prime so just display the factor
+            //         factorEntry.innerText = factor;
+            //     } else {
+            //         const factorPfObject = factors[factor].pf;
+            //         factorEntry.appendChild(getPfSpan(factorPfObject));
                     
-                    // Display the factor, which is the product of these prime factors, in parentheses
-                    factorEntry.appendChild(document.createTextNode(` (${factor})`));
-                }
+            //         // Display the factor, which is the product of these prime factors, in parentheses
+            //         factorEntry.appendChild(document.createTextNode(` (${factor})`));
+            //     }
 
-                row.appendChild(factorEntry);
-                // Have each row contain a max of 5 entries
-                if (row.children.length === 5) {
-                    factorsTable.appendChild(row);
-                    row = document.createElement('tr');
-                }
-            }
+            //     row.appendChild(factorEntry);
+            //     // Have each row contain a max of 5 entries
+            //     if (row.children.length === 5) {
+            //         factorsTable.appendChild(row);
+            //         row = document.createElement('tr');
+            //     }
+            // }
 
             // If the amount of factors is not a multiple of 5 then there should be some children
             // in tableRow since the if statement above would not have been executed for the last 
             // few children.
-            if (row.children.length > 0) {
-                factorsTable.appendChild(row);
-            }
-            div.appendChild(factorsTable);
-        }
-
-        return div;
-    }
+            // if (row.children.length > 0) {
+            //     factorsTable.appendChild(row);
+            // }
+            // div.appendChild(factorsTable);
 
     /**
      * 
@@ -537,13 +600,11 @@
         div.appendChild(euclideanHeading);
 
         const euclideanOL = document.createElement('ol');
-        // euclideanOL.style.listStyleType = 'none';
 
         const {euclideanInfo} = infoObject;
         for (const infoLine of euclideanInfo) {
             const infoLI = document.createElement('li');
             infoLI.innerText = infoLine;
-            // infoLI.appendChild(document.createTextNode(infoLine));
             euclideanOL.appendChild(infoLI);
         }
         div.appendChild(euclideanOL);
@@ -555,12 +616,12 @@
         const {pfInfo} = infoObject;
         const pfOL = document.createElement('ol');
         let pfLi = document.createElement('li');
-        pfLi.appendChild(document.createTextNode(`The prime factorization of ${firstNumber} is `));
+        pfLi.appendChild(document.createTextNode(`The prime factorization of ${getNumberStringWithCommas(firstNumber)} is `));
         pfLi.appendChild(getPfSpan(pfInfo.firstNumberPf));
         pfOL.appendChild(pfLi);
 
         pfLi = document.createElement('li');
-        pfLi.appendChild(document.createTextNode(`The prime factorization of ${secondNumber} is `));
+        pfLi.appendChild(document.createTextNode(`The prime factorization of ${getNumberStringWithCommas(secondNumber)} is `));
         pfLi.appendChild(getPfSpan(pfInfo.secondNumberPf));
         pfOL.appendChild(pfLi);
 
@@ -570,12 +631,12 @@
             // No common prime factors
             pfLi.innerText = 'There are no common prime factors so the GCD is 1';
         } else {
-            pfLi.appendChild(document.createTextNode('The prime factorization of the GCD is '));
+            pfLi.insertAdjacentText('beforeend', 'The prime factorization of the GCD is ');
             if (gcd.isPrime) {
-                pfLi.appendChild(document.createTextNode(gcd.number));
+                pfLi.insertAdjacentText('beforeend', gcd.number);
             } else {
                 pfLi.appendChild(getPfSpan(gcd.pf));
-                pfLi.appendChild(document.createTextNode(`, which is ${gcd.number}`));
+                pfLi.insertAdjacentText('beforeend', `, which is ${gcd.number}`);
             }
         }
 
@@ -604,32 +665,32 @@
      * @returns An html table element that contains a caption and rows that contain data entries. Each data entry contains one of 
      * the elements of goldbachPrimePairsArray. There are a max of 4 data entries in each row.
      */
-    function getGoldbachTable(number, goldbachPrimePairsArray) {
-        const table = document.createElement('table');
-        const caption = document.createElement('caption');
-        caption.innerText = `The prime number pairs that sum to ${number} are`;
-        table.appendChild(caption);
+    // function getGoldbachTable(number, goldbachPrimePairsArray) {
+    //     const table = document.createElement('table');
+    //     const caption = document.createElement('caption');
+    //     caption.innerText = `The prime number pairs that sum to ${number} are`;
+    //     table.appendChild(caption);
 
-        let row = document.createElement('tr');
-        for (const pair of goldbachPrimePairsArray) {
-            const pairEntry = document.createElement('td');
-            pairEntry.innerText = pair;
-            row.appendChild(pairEntry);
-            if (row.children.length === 4) {
-                table.appendChild(row);
-                row = document.createElement('tr');
-            }
-        }
+    //     let row = document.createElement('tr');
+    //     for (const pair of goldbachPrimePairsArray) {
+    //         const pairEntry = document.createElement('td');
+    //         pairEntry.innerText = pair;
+    //         row.appendChild(pairEntry);
+    //         if (row.children.length === 4) {
+    //             table.appendChild(row);
+    //             row = document.createElement('tr');
+    //         }
+    //     }
 
-        // If the number of pairs is not a multiple of 4, there still will be pairs in row 
-        // that weren't added to pairsTable yet since the if statement above would not have been 
-        // executed to add the last row to table.
-        if (row.children.length > 0) {
-            table.appendChild(row);
-        }
+    //     // If the number of pairs is not a multiple of 4, there still will be pairs in row 
+    //     // that weren't added to pairsTable yet since the if statement above would not have been 
+    //     // executed to add the last row to table.
+    //     if (row.children.length > 0) {
+    //         table.appendChild(row);
+    //     }
 
-        return table;
-    }
+    //     return table;
+    // }
 
     /**
      * 
@@ -643,14 +704,17 @@
         const heading = document.createElement('h3');
         heading.innerText = `The pairs of prime numbers that sum to ${number} are`;
         div.appendChild(heading);
-        const ol = document.createElement('ol');
-        ol.setAttribute('class', 'answerList');
-        for (const pair of goldbachPrimePairsArray) {
-            const li = document.createElement('li');
-            li.innerText = pair;
-            ol.appendChild(li);
-        }
-        div.appendChild(ol);
+        const pairsOl = getOlFromArray(goldbachPrimePairsArray);
+        pairsOl.setAttribute('class', 'answerList');
+        div.appendChild(pairsOl);
+        // const ol = document.createElement('ol');
+        // ol.setAttribute('class', 'answerList');
+        // for (const pair of goldbachPrimePairsArray) {
+        //     const li = document.createElement('li');
+        //     li.innerText = pair;
+        //     ol.appendChild(li);
+        // }
+        // div.appendChild(ol);
         return div;
     }
 

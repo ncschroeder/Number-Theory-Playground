@@ -3,7 +3,7 @@ body {
     color: gainsboro;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
     text-align: center;
     width: 90%;
     margin: 0.5em auto;
@@ -18,6 +18,8 @@ h1 {
 h2 {
     margin: 0 auto;
     width: min(90%, 10em);
+    /* width: 90%;
+    max-width: 10em; */
     color: skyblue;
     font-size: 1.5em;
 }
@@ -53,6 +55,13 @@ p {
     width: max-content;
     max-width: min(90%, 40em);
     font-family: 'Monaco', monospace;
+}
+
+/* Prime factorization span in the prime factorization section */
+div > span {
+    display: block;
+    width: max-content;
+    margin: 0 auto;
 }
 
 ol, ul {

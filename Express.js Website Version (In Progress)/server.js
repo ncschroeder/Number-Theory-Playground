@@ -8,7 +8,10 @@ app.set('views', 'views');
 app.set('view engine', 'pug');
 app.use(express.static('resources'));
 
-const cf = require('./modules/calculationFunctions');
+const cf = require('./calculationFunctions');
+
+// cf.getPfArrayWithStringsAndCommas(10);
+// cf.getGcdAndLcmInfoViaPf(4, 8);
 
 const minInputNumbers = {
     primes: 0,
@@ -70,7 +73,7 @@ app.get('/calculations', (req, res) => {
                     return;
 
                 case 'primeFactorization':
-                    res.json(cf.getPfObject(number));
+                    res.json(cf.getPfArrayWithStringsAndCommas(number));
                     return;
 
                 case 'divisibility':
@@ -95,70 +98,70 @@ app.get('/calculations', (req, res) => {
     }
 });
 
-app.get('/calculations/:sectionWithOneInput/number/:number([0-9]+)', (req, res) => {
-    const section = req.params.sectionWithOneInput;
-    const number = Number(req.params.number);
-    const minInputInt = minInputNumbers[section];
-    const maxInputInt = maxInputNumbers[section];
+// app.get('/calculations/:sectionWithOneInput/number/:number([0-9]+)', (req, res) => {
+//     const section = req.params.sectionWithOneInput;
+//     const number = Number(req.params.number);
+//     const minInputInt = minInputNumbers[section];
+//     const maxInputInt = maxInputNumbers[section];
 
-    if (number < minInputInt || number > maxInputInt) {
-        res.sendStatus(404);
-        return;
-    }
+//     if (number < minInputInt || number > maxInputInt) {
+//         res.sendStatus(404);
+//         return;
+//     }
 
-    switch (section) {
-        case 'primes':
-            res.json(cf.getPrimesAfter(number));
-            // res.json({primes: cf.getPrimesAfter(number)});
-            return;
+//     switch (section) {
+//         case 'primes':
+//             res.json(cf.getPrimesAfter(number));
+//             // res.json({primes: cf.getPrimesAfter(number)});
+//             return;
 
-        case 'twinPrimes':
-            res.json(cf.getTwinPrimesAfter(number));
-            // res.json({twinPrimePairs: cf.getTwinPrimesAfter(number)});
-            return;
+//         case 'twinPrimes':
+//             res.json(cf.getTwinPrimesAfter(number));
+//             // res.json({twinPrimePairs: cf.getTwinPrimesAfter(number)});
+//             return;
 
-        case 'primeFactorization':
-            res.json(cf.getPfObject(number));
-            return;
+//         case 'primeFactorization':
+//             res.json(cf.getPfObject(number));
+//             return;
 
-        case 'divisibility':
-            res.json({
-                tricksInfo: cf.getDivisInfoViaTricks(number),
-                pfInfo: cf.getDivisInfoViaPf(number),
-            });
-            return;
+//         case 'divisibility':
+//             res.json({
+//                 tricksInfo: cf.getDivisInfoViaTricks(number),
+//                 pfInfo: cf.getDivisInfoViaPf(number),
+//             });
+//             return;
 
-        case 'goldbach':
-            res.json(cf.getGoldbachPrimePairs(number));
-            // res.json({pairs: cf.getGoldbachPrimePairs(number)});
-            return;
+//         case 'goldbach':
+//             res.json(cf.getGoldbachPrimePairs(number));
+//             // res.json({pairs: cf.getGoldbachPrimePairs(number)});
+//             return;
 
-        case 'pythagTriples':
-            res.json(cf.getPythagTriplesAfter(number));
-            // res.json({pythagTriples: cf.getPythagTriplesAfter(number)});
-            return;
+//         case 'pythagTriples':
+//             res.json(cf.getPythagTriplesAfter(number));
+//             // res.json({pythagTriples: cf.getPythagTriplesAfter(number)});
+//             return;
 
-        default:
-            res.sendStatus(404);
-    }
-});
+//         default:
+//             res.sendStatus(404);
+//     }
+// });
 
-app.get('/calculations/:sectionWithTwoInputs/numbers/:firstNumber([0-9]+)/:secondNumber([0-9]+)', (req, res) => {
-    const section = req.params.sectionWithTwoInputs;
-    const firstNumber = Number(req.params.firstNumber);
-    const secondNumber = Number(req.params.secondNumber);
-    const minInputInt = minInputNumbers.gcdAndLcm;
-    const maxInputInt = maxInputNumbers.gcdAndLcm;
-    // Only section is gcd and lcm section
-    if (section !== 'gcdAndLcm' || firstNumber < minInputInt || firstNumber > maxInputInt || secondNumber < minInputInt || secondNumber > maxInputInt) {
-        res.sendStatus(404);
-    } else {
-        res.json({
-            euclideanInfo: cf.getEuclideanInfo(firstNumber, secondNumber),
-            pfInfo: cf.getGcdAndLcmInfoViaPf(firstNumber, secondNumber)    
-        });
-    }
-});
+// app.get('/calculations/:sectionWithTwoInputs/numbers/:firstNumber([0-9]+)/:secondNumber([0-9]+)', (req, res) => {
+//     const section = req.params.sectionWithTwoInputs;
+//     const firstNumber = Number(req.params.firstNumber);
+//     const secondNumber = Number(req.params.secondNumber);
+//     const minInputInt = minInputNumbers.gcdAndLcm;
+//     const maxInputInt = maxInputNumbers.gcdAndLcm;
+//     // Only section is gcd and lcm section
+//     if (section !== 'gcdAndLcm' || firstNumber < minInputInt || firstNumber > maxInputInt || secondNumber < minInputInt || secondNumber > maxInputInt) {
+//         res.sendStatus(404);
+//     } else {
+//         res.json({
+//             euclideanInfo: cf.getEuclideanInfo(firstNumber, secondNumber),
+//             pfInfo: cf.getGcdAndLcmInfoViaPf(firstNumber, secondNumber)    
+//         });
+//     }
+// });
 
 // app.get('/randomNumber/section/:section', (req, res) => {
 //     const {section} = req.params;

@@ -1,48 +1,63 @@
 body {
     background-color: rgb(0, 82, 78);
     color: gainsboro;
+    font-family: serif;
 }
 
 h1, h2, h3, h4 {
     text-align: center;
     width: 90%;
-    margin: 0.5em auto;
 }
 
 h1 {
     color: rgb(255, 214, 81);
-    font-size: 3em;
-    font-family: 'Brush Script MT', cursive;
+    font-size: 3rem;
+    margin: 1rem auto;
+    /* font-family: 'Brush Script MT', cursive; */
 }
 
 h2 {
-    margin: 0 auto;
-    width: min(90%, 10em);
-    /* width: 90%;
-    max-width: 10em; */
+    margin: 1rem auto;
     color: skyblue;
-    font-size: 1.5em;
+    font-size: 1.5rem;
 }
 
-h3, caption {
-    color: coral;
-    font-weight: bold;
-    font-size: 1.3em;
+h3 {
+    margin: 1rem auto;
+    font-size: 1.3rem;
+}
+
+h4 {
+    margin: 0.5rem auto;
+}
+
+p, ol {
+    max-width: min(90%, 40rem);
+}
+
+p {
+    margin: 0 auto;
+}
+
+a {
+    color: aqua;
+}
+
+button {
+    font-size: 1rem;
 }
 
 #sectionBtns {
     text-align: center;
 }
 
-#sectionBtns button {
-    font-family: 'Monaco', monospace;
-    font-size: 1em;
+#sectionBtns > button {
     background-color: rgb(19, 0, 126);
-    margin: 1em;
+    margin: 1rem;
     outline-style: none;
     color: white;
-    min-width: 5em;
-    min-height: 3em;
+    min-width: 5rem;
+    min-height: 3rem;
 }
 
 #sectionBtns button:hover {
@@ -50,41 +65,30 @@ h3, caption {
     cursor: pointer;
 }
 
-p {
-    margin: 0 auto;
-    width: max-content;
-    max-width: min(90%, 40em);
-    font-family: 'Monaco', monospace;
-}
-
-/* Prime factorization span in the prime factorization section */
-div > span {
+#calculateBtn {
     display: block;
     width: max-content;
-    margin: 0 auto;
+    margin: 1rem auto;
 }
 
-ol, ul {
-    list-style-type: none;
-    width: max-content;
-    padding: 0em;
+#sectionInfo {
+    margin: 1rem auto;
 }
 
 #inputAreaContainer {
     display: flex;
+    margin: 1rem auto;
 }
 
 .inputArea {
     display: grid;
-    gap: 0.1em;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    gap: 0.1rem;
 }
 
 /* Input box for both input areas */
 .inputArea input[type='number'] {
     margin: auto;
-    width: 7em;
+    width: 7rem;
     grid-column: 1 / 3;
     grid-row: 1;
 }
@@ -112,6 +116,10 @@ ol, ul {
     margin-right: auto;
 }
 
+#interactionContent {
+    margin: 1rem auto;
+}
+
 #interactionContent[data-input-areas-visible='0'] {
     visibility: hidden;
 }
@@ -129,45 +137,63 @@ ol, ul {
 
 /* 1st input area when both input areas should be visible */
 #interactionContent[data-input-areas-visible='2'] .inputArea:nth-child(1) {
-    margin-right: min(1em, 1%);
+    margin-right: min(1rem, 1%);
     margin-left: auto;
 }
 
 /* 2nd input area when both input areas should be visible */
 #interactionContent[data-input-areas-visible='2'] .inputArea:nth-child(2) {
-    margin-left: min(1em, 1%);
+    margin-left: min(1rem, 1%);
     margin-right: auto;
-}
-
-#calcBtnContainer {
-    text-align: center;
-    /* margin-top: 1em; */
 }
 
 /* List of primes, twin primes, factors for divis info, and goldbach prime pairs */
 .answerList {
+    list-style-type: none;
     display: flex;
-    gap: 1.5em;
+    gap: 1.5rem;
     flex-wrap: wrap;
-    width: min(40em, 90%);
+    width: min(40rem, 90%);
     align-items: center;
     justify-content: center;
     margin: auto;
+    padding: 0rem;
 }
 
-#primesList {
-    /* display: grid;
-    grid-template-columns: repeat(8, auto);
-    margin: auto;
+/* ancient egyptian multiplication section info */
+#sectionInfo > ol {
+    margin: 0.5rem auto;
+}
+
+/* Prime factorization span in the prime factorization section */
+div > .pfSpan {
+    display: block;
+    width: max-content;
+    margin: 0 auto;
+}
+
+#egyptMultTableContainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+table {
+    margin: 0 auto;
     text-align: center;
-    gap: 1.5em;
-    max-width: 60%; */
+    --border-style: 2px solid black;
+    border: var(--border-style);
+    border-collapse: collapse;
 }
 
-#twinPrimesList {
-
+th {    
+    width: 10rem;
+    border: var(--border-style);
 }
 
-#goldbachList {
-
+td {
+    border: var(--border-style);
 }
+
+/* element.style {
+    margin-left: max(calc(50% - 13rem), 0rem);
+} */

@@ -1,5 +1,20 @@
-import javax.swing.*;
-import java.awt.*;
+package com.nicholasschroeder.numbertheoryplayground.singlepanel;
+
+import com.nicholasschroeder.numbertheoryplayground.Calculations;
+import com.nicholasschroeder.numbertheoryplayground.PrimeFactorization;
+import com.nicholasschroeder.numbertheoryplayground.Section;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.List;
+
 
 /**
  * JPanel that displays either nothing, an invalid input message, or an answer for the current section.
@@ -24,12 +39,18 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
      * Displays the answer for sections that require the user to provide 1 input number.
      * @throws IllegalArgumentException if the section argument is not for a section that requires 1 input number.
      */
-    public void displaySingleInputAnswer(Section section, int number) {
+    public void displaySingleInputAnswer(Section section, int anInt) {
         removeAll();
+        String intString = Calculations.getNumberStringWithCommas(anInt);
 
         switch (section) {
             case PRIMES: {
-                JLabel label = new JLabel("The first 30 primes after " + number + " are");
+                List<String> primes = Calculations.getPrimesAfter(anInt);
+                JLabel label =
+                        new JLabel(
+                                "The first " + primes.size() +
+                                        "primes greater than or equal to " + intString + " are:"
+                        );
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 label.setFont(contentFont);
                 add(label);
@@ -42,8 +63,8 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
                 gbc.anchor = GridBagConstraints.PAGE_START;
                 gbc.insets = new Insets(5, 15, 5, 15);
 
-                for (int prime : Primes.getPrimesAfter(number)) {
-                    label = new JLabel(String.valueOf(prime));
+                for (String prime : primes) {
+                    label = new JLabel(prime);
                     label.setFont(contentFont);
                     primesGrid.add(label, gbc);
                     gbc.gridx++;
@@ -58,7 +79,12 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
             }
 
             case TWIN_PRIMES: {
-                JLabel label = new JLabel("The first 20 pairs of twin primes after " + number + " are");
+                List<String> twinPrimePairs = Calculations.getTwinPrimesAfter(anInt);
+                JLabel label =
+                        new JLabel(
+                                "The first " + twinPrimePairs.size() + " pairs of twin primes after " +
+                                        intString + " are"
+                        );
                 label.setFont(contentFont);
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 add(label);
@@ -70,8 +96,8 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
                 gbc.gridy = 0;
                 gbc.insets = new Insets(5, 15, 5, 15);
                 // Make 4 pairs of twin primes be in each row
-                for (String primesPair : TwinPrimes.getTwinPrimesAfter(number)) {
-                    label = new JLabel(primesPair);
+                for (String pair : twinPrimePairs) {
+                    label = new JLabel(pair);
                     label.setFont(contentFont);
                     twinPrimesGrid.add(label, gbc);
                     gbc.gridx++;
@@ -85,12 +111,12 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
             }
 
             case PRIME_FACTORIZATION: {
-                JLabel label = new JLabel("The prime factorization of " + number + " is");
+                JLabel label = new JLabel("The prime factorization of " + intString + " is");
                 label.setFont(contentFont);
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 add(label);
 
-                label = new JLabel(PrimeFactorization.getPfString(number));
+                label = new JLabel(PrimeFactorization.getPfString(anInt));
                 label.setFont(contentFont);
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 add(label);
@@ -98,21 +124,21 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
             }
 
             case DIVISIBILITY: {
-                JLabel label = new JLabel("Info acquired by special tricks");
+                JLabel label =
+                        new JLabel("Divisibility info for " + intString + " acquired by special tricks:");
                 label.setFont(contentFont);
                 add(label);
-                for (String infoLine : Divisibility.getDivisInfoViaTricks(number)) {
-                    label = new JLabel(infoLine);
-                    label.setFont(contentFont);
-                    add(label);
-                }
+
+                label = new JLabel(Calculations.getDivisInfoViaTricks(anInt));
+                label.setFont(contentFont);
+                add(label);
 
                 add(Box.createRigidArea(new Dimension(0, 10)));
 
-                label = new JLabel("Info acquired from the prime factorization");
+                label = new JLabel("Info acquired from the prime factorization:");
                 label.setFont(contentFont);
                 add(label);
-                for (String infoLine : Divisibility.getDivisInfoViaPf(number)) {
+                for (String infoLine : Calculations.getDivisInfoViaPf(anInt)) {
                     label = new JLabel(infoLine);
                     label.setFont(contentFont);
                     add(label);
@@ -121,7 +147,12 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
             }
 
             case GOLDBACH: {
-                JLabel label = new JLabel("Prime number pairs that sum to " + number);
+                List<String> goldbachPrimePairs = Calculations.getGoldbachPrimePairs(anInt);
+                JLabel label =
+                        new JLabel(
+                                "There are " + goldbachPrimePairs.size() +
+                                        " pairs of prime numbers that sum to " + intString + ". They are:"
+                        );
                 label.setFont(contentFont);
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 add(label);
@@ -132,7 +163,7 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
                 gbc.gridx = 0;
                 gbc.gridy = 0;
                 gbc.insets = new Insets(5, 10, 5, 10);
-                for (String pair : Goldbach.getGoldbachPrimePairs(number)) {
+                for (String pair : goldbachPrimePairs) {
                     label = new JLabel(pair);
                     label.setFont(contentFont);
                     pairsGrid.add(label, gbc);
@@ -148,12 +179,17 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
             }
 
             case PYTHAG_TRIPLES: {
-                JLabel label = new JLabel("The first 10 Pythagorean triples after " + number + " are");
+                List<String> triplesEquations = Calculations.getPythagTriplesAfter(anInt);
+                JLabel label =
+                        new JLabel(
+                                "The first " + triplesEquations.size() + " Pythagorean triples after " +
+                                intString + " are:"
+                        );
                 label.setFont(contentFont);
                 add(label);
 
-                for (String triple : PythagoreanTriples.getPythagTriplesAfter(number)) {
-                    label = new JLabel(triple);
+                for (String equation : triplesEquations) {
+                    label = new JLabel(equation);
                     label.setFont(contentFont);
                     add(label);
                 }
@@ -172,18 +208,23 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
      * Displays the answer for sections that require the user to provide 2 input numbers.
      * @throws IllegalArgumentException if the section argument is not for a section that requires 2 input numbers.
      */
-    public void displayDoubleInputAnswer(Section section, int firstNumber, int secondNumber) {
+    public void displayDoubleInputAnswer(Section section, int int1, int int2) {
         // Only valid section is GCD and LCM
         if (section != Section.GCD_LCM) {
             throw new IllegalArgumentException("invalid section: " + section);
         }
 
         removeAll();
-
-        JLabel label = new JLabel("GCD and LCM info acquired from the prime factorizations");
+        String intString1 = Calculations.getNumberStringWithCommas(int1);
+        String intString2 = Calculations.getNumberStringWithCommas(int2);
+        JLabel label =
+                new JLabel(
+                        "GCD and LCM info for " + intString1 + " and " + intString2 +
+                                " acquired from the prime factorizations"
+                );
         label.setFont(contentFont);
         add(label);
-        for (String infoLine : GcdAndLcm.getGcdAndLcmInfoViaPf(firstNumber, secondNumber)) {
+        for (String infoLine : Calculations.getGcdAndLcmInfoViaPf(int1, int2)) {
             label = new JLabel(infoLine);
             label.setFont(contentFont);
             add(label);
@@ -194,7 +235,8 @@ public class AnswerPanel extends NumberTheoryPlaygroundPanel {
         label = new JLabel("GCD info acquired from the Euclidean algorithm");
         label.setFont(contentFont);
         add(label);
-        for (String infoLine : GcdAndLcm.getEuclideanInfo(firstNumber, secondNumber)) {
+
+        for (String infoLine : Calculations.getEuclideanInfo(int1, int2)) {
             label = new JLabel(infoLine);
             label.setFont(contentFont);
             add(label);

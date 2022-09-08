@@ -1,6 +1,11 @@
 package com.nicholasschroeder.numbertheoryplayground;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * A class that has methods related to prime factorizations. Some methods are static and some require an instance
@@ -63,79 +68,108 @@ public class PrimeFactorization {
     }
 
     /**
+     *
+     * @param intParam
+     * @return A list of prime factorization strings for all factors of intParam.
+     */
+    public static List<String> getFactorPfStrings(int intParam) {
+        if (Section.DIVISIBILITY.isInvalidInput(intParam)) {
+            throw new IllegalArgumentException();
+        }
+
+        return
+            IntStream.rangeClosed(2, intParam / 2)
+            .filter(i -> isDivisible(intParam, i))
+            .mapToObj(i -> new PrimeFactorization(i).toStringWithCorrespondingLong())
+            .collect(Collectors.toList());
+    }
+
+    public static final String divisibilityInfoLabel = "Prime factorization info";
+
+    public static final String subfactorizationsLabel =
+        "By looking at the \"sub-factorizations\", we can see the factors are:";
+
+    public static String getPrimeNumberLabel(String intString) {
+        return intString + " is prime and doesn't have any factors other than itself and 1.";
+    }
+
+    /**
      * A map whose keys are the prime factors of a number and the values are the powers those factors are
      * raised to to form the prime factorization of a number. A TreeMap is used so that the prime factors
      * are in order.
      */
-    private final TreeMap<Integer, Integer> pfMap;
+    private final TreeMap<Integer, Integer> factorsAndPowers;
 
     /**
      * The long that this prime factorization is for.
      */
-//    private long correspondingLong;
+    private long correspondingLong;
 
     /**
-     * @throws IllegalArgumentException if anInt is less than 2.
+     * @throws IllegalArgumentException
      */
     public PrimeFactorization(int anInt) {
-        if (anInt < 2) {
-            throw new IllegalArgumentException("Cannot get prime factorization of integer less than 2");
+        if (Section.PRIME_FACTORIZATION.isInvalidInput(anInt)) {
+            throw new IllegalArgumentException();
         }
-        pfMap = new TreeMap<>();
+
+        factorsAndPowers = new TreeMap<>();
+        correspondingLong = anInt;
         int intRemaining = anInt;
 
         /*
-        Find all the prime factors and their powers and put these in pfMap. Divide intRemaining by each
+        Find all the prime factors and their powers and put these in factorsAndPowers. Divide intRemaining by each
         prime factor that is found. When intRemaining becomes 1, the entire prime factorization has been
-        found. All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so first
-        2 and 3 will be checked to see if they're prime factors and then numbers that are either 1 above
-        or 1 below a multiple of 6 will be checked.
+        found. First 2 will be checked and then odd numbers will be checked since all prime numbers
+        besides 2 are odd.
         */
 
-        for (int potentialPrimeFactor = 2; potentialPrimeFactor <= 3; potentialPrimeFactor++) {
-            if (intRemaining % potentialPrimeFactor == 0) {
-                int power = 0;
-                do {
-                    power++;
-                    intRemaining /= potentialPrimeFactor;
-                } while (intRemaining % potentialPrimeFactor == 0);
-                pfMap.put(potentialPrimeFactor, power);
-                if (intRemaining == 1) {
-                    return;
-                }
+        int possiblePrimeFactor = 2;
+        if (isDivisible(intRemaining, possiblePrimeFactor)) {
+            int power = 0;
+            do {
+                power++;
+                intRemaining /= possiblePrimeFactor;
+            } while (isDivisible(intRemaining, possiblePrimeFactor));
+            factorsAndPowers.put(possiblePrimeFactor, power);
+            if (intRemaining == 1) {
+                return;
             }
         }
 
-        for (int potentialPrimeFactor = 5; ; potentialPrimeFactor += 4) {
-            for (int i = 0; i < 2; i++) {
-                if (intRemaining % potentialPrimeFactor == 0) {
-                    int power = 0;
-                    do {
-                        power++;
-                        intRemaining /= potentialPrimeFactor;
-                    } while (intRemaining % potentialPrimeFactor == 0);
-                    pfMap.put(potentialPrimeFactor, power);
-                    if (intRemaining == 1) {
-                        return;
-                    }
-                }
-                if (i == 0) {
-                    potentialPrimeFactor += 2;
+        for (possiblePrimeFactor = 3; ; possiblePrimeFactor += 2) {
+            if (isDivisible(intRemaining, possiblePrimeFactor)) {
+                int power = 0;
+                do {
+                    power++;
+                    intRemaining /= possiblePrimeFactor;
+                } while (isDivisible(intRemaining, possiblePrimeFactor));
+                factorsAndPowers.put(possiblePrimeFactor, power);
+                if (intRemaining == 1) {
+                    return;
                 }
             }
         }
     }
 
     /**
-     * @param pfMap A map representing the prime factorization of a number. The keys are the prime factors and the
-     *              values are the powers of those prime factors.
-     * @throws IllegalArgumentException if pfMap is empty.
+     * @param factorsAndPowers A map representing the prime factorization of a number. The keys are the prime
+     *     factors and the values are the powers of those prime factors.
+     * @throws IllegalArgumentException if factorsAndPowers is empty or contains any non-prime keys
+     *     or non-positive values.
      */
-    public PrimeFactorization(TreeMap<Integer, Integer> pfMap) {
-        if (pfMap.isEmpty()) {
-            throw new IllegalArgumentException("Cannot create prime factorization from an empty map");
+    public PrimeFactorization(TreeMap<Integer, Integer> factorsAndPowers) {
+        if (factorsAndPowers.isEmpty() || factorsAndPowers.entrySet().stream().anyMatch(
+            entry -> !isPrime(entry.getKey()) || entry.getValue() < 1)
+        ) {
+            throw new IllegalArgumentException("Invalid map provided: " + factorsAndPowers);
         }
-        this.pfMap = pfMap;
+
+        this.factorsAndPowers = factorsAndPowers;
+        correspondingLong = 1;
+        for (Map.Entry<Integer, Integer> entry : factorsAndPowers.entrySet()) {
+            correspondingLong *= Math.pow(entry.getKey(), entry.getValue());
+        }
     }
 
     /**
@@ -144,18 +178,29 @@ public class PrimeFactorization {
      * factors and is used for prime factors that have a power other than 1.
      */
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int primeFactor : pfMap.keySet()) {
-            sb.append(primeFactor);
-            int power = pfMap.get(primeFactor);
-            if (power != 1) {
-                sb.append("^").append(power);
-            }
-            sb.append(" x ");
-        }
-        // Delete last " x "
-        sb.delete(sb.length() - 3, sb.length());
-        return sb.toString();
+        return
+            factorsAndPowers
+            .entrySet()
+            .stream()
+            .map(entry -> {
+                String factorString = getLongStringWithCommas(entry.getKey());
+                int power = entry.getValue();
+                return power == 1 ? factorString : factorString + "^" + power;
+            })
+            .collect(Collectors.joining(" x "));
+    }
+
+    /**
+     *
+     * @return the result of calling toString and if this prime factorization is for a composite
+     * number then this is followed by the corresponding long of this prime factorization in
+     * parentheses.
+     */
+    public String toStringWithCorrespondingLong() {
+        return
+            isForAPrimeNumber()
+            ? toString()
+            : toString() + " (" + getCorrespondingLongString() + ")";
     }
 
     /**
@@ -165,82 +210,47 @@ public class PrimeFactorization {
      * argument.
      */
     public long getCorrespondingLong() {
-        long correspondingLong = 1;
-        for (int primeFactor : pfMap.keySet()) {
-            int power = pfMap.get(primeFactor);
-            correspondingLong *= Math.pow(primeFactor, power);
-        }
         return correspondingLong;
+    }
+
+    public String getCorrespondingLongString() {
+        return getLongStringWithCommas(getCorrespondingLong());
+    }
+
+    public String getInfoMessage() {
+        return "The prime factorization of " + getCorrespondingLongString() + " is " + this;
     }
 
     /**
      * @return true if the number that this prime factorization is representing is prime. For this case, the prime
-     * factorization consists of a single number that has 1 as it's power. Returns false otherwise.
+     * factorization consists of a single number that has 1 as its power. Returns false otherwise.
      */
     public boolean isForAPrimeNumber() {
-        return pfMap.size() == 1 && pfMap.containsValue(1);
+        return factorsAndPowers.size() == 1 && factorsAndPowers.containsValue(1);
+    }
+
+    public boolean isForACompositeNumber() {
+        return !isForAPrimeNumber();
     }
 
     /**
-     * @return A list of strings that contain info about the factors of the number that this prime factorization
-     * represents. This info is acquired using this prime factorization.
+     * The number of factors can be found by taking the powers of all the prime factors in the
+     * prime factorization, adding 1 to each, and multiplying these all together. This method
+     * calculates this and returns a string that says the number of factors and how it was
+     * determined.
      */
-//    public List<String> getFactorsInfo() {
-//        long number = getNumber();
-//        StringBuilder sb = new StringBuilder();
-//        ArrayList<String> info = new ArrayList<>();
-//        info.add("The prime factorization of " + number + " is " + this);
-//        if (isForAPrimeNumber()) {
-//            info.add(number + " is prime and the only factors it has are itself and 1");
-//            return info;
-//        }
-//
-//        info.add("By looking at the powers of all the prime factors, we can see that there are");
-//        // Find number of factors by taking the powers of all the prime factors in the prime factorization,
-//        // adding 1 to each and multiplying these all together. Also build a string that shows how the
-//        // number of factors was determined.
-//        int numberOfFactors = 1;
-//        for (int primeFactor : pfMap.keySet()) {
-//            int power = pfMap.get(primeFactor);
-//            numberOfFactors *= (power + 1);
-//            sb.append("(").append(power).append(" + 1) x ");
-//        }
-//        // Delete last " x " of the built string
-//        sb.delete(sb.length() - 3, sb.length());
-//        sb.append(" = ").append(numberOfFactors).append(" total factors.");
-//        info.add(sb.toString());
-//        sb.delete(0, sb.length());
-//        info.add(
-//                "If 1 and " + number + " are excluded then there are " + (numberOfFactors - 2) + " factors"
-//        );
-//
-//        info.add("By looking at the \"sub-factorizations\", we can see that these factors are:");
-//        // Find all the factors and add their prime factorizations to the info list to show that they are
-//        // "sub-factorizations". Some examples of "sub-factorizations" are 2 and 2 * 3 in the prime factorization
-//        // 2 * 3 * 5.
-//        long highestPossibleFactor = number / 2;
-//        for (int potentialFactor = 2; potentialFactor <= highestPossibleFactor; potentialFactor++) {
-//            if (number % potentialFactor == 0) {
-//                PrimeFactorization factorPf = new PrimeFactorization(potentialFactor);
-//                sb.append(factorPf.toString());
-//                // If the prime factorization doesn't consist of single number that is raised to the power 1,
-//                // display what number that prime factorization is for in parentheses.
-//                if (!factorPf.isForAPrimeNumber()) {
-//                    sb.append(" (").append(potentialFactor).append(")");
-//                }
-//                // Add space between each factor
-//                sb.append("     ");
-//
-//                // Start a new line once the current line exceeds 60 characters
-//                if (sb.length() > 60) {
-//                    info.add(sb.toString());
-//                    sb.delete(0, sb.length());
-//                }
-//            }
-//        }
-//        if (sb.length() > 0) {
-//            info.add(sb.toString());
-//        }
-//        return info;
-//    }
+    public String getNumberOfFactorsInfo() {
+        int numberOfFactors = 1;
+        ArrayList<String> powerStrings = new ArrayList<>();
+        for (int power : factorsAndPowers.values()) {
+            numberOfFactors *= (power + 1);
+            powerStrings.add("(" + power + " + 1)");
+        }
+
+        return
+            "By looking at the powers, we can see there are " +
+            String.join(" x ", powerStrings) + " = " + numberOfFactors +
+            " total factors. If 1 and " + getCorrespondingLongString() +
+            " are excluded then there are " + (numberOfFactors - 2) + " total factors.";
+    }
 }

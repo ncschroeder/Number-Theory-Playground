@@ -6,7 +6,10 @@ public enum Section {
     DIVISIBILITY("Divisibility", getDivisInfo()),
     GCD_AND_LCM("GCD and LCM", getGcdAndLcmInfo()),
     GOLDBACH("Goldbach Conjecture", getGoldbachInfo()),
-    PYTHAG_TRIPLES("Pythagorean Triples", getPythagTriplesInfo());
+    PYTHAG_TRIPLES("Pythagorean Triples", getPythagTriplesInfo()),
+    TWO_SQUARE_THEOREM("Two Square Theorem"),
+    FIBONACCI_LIKE_SEQUENCES("Fibonacci-Like Sequences"),
+    ANCIENT_EGYPTIAN_MULTIPLICATION("Ancient Egyptian Multiplication");
 
     private static final Random random = new Random();
 
@@ -210,5 +213,35 @@ public enum Section {
                 "the sum of the squares of the 2 short sides equals the square of the long " +
                 "side (hypotenuse) or a^2 + b^2 = c^2. There are an infinite amount of trios " +
                 "of integers that a, b, and c can be. These trios are called Pythagorean triples.";
+    }
+
+    private static String getTwoSquareTheoremInfo() {
+        return "The two square theorem says that every prime number that is 1 above a multiple " +
+            "of 4 can be expressed as the sum of 2 squares.";
+    }
+
+    private static String getFibonacciLikeSequencesInfo() {
+        return "For any sequence of numbers that starts with 2 numbers and has every following " +
+                "term be the sum of the 2 previous terms, as this sequence goes on and on, the " +
+                "ratio between consecutive terms gets closer and closer to the Golden Ratio, " +
+                "which is approximately " + (1 + Math.sqrt(5)) / 2 + ". The most notable sequence " +
+                "of this type is the Fibonacci sequence, whose first 2 numbers are 1 and 1. " +
+                "Another notable sequence are the Lucas numbers, whose first 2 numbers are 2 and 1.";
+    }
+
+    private static List<String> getAncientEgyptianMultiplicationInfo() {
+        return List.of(
+            "The Ancient Egyptians had an interesting algorithm for multiplication. My way of explaining " +
+                "the algorithm goes like this:",
+            "1. Find all the powers of 2 that are less than or equal to the min of the 2 numbers. This could " +
+                "be done without modern multiplication by starting with 1 and having each following term be " +
+                "the previous term added to itself.",
+            "2. Find the multiples of the max number that correspond to all these powers of 2. Like with the " +
+                "powers of 2, this could be done by starting with the max number and have each following term " +
+                "be the previous term added to itself.",
+            "3. Find the powers of 2 that sum up to the min number.",
+            "4. Sum up the max number multiples that correspond to these powers of 2.",
+            "This gives us the product of the 2 numbers."
+        );
     }
 }

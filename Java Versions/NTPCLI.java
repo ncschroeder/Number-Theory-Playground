@@ -339,6 +339,15 @@ public class NTPCLI {
             case PYTHAG_TRIPLES:
                 return getPythagoreanTriplesAnswer(inputInt1, int1String);
 
+            case TWO_SQUARE_THEOREM:
+                return insertNewLines(TwoSquareTheoremInfo.getInfoString(inputInt1, int1String));
+
+            case FIBONACCI_LIKE_SEQUENCES:
+                return getFibonacciLikeSequencesAnswer(inputInt1, int1String, inputInt2, int2String);
+
+            case ANCIENT_EGYPTIAN_MULTIPLICATION:
+                return getAncientEgyptianMultiplicationAnswer(inputInt1, int1String, inputInt2, int2String);
+
             default:
                 String errorMessage = String.format("Section \"%s\" not found", section);
                 logError(errorMessage);
@@ -513,5 +522,69 @@ public class NTPCLI {
 
         return lines.toString();
     }
+
+    /**
+     *
+     * @param int1
+     * @param int1String
+     * @param int2
+     * @param int2String
+     * @return A string of the elements of the Fibonacci-like sequence for the input ints and a message that says
+     * what the ratio between the last 2 elements of the sequence are.
+     * @throws IllegalArgumentException if the constructor for FibonacciLikeSequenceInfo throws
+     * an exception when int1 and int2 are given as args.
+     */
+    String getFibonacciLikeSequencesAnswer(int int1, String int1String, int int2, String int2String) {
+        FibonacciLikeSequenceInfo info = new FibonacciLikeSequenceInfo(int1, int2);
+        String prefix = FibonacciLikeSequenceInfo.getLabel(int1String, int2String);
+        return
+            stringifyList(info.getStringSequence(), prefix) + "\n\n" + info.getEndRatioMessage();
+    }
+
+    /**
+     *
+     * @param inputInt1
+     * @param int1String
+     * @param inputInt2
+     * @param int2String
+     * @return An instance of AncientEgyptianMultiplicationInfo will be created and this method will return a
+     * string that shows 2 tables, 1 that will contain the data returned by calling getRows1() on the
+     * info object and 1 that will contain the data returned by calling getRows2() on the info object.
+     * @throws IllegalArgumentException if the constructor for AncientEgyptianMultiplicationInfo
+     * throws an exception when inputInt1 and inputInt2 are given as args.
+     */
+    String getAncientEgyptianMultiplicationAnswer(int inputInt1, String int1String, int inputInt2, String int2String) {
+        AncientEgyptianMultiplicationInfo info = new AncientEgyptianMultiplicationInfo(inputInt1, inputInt2);
+        int columnGap = 3;
+        String powersOf2ColumnHeading = info.getAllPowersOf2ColumnHeading();
+        int table1Column1Width = powersOf2ColumnHeading.length() + columnGap;
+        String headRow =
+            getRowFor2ColumnTable(powersOf2ColumnHeading, table1Column1Width, info.getMaxIntMultiplesColumnHeading());
+
+        String table1 =
+            info.getRows1()
+            .stream()
+            .map(r ->
+                getRowFor2ColumnTable(r.getPowerOf2String(), table1Column1Width, r.getCorrespondingMultipleString())
+            )
+            .collect(Collectors.joining("\n", headRow + "\n", ""));
+
+        powersOf2ColumnHeading = info.getPowersOf2ThatSumToMinIntColumnHeading();
+        int table2Column1Width = powersOf2ColumnHeading.length() + columnGap;
+        headRow = getRowFor2ColumnTable(powersOf2ColumnHeading, table2Column1Width, info.getMaxIntMultiplesColumnHeading());
+        String productMessage = String.format("The sum of the right column is %s, which is the product", info.getProductString());
+
+        String table2 =
+            info.getRows2()
+            .stream()
+            .map(r -> getRowFor2ColumnTable(r.getPowerOf2String(), table2Column1Width, r.getCorrespondingMultipleString()))
+            .collect(Collectors.joining("\n", headRow + "\n", "\n" + productMessage));
+
+        return String.join(
+            "\n\n",
+            AncientEgyptianMultiplicationInfo.getMainLabel(int1String, int2String),
+            table1,
+            table2
+        );
     }
 }

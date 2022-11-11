@@ -1,64 +1,96 @@
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Utility class consisting of methods related to the Goldbach conjecture.
+ * Utility class related to the Goldbach conjecture and the section for it.
  */
 public class Goldbach {
-    public static String getSectionInfo() {
-        return "The Goldbach conjecture states that every even number greater than or equal to 4 can be " +
-                "expressed as the sum of 2 prime numbers. A conjecture is a statement that is believed to be " +
-                "true but has not been proven to be true. The Goldbach conjecture has been verified to be true " +
-                "for all even numbers greater than or equal to 4 and less than or equal to a very high number. " +
-                "I don't know this number off the top of my head but it's way, way bigger than the maximum " +
-                "number you are allowed to use for input.";
-    }
+    private static final String info =
+        "The Goldbach conjecture states that every even number >= 4 can be expressed as the sum of " +
+        "2 prime numbers. A conjecture is a statement that is believed to be true but has not been " +
+        "proven to be true. The Goldbach conjecture has been verified to be true for all even numbers " +
+        ">= 4 && <= a very high number. I don't know this number off the top of my head but it's way, " +
+        "way bigger than the maximum number you're allowed to use for input.";
+
+    public static final int minInputInt = 4;
+    public static final int maxInputInt = oneHundredThousand;
 
     /**
-     * @return A list of strings that say the prime number pairs that sum up to the argument number. Each string contains
-     * the 2 numbers separated by " and ".
-     * @throws IllegalArgumentException if the argument number is less than 4 or is not even.
+     * @return A list of all the pairs of prime numbers that sum up to anInt.
      */
-    public static List<String> getGoldbachPrimePairs(int number) {
-        if (number % 2 != 0 || number < 4) {
-            throw new IllegalArgumentException("Number must be even and greater than or equal to 4");
+    public static List<IntPair> getGoldbachPrimePairs(int anInt) {
+        assertIsInRange(anInt, minInputInt, maxInputInt);
+        if (isOdd(anInt)) {
+            throw new IllegalArgumentException("Arg can't be odd");
         }
 
-        ArrayList<String> pairs = new ArrayList<>();
-        // All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6. First, check if the argument
-        // number is 4 since 4 is the only even number greater than or equal to 4 that has 2 in a pair of prime numbers
-        // that sum to it.
-        if (number == 4) {
-            pairs.add("2 and 2");
+        List<IntPair> pairs = new ArrayList<>();
+        // 1st, check if anInt is 4 since 4 is the only even number >= 4 that
+        // has 2 in a pair of prime numbers that sum to it.
+        if (anInt == 4) {
+            pairs.add(new IntPair(2, 2));
             return pairs;
         }
 
-        // Check if 3 and a prime number sum to the argument number.
-        if (Primes.isPrime(number - 3)) {
-            pairs.add("3 and " + (number - 3));
+        /*
+        Check if a possible prime number and the difference between that possible prime number and
+        anInt are both prime. The max possible prime number that needs to be checked is equal to the
+        floor of half of anInt. This is because after that point, calculations for primality will be
+        done on numbers that have already been determined to be pairs of prime numbers that sum to anInt.
+        */
+        int maxPossiblePrime = anInt / 2;
+        for (int possiblePrime1 = 3; possiblePrime1 <= maxPossiblePrime; possiblePrime1 += 2) {
+            int possiblePrime2 = anInt - possiblePrime1;
+            if (Primes.bothArePrime(possiblePrime1, possiblePrime2)) {
+                pairs.add(new IntPair(possiblePrime1, possiblePrime2));
+            }
+        }
+        return pairs;
+    }
+
+    private static List<String> getGoldbachPrimePairStrings(int anInt) {
+        return stringifyElements(getGoldbachPrimePairs(anInt));
+    }
+
+    private static String getListHeading(int pairsCount, int inputInt) {
+        return String.format(
+            "There are %s pairs of prime numbers that sum to %s. They are:",
+            getLongStringWithCommas(pairsCount),
+            getLongStringWithCommas(inputInt)
+        );
+    }
+
+    public static class Section extends SingleInputSection {
+        public Section() {
+            super(
+                "Goldbach Conjecture",
+                List.of(info),
+                minInputInt,
+                maxInputInt,
+                "get the pairs of prime numbers that sum to it",
+                "the Goldbach Conjecture",
+                "Have %s be even && >= %d && <= %s"
+            );
         }
 
-        // Check if a potential prime number and the difference between that potential prime number and the argument
-        // number are both prime.
+        @Override
+        public String getCliAnswer(int inputInt) {
+            List<String> pairStrings = getGoldbachPrimePairStrings(inputInt);
+            return NTPCLI.stringifyList(pairStrings, getListHeading(pairStrings.size(), inputInt));
+        }
 
-        // The max potential prime number that needs to be checked is equal to the floor of half of the argument number.
-        // This is because after that point, calculations for primality will be done on numbers that have already been
-        // determined to be pairs of prime numbers that sum to the argument number.
+        @Override
+        public List<Component> getGuiComponents(int inputInt) {
+            List<String> pairStrings = getGoldbachPrimePairStrings(inputInt);
+            return AnswerPanel.createListHeadingAndPanel(getListHeading(pairStrings.size(), inputInt), pairStrings);
+        }
 
-        int upperBound = number / 2;
-        for (int potentialPrime = 5; ; potentialPrime += 4) {
-            for (int i = 0; i < 2; i++) {
-                if (potentialPrime > upperBound) {
-                    return pairs;
-                }
-                int otherPotentialPrime = number - potentialPrime;
-                if (Primes.isPrime(potentialPrime) && Primes.isPrime(otherPotentialPrime)) {
-                    pairs.add(potentialPrime + " and " + otherPotentialPrime);
-                }
-                if (i == 0) {
-                    potentialPrime += 2;
-                }
-            }
+        @Override
+        public int getRandomValidInt() {
+            int randomInt = super.getRandomValidInt();
+            return isEven(randomInt) ? randomInt : randomInt + 1;
         }
     }
 }

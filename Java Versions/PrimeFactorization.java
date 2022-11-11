@@ -1,97 +1,29 @@
 package com.nicholasschroeder.numbertheoryplayground;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
- * A class that has methods related to prime factorizations. Some methods are static and some require an instance
- * of this class.
+ * Class that can be instantiated to form an abstraction of a prime factorization. Also has static members related
+ * to prime factorizations and the section for it.
  */
 public class PrimeFactorization {
     /**
-     * @return A string representation of the argument number's prime factorization.
-     * @throws IllegalArgumentException if the argument number is less than 2.
-     */
-    public static String getPfString(int anInt) {
-        return new PrimeFactorization(anInt).toString();
-    }
-
-    /**
-     * @return An array whose first element is a PrimeFactorization object for the GCD of pf1 and pf2 if the GCD
-     * is not 1. If the GCD is 1 then this element is null. The second element is a PrimeFactorization for
-     * the LCM of pf1 and pf2.
-     */
-    public static PrimeFactorization[] getGcdAndLcmPfs(PrimeFactorization pf1, PrimeFactorization pf2) {
-        /*
-        The prime factorization of the GCD of 2 numbers contains all the prime factors that are in both of the prime
-        factorizations of the 2 numbers. The power of each prime factor is the minimum of the 2 powers in the 2
-        prime factorizations. If there are no common prime factors then the GCD is 1.
-
-        The prime factorization of the LCM of 2 numbers contains all prime factors that are in either of the prime
-        factorizations for the 2 numbers. If a prime factor is in both prime factorizations then the power of that
-        prime factor in the LCM prime factorization is the max of the 2 powers in the 2 prime factorizations. If a
-        prime factor is unique to 1 of the prime factorizations of the 2 numbers, then the power of that prime factor
-        in the LCM prime factorization is the same as in the prime factorization for that 1 number.
-        */
-        TreeMap<Integer, Integer> gcdPfMap = new TreeMap<>();
-        TreeMap<Integer, Integer> lcmPfMap = new TreeMap<>();
-
-        for (int primeFactor : pf1.pfMap.keySet()) {
-            int power1 = pf1.pfMap.get(primeFactor);
-            if (pf2.pfMap.containsKey(primeFactor)) {
-                // Common prime factors
-                int power2 = pf2.pfMap.get(primeFactor);
-                gcdPfMap.put(primeFactor, Math.min(power1, power2));
-                lcmPfMap.put(primeFactor, Math.max(power1, power2));
-            } else {
-                // Prime factor is unique to the first prime factorization
-                lcmPfMap.put(primeFactor, power1);
-            }
-        }
-
-        // Find the unique prime factors of the second prime factorization
-        for (int primeFactor : pf2.pfMap.keySet()) {
-            if (!pf1.pfMap.containsKey(primeFactor)) {
-                int power = pf2.pfMap.get(primeFactor);
-                lcmPfMap.put(primeFactor, power);
-            }
-        }
-
-        return new PrimeFactorization[] {
-                gcdPfMap.isEmpty() ? null : new PrimeFactorization(gcdPfMap),
-                new PrimeFactorization(lcmPfMap)
-        };
-    }
-
-    /**
      *
-     * @param intParam
-     * @return A list of prime factorization strings for all factors of intParam.
      */
-    public static List<String> getFactorPfStrings(int intParam) {
-        if (Section.DIVISIBILITY.isInvalidInput(intParam)) {
-            throw new IllegalArgumentException();
-        }
+    private static final String info =
+        "The fundamental theorem of arithmetic states that every integer > 1 can be expressed as the product " +
+        "of prime numbers. This product is called its prime factorization. There are some interesting " +
+        "applications for this. Visit the GCD and LCM or the divisibility sections for some applications.";
 
-        return
-            IntStream.rangeClosed(2, intParam / 2)
-            .filter(i -> isDivisible(intParam, i))
-            .mapToObj(i -> new PrimeFactorization(i).toStringWithCorrespondingLong())
-            .collect(Collectors.toList());
-    }
-
-    public static final String divisibilityInfoLabel = "Prime factorization info";
-
-    public static final String subfactorizationsLabel =
-        "By looking at the \"sub-factorizations\", we can see the factors are:";
-
-    public static String getPrimeNumberLabel(String intString) {
-        return intString + " is prime and doesn't have any factors other than itself and 1.";
-    }
+    public final static int minInputInt = 2;
+    public final static int maxInputInt = tenThousand;
 
     /**
      * A map whose keys are the prime factors of a number and the values are the powers those factors are
@@ -109,9 +41,7 @@ public class PrimeFactorization {
      * @throws IllegalArgumentException
      */
     public PrimeFactorization(int anInt) {
-        if (Section.PRIME_FACTORIZATION.isInvalidInput(anInt)) {
-            throw new IllegalArgumentException();
-        }
+        assertIsInRange(anInt, minInputInt, maxInputInt);
 
         factorsAndPowers = new TreeMap<>();
         correspondingLong = anInt;
@@ -119,9 +49,8 @@ public class PrimeFactorization {
 
         /*
         Find all the prime factors and their powers and put these in factorsAndPowers. Divide intRemaining by each
-        prime factor that is found. When intRemaining becomes 1, the entire prime factorization has been
-        found. First 2 will be checked and then odd numbers will be checked since all prime numbers
-        besides 2 are odd.
+        prime factor that is found. When intRemaining becomes 1, the entire prime factorization has been found.
+        First 2 will be checked and then odd numbers will be checked since all prime numbers besides 2 are odd.
         */
 
         int possiblePrimeFactor = 2;
@@ -154,20 +83,24 @@ public class PrimeFactorization {
 
     /**
      * @param factorsAndPowers A map representing the prime factorization of a number. The keys are the prime
-     *     factors and the values are the powers of those prime factors.
+     *                         factors and the values are the powers of those prime factors.
      * @throws IllegalArgumentException if factorsAndPowers is empty or contains any non-prime keys
-     *     or non-positive values.
+     * or non-positive values.
      */
-    public PrimeFactorization(TreeMap<Integer, Integer> factorsAndPowers) {
-        if (factorsAndPowers.isEmpty() || factorsAndPowers.entrySet().stream().anyMatch(
-            entry -> !isPrime(entry.getKey()) || entry.getValue() < 1)
+    private PrimeFactorization(TreeMap<Integer, Integer> factorsAndPowers) {
+        Set<Map.Entry<Integer, Integer>> entries = factorsAndPowers.entrySet();
+        if (factorsAndPowers.isEmpty() ||
+            entries.stream().anyMatch(
+                entry -> !Primes.isPrime(entry.getKey()) || entry.getValue() < 1
+            )
         ) {
             throw new IllegalArgumentException("Invalid map provided: " + factorsAndPowers);
         }
 
+
         this.factorsAndPowers = factorsAndPowers;
         correspondingLong = 1;
-        for (Map.Entry<Integer, Integer> entry : factorsAndPowers.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : entries) {
             correspondingLong *= Math.pow(entry.getKey(), entry.getValue());
         }
     }
@@ -177,6 +110,7 @@ public class PrimeFactorization {
      * the prime factors and is placed between all the prime factors. "^" is used to represent the powers of prime
      * factors and is used for prime factors that have a power other than 1.
      */
+    @Override
     public String toString() {
         return
             factorsAndPowers
@@ -185,22 +119,9 @@ public class PrimeFactorization {
             .map(entry -> {
                 String factorString = getLongStringWithCommas(entry.getKey());
                 int power = entry.getValue();
-                return power == 1 ? factorString : factorString + "^" + power;
+                return power == 1 ? factorString : String.format("%s^%d", factorString, power);
             })
             .collect(Collectors.joining(" x "));
-    }
-
-    /**
-     *
-     * @return the result of calling toString and if this prime factorization is for a composite
-     * number then this is followed by the corresponding long of this prime factorization in
-     * parentheses.
-     */
-    public String toStringWithCorrespondingLong() {
-        return
-            isForAPrimeNumber()
-            ? toString()
-            : toString() + " (" + getCorrespondingLongString() + ")";
     }
 
     /**
@@ -217,8 +138,15 @@ public class PrimeFactorization {
         return getLongStringWithCommas(getCorrespondingLong());
     }
 
+    public String toStringWithCorrespondingLong() {
+        return
+            isForAPrimeNumber()
+            ? toString()
+            : String.format("%s (%s)", this, getCorrespondingLongString());
+    }
+
     public String getInfoMessage() {
-        return "The prime factorization of " + getCorrespondingLongString() + " is " + this;
+        return String.format("The prime factorization of %s is %s", getCorrespondingLongString(), this);
     }
 
     /**
@@ -234,23 +162,150 @@ public class PrimeFactorization {
     }
 
     /**
-     * The number of factors can be found by taking the powers of all the prime factors in the
-     * prime factorization, adding 1 to each, and multiplying these all together. This method
-     * calculates this and returns a string that says the number of factors and how it was
-     * determined.
+     * The number of factors can be found by taking the powers of all the prime factors in the prime factorization,
+     * adding 1 to each, and multiplying these all together. This method calculates this and returns a string that
+     * says the number of factors and how it was determined.
      */
     public String getNumberOfFactorsInfo() {
         int numberOfFactors = 1;
         ArrayList<String> powerStrings = new ArrayList<>();
         for (int power : factorsAndPowers.values()) {
             numberOfFactors *= (power + 1);
-            powerStrings.add("(" + power + " + 1)");
+            powerStrings.add(String.format("(%d + 1)", power));
         }
 
+        return String.format(
+            "By looking at the powers, we can see there are %s = %d total factors. If 1 and %s are " +
+                "excluded then there are %d total factors.",
+            String.join(" x ", powerStrings),
+            numberOfFactors,
+            getCorrespondingLongString(),
+            numberOfFactors - 2
+        );
+    }
+
         return
-            "By looking at the powers, we can see there are " +
-            String.join(" x ", powerStrings) + " = " + numberOfFactors +
-            " total factors. If 1 and " + getCorrespondingLongString() +
-            " are excluded then there are " + (numberOfFactors - 2) + " total factors.";
+    public static String getPfInfoString(int anInt) {
+        return new PrimeFactorization(anInt).getInfoMessage();
+    }
+
+    /**
+     * Prime factorizations can be used to find the greatest common divisor (GCD) and least common multiple (LCM)
+     * of 2 integers. This class does just that.
+     */
+    public static class GcdAndLcmInfo {
+        /**
+         * This will be displayed in the application and it also can help explain the code in this class.
+         */
+        public static String infoString =
+            "One way to find the GCD and LCM of 2 numbers is to look at the prime factorizations " +
+            "of those numbers. If those numbers do not have any common prime factors, then " +
+            "the GCD is 1. If they do have common prime factors, then the prime factorization " +
+            "of the GCD consists of all the common prime factors and the power of each factor " +
+            "is the minimum power of that factor in the 2 prime factorizations. The prime " +
+            "factorization of the LCM consists of all factors that are in either of the prime " +
+            "factorizations of the 2 numbers. The power for each factor is the maximum power " +
+            "of that factor in the 2 prime factorizations.";
+
+        /**
+         * Prime factorization of the 1st int provided
+         */
+        public final PrimeFactorization int1Pf;
+
+        /**
+         * Prime factorization of the 2nd int provided
+         */
+        public final PrimeFactorization int2Pf;
+
+        public final Optional<PrimeFactorization> gcdPf;
+
+        public final PrimeFactorization lcmPf;
+
+        /**
+         * Constructs a new object for info about int1 and int2 and their GCD and LCM.
+         * @throws IllegalArgumentException if int1 or int2 are invalid inputs for creating a PrimeFactorization.
+         */
+        public GcdAndLcmInfo(int int1, int int2) {
+            int1Pf = new PrimeFactorization(int1);
+            int2Pf = new PrimeFactorization(int2);
+
+            /*
+            The prime factorization of the GCD of 2 numbers contains all the prime factors that are in both of the prime
+            factorizations of the 2 numbers. The power of each prime factor is the minimum of the 2 powers in the 2
+            prime factorizations. If there are no common prime factors then the GCD is 1.
+
+            The prime factorization of the LCM of 2 numbers contains all prime factors that are in either of the prime
+            factorizations for the 2 numbers. If a prime factor is in both prime factorizations then the power of that
+            prime factor in the LCM prime factorization is the max of the 2 powers in the 2 prime factorizations. If a
+            prime factor is unique to 1 of the prime factorizations of the 2 numbers, then the power of that prime factor
+            in the LCM prime factorization is the same as in the prime factorization for that 1 number.
+            */
+            TreeMap<Integer, Integer> gcdPfMap = new TreeMap<>();
+            TreeMap<Integer, Integer> lcmPfMap = new TreeMap<>();
+
+            for (Map.Entry<Integer, Integer> entry : int1Pf.factorsAndPowers.entrySet()) {
+                Integer factor = entry.getKey();
+                Integer power1 = entry.getValue();
+                Integer power2 = int2Pf.factorsAndPowers.get(factor);
+                if (power2 == null) {
+                    // Prime factor is unique to the first prime factorization
+                    lcmPfMap.put(factor, power1);
+                } else {
+                    // Common prime factors
+                    gcdPfMap.put(factor, Math.min(power1, power2));
+                    lcmPfMap.put(factor, Math.max(power1, power2));
+                }
+
+            // Find the unique prime factors of the second prime factorization
+            for (Map.Entry<Integer, Integer> entry : int2Pf.factorsAndPowers.entrySet()) {
+                int factor = entry.getKey();
+                if (!int1Pf.factorsAndPowers.containsKey(factor)) {
+                    int power = entry.getValue();
+                    lcmPfMap.put(factor, power);
+                }
+            }
+
+            gcdPf = gcdPfMap.isEmpty() ? Optional.empty() : Optional.of(new PrimeFactorization(gcdPfMap));
+            lcmPf = new PrimeFactorization(lcmPfMap);
+        }
+
+        public String getGcdPfStringOrDefault() {
+            return
+                gcdPf
+                .map(PrimeFactorization::toString)
+                .orElse("N/A");
+        }
+
+        public String getGcdString() {
+            return
+                gcdPf
+                .map(PrimeFactorization::getCorrespondingLongString)
+                .orElse("1");
+        }
+    }
+
+    public static class Section extends SingleInputSection {
+        public Section() {
+            super(
+                "Prime Factorization",
+                List.of(info),
+                minInputInt,
+                maxInputInt,
+                "get its prime factorization",
+                "prime factorizations"
+            );
+        }
+
+        @Override
+        public String getCliAnswer(int inputInt) {
+            return getPfInfoString(inputInt);
+        }
+
+        @Override
+        public List<Component> getGuiComponents(int inputInt) {
+            return List.of(
+                NTPPanel.createCenteredLabel(getPfInfoString(inputInt), AnswerPanel.contentFont)
+            );
+        }
     }
 }

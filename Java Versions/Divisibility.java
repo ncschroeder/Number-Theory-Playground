@@ -1,102 +1,193 @@
-import java.util.ArrayList;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
- * Utility class consisting of methods related to divisibility.
+ * Utility class related to divisibility and the section for it.
  */
 public class Divisibility {
-    public static String getSectionInfo() {
-        return "The factors of a number are all the numbers that can evenly divide that number. Some special " +
-                "tricks can be used to find some of the factors of a number. If the sum of the digits of a number is " +
-                "divisible by 3, then that number is divisible by 3. If the sum of the digits of a number is divisible " +
-                "by 9, then that number is divisible by 9. If a number is even and divisible by 3, then it is also " +
-                "divisible by 6. If the last 2 digits of a number is divisible by 4, then that number is divisible by " +
-                "4. If the last 3 digits of a number is divisible by 8, then that number is divisible by 8. If a " +
-                "number is divisible by both 3 and 4 then it is also divisible by 12. Another way you can tell what " +
-                "factors a number has and how many factors it has is by looking at it's prime factorization. To find " +
-                "the number of factors, you take all the powers of the prime factors, add 1 to each and then multiply " +
-                "them all together. All the \"sub-factorizations\" of this prime factorization are the prime " +
-                "factorizations of all the factors. Some examples of \"sub-factorizations\" are 2 and 2 * 3 in " +
-                "the prime factorization 2 * 3 * 5.";
-    }
+    private static final String introParagraph =
+        "The factors of a number are all the numbers that can evenly divide that number.";
 
     /**
-     * @return An list of Strings that contain info about what numbers the argument number is divisible by.
-     * This info is acquired by using special tricks.
+     * Determines if a is divisible by b without using any special tricks
+     * @return <code>a % b == 0</code>, which is true if a is divisible by b and false otherwise.
      */
-    public static List<String> getDivisInfoViaTricks(int number) {
-        ArrayList<String> divisInfo = new ArrayList<>();
-        boolean isEven = number % 2 == 0;
-        if (!isEven) {
-            divisInfo.add(number + " is not even so it cannot be divisible by any even numbers");
+    public static boolean isDivisible(long a, long b) {
+        return a % b == 0;
+    }
+
+    public static boolean isEven(int i) {
+        return isDivisible(i, 2);
+    }
+
+    public static boolean isOdd(int i) {
+        return !isEven(i);
+    }
+
+    // This section uses prime factorizations so the input constraints for those will be used
+    public static final int minInputInt = PrimeFactorization.minInputInt;
+    public static final int maxInputInt = PrimeFactorization.maxInputInt;
         }
-        int sumOfDigits = sumOfDigits(number);
-        divisInfo.add("The sum of the digits is " + sumOfDigits);
-        // A number is divisible by 3 if and only if the sum of it's digits is divisible by 3
-        boolean isDivisibleBy3 = sumOfDigits % 3 == 0;
-        if (isDivisibleBy3) {
-            divisInfo.add(sumOfDigits + " is divisible by 3 so " + number + " is divisible by 3");
-            if (sumOfDigits % 9 == 0) {
-                // A number is divisible by 9 if and only if the sum of it's digits is divisible by 9
-                divisInfo.add(sumOfDigits + " is divisible by 9 so " + number + " is divisible by 9");
-            } else {
-                divisInfo.add(sumOfDigits + " is not divisible by 9 so " + number + " is not divisible by 9");
-            }
-        } else {
-            divisInfo.add(sumOfDigits + " is not divisible by 3 so " + number + " is not divisible by 3");
-            divisInfo.add("Since " + number + " is not divisible by 3, it can't be divisible by ");
-            divisInfo.add("6, 9, 12, and any other multiples of 3");
         }
 
-        if (isEven) {
             if (isDivisibleBy3) {
-                // A number is divisible by 6 if it's even and divisible by 3.
-                divisInfo.add(number + " is even and divisible by 3 so it's also divisible by 6");
             }
-            int last2Digits = Math.abs(number) % 100;
-            divisInfo.add("The last 2 digits are " + last2Digits);
-            if (last2Digits % 4 == 0) {
-                // A number is divisible by 4 if the last 2 digits are divisible by 4.
-                divisInfo.add(last2Digits + " is divisible by 4 so " + number + " is divisible by 4");
-
-                int last3Digits = Math.abs(number) % 1000;
-                divisInfo.add("The last 3 digits are " + last3Digits);
-                if (last3Digits % 8 == 0) {
-                    // A number is divisible by 8 if the last 3 digits are divisible by 8.
-                    divisInfo.add(last3Digits + " is divisible by 8 so " + number + " is divisible by 8");
-                } else {
-                    divisInfo.add(last3Digits + " is not divisible by 8 so " + number + " is not divisible by 8");
-                }
 
                 if (isDivisibleBy3) {
-                    // A number is divisible by 12 if it's divisible by both 3 and 4.
-                    divisInfo.add(number + " is divisible by both 3 and 4 so it's also divisible by 12");
                 }
-            } else {
-                divisInfo.add(last2Digits + " is not divisible by 4 so " + number + " is not divisible by 4.");
-                divisInfo.add("Since " + number + " is not divisible by 4, " + number + " also can't be divisible by ");
-                divisInfo.add("8, 12, and any other multiples of 4");
             }
         }
-        return divisInfo;
     }
 
-    private static int sumOfDigits(int number) {
-        String numberString = String.valueOf(number);
-        int sum = 0;
-        for (int i = 0; i < numberString.length(); i++) {
-            int digit = Character.getNumericValue(numberString.charAt(i));
-            sum += digit;
-        }
-        return sum;
+    private static final String tricksInfoParagraph =
+        "Some special tricks can be used to find some of the factors of a number. If the " +
+        "sum of the digits of a number is divisible by 3, then that number is divisible " +
+        "by 3. If the sum of the digits of a number is divisible by 9, then that number " +
+        "is divisible by 9. If a number is even and divisible by 3, then it is also " +
+        "divisible by 6. If the last 2 digits of a number is divisible by 4, then that " +
+        "number is divisible by 4. If the last 3 digits of a number is divisible by 8, " +
+        "then that number is divisible by 8. If a number is divisible by both 3 and 4 " +
+        "then it is also divisible by 12.";
+
+    private static final String pfInfoParagraph =
+        "Another way you can tell what factors a number has and how many factors it has is " +
+        "by looking at it's prime factorization. To find the number of factors, you take " +
+        "all the powers of the prime factors, add 1 to each and then multiply them all " +
+        "together. All the \"sub-factorizations\" of this prime factorization are the prime " +
+        "factorizations of all the factors. Some examples of \"sub-factorizations\" are 2 and " +
+        "2 x 3 in the prime factorization 2 x 3 x 5.";
+
+    /**
+     * Creates a sequential stream containing the factors of intParam besides 1 and intParam. The tests
+     * will collect this stream to a list and the applications will do some mapping on this before collecting
+     * it to a list, as seen in the getFactorPfStrings method below.
+     * @param intParam
+     */
+    public static Stream<Integer> getFactorsStream(int intParam) {
+        return
+            IntStream.rangeClosed(2, intParam / 2)
+            .filter(i -> isDivisible(intParam, i))
+            .boxed();
     }
 
     /**
-     * @return An list of Strings that consists of divisibility info about the argument number. This info is
-     * acquired by looking at the prime factorization of the argument number.
-     * @throws IllegalArgumentException if the argument number is less than 2.
+     * PFs can be used to find the factors of an integer. This can be done by finding what I consider
+     * to be "sub-factorizations" of a PF. These are PFs within a PF. For the PF 2 x 3 x 5 x 7, some
+     * examples of sub-factorizations are 2, 2 x 3, and 2 x 3 x 5. In order to find sub-factorizations
+     * programmatically, you would have to use the factorsAndPowers map of a PF object and find all possible combinations
+     * of factors and powers. I don't know how to do that so I'll just do some iteration to find the factors
+     * and then create PF objects from those factors.
+     * @return A list of prime factorization strings for all factors of intParam.
+     * @throws IllegalArgumentException
      */
-    public static List<String> getDivisInfoViaPf(int number) {
-        return new PrimeFactorization(number).getFactorsInfo();
+    public static List<String> getFactorPfStrings(int intParam) {
+        assertIsInRange(intParam, minInputInt, maxInputInt);
+        return
+            getFactorsStream(intParam)
+            .map(i -> new PrimeFactorization(i).toStringWithCorrespondingLong())
+            .collect(Collectors.toList());
+    }
+
+    private static String getDivisibilityInfoHeading(int inputInt) {
+        return String.format("Divisibility info for %s", getLongStringWithCommas(inputInt));
+    }
+
+    private static final String tricksInfoHeading = "Info acquired by using special tricks";
+    private static final String pfInfoHeading = "Prime factorization info";
+    private static final String subfactorizationsSentence =
+        "By looking at the \"sub-factorizations\", we can see the factors are:";
+
+    private static String getPrimeNumberSentence(int inputInt) {
+        return String.format("%s is prime and doesn't have any factors other than itself and 1.", getLongStringWithCommas(inputInt));
+    }
+
+    public static class Section extends SingleInputSection {
+        public Section() {
+            super(
+                "Divisibility",
+                List.of(introParagraph, tricksInfoParagraph, pfInfoParagraph),
+                minInputInt,
+                maxInputInt,
+                "get divisibility info about it",
+                "divisibility"
+            );
+        }
+
+        /**
+         * @return A string that shows a paragraph of divisibility info acquired by using special tricks followed by a
+         * section of information about divisibility info relating to prime factorizations.
+         * @throws IllegalArgumentException if inputInt is invalid input for the DIVISIBILITY section.
+         */
+        @Override
+        public String getCliAnswer(int inputInt) throws IllegalArgumentException {
+            String tricksInfo = getDivisibilityInfoViaTricks(inputInt);
+            tricksInfo = NTPCLI.insertNewLines(tricksInfo);
+
+            StringJoiner linesJoiner =
+                new StringJoiner("\n")
+                .add(getDivisibilityInfoHeading(inputInt))
+                .add("")
+                .add(tricksInfoHeading)
+                .add(tricksInfo)
+                .add("")
+                .add(pfInfoHeading);
+
+            PrimeFactorization pf = new PrimeFactorization(inputInt);
+            if (pf.isForAPrimeNumber()) {
+                linesJoiner.add(
+                    NTPCLI.insertNewLines(pf.getInfoMessage() + ". " + getPrimeNumberSentence(inputInt))
+                );
+            } else {
+                String factorsListPrefix =
+                    pf.getInfoMessage() + ". " + pf.getNumberOfFactorsInfo() + " " + subfactorizationsSentence;
+                factorsListPrefix = NTPCLI.insertNewLines(factorsListPrefix);
+                String factorsListWithPrefix =
+                    NTPCLI.stringifyList(getFactorPfStrings(inputInt), factorsListPrefix);
+                linesJoiner.add(factorsListWithPrefix);
+            }
+
+            return linesJoiner.toString();
+        }
+
+        /**
+         * @return A list of GUI components which includes a main heading label, components for a tricks info section,
+         * components for a prime factorization info section, and gaps where appropriate.
+         * @throws IllegalArgumentException
+         */
+        @Override
+        public List<Component> getGuiComponents(int inputInt) throws IllegalArgumentException {
+            String tricksInfo = getDivisibilityInfoViaTricks(inputInt);
+            NTPTextArea tricksInfoArea = new NTPTextArea(AnswerPanel.contentFont);
+            tricksInfoArea.setText(tricksInfo);
+
+            PrimeFactorization pf = new PrimeFactorization(inputInt);
+            NTPTextArea pfInfoArea = new NTPTextArea(AnswerPanel.contentFont);
+            NTPPanel factorsPanel = null;
+            if (pf.isForAPrimeNumber()) {
+                pfInfoArea.setText(pf.getInfoMessage() + ". " + getPrimeNumberSentence(inputInt));
+            } else {
+                pfInfoArea.setText(
+                    pf.getInfoMessage() + ". " + pf.getNumberOfFactorsInfo() + " " + subfactorizationsSentence
+                );
+            }
+
+            return List.of(
+                NTPPanel.createCenteredLabel(getDivisibilityInfoHeading(inputInt), AnswerPanel.mainHeadingFont),
+                NTPGUI.createGap(15),
+                NTPPanel.createCenteredLabel(tricksInfoHeading, AnswerPanel.subHeadingFont),
+                NTPGUI.createGap(5),
+                tricksInfoArea,
+                NTPGUI.createGap(10),
+                NTPPanel.createCenteredLabel(pfInfoHeading, AnswerPanel.subHeadingFont),
+                NTPGUI.createGap(5),
+                pfInfoArea,
+                factorsPanel != null ? factorsPanel : NTPGUI.createGap(0)
+            );
+        }
     }
 }

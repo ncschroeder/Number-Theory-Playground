@@ -17,21 +17,15 @@ public class Goldbach {
     public static final int minInputInt = 4;
     public static final int maxInputInt = oneHundredThousand;
 
+
     /**
-     * @return A list of all the pairs of prime numbers that sum up to anInt.
+     * Find the pairs of prime numbers that sum to anInt and returns an array that contains the lower numbers
+     * of each pair
      */
-    public static List<IntPair> getGoldbachPrimePairs(int anInt) {
+    public static int[] getGoldbachPrimePairStarts(int anInt) {
         assertIsInRange(anInt, minInputInt, maxInputInt);
         if (isOdd(anInt)) {
             throw new IllegalArgumentException("Arg can't be odd");
-        }
-
-        List<IntPair> pairs = new ArrayList<>();
-        // 1st, check if anInt is 4 since 4 is the only even number >= 4 that
-        // has 2 in a pair of prime numbers that sum to it.
-        if (anInt == 4) {
-            pairs.add(new IntPair(2, 2));
-            return pairs;
         }
 
         /*
@@ -40,19 +34,27 @@ public class Goldbach {
         floor of half of anInt. This is because after that point, calculations for primality will be
         done on numbers that have already been determined to be pairs of prime numbers that sum to anInt.
         */
-        int maxPossiblePrime = anInt / 2;
-        for (int possiblePrime1 = 3; possiblePrime1 <= maxPossiblePrime; possiblePrime1 += 2) {
-            int possiblePrime2 = anInt - possiblePrime1;
-            if (Primes.bothArePrime(possiblePrime1, possiblePrime2)) {
-                pairs.add(new IntPair(possiblePrime1, possiblePrime2));
-            }
+        
+        if (anInt == 4) {
+            return new int[] { 2 };
         }
-        return pairs;
+        
+        int maxI = anInt / 2;
+        return
+            IntStream.iterate(3, i -> i <= maxI, i -> i + 2)
+            .filter(i -> bothArePrime(i, anInt - i))
+            .toArray();
     }
 
-    private static List<String> getGoldbachPrimePairStrings(int anInt) {
-        return stringifyElements(getGoldbachPrimePairs(anInt));
+    /**
+     * Returns a Stream of the string representations of the pairs of prime numbers that sum to inputInt.
+     * pairStarts should be an int array returned from calling getGoldbachPrimePairStarts and inputInt
+     * should be the int used in that call to getGoldbachPrimePairStarts.
+     */
+    private static Stream<String> getGoldbachPrimePairStrings(int[] pairStarts, int inputInt) {
+        return Arrays.stream(pairStarts).mapToObj(i -> intPairToString(i, inputInt - i));
     }
+
 
     private static String getListHeading(int pairsCount, int inputInt) {
         return String.format(
@@ -77,14 +79,20 @@ public class Goldbach {
 
         @Override
         public String getCliAnswer(int inputInt) {
-            List<String> pairStrings = getGoldbachPrimePairStrings(inputInt);
-            return NTPCLI.stringifyList(pairStrings, getListHeading(pairStrings.size(), inputInt));
+            int[] pairStarts = getGoldbachPrimePairStarts(inputInt);
+            return NTPCLI.stringifyList(
+                getListHeading(pairStarts.length, inputInt),
+                getGoldbachPrimePairStrings(pairStarts, inputInt)
+            );
         }
 
         @Override
         public List<Component> getGuiComponents(int inputInt) {
-            List<String> pairStrings = getGoldbachPrimePairStrings(inputInt);
-            return AnswerPanel.createListHeadingAndPanel(getListHeading(pairStrings.size(), inputInt), pairStrings);
+            int[] pairStarts = getGoldbachPrimePairStarts(inputInt);
+            return AnswerPanel.createListHeadingAndTextArea(
+                getListHeading(pairStarts.length, inputInt),
+                getGoldbachPrimePairStrings(pairStarts, inputInt)
+            );
         }
 
         @Override

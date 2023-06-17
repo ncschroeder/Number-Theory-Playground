@@ -73,13 +73,13 @@ public class AncientMultiplication {
         /**
          * Will contain rows for all the powers of 2 <= minInt and the corresponding multiples of maxInt.
          */
-        private final List<Row> rows1;
+        private final Stream<Row> rows1;
 
         /**
          * Will be a sublist of rows1 and contain rows for all the powers of 2 that sum to minInt and the corresponding
          * multiples of maxInt, which will sum up to the product of minInt and maxInt.
          */
-        private final List<Row> rows2;
+        private final Stream<Row> rows2;
 
         /**
          * Constructs a new object for info about multiplication of int1 and int2.
@@ -90,18 +90,19 @@ public class AncientMultiplication {
 
             minInt = Math.min(int1, int2);
             maxInt = Math.max(int1, int2);
-            rows1 = new ArrayList<>();
-            rows2 = new ArrayList<>();
+
+            // Builders for IntStreams that will be the sources of the streams for rows1 and rows2
+            IntStream.Builder stream1Builder = IntStream.builder();
+            IntStream.Builder stream2Builder = IntStream.builder();
 
             // Iterate backwards through the binary string of minInt to find the powers of 2 that are <= minInt,
             // as well as the powers of 2 that sum to minInt, as well as maxInt multiplied by those powers of 2
             String minIntBinaryString = Integer.toBinaryString(minInt);
             for (int index = minIntBinaryString.length() - 1, power = 0; index >= 0; index--, power++) {
                 int powerOf2 = (int) Math.pow(2, power);
-                Row row = new Row(powerOf2, maxInt * powerOf2);
-                rows1.add(row);
+                stream1Builder.accept(powerOf2);
                 if (minIntBinaryString.charAt(index) == '1') {
-                    rows2.add(row);
+                    stream2Builder.accept(powerOf2);
                 }
             }
 
@@ -109,6 +110,11 @@ public class AncientMultiplication {
                 rows2.stream()
                 .mapToInt(r -> r.correspondingMultiple)
                 .sum();
+            Function<IntStream.Builder, Stream<Row>> buildStream =
+                builder -> builder.build().mapToObj(i -> new Row(i, i * int2));
+            
+            rows1 = buildStream.apply(stream1Builder);
+            rows2 = buildStream.apply(stream2Builder);
         }
 
         public String getMinIntString() {
@@ -123,19 +129,16 @@ public class AncientMultiplication {
             return getLongStringWithCommas(product);
         }
 
-        /**
-         * @return An unmodifiable copy of rows1
-         */
-        public List<Row> getRows1() {
-            return List.copyOf(rows1);
+        public Stream<Row> getRows1() {
+            return rows1;
+        }
+    
+        public Stream<Row> getRows2() {
+            return rows2;
         }
 
         /**
-         * @return An unmodifiable copy of rows2
          */
-        public List<Row> getRows2() {
-            return List.copyOf(rows2);
-        }
 
         public String getAllPowersOf2ColumnHeading() {
             return String.format("Powers of 2 <= %s", getMinIntString());
@@ -198,7 +201,6 @@ public class AncientMultiplication {
 
             String table1 =
                 info.getRows1()
-                .stream()
                 .map(r ->
                     NTPCLI.getRowFor2ColumnTable(r.getPowerOf2String(), table1Column1Width, r.getCorrespondingMultipleString())
                 )
@@ -212,7 +214,6 @@ public class AncientMultiplication {
 
             String table2 =
                 info.getRows2()
-                .stream()
                 .map(r -> NTPCLI.getRowFor2ColumnTable(r.getPowerOf2String(), table2Column1Width, r.getCorrespondingMultipleString()))
                 .collect(Collectors.joining("\n", headRow + "\n", "\n" + productMessage));
 
@@ -244,20 +245,20 @@ public class AncientMultiplication {
             table1.addCenteredLabel(info.getAllPowersOf2ColumnHeading(), tableHeadingFont);
             table1.addCenteredLabel(maxIntMultiplesColumnHeading, tableHeadingFont);
 
-            for (Row row : info.getRows1()) {
-                table1.addCenteredLabel(row.getPowerOf2String(), contentFont);
-                table1.addCenteredLabel(row.getCorrespondingMultipleString(), contentFont);
-            }
+            BiConsumer<Stream<Row>, NTPPanel> addRows =
+                (rows, table) ->
+                    rows
+                    .flatMap(r -> Stream.of(r.getPowerOf2String(), r.getCorrespondingMultipleString()))
+                    .forEachOrdered(s -> table.addCenteredLabel(s, contentFont));
+            
+            addRows.accept(info.getRows1(), table1);
 
             NTPPanel table2 = new NTPPanel();
             table2.setLayout(tableLayout);
             table2.addCenteredLabel(info.getPowersOf2ThatSumToMinIntColumnHeading(), tableHeadingFont);
             table2.addCenteredLabel(maxIntMultiplesColumnHeading, tableHeadingFont);
 
-            for (Row row : info.getRows2()) {
-                table2.addCenteredLabel(row.getPowerOf2String(), contentFont);
-                table2.addCenteredLabel(row.getCorrespondingMultipleString(), contentFont);
-            }
+            addRows.accept(info.getRows2(), table2);
 
             return List.of(
                 NTPPanel.createCenteredLabel(getAncientMultiplicationHeading(inputInt1, inputInt2), AnswerPanel.mainHeadingFont),

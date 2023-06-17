@@ -266,36 +266,32 @@ public class NTPCLI {
     }
 
     /**
-     *
-     * @param strings
-     * @param prefix
-     * @return A string that consists of lines that consist of the elements of the list provided separated
-     * by space. Each line is at most 75 characters long. If a non-blank prefix is provided, then it will be
-     * placed above the lines of elements (the beginning of the string returned will be the prefix followed by
-     * a new line character).
+     * Returns a string that consists of the heading on its own line followed by lines that consist of
+     * the elements of the Stream provided separated by space. Each line is at most 75 characters long.
+     * The exception to this is that if an element of the Stream is more than 75 characters long then it
+     * will be placed on a line by itself.
      */
-    String stringifyList(List<String> strings, String prefix) {
+    public static String stringifyList(String heading, Stream<String> strings) {
         final int spaceSeparatorWidth = 4;
         String spaceSeparator = getWhiteSpace(spaceSeparatorWidth);
-        StringJoiner spacesJoiner = new StringJoiner(spaceSeparator);
-
-        StringJoiner linesJoiner = new StringJoiner("\n");
-        if (!prefix.isBlank()) {
-            linesJoiner.add(prefix);
-        }
-
-        for (String s : strings) {
-            int spacesJoinerLength = spacesJoiner.length();
+        
+        // Use AtomicReference to allow for reassignability in a lambda
+        var spacesJoinerRef =
+            new AtomicReference<StringJoiner>(new StringJoiner(spaceSeparator));
+        var linesJoiner = new StringJoiner("\n").add(heading);
+            
+        strings.forEachOrdered(s -> {
+            int spacesJoinerLength = spacesJoinerRef.get().length();
             if (spacesJoinerLength + spaceSeparatorWidth + s.length() > 75 && spacesJoinerLength > 0) {
-                linesJoiner.add(spacesJoiner.toString());
-                spacesJoiner = new StringJoiner(spaceSeparator);
+                linesJoiner.add(spacesJoinerRef.get().toString());
+                spacesJoinerRef.set(new StringJoiner(spaceSeparator));
             }
-            spacesJoiner.add(s);
-        }
-
+            spacesJoinerRef.get().add(s);
+        });
+        
         return
             linesJoiner
-            .add(spacesJoiner.toString())
+            .add(spacesJoinerRef.get().toString())
             .toString();
     }
 

@@ -62,36 +62,26 @@ public class Divisibility {
         "factorizations of all the factors. Some examples of \"sub-factorizations\" are 2 and " +
         "2 x 3 in the prime factorization 2 x 3 x 5.";
 
+
     /**
-     * Creates a sequential stream containing the factors of intParam besides 1 and intParam. The tests
-     * will collect this stream to a list and the applications will do some mapping on this before collecting
-     * it to a list, as seen in the getFactorPfStrings method below.
-     * @param intParam
+     * Returns an IntStream of the factors of anInt besides 1 and anInt
      */
-    public static Stream<Integer> getFactorsStream(int intParam) {
+    public static IntStream getFactors(int anInt) {
+        assertIsInRange(anInt, minInputInt, maxInputInt);
         return
-            IntStream.rangeClosed(2, intParam / 2)
-            .filter(i -> isDivisible(intParam, i))
-            .boxed();
+            IntStream.rangeClosed(2, anInt / 2)
+            .filter(i -> isDivisible(anInt, i));
     }
 
     /**
-     * PFs can be used to find the factors of an integer. This can be done by finding what I consider
-     * to be "sub-factorizations" of a PF. These are PFs within a PF. For the PF 2 x 3 x 5 x 7, some
-     * examples of sub-factorizations are 2, 2 x 3, and 2 x 3 x 5. In order to find sub-factorizations
-     * programmatically, you would have to use the factorsAndPowers map of a PF object and find all possible combinations
-     * of factors and powers. I don't know how to do that so I'll just do some iteration to find the factors
-     * and then create PF objects from those factors.
-     * @return A list of prime factorization strings for all factors of intParam.
-     * @throws IllegalArgumentException
+     * Returns a Stream of prime factorization strings for all factors of anInt besides 1 and anInt
      */
-    public static List<String> getFactorPfStrings(int intParam) {
-        assertIsInRange(intParam, minInputInt, maxInputInt);
+    public static Stream<String> getFactorPfStrings(int anInt) {
         return
-            getFactorsStream(intParam)
-            .map(i -> new PrimeFactorization(i).toStringWithCorrespondingLong())
-            .collect(Collectors.toList());
+            getFactors(anInt)
+            .mapToObj(i -> new PrimeFactorization(i).toStringWithCorrespondingInt());
     }
+
 
     private static String getDivisibilityInfoHeading(int inputInt) {
         return String.format("Divisibility info for %s", getLongStringWithCommas(inputInt));

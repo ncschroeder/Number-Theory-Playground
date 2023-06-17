@@ -50,10 +50,10 @@ public class FibonacciLikeSequences {
         }
 
         /**
-         * @return An unmodifiable list of the elements in the sequence that are stringified with commas.
+         * Returns a Stream of the string representations of the numbers in the sequence
          */
-        public List<String> getStringSequence() {
-            return makeElementsStringsWithCommas(intSequence);
+        public Stream<String> getStringSequence() {
+            return intSequence.stream().map(Misc::stringifyWithCommas);
         }
 
         /**

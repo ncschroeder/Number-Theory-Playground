@@ -46,38 +46,25 @@ public class Primes {
     public static final int maxInputInt = oneBillion;
 
     /**
-     * @return A list of the first 30 prime numbers that are >= anInt
-     * @throws IllegalArgumentException if anInt is out of the range of valid input ints for this section
+     * Returns an IntStream of the first 30 prime numbers that are >= anInt
      */
-    public static List<Integer> getPrimesInts(int anInt) {
+    public static IntStream getPrimesInts(int anInt) {
         assertIsInRange(anInt, minInputInt, maxInputInt);
 
-        List<Integer> primes = new ArrayList<>(numberOfPrimesToFind);
-        int possiblePrime;
-        if (anInt <= 2) {
-            primes.add(2);
-            // Set possiblePrime to the first odd prime number
-            possiblePrime = 3;
-        } else {
-            // Set possiblePrime to the first odd int >= anInt
-            possiblePrime = isOdd(anInt) ? anInt : anInt + 1;
-        }
-
-        // Check odd numbers for primality until 30 prime numbers are found
-        for (;; possiblePrime += 2) {
-            if (isPrime(possiblePrime)) {
-                primes.add(possiblePrime);
-                if (primes.size() == numberOfPrimesToFind) {
-                    return primes;
-                }
-            }
-        }
+        return
+            IntStream.concat(
+                anInt <= 2 ? IntStream.of(2) : IntStream.empty(), // 2 is the only even prime number
+                IntStream.iterate(isOdd(anInt) ? anInt : anInt + 1, i -> i + 2) // Iterate through odd numbers
+            )
+            .filter(Primes::isPrime)
+            .limit(numberOfPrimesToFind);
     }
 
     /**
+     * Returns a Stream of the string representations of the first 30 prime numbers >= anInt
      */
-    private static List<String> getPrimesStrings(int anInt) {
-        return makeElementsStringsWithCommas(getPrimesInts(anInt));
+    private static Stream<String> getPrimesStrings(int anInt) {
+        return getPrimes(anInt).mapToObj(Misc::stringifyWithCommas);
     }
 
     private static String getListHeading(int inputInt) {

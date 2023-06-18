@@ -20,12 +20,45 @@ public abstract class Section {
             new AncientMultiplication.Section()
         );
     }
-
-    private static final Random random = new Random();
-
+    
+    
+    private final String headingText;
+    
     /**
-     * Creates a new Section with the info provided. inputConstraintsSentence is initialized using a default input constraints
-     * sentence format.
+     * List of paragraphs of information about this section. Each constructor creates this List using
+     * List.of, which makes this List immutable.
+     */
+    private final List<String> info;
+    
+    private final int minInputInt;
+    private final int maxInputInt;
+    
+    /**
+     * There are a few "action" sentences used that say what the user is to do and what will happen in
+     * response. For the GUI, there's 1 action sentence that starts with "Enter or generate an integer
+     * and click the Calculate button to ". For the CLI, there's 1 action sentence for the custom input
+     * option and 1 for the random input option. The custom input option starts with "An integer to ".
+     * The random input option starts with "(r) to generate a random integer and ". This field is for
+     * the endings of those sentences.
+     */
+    private final String actionSentenceEnding;
+    
+    /**
+     * Mentions that the input int(s) should be >= what minInputInt is and <= what maxInputInt is.
+     * For the Goldbach section, it's also mentioned that the input should be even.
+     */
+    private final String inputConstraintsSentence;
+    
+    /**
+     * The beginning of the CLI info option is "(i) to get info about ". This field is what the ending
+     * should be.
+     */
+    private final String cliInfoOptionEnding;
+    
+    
+    /**
+     * Creates a new Section with the info provided. inputConstraintsSentence is initialized using a
+     * default input constraints sentence format.
      */
     protected Section(
         String headingText,
@@ -33,7 +66,7 @@ public abstract class Section {
         int minInputInt,
         int maxInputInt,
         String actionSentenceEnding,
-        String infoOptionEndingForCli
+        String cliInfoOptionEnding
     ) {
         this(
             headingText,
@@ -41,20 +74,13 @@ public abstract class Section {
             minInputInt,
             maxInputInt,
             actionSentenceEnding,
-            infoOptionEndingForCli,
+            cliInfoOptionEnding,
             "Have %s be >= %d && <= %s"
         );
     }
-
+    
     /**
-     *
-     * @param minInputInt
-     * @param maxInputInt
-     * @param inputConstraintsSentenceFormat A format string consisting of an %s, %d, and %s in that order. The 1st
-     *                                       one will be replaced with either "this integer" or "these integers",
-     *                                       depending on the value of needs1Int. The 2nd is for minInputInt
-     *                                       and the 3rd is for an English version of maxInputInt (e.g.
-     *                                       if maxInputInt is 10000, then the %s will be replaced with "10 thousand").
+     * The inputConstraintsSentenceFormat is a format string consisting of an %s, %d, and %s in that order
      */
     protected Section(
         String headingText,
@@ -62,7 +88,7 @@ public abstract class Section {
         int minInputInt,
         int maxInputInt,
         String actionSentenceEnding,
-        String infoOptionEndingForCli,
+        String cliInfoOptionEnding,
         String inputConstraintsSentenceFormat
     ) {
         this.headingText = headingText;
@@ -70,31 +96,31 @@ public abstract class Section {
         this.minInputInt = minInputInt;
         this.maxInputInt = maxInputInt;
         this.actionSentenceEnding = actionSentenceEnding;
-        this.infoOptionEndingForCli = infoOptionEndingForCli;
-
+        this.cliInfoOptionEnding = cliInfoOptionEnding;
+        
         String maxInputString;
         switch (maxInputInt) {
             case oneThousand:
                 maxInputString = "1 thousand";
                 break;
-
+            
             case tenThousand:
                 maxInputString = "10 thousand";
                 break;
-
+            
             case oneHundredThousand:
                 maxInputString = "100 thousand";
                 break;
-
+            
             case oneBillion:
                 maxInputString = "1 billion";
                 break;
-
+            
             default:
                 logError("maxInputString not properly initialized");
-                maxInputString = getLongStringWithCommas(maxInputInt);
+                maxInputString = stringifyWithCommas(maxInputInt);
         }
-
+        
         inputConstraintsSentence =
             String.format(
                 inputConstraintsSentenceFormat,
@@ -103,14 +129,15 @@ public abstract class Section {
                 maxInputString
             );
     }
-
+    
+    
     /**
-     * Whether or not this section needs 1 int for input. If this is false then 2 ints are needed.
+     * Returns true if this is a SingleInputSection and false if this is a DoubleInputSection
      */
     public final boolean isSingleInputSection() {
         return this instanceof SingleInputSection;
     }
-
+    
     /**
      * Goldbach section needs even ints for input so this is used by the GUI when an increment or
      * decrement button is clicked to determine whether or not the number to increment or decrement
@@ -119,66 +146,50 @@ public abstract class Section {
     public final boolean isGoldbachSection() {
         return this instanceof Goldbach.Section;
     }
-
+    
+    
+    private static final Random random = new Random();
+    
+    /**
+     * Returns a random int in the appropriate range. If this method is called with the Goldbach section,
+     * then this int will be even.
+     */
+    public int getRandomValidInt() {
+        return Math.max(minInputInt, random.nextInt(maxInputInt));
+    }
+    
+    /**
+     * Used by the CLI to run the algorithm(s) for this section using random input and create a string
+     * with info about the results of the algorithm(s).
+     */
     public abstract String getRandomCliAnswer();
-
-    private final String headingText;
+    
+    
     public final String getHeadingText() {
         return headingText;
     }
-
-    /**
-     * List of paragraphs of information about this section. Each class creates this list using
-     * <code>List.of</code>, which makes this list immutable.
-     */
-    private final List<String> info;
+    
     public final List<String> getInfo() {
         return info;
     }
-
-    private final int minInputInt;
+    
     public final int getMinInputInt() {
         return minInputInt;
     }
-
-    private final int maxInputInt;
+    
     public final int getMaxInputInt() {
         return maxInputInt;
     }
-
-    /**
-     * There are a few "action" sentences used that say what the user is to do and what will happen in
-     * response. For the GUI, there's 1 action sentence that starts with something along the lines
-     * of "Enter or generate an integer and hit the Calculate button to ".
-     * For the CLI, there's 1 action sentence for the custom input option and 1 for the random input
-     * option. The custom input option starts with "An integer to ". The random input option starts with
-     * "(r) to generate a random integer and ".
-     * This attribute is for the endings of those sentences.
-     */
-    private final String actionSentenceEnding;
+    
     public final String getActionSentenceEnding() {
         return actionSentenceEnding;
     }
-
-    /**
-     * Mentions that the input int(s) should be >= what minInputInt is and <= what maxInputInt is.
-     * For the Goldbach section, it's also mentioned that the input should be even.
-     */
-    private final String inputConstraintsSentence;
+    
     public final String getInputConstraintsSentence() {
         return inputConstraintsSentence;
     }
-
-    /**
-     * The beginning of the CLI info option is something along the lines of
-     * "(i) to get info about ". This attribute is what the ending should be.
-     */
-    private final String infoOptionEndingForCli;
-    public final String getInfoOptionEndingForCli() {
-        return infoOptionEndingForCli;
-    }
-
-    public int getRandomValidInt() {
-        return Math.max(minInputInt, random.nextInt(maxInputInt));
+    
+    public final String getCliInfoOptionEnding() {
+        return cliInfoOptionEnding;
     }
 }

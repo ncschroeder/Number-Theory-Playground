@@ -11,7 +11,28 @@ public abstract class SingleInputSection extends Section {
         int minInputInt,
         int maxInputInt,
         String actionSentenceEnding,
-        String infoOptionEndingForCli,
+        String cliInfoOptionEnding
+    ) {
+        super(
+            headingText,
+            info,
+            minInputInt,
+            maxInputInt,
+            actionSentenceEnding,
+            cliInfoOptionEnding
+        );
+    }
+    
+    /**
+     * Constructor that the Goldbach section can use since it has a unique input constraints sentence format
+     */
+    protected SingleInputSection(
+        String headingText,
+        List<String> info,
+        int minInputInt,
+        int maxInputInt,
+        String actionSentenceEnding,
+        String cliInfoOptionEnding,
         String inputConstraintsSentenceFormat
     ) {
         super(
@@ -20,45 +41,25 @@ public abstract class SingleInputSection extends Section {
             minInputInt,
             maxInputInt,
             actionSentenceEnding,
-            infoOptionEndingForCli,
+            cliInfoOptionEnding,
             inputConstraintsSentenceFormat
         );
     }
 
-    protected SingleInputSection(
-        String headingText,
-        List<String> info,
-        int minInputInt,
-        int maxInputInt,
-        String actionSentenceEnding,
-        String infoOptionEndingForCli
-    ) {
-        super(
-            headingText,
-            info,
-            minInputInt,
-            maxInputInt,
-            actionSentenceEnding,
-            infoOptionEndingForCli
-        );
-    }
-
+    /**
+     * Used by the CLI to run the algorithm(s) for this section using the input and create a string with
+     * info about the results of the algorithm(s)
+     */
+    public abstract String getCliAnswer(int input);
+        
+    /**
+     * Used by the GUI to run the algorithm(s) for this section using the input and create GUI components
+     * with info about the results of the algorithm(s)
+     */
+    public abstract List<Component> getGuiComponents(int input);
+    
     @Override
     public final String getRandomCliAnswer() {
         return getCliAnswer(getRandomValidInt());
     }
-
-    /**
-     * Runs the algorithm(s) for this section using inputInt and creates a string with info about the results
-     * of the algorithm(s).
-     * @throws IllegalArgumentException if inputInt is invalid input for this section.
-     */
-    public abstract String getCliAnswer(int inputInt);
-
-    /**
-     * Runs the algorithm(s) for this section using inputInt and creates GUI components with info about the
-     * results of the algorithm(s).
-     * @throws IllegalArgumentException if inputInt is invalid input for this section.
-     */
-    public abstract List<Component> getGuiComponents(int inputInt);
 }

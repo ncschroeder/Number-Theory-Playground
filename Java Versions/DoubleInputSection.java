@@ -11,7 +11,7 @@ public abstract class DoubleInputSection extends Section {
         int minInputInt,
         int maxInputInt,
         String actionSentenceEnding,
-        String infoOptionEndingForCli
+        String cliInfoOptionEnding
     ) {
         super(
             headingText,
@@ -19,26 +19,24 @@ public abstract class DoubleInputSection extends Section {
             minInputInt,
             maxInputInt,
             actionSentenceEnding,
-            infoOptionEndingForCli
+            cliInfoOptionEnding
         );
     }
-
+    
+    /**
+     * Used by the CLI to run the algorithm(s) for this section using input1 and input2 and create a
+     * string with info about the results of the algorithm(s)
+     */
+    public abstract String getCliAnswer(int input1, int input2);
+    
+    /**
+     * Used by the GUI to run the algorithm(s) for this section using input1 and input2 and create
+     * GUI components with info about the results of the algorithm(s)
+     */
+    public abstract List<Component> getGuiComponents(int input1, int input2);
+    
     @Override
     public final String getRandomCliAnswer() {
         return getCliAnswer(getRandomValidInt(), getRandomValidInt());
     }
-
-    /**
-     * Runs the algorithm(s) for this section using inputInt1 and inputInt2 and creates a string with info about
-     * the results of the algorithm(s).
-     * @throws IllegalArgumentException if inputInt1 or inputInt2 are invalid input for this section.
-     */
-    public abstract String getCliAnswer(int inputInt1, int inputInt2);
-
-    /**
-     * Runs the algorithm(s) for this section using inputInt1 and inputInt2 and creates GUI components with info
-     * about the results of the algorithm(s).
-     * @throws IllegalArgumentException if inputInt1 or inputInt2 are invalid input for this section.
-     */
-    public abstract List<Component> getGuiComponents(int inputInt1, int inputInt2);
 }

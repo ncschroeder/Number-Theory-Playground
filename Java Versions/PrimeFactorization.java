@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -22,59 +25,64 @@ public class PrimeFactorization {
         "of prime numbers. This product is called its prime factorization. There are some interesting " +
         "applications for this. Visit the GCD and LCM or the divisibility sections for some applications.";
 
-    public final static int minInputInt = 2;
-    public final static int maxInputInt = tenThousand;
+    public static final int minInputInt = 2;
+    public static final int maxInputInt = tenThousand;
 
     /**
-     * A map whose keys are the prime factors of a number and the values are the powers those factors are
-     * raised to to form the prime factorization of a number. A TreeMap is used so that the prime factors
-     * are in order.
+     * A map whose keys are prime factors and values are the corresponding powers for this prime
+     * factorization. A SortedMap is used so that the entries are ordered by the prime factors, which
+     * is mathematically appropriate when converting this to a string.
      */
-    private final TreeMap<Integer, Integer> factorsAndPowers;
+    private final SortedMap<Integer, Integer> factorsAndPowers;
 
     /**
-     * The long that this prime factorization is for.
+     * The int that this prime factorization is for.
+     *
+     * Note: the GcdAndLcmInfo constructor below creates 2 PrimeFactorizations, and then creates a Map
+     * to represent the prime factorization of the LCM of the 2 input ints, and then passes that Map to
+     * the constructor with a SortedMap param, which will then set this field to the product of all the
+     * factors raised to their powers. The LCM of 2 ints is at most the product of those 2 ints. For a
+     * max input of 10,000, the highest possible LCM will be < 10,000^2 (100,000,000), which is < the max
+     * value for an int. If the max input was to be raised, then this might need to be changed to a long.
      */
-    private long correspondingLong;
+    private int correspondingInt;
 
     /**
-     * @throws IllegalArgumentException
      */
-    public PrimeFactorization(int anInt) {
-        assertIsInRange(anInt, minInputInt, maxInputInt);
+    public PrimeFactorization(int input) {
+        assertIsInRange(input, minInputInt, maxInputInt);
 
         factorsAndPowers = new TreeMap<>();
-        correspondingLong = anInt;
-        int intRemaining = anInt;
+        correspondingInt = input;
+        var intRemaining = new AtomicInteger(input);
 
         /*
-        Find all the prime factors and their powers and put these in factorsAndPowers. Divide intRemaining by each
-        prime factor that is found. When intRemaining becomes 1, the entire prime factorization has been found.
-        First 2 will be checked and then odd numbers will be checked since all prime numbers besides 2 are odd.
+        Find all the prime factors and their powers and put these in factorsAndPowers. Divide intRemaining
+        by each prime factor that is found. When intRemaining becomes 1, the entire prime factorization has
+        been found. First 2 will be checked and then odd numbers will be checked since all prime numbers
+        besides 2 are odd.
         */
-
-        int possiblePrimeFactor = 2;
-        if (isDivisible(intRemaining, possiblePrimeFactor)) {
+        
+        Consumer<Integer> addPrimeFactor = factor -> {
             int power = 0;
             do {
                 power++;
-                intRemaining /= possiblePrimeFactor;
-            } while (isDivisible(intRemaining, possiblePrimeFactor));
-            factorsAndPowers.put(possiblePrimeFactor, power);
-            if (intRemaining == 1) {
+                intRemaining.updateAndGet(i -> i / factor);
+            } while (isDivisible(intRemaining.get(), factor));
+            factorsAndPowers.put(factor, power);
+        };
+        
+        if (isEven(input)) {
+            addPrimeFactor.accept(2);
+            if (intRemaining.get() == 1) {
                 return;
             }
         }
-
-        for (possiblePrimeFactor = 3; ; possiblePrimeFactor += 2) {
-            if (isDivisible(intRemaining, possiblePrimeFactor)) {
-                int power = 0;
-                do {
-                    power++;
-                    intRemaining /= possiblePrimeFactor;
-                } while (isDivisible(intRemaining, possiblePrimeFactor));
-                factorsAndPowers.put(possiblePrimeFactor, power);
-                if (intRemaining == 1) {
+    
+        for (int possiblePrimeFactor = 3; ; possiblePrimeFactor += 2) {
+            if (isDivisible(intRemaining.get(), possiblePrimeFactor)) {
+                addPrimeFactor.accept(possiblePrimeFactor);
+                if (intRemaining.get() == 1) {
                     return;
                 }
             }
@@ -82,83 +90,77 @@ public class PrimeFactorization {
     }
 
     /**
-     * @param factorsAndPowers A map representing the prime factorization of a number. The keys are the prime
-     *                         factors and the values are the powers of those prime factors.
-     * @throws IllegalArgumentException if factorsAndPowers is empty or contains any non-prime keys
-     * or non-positive values.
+     * We're setting the factorsAndPowers Map in this PrimeFactorization to the Map provided, meaning that
+     * any changes to that Map after using it to create this PrimeFactorization will cause unwanted behavior.
+     * However, I don't consider this much of a problem since this constructor is private and the only place
+     * it's used is at the bottom of the GcdAndLcmInfo constructor below.
      */
-    private PrimeFactorization(TreeMap<Integer, Integer> factorsAndPowers) {
+    private PrimeFactorization(SortedMap<Integer, Integer> factorsAndPowers) {
         Set<Map.Entry<Integer, Integer>> entries = factorsAndPowers.entrySet();
         if (factorsAndPowers.isEmpty() ||
             entries.stream().anyMatch(
                 entry -> !Primes.isPrime(entry.getKey()) || entry.getValue() < 1
             )
         ) {
-            throw new IllegalArgumentException("Invalid map provided: " + factorsAndPowers);
+            logError("Invalid map provided for PrimeFactorization constructor: " + factorsAndPowers);
         }
 
-
         this.factorsAndPowers = factorsAndPowers;
-        correspondingLong = 1;
+        correspondingInt = 1;
         for (Map.Entry<Integer, Integer> entry : entries) {
-            correspondingLong *= Math.pow(entry.getKey(), entry.getValue());
+            correspondingInt *= Math.pow(entry.getKey(), entry.getValue());
         }
     }
 
     /**
-     * @return A string representation of a prime factorization. " x " is used to represent multiplication among all
-     * the prime factors and is placed between all the prime factors. "^" is used to represent the powers of prime
-     * factors and is used for prime factors that have a power other than 1.
+     * Returns a List of Map Entries where each key is a prime factor and each value is the corresponding
+     * power in this prime factorization.
+     */
+    public List<Map.Entry<Integer, Integer>> getFactorsAndPowers() {
+        return List.copyOf(factorsAndPowers.entrySet());
+    }
+    
+    public int getCorrespondingInt() {
+        return correspondingInt;
+    }
+    
+    public String getCorrespondingIntString() {
+        return stringifyWithCommas(correspondingInt);
+    }
+
+    /**
+     * Returns a string representation of a prime factorization. " x " is used to represent multiplication
+     * among all the prime factors and is placed between all the factors. "^" is used to represent the
+     * powers of factors and is placed after factors that have a power other than 1.
      */
     @Override
     public String toString() {
         return
-            factorsAndPowers
-            .entrySet()
-            .stream()
+            factorsAndPowers.entrySet().stream()
             .map(entry -> {
-                String factorString = getLongStringWithCommas(entry.getKey());
+                String factorString = stringifyWithCommas(entry.getKey());
                 int power = entry.getValue();
                 return power == 1 ? factorString : String.format("%s^%d", factorString, power);
             })
             .collect(Collectors.joining(" x "));
     }
-
+    
     /**
-     * @return The long that this prime factorization is for, that is, the product of all the prime factors
-     * raised to their respective powers. This method returns a long since it's possible that an int will be
-     * too small when a PrimeFactorization is created using the constructor that takes a TreeMap as an
-     * argument.
-     */
-    public long getCorrespondingLong() {
-        return correspondingLong;
-    }
-
-    public String getCorrespondingLongString() {
-        return getLongStringWithCommas(getCorrespondingLong());
-    }
-
-    public String toStringWithCorrespondingLong() {
-        return
-            isForAPrimeNumber()
-            ? toString()
-            : String.format("%s (%s)", this, getCorrespondingLongString());
-    }
-
-    public String getInfoMessage() {
-        return String.format("The prime factorization of %s is %s", getCorrespondingLongString(), this);
-    }
-
-    /**
-     * @return true if the number that this prime factorization is representing is prime. For this case, the prime
-     * factorization consists of a single number that has 1 as its power. Returns false otherwise.
+     * Prime numbers have a prime factorization that consists of a single factor with 1 as its power.
      */
     public boolean isForAPrimeNumber() {
         return factorsAndPowers.size() == 1 && factorsAndPowers.containsValue(1);
     }
-
-    public boolean isForACompositeNumber() {
-        return !isForAPrimeNumber();
+    
+    public String toStringWithCorrespondingInt() {
+        return
+            isForAPrimeNumber()
+            ? getCorrespondingIntString()
+            : String.format("%s (%s)", this, getCorrespondingIntString());
+    }
+    
+    public String getInfoMessage() {
+        return String.format("The prime factorization of %s is %s", getCorrespondingIntString(), this);
     }
 
     /**
@@ -167,8 +169,8 @@ public class PrimeFactorization {
      * says the number of factors and how it was determined.
      */
     public String getNumberOfFactorsInfo() {
-        int numberOfFactors = 1;
-        ArrayList<String> powerStrings = new ArrayList<>();
+        var numberOfFactors = 1;
+        var powerStrings = new ArrayList<String>(factorsAndPowers.size());
         for (int power : factorsAndPowers.values()) {
             numberOfFactors *= (power + 1);
             powerStrings.add(String.format("(%d + 1)", power));
@@ -176,22 +178,20 @@ public class PrimeFactorization {
 
         return String.format(
             "By looking at the powers, we can see there are %s = %d total factors. If 1 and %s are " +
-                "excluded then there are %d total factors.",
+                "excluded then there are %d factors.",
             String.join(" x ", powerStrings),
             numberOfFactors,
-            getCorrespondingLongString(),
+            getCorrespondingIntString(),
             numberOfFactors - 2
         );
     }
 
-        return
-    public static String getPfInfoString(int anInt) {
-        return new PrimeFactorization(anInt).getInfoMessage();
-    }
 
     /**
-     * Prime factorizations can be used to find the greatest common divisor (GCD) and least common multiple (LCM)
-     * of 2 integers. This class does just that.
+     * Prime factorizations can be used to find the greatest common divisor (GCD) and least common multiple
+     * (LCM) of 2 integers. This class does just that. An advantage to having this class be a nested class
+     * within the PrimeFactorization class is that we can access the private factorsAndPowers map of the
+     * PrimeFactorizations we create in the constructor for this class.
      */
     public static class GcdAndLcmInfo {
         /**
@@ -207,6 +207,9 @@ public class PrimeFactorization {
             "factorizations of the 2 numbers. The power for each factor is the maximum power " +
             "of that factor in the 2 prime factorizations.";
 
+
+        // Since this class has a unique and specific use, I'll use public final fields instead of getter methods
+
         /**
          * Prime factorization of the 1st int provided
          */
@@ -217,9 +220,15 @@ public class PrimeFactorization {
          */
         public final PrimeFactorization int2Pf;
 
+        /**
+         * If the GCD of the ints provided is 1, then this is an empty Optional. Otherwise, this is an
+         * Optional with the prime factorization of the GCD. The reason for this behavior is that
+         * mathematically, only integers >= 2 have a prime factorization.
+         */
         public final Optional<PrimeFactorization> gcdPf;
 
         public final PrimeFactorization lcmPf;
+
 
         /**
          * Constructs a new object for info about int1 and int2 and their GCD and LCM.
@@ -279,10 +288,11 @@ public class PrimeFactorization {
         public String getGcdString() {
             return
                 gcdPf
-                .map(PrimeFactorization::getCorrespondingLongString)
+                .map(PrimeFactorization::getCorrespondingIntString)
                 .orElse("1");
         }
     }
+
 
     public static class Section extends SingleInputSection {
         public Section() {
@@ -297,14 +307,14 @@ public class PrimeFactorization {
         }
 
         @Override
-        public String getCliAnswer(int inputInt) {
-            return getPfInfoString(inputInt);
+        public String getCliAnswer(int input) {
+            return new PrimeFactorization(input).getInfoMessage();
         }
-
+        
         @Override
-        public List<Component> getGuiComponents(int inputInt) {
+        public List<Component> getGuiComponents(int input) {
             return List.of(
-                NTPPanel.createCenteredLabel(getPfInfoString(inputInt), AnswerPanel.contentFont)
+                NTPGUI.createCenteredLabel(new PrimeFactorization(input).getInfoMessage(), AnswerPanel.contentFont)
             );
         }
     }

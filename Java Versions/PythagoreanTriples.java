@@ -1,7 +1,8 @@
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -15,15 +16,18 @@ public class PythagoreanTriples {
         "of integers that a, b, and c can be. These trios are called Pythagorean triples.";
 
     private static final int numberOfTriplesToFind = 10;
-    public static final int minInputInt = 0;
-    public static final int maxInputInt = oneThousand;
+    private static final int minInputInt = 0;
+    private static final int maxInputInt = oneThousand;
 
+    /**
+     * Class with data for the 3 elements of a Pythagorean triple
+     */
     public static class PythagoreanTriple {
-        public final long side1;
-        public final long side2;
-        public final long hypotenuse;
+        public final int side1;
+        public final int side2;
+        public final int hypotenuse;
 
-        public PythagoreanTriple(long side1, long side2, long hypotenuse) {
+        public PythagoreanTriple(int side1, int side2, int hypotenuse) {
             this.side1 = side1;
             this.side2 = side2;
             this.hypotenuse = hypotenuse;
@@ -31,11 +35,12 @@ public class PythagoreanTriples {
 
         @Override
         public String toString() {
-            Object[] args =
-                Stream.of(side1, side2, hypotenuse)
-                .map(Misc::getLongAndSquareString)
-                .toArray();
-            return String.format("%s + %s = %s", args);
+            return String.format(
+                "%s + %s = %s",
+                getLongAndSquareString(side1),
+                getLongAndSquareString(side2),
+                getLongAndSquareString(hypotenuse)
+            );
         }
 
         @Override
@@ -49,32 +54,33 @@ public class PythagoreanTriples {
     }
 
     /**
-     * @return A list of <code>PythagoreanTriple</code> objects to represent the first 10 Pythagorean triples where
-     * the lowest integer in the triple is >= anInt.
+     * Returns a List of PythagoreanTriple objects to represent the first 10 Pythagorean triples where
+     * the lowest integer in the triple is >= the input
      */
-    public static List<PythagoreanTriple> getPythagTriples(int anInt) {
-        assertIsInRange(anInt, minInputInt, maxInputInt);
+    public static List<PythagoreanTriple> getPythagTriples(int input) {
+        assertIsInRange(input, minInputInt, maxInputInt);
 
-        List<PythagoreanTriple> triples = new ArrayList<>(numberOfTriplesToFind);
+        var triples = new ArrayList<PythagoreanTriple>(numberOfTriplesToFind);
+        
         // sideLength1 represents one of the lengths of one of the two short sides of a right triangle.
         // 3 is the lowest number to be in a Pythagorean triple so make sideLength1 be at least that.
-        int sideLength1 = Math.max(anInt, 3);
-        // sideLength2 represents the length of the other short side. This needs to be a long to prevent overflow.
-        long sideLength2 = sideLength1 + 1;
-
+        int sideLength1 = Math.max(input, 3);
+        // sideLength2 represents the length of the other short side
+        int sideLength2 = sideLength1 + 1;
+        
         while (true) {
             double hypotLengthDouble = Math.hypot(sideLength1, sideLength2);
             if (hypotLengthDouble < sideLength2 + 1) {
                 // sideLength2 + 1 is the minimum possible integer value for the hypotenuse length.
-                // If the hypotenuse length is less than this, then the max value for sideLength2 for the current
-                // value of sideLength1 has been exceeded.
+                // If the hypotenuse length is less than this, then the max value for sideLength2 for the
+                // current value of sideLength1 has been exceeded.
                 sideLength1++;
                 sideLength2 = sideLength1 + 1;
             } else {
-                long hypotLengthLong = (long) hypotLengthDouble;
-                if (hypotLengthLong == hypotLengthDouble) {
+                int hypotLengthInt = (int) hypotLengthDouble;
+                if (hypotLengthInt == hypotLengthDouble) {
                     // A Pythagorean triple has been found
-                    triples.add(new PythagoreanTriple(sideLength1, sideLength2, hypotLengthLong));
+                    triples.add(new PythagoreanTriple(sideLength1, sideLength2, hypotLengthInt));
                     if (triples.size() == numberOfTriplesToFind) {
                         return triples;
                     }
@@ -88,11 +94,11 @@ public class PythagoreanTriples {
         return stringifyElements(getPythagTriples(anInt));
     }
 
-    private static String getListHeading(int inputInt) {
+    private static String getListHeading(int input) {
         return String.format(
             "The first %d Pythagorean triples >= %s are:",
             numberOfTriplesToFind,
-            getLongStringWithCommas(inputInt)
+            stringifyWithCommas(input)
         );
     }
 

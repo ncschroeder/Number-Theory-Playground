@@ -1,6 +1,7 @@
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class FibonacciLikeSequences {
     private static final String infoString =
@@ -11,39 +12,45 @@ public class FibonacciLikeSequences {
         "of this type is the Fibonacci sequence, whose first 2 numbers are 1 and 1. " +
         "Another notable sequence are the Lucas numbers, whose first 2 numbers are 2 and 1.";
 
-    private final static int sequenceLength = 20;
-    public static final int minInputInt = 1;
-    public static final int maxInputInt = oneThousand;
+    private static final int sequenceLength = 20;
+    private static final int minInputInt = 1;
+    private static final int maxInputInt = oneThousand;
 
     public static class Info {
         private final List<Integer> intSequence;
-        private final int secondToLastElement;
-        private final int lastElement;
+        private final String endRatioMessage;
 
         /**
          * Constructs an object with a sequence that is as long as sequenceLength and with int1 and int2 as
          * the first 2 elements in the sequence.
          */
-        public Info(int int1, int int2) {
-            assertIsInRange(int1, minInputInt, maxInputInt);
-            assertIsInRange(int2, minInputInt, maxInputInt);
-
+        public Info(int input1, int input2) {
+            assertIsInRange(input1, minInputInt, maxInputInt);
+            assertIsInRange(input2, minInputInt, maxInputInt);
+        
             intSequence = new ArrayList<>(sequenceLength);
-            intSequence.add(int1);
-            intSequence.add(int2);
-
+            intSequence.add(input1);
+            intSequence.add(input2);
+        
             do {
                 int lastIndex = intSequence.size() - 1;
                 int nextElement = intSequence.get(lastIndex - 1) + intSequence.get(lastIndex);
                 intSequence.add(nextElement);
             } while (intSequence.size() < sequenceLength);
-
-            secondToLastElement = intSequence.get(sequenceLength - 2);
-            lastElement = intSequence.get(sequenceLength - 1);
+        
+            int secondToLastElement = intSequence.get(sequenceLength - 2);
+            int lastElement = intSequence.get(sequenceLength - 1);
+            endRatioMessage =
+                String.format(
+                    "%s / %s is approximately %f",
+                    stringifyWithCommas(lastElement),
+                    stringifyWithCommas(secondToLastElement),
+                    (double) lastElement / secondToLastElement
+                );
         }
-
+    
         /**
-         * @return An unmodifiable list of the ints in the sequence.
+         * Returns an unmodifiable list of the ints in the sequence
          */
         public List<Integer> getIntSequence() {
             return List.copyOf(intSequence);
@@ -56,30 +63,17 @@ public class FibonacciLikeSequences {
             return intSequence.stream().map(Misc::stringifyWithCommas);
         }
 
-        /**
-         * @return The last element of the sequence divided by the 2nd to last element of the sequence. Should be close
-         * to the golden ratio (~1.618).
-         */
-        public double getEndRatio() {
-            return (double) lastElement / secondToLastElement;
-        }
-
         public String getEndRatioMessage() {
-            return String.format(
-                "%s / %s is approximately %f",
-                getLongStringWithCommas(lastElement),
-                getLongStringWithCommas(secondToLastElement),
-                getEndRatio()
-            );
+            return endRatioMessage;
         }
     }
 
-    private static String getListHeading(int inputInt1, int inputInt2) {
+    private static String getListHeading(int input1, int input2) {
         return String.format(
             "The first %d elements in the Fibonacci-like sequence that begins with %s and %s are:",
             sequenceLength,
-            getLongStringWithCommas(inputInt1),
-            getLongStringWithCommas(inputInt2)
+            stringifyWithCommas(input1),
+            stringifyWithCommas(input2)
         );
     }
 

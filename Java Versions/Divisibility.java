@@ -1,10 +1,11 @@
 import java.awt.Component;
-import java.awt.Dimension;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static com.nicholasschroeder.numbertheoryplayground.NTPGUI.*;
 
 /**
  * Utility class related to divisibility and the section for it.
@@ -12,12 +13,14 @@ import java.util.stream.Stream;
 public class Divisibility {
     private static final String introParagraph =
         "The factors of a number are all the numbers that can evenly divide that number.";
+    // This section uses prime factorizations so the input constraints for those will be used.
+    private static final int minInputInt = PrimeFactorization.minInputInt;
+    private static final int maxInputInt = PrimeFactorization.maxInputInt;
 
     /**
-     * Determines if a is divisible by b without using any special tricks
-     * @return <code>a % b == 0</code>, which is true if a is divisible by b and false otherwise.
+     * Determines if a is divisible by b without using any special tricks.
      */
-    public static boolean isDivisible(long a, long b) {
+    public static boolean isDivisible(int a, int b) {
         return a % b == 0;
     }
 
@@ -29,18 +32,160 @@ public class Divisibility {
         return !isEven(i);
     }
 
-    // This section uses prime factorizations so the input constraints for those will be used
-    public static final int minInputInt = PrimeFactorization.minInputInt;
-    public static final int maxInputInt = PrimeFactorization.maxInputInt;
-        }
-        }
 
-            if (isDivisibleBy3) {
+    public static class TricksInfo {
+        private final String info;
+        
+        private final int sumOfDigits;
+        private final int last2Digits;
+        private final int last3Digits;
+        
+        private final boolean isDivisibleBy3;
+        private boolean isDivisibleBy4 = false;
+        private boolean isDivisibleBy6 = false;
+        private boolean isDivisibleBy8 = false;
+        private boolean isDivisibleBy9 = false;
+        private boolean isDivisibleBy12 = false;
+    
+
+        public TricksInfo(int input) {
+            assertIsInRange(input, minInputInt, maxInputInt);
+            
+            String intString = stringifyWithCommas(input);
+            var sentencesJoiner = new StringJoiner(". ", "", ".");
+            boolean isEven = isEven(input);
+            if (!isEven) {
+                sentencesJoiner.add(intString + " is not even so it cannot be divisible by any even numbers");
             }
+            
+            sumOfDigits =
+                String.valueOf(input)
+                .chars()
+                .map(Character::getNumericValue)
+                .sum();
+            
+            isDivisibleBy3 = isDivisible(sumOfDigits, 3);
+            sentencesJoiner
+            .add("The sum of the digits is " + sumOfDigits)
+            .add(
+                // This and a few more string creations below insert negations conditionally.
+                String.format(
+                    "%1$d is %2$sdivisible by 3 so %3$s is %2$sdivisible by 3",
+                    sumOfDigits,
+                    isDivisibleBy3 ? "" : "not ",
+                    intString
+                )
+            );
+            
+            if (isDivisibleBy3) {
+                isDivisibleBy9 = isDivisible(sumOfDigits, 9);
+                sentencesJoiner.add(
+                    String.format(
+                        "%1$d is %2$sdivisible by 9 so %3$s is %2$sdivisible by 9",
+                        sumOfDigits,
+                        isDivisibleBy9 ? "" : "not ",
+                        intString
+                    )
+                );
+            } else {
+                sentencesJoiner.add(
+                    String.format(
+                        "Since %s is not divisible by 3, it can't be divisible by 6, 9, 12, and any other multiples of 3",
+                        intString
+                    )
+                );
+            }
+    
+            last2Digits = input % 100;
+            last3Digits = input % 1000;
 
+            if (isEven) {
                 if (isDivisibleBy3) {
+                    isDivisibleBy6 = true;
+                    sentencesJoiner.add(intString + " is even and divisible by 3 so it's also divisible by 6");
+                }
+                
+                isDivisibleBy4 = isDivisible(last2Digits, 4);
+                sentencesJoiner
+                .add("The last 2 digits form the number " + last2Digits)
+                .add(
+                    String.format(
+                        "%1$d is %2$sdivisible by 4 so %3$s is %2$sdivisible by 4",
+                        last2Digits,
+                        isDivisibleBy4 ? "" : "not ",
+                        intString
+                    )
+                );
+        
+                if (isDivisibleBy4) {
+                    isDivisibleBy8 = isDivisible(last3Digits, 8);
+                    sentencesJoiner
+                    .add("The last 3 digits form the number " + last3Digits)
+                    .add(
+                        String.format(
+                            "%1$d is %2$sdivisible by 8 so %3$s is %2$sdivisible by 8",
+                            last3Digits,
+                            isDivisibleBy8 ? "" : "not ",
+                            intString
+                        )
+                    );
+                    
+                    if (isDivisibleBy3) {
+                        isDivisibleBy12 = true;
+                        sentencesJoiner.add(intString + " is divisible by both 3 and 4 so it's also divisible by 12");
+                    }
+                } else {
+                    sentencesJoiner.add(
+                        String.format(
+                            "Since %1$s is not divisible by 4, %1$s is also not divisible by 8, 12, and any other multiples of 4",
+                            intString
+                        )
+                    );
                 }
             }
+            
+            info = sentencesJoiner.toString();
+        }
+        
+        @Override
+        public String toString() {
+            return info;
+        }
+        
+        public int getSumOfDigits() {
+            return sumOfDigits;
+        }
+    
+        public int getLast2Digits() {
+            return last2Digits;
+        }
+    
+        public int getLast3Digits() {
+            return last3Digits;
+        }
+        
+        public boolean isDivisibleBy3() {
+            return isDivisibleBy3;
+        }
+    
+        public boolean isDivisibleBy4() {
+            return isDivisibleBy4;
+        }
+        
+        public boolean isDivisibleBy6() {
+            return isDivisibleBy6;
+        }
+    
+        public boolean isDivisibleBy8() {
+            return isDivisibleBy8;
+        }
+        
+        public boolean isDivisibleBy9() {
+            return isDivisibleBy9;
+        }
+        
+        public boolean isDivisibleBy12() {
+            return isDivisibleBy12;
         }
     }
 
@@ -62,38 +207,42 @@ public class Divisibility {
         "factorizations of all the factors. Some examples of \"sub-factorizations\" are 2 and " +
         "2 x 3 in the prime factorization 2 x 3 x 5.";
 
+    /*
+    In order to find sub-factorizations programmatically, you would have to use the factorsAndPowers
+    map of a PF object and find all possible combinations of factors and powers. I don't know how to do
+    that so I'll just do some iteration to find the factors and then create PF objects from those factors.
+    */
 
     /**
-     * Returns an IntStream of the factors of anInt besides 1 and anInt
+     * Returns an IntStream of the factors of the input besides 1 and the input. This method is called by
+     * getFactorPfStrings below and by a unit test.
      */
-    public static IntStream getFactors(int anInt) {
-        assertIsInRange(anInt, minInputInt, maxInputInt);
+    public static IntStream getFactors(int input) {
+        assertIsInRange(input, minInputInt, maxInputInt);
         return
-            IntStream.rangeClosed(2, anInt / 2)
-            .filter(i -> isDivisible(anInt, i));
+            IntStream.rangeClosed(2, input / 2)
+            .filter(i -> isDivisible(input, i));
     }
-
+    
     /**
-     * Returns a Stream of prime factorization strings for all factors of anInt besides 1 and anInt
+     * Returns a Stream of prime factorization strings for all factors of the input besides 1 and the input.
      */
-    public static Stream<String> getFactorPfStrings(int anInt) {
+    public static Stream<String> getFactorPfStrings(int input) {
         return
-            getFactors(anInt)
+            getFactors(input)
             .mapToObj(i -> new PrimeFactorization(i).toStringWithCorrespondingInt());
     }
-
-
-    private static String getDivisibilityInfoHeading(int inputInt) {
-        return String.format("Divisibility info for %s", getLongStringWithCommas(inputInt));
+    
+    private static String getDivisibilityInfoHeading(int input) {
+        return "Divisibility Info for " + stringifyWithCommas(input);
     }
-
-    private static final String tricksInfoHeading = "Info acquired by using special tricks";
-    private static final String pfInfoHeading = "Prime factorization info";
-    private static final String subfactorizationsSentence =
-        "By looking at the \"sub-factorizations\", we can see the factors are:";
-
-    private static String getPrimeNumberSentence(int inputInt) {
-        return String.format("%s is prime and doesn't have any factors other than itself and 1.", getLongStringWithCommas(inputInt));
+    
+    private static final String tricksInfoHeading = "Info Acquired Using Special Tricks";
+    private static final String pfInfoHeading = "Prime Factorization Info";
+    private static final String factorsAndPfsSentence = "The factors and their prime factorizations are:";
+    
+    private static String getPrimeNumberSentence(int input) {
+        return stringifyWithCommas(input) + " is prime and doesn't have any factors other than 1 and itself.";
     }
 
     public static class Section extends SingleInputSection {
@@ -107,76 +256,69 @@ public class Divisibility {
                 "divisibility"
             );
         }
-
+        
         /**
-         * @return A string that shows a paragraph of divisibility info acquired by using special tricks followed by a
-         * section of information about divisibility info relating to prime factorizations.
-         * @throws IllegalArgumentException if inputInt is invalid input for the DIVISIBILITY section.
+         * Returns a string that shows divisibility info acquired using special tricks followed by info
+         * related to prime factorizations.
          */
         @Override
-        public String getCliAnswer(int inputInt) throws IllegalArgumentException {
-            String tricksInfo = getDivisibilityInfoViaTricks(inputInt);
-            tricksInfo = NTPCLI.insertNewLines(tricksInfo);
-
-            StringJoiner linesJoiner =
-                new StringJoiner("\n")
-                .add(getDivisibilityInfoHeading(inputInt))
-                .add("")
-                .add(tricksInfoHeading)
-                .add(tricksInfo)
-                .add("")
-                .add(pfInfoHeading);
-
-            PrimeFactorization pf = new PrimeFactorization(inputInt);
+        public String getCliAnswer(int input) {
+            var pf = new PrimeFactorization(input);
+            String pfInfo;
+    
             if (pf.isForAPrimeNumber()) {
-                linesJoiner.add(
-                    NTPCLI.insertNewLines(pf.getInfoMessage() + ". " + getPrimeNumberSentence(inputInt))
-                );
+                pfInfo = NTPCLI.insertNewLines(pf.getInfoMessage() + ". " + getPrimeNumberSentence(input));
             } else {
                 String factorsListPrefix =
-                    pf.getInfoMessage() + ". " + pf.getNumberOfFactorsInfo() + " " + subfactorizationsSentence;
+                    pf.getInfoMessage() + ". " + pf.getNumberOfFactorsInfo() + " " + factorsAndPfsSentence;
                 factorsListPrefix = NTPCLI.insertNewLines(factorsListPrefix);
-                String factorsListWithPrefix =
-                    NTPCLI.stringifyList(getFactorPfStrings(inputInt), factorsListPrefix);
-                linesJoiner.add(factorsListWithPrefix);
+                pfInfo = NTPCLI.streamToString(factorsListPrefix, getFactorPfStrings(input));
             }
-
-            return linesJoiner.toString();
+    
+            return String.join(
+                "\n",
+                getDivisibilityInfoHeading(input),
+                "",
+                tricksInfoHeading,
+                NTPCLI.insertNewLines(new TricksInfo(input).toString()),
+                "",
+                pfInfoHeading,
+                pfInfo
+            );
         }
-
+    
         /**
-         * @return A list of GUI components which includes a main heading label, components for a tricks info section,
-         * components for a prime factorization info section, and gaps where appropriate.
-         * @throws IllegalArgumentException
+         * Returns a list of GUI components which includes a main heading label, components for divisibility
+         * info acquired using special tricks, components for info relating to prime factorizations, and gaps
+         * where appropriate.
          */
         @Override
-        public List<Component> getGuiComponents(int inputInt) throws IllegalArgumentException {
-            String tricksInfo = getDivisibilityInfoViaTricks(inputInt);
-            NTPTextArea tricksInfoArea = new NTPTextArea(AnswerPanel.contentFont);
-            tricksInfoArea.setText(tricksInfo);
-
-            PrimeFactorization pf = new PrimeFactorization(inputInt);
-            NTPTextArea pfInfoArea = new NTPTextArea(AnswerPanel.contentFont);
-            NTPPanel factorsPanel = null;
+        public List<Component> getGuiComponents(int input) {    
+            var pf = new PrimeFactorization(input);
+            String pfInfo;
+            Component emptyComponentOrFactorsTextArea;
+            
             if (pf.isForAPrimeNumber()) {
-                pfInfoArea.setText(pf.getInfoMessage() + ". " + getPrimeNumberSentence(inputInt));
+                pfInfo = pf.getInfoMessage() + ". " + getPrimeNumberSentence(input);
+                // No factors to display so set this to an empty component.
+                emptyComponentOrFactorsTextArea = createGap(0);
             } else {
-                pfInfoArea.setText(
-                    pf.getInfoMessage() + ". " + pf.getNumberOfFactorsInfo() + " " + subfactorizationsSentence
-                );
+                pfInfo =
+                    pf.getInfoMessage() + ". " + pf.getNumberOfFactorsInfo() + " " + factorsAndPfsSentence;
+                emptyComponentOrFactorsTextArea = new NTPTextArea(getFactorPfStrings(input));
             }
-
+            
             return List.of(
-                NTPPanel.createCenteredLabel(getDivisibilityInfoHeading(inputInt), AnswerPanel.mainHeadingFont),
-                NTPGUI.createGap(15),
-                NTPPanel.createCenteredLabel(tricksInfoHeading, AnswerPanel.subHeadingFont),
-                NTPGUI.createGap(5),
-                tricksInfoArea,
-                NTPGUI.createGap(10),
-                NTPPanel.createCenteredLabel(pfInfoHeading, AnswerPanel.subHeadingFont),
-                NTPGUI.createGap(5),
-                pfInfoArea,
-                factorsPanel != null ? factorsPanel : NTPGUI.createGap(0)
+                createCenteredLabel(getDivisibilityInfoHeading(input), answerMainHeadingFont),
+                createGap(15),
+                createCenteredLabel(tricksInfoHeading, answerSubHeadingFont),
+                createGap(5),
+                new NTPTextArea(new TricksInfo(input).toString()),
+                createGap(10),
+                createCenteredLabel(pfInfoHeading, answerSubHeadingFont),
+                createGap(5),
+                new NTPTextArea(pfInfo),
+                emptyComponentOrFactorsTextArea
             );
         }
     }

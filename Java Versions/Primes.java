@@ -7,12 +7,22 @@ import java.util.stream.Stream;
  * Utility class related to prime numbers and the section for it.
  */
 public class Primes {
-    private static final String info =
-        "Prime numbers are numbers that are only divisible by 1 and themself. There are " +
-        "an infinite amount of them. A number can be determined to be prime if it is not " +
-        "divisible by any prime numbers less than or equal to the square root of that " +
-        "number. Fun fact: with the exception of 2 and 3, all prime numbers are either " +
-        "1 above or 1 below a multiple of 6.";
+    private static final List<String> infoParagraphs =
+        List.of(
+            "A prime number is an integer >= 2 whose only factors are 1 and itself. There are an infinite " +
+                "amount of them. A composite number is an integer >= 2 that has a factor other than 1 and " +
+                "itself. Prime numbers are used in 7 of the 10 sections in this application.",
+            "An integer can be determined to be prime if it is not divisible by any prime numbers <= " +
+                "the square root of that integer. For example, let's determine if 29 and 33 are prime. " +
+                "5^2 = 25 and 6^2 = 36 so the square roots of 29 and 33 are between 5 and 6. We check if " +
+                "the integers are divisible by 2, 3, or 5, which are the prime numbers <= 5. 29 isn't " +
+                "divisible by any of those and 33 is divisible by 3 so 29 is prime and 33 isn't.",
+            "Fun fact: with the exception of 2 and 3, all prime numbers are either 1 above or 1 below " +
+                "a multiple of 6. To show why this is the case, let's have a variable i and let it represent " +
+                "any integer >= 6 that is a multiple of 6. We know that i is divisible by 2 and 3 so i + 2 " +
+                "and i + 4 are divisible by 2 and i + 3 is divisible by 3 but we don't have any guarantees " +
+                "about what i + 1 and i + 5 are divisible by. Therefore, that is where prime numbers can be."
+        );
 
     public static boolean isPrime(int input) {
         // All integers < 2 are not prime
@@ -83,7 +93,7 @@ public class Primes {
         public Section() {
             super(
                 "Prime Numbers",
-                List.of(info),
+                infoParagraphs,
                 minInputInt,
                 maxInputInt,
                 String.format("get the first %d prime numbers >= that integer", numberOfPrimesToFind),

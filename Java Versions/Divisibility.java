@@ -12,7 +12,11 @@ import static com.nicholasschroeder.numbertheoryplayground.NTPGUI.*;
  */
 public class Divisibility {
     private static final String introParagraph =
-        "The factors of a number are all the numbers that can evenly divide that number.";
+        "Say we have 2 integers that we'll represent with the variables a and b. If we divide a by b and " +
+        "get no remainder, then a is said to be divisible by b and b is said to be a factor or divisor " +
+        "of a. If you want to find all the factors of an integer, you could manually find all of them but " +
+        "there are some other ways to find them.";
+
     // This section uses prime factorizations so the input constraints for those will be used.
     private static final int minInputInt = PrimeFactorization.minInputInt;
     private static final int maxInputInt = PrimeFactorization.maxInputInt;
@@ -34,6 +38,15 @@ public class Divisibility {
 
 
     public static class TricksInfo {
+        private static final String paragraph =
+            "Some special tricks can be used to find some of the factors of a number. Let's have a variable i " +
+            "and let it represent an integer. If the sum of the digits of i is divisible by 3, then i is " +
+            "divisible by 3. If the sum of the digits of i is divisible by 9, then i is divisible by 9. If i " +
+            "is even and divisible by 3, then i is also divisible by 6. If the last 2 digits of i is divisible " +
+            "by 4, then i is divisible by 4. If the last 3 digits of i is divisible by 8, then i is divisible " +
+            "by 8. If i is divisible by both 3 and 4 then i is also divisible by 12.";
+        
+        
         private final String info;
         
         private final int sumOfDigits;
@@ -189,23 +202,18 @@ public class Divisibility {
         }
     }
 
-    private static final String tricksInfoParagraph =
-        "Some special tricks can be used to find some of the factors of a number. If the " +
-        "sum of the digits of a number is divisible by 3, then that number is divisible " +
-        "by 3. If the sum of the digits of a number is divisible by 9, then that number " +
-        "is divisible by 9. If a number is even and divisible by 3, then it is also " +
-        "divisible by 6. If the last 2 digits of a number is divisible by 4, then that " +
-        "number is divisible by 4. If the last 3 digits of a number is divisible by 8, " +
-        "then that number is divisible by 8. If a number is divisible by both 3 and 4 " +
-        "then it is also divisible by 12.";
 
     private static final String pfInfoParagraph =
-        "Another way you can tell what factors a number has and how many factors it has is " +
-        "by looking at it's prime factorization. To find the number of factors, you take " +
-        "all the powers of the prime factors, add 1 to each and then multiply them all " +
-        "together. All the \"sub-factorizations\" of this prime factorization are the prime " +
-        "factorizations of all the factors. Some examples of \"sub-factorizations\" are 2 and " +
-        "2 x 3 in the prime factorization 2 x 3 x 5.";
+        "Another way you can tell what factors a number has and how many factors it has is by looking at " +
+        "its prime factorization, or PF. Let's say we have an integer > 1 and we'll represent it with the " +
+        "variable i. You can find how many factors i has by looking at i's PF, taking all the powers of the " +
+        "prime factors, adding 1 to each, and then multiplying all these together. For example, the prime " +
+        "factorization of 294 is 2 x 3 x 7^2. The powers are 1, 1, and 2; so there are 2 x 2 x 3 = 12 factors. " +
+        "However, that count includes 1 and the number that the PF is for (294 in this case). If you want to " +
+        "exclude those, then subtract 2. That would give us 10 factors. You can find the factors of i by " +
+        "finding all the PFs within i's PF, or the \"sub-factorizations\". For 2 x 3 x 7^2, some " +
+        "sub-factorizations include 2, 2 x 7, and 3 x 7^2. This means that 2, 14, and 147 are factors of 294.";
+
 
     /*
     In order to find sub-factorizations programmatically, you would have to use the factorsAndPowers
@@ -249,7 +257,7 @@ public class Divisibility {
         public Section() {
             super(
                 "Divisibility",
-                List.of(introParagraph, tricksInfoParagraph, pfInfoParagraph),
+                List.of(introParagraph, TricksInfo.paragraph, pfInfoParagraph),
                 minInputInt,
                 maxInputInt,
                 "get divisibility info about it",

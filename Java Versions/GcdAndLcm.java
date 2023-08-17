@@ -16,13 +16,14 @@ public class GcdAndLcm {
     private static final List<String> infoParagraphs =
         List.of(
             "GCD stands for greatest common divisor and LCM stands for least common multiple.",
-            PrimeFactorization.GcdAndLcmInfo.infoString,
+            PrimeFactorization.GcdAndLcmInfo.infoParagraph,
+            PrimeFactorization.GcdAndLcmInfo.examplesParagraph,
             "The Euclidean algorithm can be used to find the GCD of 2 numbers, usually faster than " +
-                "calculating the prime factorizations. For the Euclidean algorithm, first take 2 " +
-                "numbers. If the bigger number is divisible by the smaller number, then the smaller " +
-                "number is the GCD. Otherwise, the GCD of the 2 numbers is the same as the GCD of the " +
-                "smaller number and the remainder when the bigger number is divided by the smaller " +
-                "number. Repeat."
+                "calculating the prime factorizations. This algorithm was named after the ancient Greek " +
+                "mathematician Euclid. For this algorithm, first take 2 numbers. If the bigger number is " +
+                "divisible by the smaller number, then the smaller number is the GCD. Otherwise, the GCD " +
+                "of the 2 numbers is the same as the GCD of the smaller number and the remainder when the " +
+                "bigger number is divided by the smaller number. Repeat."
         );
 
     // This section uses prime factorizations so the input constraints for those will be used.

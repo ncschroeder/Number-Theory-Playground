@@ -17,13 +17,12 @@ import java.util.stream.Collectors;
  * to prime factorizations and the section for it.
  */
 public class PrimeFactorization {
-    /**
-     *
-     */
     private static final String info =
-        "The fundamental theorem of arithmetic states that every integer > 1 can be expressed as the product " +
-        "of prime numbers. This product is called its prime factorization. There are some interesting " +
-        "applications for this. Visit the GCD and LCM or the divisibility sections for some applications.";
+        "The Fundamental Theorem of Arithmetic says that every integer > 1 can be expressed as the product " +
+        "of prime numbers. The prime factorization (PF) of an integer is an expression of the prime numbers " +
+        "whose product is that integer. For example, the PF of 5 is just 5, the PF of 25 is 5^2, and the PF " +
+        "of 12,250 is 2 x 5^3 x 7^2. There are some interesting applications for this. Visit the GCD and LCM " +
+        "or the Divisibility sections for some applications.";
 
     public static final int minInputInt = 2;
     public static final int maxInputInt = tenThousand;
@@ -194,18 +193,23 @@ public class PrimeFactorization {
      * PrimeFactorizations we create in the constructor for this class.
      */
     public static class GcdAndLcmInfo {
-        /**
-         * This will be displayed in the application and it also can help explain the code in this class.
-         */
-        public static String infoString =
-            "One way to find the GCD and LCM of 2 numbers is to look at the prime factorizations " +
-            "of those numbers. If those numbers do not have any common prime factors, then " +
-            "the GCD is 1. If they do have common prime factors, then the prime factorization " +
-            "of the GCD consists of all the common prime factors and the power of each factor " +
-            "is the minimum power of that factor in the 2 prime factorizations. The prime " +
-            "factorization of the LCM consists of all factors that are in either of the prime " +
-            "factorizations of the 2 numbers. The power for each factor is the maximum power " +
-            "of that factor in the 2 prime factorizations.";
+        public static final String infoParagraph =
+            "One way to find the GCD and LCM of 2 numbers is to look at the prime factorizations (PFs) " +
+            "of those numbers. If those numbers do not have any common prime factors, then the GCD is 1. " +
+            "If they do have common prime factors, then the PF of the GCD consists of all the common prime " +
+            "factors and the power of each factor is the minimum power of that factor in the 2 PFs. The PF " +
+            "of the LCM consists of all factors that are in either of the PFs of the 2 numbers. If a factor " +
+            "is in both PFs then the power of that factor in the LCM PF is the max of the powers of that " +
+            "factor the 2 PFs. If a factor is unique to one of the PFs then that factor and its power are " +
+            "in the LCM PF.";
+            
+        public static final String examplesParagraph =
+            "Let's find the GCD and LCM of 6 and 35 using their PFs. 6 has a PF of 2 x 3 and 35 has a " +
+            "PF of 5 x 7. There are no common factors so the GCD is 1. The LCM has a PF of 2 x 3 x 5 x 7 " +
+            "and this equals 210. Let's find the GCD and LCM of 54 and 99. 54 has a PF of 2 x 3^3 and " +
+            "99 has a PF of 3^2 x 11. 3 is the only common factor and the minimum power of that factor is " +
+            "2 so the GCD has a PF of 3^2 and this equals 9. The max power of that factor is 3 so the LCM " +
+            "has a PF that consists of 3^3. The PF of the LCM is 2 x 3^3 x 11 and this equals 594.";
 
 
         // Since this class has a unique and specific use, I'll use public final fields instead of getter methods

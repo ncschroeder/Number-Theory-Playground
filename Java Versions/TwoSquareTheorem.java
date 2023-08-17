@@ -5,12 +5,8 @@ import java.util.List;
  * Utility class related to the two square theorem and the section for it.
  */
 public class TwoSquareTheorem {
-    /**
-     * A string that has info about the theorem. This will be displayed to the end user and it also can help
-     * explain the code in this class.
-     */
     private static final String theoremInfo =
-        "The two square theorem says that every prime number that is 1 above a multiple " +
+        "The Two Square Theorem says that every prime number that is 1 above a multiple " +
         "of 4 can be expressed as the sum of 2 squares.";
 
     public static final int minInputInt = 0;

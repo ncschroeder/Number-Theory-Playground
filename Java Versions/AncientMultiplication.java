@@ -12,23 +12,29 @@ import java.util.stream.Stream;
  * Utility class related to Ancient Egyptian multiplication and the section for it.
  */
 public class AncientMultiplication {
-    /**
-     * A list of strings that have info about the algorithm. This will be displayed to the end user and it also can help
-     * explain the code in this class.
-     */
     private static final List<String> infoStrings =
         List.of(
-            "The Ancient Egyptians had an interesting algorithm for multiplication. My way of explaining " +
+            "The ancient Egyptians had an interesting algorithm for multiplication. My way of explaining " +
                 "the algorithm goes like this:",
-            "1. Find all the powers of 2 that are less than or equal to the min of the 2 numbers. This could " +
-                "be done without modern multiplication by starting with 1 and having each following term be " +
-                "the previous term added to itself.",
-            "2. Find the multiples of the max number that correspond to all these powers of 2. Like with the " +
-                "powers of 2, this could be done by starting with the max number and have each following term " +
-                "be the previous term added to itself.",
-            "3. Find the powers of 2 that sum up to the min number.",
-            "4. Sum up the max number multiples that correspond to these powers of 2.",
-            "This gives us the product of the 2 numbers."
+            "1. Let variable a represent 1 of the numbers and variable b represent the other number.",
+            "2. Find all powers of 2 that are <= a. This could be done without modern multiplication by " +
+                "starting with 1, the 1st power of 2 or 2^0, and finding the next power by adding the previous " +
+                "power to itself. This process will look like: 1 + 1 = 2 (2^1), 2 + 2 = 4 (2^2), 4 + 4 = 8 (2^3), " +
+                "and so on until we find a power that's > a, which we won't use.",
+            "3. Find the products of b and these powers of 2. Like with the powers of 2, this could be done " +
+                "by starting with b and finding the next product by adding the previous product to itself. " +
+                "If we let b be 5, this process will look like: 5 + 5 = 10 (5 x 2), 10 + 10 = 20 (5 x 4), " +
+                "20 + 20 = 40 (5 x 8), and so on.",
+            "4. Find the powers of 2 that add up to a.",
+            "5. Add up the products of b and these powers.",
+            "This gives us the product of the 2 numbers.",
+            "Let's find the product of 5 and 12. Let's first use 5 for the number represented by a in the " +
+                "algorithm above and 12 for b. The powers of 2 <= 5 are 1, 2, and 4. The products of 12 and " +
+                "these powers are 12, 24, and 48. The powers of 2 that add up to 5 are 1 and 4. The products " +
+                "of 12 and these powers are 12 and 48. 12 + 48 = (12 x 1) + (12 x 4) = 12 x (1 + 4) = 60. " +
+                "Now let's use 12 for a and 5 for b. The powers of 2 <= 12 are 1, 2, 4, and 8. The products " +
+                "of 5 and these powers are 5, 10, 20, and 40. The powers of 2 that add up to 12 are 4 and 8. " +
+                "The products of 5 and these powers are 20 and 40. 20 + 40 = (5 x 4) + (5 x 8) = 5 x (4 + 8) = 60."
         );
 
     private static final int minInputInt = 2;

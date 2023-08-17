@@ -4,13 +4,21 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class FibonacciLikeSequences {
-    private static final String infoString =
-        "For any sequence of numbers that starts with 2 numbers and has every following " +
-        "term be the sum of the 2 previous terms, as this sequence goes on and on, the " +
-        "ratio between consecutive terms gets closer and closer to the Golden Ratio, " +
-        "which is approximately " + (1 + Math.sqrt(5)) / 2 + ". The most notable sequence " +
-        "of this type is the Fibonacci sequence, whose first 2 numbers are 1 and 1. " +
-        "Another notable sequence are the Lucas numbers, whose first 2 numbers are 2 and 1.";
+    private static final List<String> infoParagraphs =
+        List.of(
+            "I consider a number sequence to be \"Fibonacci-like\" if it starts with 2 numbers and has " +
+                "every following element be the sum of the 2 previous elements. The Fibonacci sequence " +
+                "does this and has 1 and 1 as its first 2 elements. Fibonacci was a mathematician from " +
+                "the 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence are the Lucas " +
+                "numbers, which has 2 and 1 as its first 2 elements. This sequence was named after 1800s " +
+                "French mathematician Francois Edouard Anatole Lucas. Lucas is pronounced like Lucaw.",
+            "The Golden Ratio is an irrational number symbolized by the Greek letter Phi. " +
+                "Phi = (1 + the square root of 5) / 2, which is approximately " + (1 + Math.sqrt(5)) / 2 +
+                ". As we advance further and further into a Fibonacci-like sequence, the ratio between an " +
+                "element and the element before it gets closer and closer to Phi. For example, the first 8 " +
+                "elements of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. " +
+                "2 / 1 = 2. 8 / 5 = 1.6. 21 / 13 is approximately " + (double) 21 / 13 + "."
+        );
 
     private static final int sequenceLength = 20;
     private static final int minInputInt = 1;
@@ -81,7 +89,7 @@ public class FibonacciLikeSequences {
         public Section() {
             super(
                 "Fibonacci-Like Sequences",
-                List.of(infoString),
+                infoParagraphs,
                 minInputInt,
                 maxInputInt,
                 String.format(

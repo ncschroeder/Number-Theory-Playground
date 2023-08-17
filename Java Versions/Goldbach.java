@@ -10,11 +10,11 @@ import java.util.stream.Stream;
  */
 public class Goldbach {
     private static final String info =
-        "The Goldbach conjecture states that every even number >= 4 can be expressed as the sum of " +
-        "2 prime numbers. A conjecture is a statement that is believed to be true but has not been " +
-        "proven to be true. The Goldbach conjecture has been verified to be true for all even numbers " +
-        ">= 4 && <= a very high number. I don't know this number off the top of my head but it's way, " +
-        "way bigger than the maximum number you're allowed to use for input.";
+        "The Goldbach Conjecture says that every even number >= 4 can be expressed as the sum of 2 prime " +
+        "numbers. A conjecture is a statement that is believed to be true but has not been proven to be " +
+        "true. The Goldbach Conjecture has been verified to be true for all even numbers >= 4 && <= a very " +
+        "high number. I don't know this number off the top of my head but it's way, way bigger than the " +
+        "max number you're allowed to use for input.";
 
     public static final int minInputInt = 4;
     public static final int maxInputInt = oneHundredThousand;

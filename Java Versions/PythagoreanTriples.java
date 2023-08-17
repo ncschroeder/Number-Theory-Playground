@@ -10,11 +10,12 @@ import java.util.stream.Stream;
  */
 public class PythagoreanTriples {
     private static final String info =
-        "The Pythagorean theorem says that for the side lengths of a right triangle, " +
-        "the sum of the squares of the 2 short sides equals the square of the long " +
-        "side (hypotenuse) or a^2 + b^2 = c^2. There are an infinite amount of trios " +
-        "of integers that a, b, and c can be. These trios are called Pythagorean triples.";
-
+        "The Pythagorean Theorem says that for the side lengths of a right triangle, the sum of the " +
+        "squares of the 2 short sides equals the square of the long side (hypotenuse) or " +
+        "a^2 + b^2 = c^2. This theorem was named after the ancient Greek mathematician Pythagoras. There " +
+        "are an infinite amount of trios of integers that a, b, and c can be. These trios are called " +
+        "Pythagorean Triples.";
+    
     private static final int numberOfTriplesToFind = 10;
     private static final int minInputInt = 0;
     private static final int maxInputInt = oneThousand;

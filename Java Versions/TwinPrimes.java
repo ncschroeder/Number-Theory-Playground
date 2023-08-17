@@ -8,9 +8,11 @@ import java.util.stream.Stream;
  */
 public class TwinPrimes {
     private static final String info =
-        "Twin primes are prime numbers that differ by 2. It is conjectured that there " +
-        "are infinitely many of them. A conjecture is a statement that is believed to be " +
-        "true but has not been proven to be.";
+        "Twin primes are pairs of prime numbers that differ by 2. It is conjectured that there are infinitely " +
+        "many of them. A conjecture is a statement that is believed to be true but has not been proven to be. " +
+        "Fun fact: all prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this " +
+        "means that all pairs of twin primes besides 3 and 5 consist of 1 number that is 1 below a multiple " +
+        "of 6 and another number that is 1 above that same multiple of 6.";
 
     private static final int numberOfPairsToFind = 20;
     private static final int minInputInt = 0;

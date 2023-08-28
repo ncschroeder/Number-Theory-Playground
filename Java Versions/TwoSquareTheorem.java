@@ -1,30 +1,42 @@
+package com.nicholasschroeder.numbertheoryplayground;
+
 import java.awt.Component;
 import java.util.List;
 
+import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static com.nicholasschroeder.numbertheoryplayground.Primes.isPrime;
+
 /**
- * Utility class related to the two square theorem and the section for it.
+ * Utility class related to the Two Square Theorem and the section for it.
  */
 public class TwoSquareTheorem {
     private static final String theoremInfo =
         "The Two Square Theorem says that every prime number that is 1 above a multiple " +
         "of 4 can be expressed as the sum of 2 squares.";
-
-    public static final int minInputInt = 0;
-    public static final int maxInputInt = oneBillion;
-
+    
+    private static final int minInputInt = 0;
+    private static final int maxInputInt = oneBillion;
+    
     public static class Info {
+        /**
+         * This is set to the first prime number >= an input int that is 1 above a multiple of 4.
+         */
         private int primeNumber;
+        
+        /**
+         * int1 and int2 are set to the ints whose squares sum to primeNumber.
+         */
         private int int1;
         private final int int2;
 
-        public Info(int anInt) {
-            assertIsInRange(anInt, minInputInt, maxInputInt);
+        public Info(int input) {
+            assertIsInRange(input, minInputInt, maxInputInt);
 
-            primeNumber = anInt;
+            primeNumber = input;
             while (primeNumber % 4 != 1) {
                 primeNumber++;
             }
-            while (!Primes.isPrime(primeNumber)) {
+            while (!isPrime(primeNumber)) {
                 primeNumber += 4;
             }
 
@@ -38,45 +50,36 @@ public class TwoSquareTheorem {
                     return;
                 }
             }
-            throw new IllegalStateException("Numbers not found for two square theorem algorithm");
+            
+            // This part shouldn't be reached.
+            int2 = 0;
+            printError("Numbers not found for Two Square Theorem algorithm with an input of " + input);
         }
-
+    
         public int getPrimeNumber() {
             return primeNumber;
         }
-
+    
         public int getInt1() {
             return int1;
         }
-
+    
         public int getInt2() {
             return int2;
         }
-
-        public int getSquare1() {
-            return square1;
-        }
-
-        public int getSquare2() {
-            return square2;
-        }
     }
-
-    /**
-     * @return The result of creating an Info instance using anInt and then using its attributes to
-     * form a sentence.
-     */
-    private static String getInfoString(int anInt) {
-        Info info = new Info(anInt);
+    
+    private static String getInfoString(int input) {
+        var info = new Info(input);
         return String.format(
-            "The first integer >= %s that is prime and is 1 above a multiple of 4 is %s, which is equal to %s + %s",
-            getLongStringWithCommas(anInt),
-            getLongStringWithCommas(info.primeNumber),
+            "The first integer >= %s that is prime and is 1 above a multiple of 4 is %s, which is equal to %s + %s.",
+            stringifyWithCommas(input),
+            stringifyWithCommas(info.primeNumber),
             getLongAndSquareString(info.int1),
             getLongAndSquareString(info.int2)
         );
     }
-
+    
     public static class Section extends SingleInputSection {
         public Section() {
             super(
@@ -86,21 +89,18 @@ public class TwoSquareTheorem {
                 maxInputInt,
                 "get the first prime number that is >= that integer and is 1 above a multiple " +
                     "of 4, as well as the squares that sum to that prime number",
-                "the two square theorem"
+                "the Two Square Theorem"
             );
         }
-
+        
         @Override
-        public String getCliAnswer(int inputInt) {
-            return NTPCLI.insertNewLines(getInfoString(inputInt));
+        public String getCliAnswer(int input) {
+            return NTPCLI.insertNewLines(getInfoString(input));
         }
-
+    
         @Override
-        public List<Component> getGuiComponents(int inputInt) {
-            String infoString = getInfoString(inputInt);
-            NTPTextArea ta = new NTPTextArea(AnswerPanel.contentFont);
-            ta.setText(infoString);
-            return List.of(ta);
+        public List<Component> getGuiComponents(int input) {
+            return List.of(new NTPTextArea(getInfoString(input)));
         }
     }
 }

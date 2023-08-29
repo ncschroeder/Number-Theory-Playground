@@ -7,8 +7,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+
 /**
- * Launcher for the Number Theory Playground Command Line Interface.
+ * Class with code related to the Number Theory Playground Command Line Interface, including the code for
+ * running the application and some static methods. The static methods are used in this class and by Section
+ * classes for implementing getCliAnswer.
  */
 public class NTPCLI {
     public static void main(String[] args) {
@@ -18,8 +22,8 @@ public class NTPCLI {
     Scanner inputReader = new Scanner(System.in);
     
     /**
-     * Lets the user type something and after they do and hit enter, a trimmed and all-lowercase version
-     * of what they typed gets returned
+     * Lets the user type something and after they do and hit Enter, a trimmed and all-lowercase version
+     * of what they typed gets returned.
      */
     String getFormattedInput() {
         return inputReader.nextLine().trim().toLowerCase();
@@ -96,7 +100,7 @@ public class NTPCLI {
     /**
      * Displays the choices for the section and lets the user either enter custom input to use for the
      * calculation of the section, generate random input to use for the calculation, get info about the
-     * section, or go bock to the main menu.
+     * section, or go back to the main menu.
      */
     void goToSection(Section section) {
         final String randomKey = "r";
@@ -105,7 +109,7 @@ public class NTPCLI {
         String sectionChoicesString = getSectionChoicesString(section, randomKey, infoKey, menuKey);
         
         // Let sectionInfo contain the paragraphs of section info with new lines inserted into the
-        // paragraphs and with each paragraph separated by a blank line
+        // paragraphs and with each paragraph separated by a blank line.
         String sectionInfo =
             section.getInfo().stream()
             .map(NTPCLI::insertNewLines)
@@ -189,7 +193,7 @@ public class NTPCLI {
             "\n",
             section.getHeadingText(),
             "",
-            "Type one of the following and press enter:",
+            "Type one of the following and press Enter:",
             intChoice,
             randomChoice,
             infoChoice,
@@ -243,14 +247,14 @@ public class NTPCLI {
      * The exception to this is that if an element of the Stream is more than 75 characters long then it
      * will be placed on a line by itself.
      */
-    public static String stringifyList(String heading, Stream<String> strings) {
+    public static String streamToString(String heading, Stream<String> strings) {
         final int spaceSeparatorWidth = 4;
         final String spaceSeparator = getWhiteSpace(spaceSeparatorWidth);
         
-        // Use AtomicReference to allow for reassignability in a lambda
+        // Use AtomicReference to allow for reassignability in a lambda.
         var spacesJoinerRef =
             new AtomicReference<StringJoiner>(new StringJoiner(spaceSeparator));
-        var linesJoiner = new StringJoiner("\n").add(heading);
+        StringJoiner linesJoiner = new StringJoiner("\n").add(heading);
             
         strings.forEachOrdered(s -> {
             int spacesJoinerLength = spacesJoinerRef.get().length();

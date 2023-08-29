@@ -1,3 +1,5 @@
+package com.nicholasschroeder.numbertheoryplayground;
+
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -58,10 +60,10 @@ public class GcdAndLcm {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof EuclideanIteration) {
-                var other = (EuclideanIteration) obj;
-                return this.max == other.max && this.min == other.min && this.remainder == other.remainder;
+        public boolean equals(Object o) {
+            if (o instanceof EuclideanIteration) {
+                var iteration = (EuclideanIteration) o;
+                return this.max == iteration.max && this.min == iteration.min && this.remainder == iteration.remainder;
             }
             return false;
         }
@@ -163,9 +165,10 @@ public class GcdAndLcm {
             .center();
         
         List.of(euclideanMaxColumnHeading, euclideanMinColumnHeading, euclideanRemainderColumnHeading)
-        .forEach(h -> iterationsTable.addLabel(h, tableHeadingFont));
+        .forEach(s -> iterationsTable.addLabel(s, tableHeadingFont));
         
-        euclideanIterations.stream()
+        euclideanIterations
+        .stream()
         .flatMap(ei -> Stream.of(ei.getMaxString(), ei.getMinString(), ei.getRemainderString()))
         .forEachOrdered(s -> iterationsTable.addLabel(s, answerContentFont));
         
@@ -266,7 +269,7 @@ public class GcdAndLcm {
             .setMaxSizeToPreferredSize();
     }
     
-    private static String getGcdAndLcmInfoHeading(int input1, int input2) {
+    private static String getAnswerMainHeading(int input1, int input2) {
         return String.format("GCD and LCM Info for %s and %s", stringifyWithCommas(input1), stringifyWithCommas(input2));
     }
 
@@ -287,7 +290,7 @@ public class GcdAndLcm {
         public String getCliAnswer(int input1, int input2) {
             return String.join(
                 "\n\n",
-                getGcdAndLcmInfoHeading(input1, input2),
+                getAnswerMainHeading(input1, input2),
                 getEuclideanCliAnswer(input1, input2),
                 getGcdAndLcmViaPfCliAnswer(input1, input2)
             );
@@ -296,7 +299,7 @@ public class GcdAndLcm {
         @Override
         public List<Component> getGuiComponents(int input1, int input2) {
             return List.of(
-                createCenteredLabel(getGcdAndLcmInfoHeading(input1, input2), answerMainHeadingFont),
+                createCenteredLabel(getAnswerMainHeading(input1, input2), answerMainHeadingFont),
                 createGap(10),
                 getEuclideanPanel(input1, input2),
                 createGap(10),

@@ -87,20 +87,20 @@ class NTPCLITest {
     
     
     @ParameterizedTest
-    @MethodSource("getStringifyListArgs")
-    void testStringifyList(String expectedContentResult, List<String> contentStrings, String message) {
+    @MethodSource("getStreamToStringArgs")
+    void testStreamToString(String expectedContentResult, List<String> contentStrings, String message) {
         String testHeading = "test heading";
         assertEquals(
             testHeading + "\n" + expectedContentResult,
-            stringifyList(testHeading, contentStrings.stream()),
+            streamToString(testHeading, contentStrings.stream()),
             message
         );
     }
     
-    static Stream<Arguments> getStringifyListArgs() {
+    static Stream<Arguments> getStreamToStringArgs() {
         String testMessage =
             "If a list of elements is 75 characters long after being joined together, " +
-            "stringifyList puts those elements on a single line";
+            "streamToString puts those elements on a single line";
     
         String spaceSeparator = Misc.getWhiteSpace(4);
         String testElement = "test element";
@@ -116,7 +116,7 @@ class NTPCLITest {
     
         
         testMessage =
-            "If a list of elements is 76 characters long after being joined together, stringifyList " +
+            "If a list of elements is 76 characters long after being joined together, streamToString " +
             "puts the last element on its own line and the rest of the elements on the same line";
         
         strings = new ArrayList<>(strings);

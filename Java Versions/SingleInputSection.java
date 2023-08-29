@@ -1,3 +1,5 @@
+package com.nicholasschroeder.numbertheoryplayground;
+
 import java.awt.Component;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public abstract class SingleInputSection extends Section {
     }
     
     /**
-     * Constructor that the Goldbach section can use since it has a unique input constraints sentence format
+     * Constructor that the Goldbach section can use since it has a unique input constraints sentence format.
      */
     protected SingleInputSection(
         String headingText,
@@ -48,13 +50,13 @@ public abstract class SingleInputSection extends Section {
 
     /**
      * Used by the CLI to run the algorithm(s) for this section using the input and create a string with
-     * info about the results of the algorithm(s)
+     * info about the results of the algorithm(s).
      */
     public abstract String getCliAnswer(int input);
         
     /**
      * Used by the GUI to run the algorithm(s) for this section using the input and create GUI components
-     * with info about the results of the algorithm(s)
+     * with info about the results of the algorithm(s).
      */
     public abstract List<Component> getGuiComponents(int input);
     

@@ -1,6 +1,9 @@
+package com.nicholasschroeder.numbertheoryplayground;
+
 import java.util.List;
 import java.util.Random;
 
+import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
 
 /**
  * Class for data and functionality of each section of the applications.
@@ -80,7 +83,7 @@ public abstract class Section {
     }
     
     /**
-     * The inputConstraintsSentenceFormat is a format string consisting of an %s, %d, and %s in that order
+     * The inputConstraintsSentenceFormat is a format string consisting of an %s, %d, and %s in that order.
      */
     protected Section(
         String headingText,
@@ -132,17 +135,12 @@ public abstract class Section {
     
     
     /**
-     * Returns true if this is a SingleInputSection and false if this is a DoubleInputSection
+     * Returns true if this is a SingleInputSection and false if this is a DoubleInputSection.
      */
     public final boolean isSingleInputSection() {
         return this instanceof SingleInputSection;
     }
     
-    /**
-     * Goldbach section needs even ints for input so this is used by the GUI when an increment or
-     * decrement button is clicked to determine whether or not the number to increment or decrement
-     * to needs to be even.
-     */
     public final boolean isGoldbachSection() {
         return this instanceof Goldbach.Section;
     }
@@ -151,8 +149,7 @@ public abstract class Section {
     private static final Random random = new Random();
     
     /**
-     * Returns a random int in the appropriate range. If this method is called with the Goldbach section,
-     * then this int will be even.
+     * Returns a random int in the range of valid input ints for this Section.
      */
     public int getRandomValidInt() {
         return Math.max(minInputInt, random.nextInt(maxInputInt));

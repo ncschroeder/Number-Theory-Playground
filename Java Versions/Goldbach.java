@@ -1,9 +1,15 @@
+package com.nicholasschroeder.numbertheoryplayground;
+
 import java.awt.Component;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static com.nicholasschroeder.numbertheoryplayground.Divisibility.isEven;
+import static com.nicholasschroeder.numbertheoryplayground.Divisibility.isOdd;
+import static com.nicholasschroeder.numbertheoryplayground.Primes.bothArePrime;
 
 /**
  * Utility class related to the Goldbach conjecture and the section for it.
@@ -22,7 +28,7 @@ public class Goldbach {
 
     /**
      * Find the pairs of prime numbers that sum to the input and returns an array that contains the lower numbers
-     * of each pair
+     * of each pair.
      */
     public static int[] getGoldbachPrimePairStarts(int input) {
         assertIsInRange(anInt, minInputInt, maxInputInt);
@@ -32,11 +38,10 @@ public class Goldbach {
 
         /*
         First, check if the input is 4 since 4 is the only even number >= 4 that has 2 in a pair of prime
-        numbers that sum to it.
-        
-        If the input isn't 4, check pairs of odd ints that sum to the input for primality. The iterating only
-        needs to go up to the floor of half of the input. This is because after that point, checks for
-        primality will be done on pairs of ints that have already been checked for primality.
+        numbers that sum to it. If the input isn't 4, check pairs of odd ints that sum to the input for
+        primality. The iterating only needs to go up to the floor of half of the input. This is because
+        after that point, checks for primality will be done on pairs of ints that have already been checked
+        for primality.
         */
         
         if (input == 4) {
@@ -52,8 +57,7 @@ public class Goldbach {
 
     /**
      * Returns a Stream of the string representations of the pairs of prime numbers that sum to the input.
-     * pairStarts should be an int array returned from calling getGoldbachPrimePairStarts and inputInt
-     * should be the int used in that call to getGoldbachPrimePairStarts.
+     * pairStarts should be an int array returned from calling getGoldbachPrimePairStarts using the input.
      */
     private static Stream<String> getGoldbachPrimePairStrings(int[] pairStarts, int input) {
         return Arrays.stream(pairStarts).mapToObj(i -> intPairToString(i, input - i));
@@ -84,7 +88,7 @@ public class Goldbach {
         @Override
         public String getCliAnswer(int input) {
             int[] pairStarts = getGoldbachPrimePairStarts(input);
-            return NTPCLI.stringifyList(
+            return NTPCLI.streamToString(
                 getListHeading(pairStarts.length, input),
                 getGoldbachPrimePairStrings(pairStarts, input)
             );
@@ -93,12 +97,15 @@ public class Goldbach {
         @Override
         public List<Component> getGuiComponents(int input) {
             int[] pairStarts = getGoldbachPrimePairStarts(input);
-            return AnswerPanel.createListHeadingAndTextArea(
+            return NTPGUI.createStreamHeadingAndTextArea(
                 getListHeading(pairStarts.length, input),
                 getGoldbachPrimePairStrings(pairStarts, input)
             );
         }
 
+        /**
+         * Returns an random, even int in the range of valid input ints for this Section.
+         */
         @Override
         public int getRandomValidInt() {
             int randomInt = super.getRandomValidInt();

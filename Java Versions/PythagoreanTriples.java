@@ -50,10 +50,10 @@ public class PythagoreanTriples {
         }
     
         @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof PythagoreanTriple) {
-                PythagoreanTriple other = (PythagoreanTriple) obj;
-                return this.side1 == other.side1 && this.side2 == other.side2 && this.hypotenuse == other.hypotenuse;
+        public boolean equals(Object o) {
+            if (o instanceof PythagoreanTriple) {
+                var triple = (PythagoreanTriple) o;
+                return this.side1 == triple.side1 && this.side2 == triple.side2 && this.hypotenuse == triple.hypotenuse;
             }
             return false;
         }
@@ -73,7 +73,7 @@ public class PythagoreanTriples {
         // sideLength1 represents one of the lengths of one of the two short sides of a right triangle.
         // 3 is the lowest number to be in a Pythagorean triple so make sideLength1 be at least that.
         int sideLength1 = Math.max(input, 3);
-        // sideLength2 represents the length of the other short side
+        // sideLength2 represents the length of the other short side.
         int sideLength2 = sideLength1 + 1;
         
         while (true) {

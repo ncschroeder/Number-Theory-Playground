@@ -1,7 +1,12 @@
+package com.nicholasschroeder.numbertheoryplayground;
+
 import java.awt.Component;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static com.nicholasschroeder.numbertheoryplayground.methods.Divisibility.*;
 
 /**
  * Utility class related to prime numbers and the section for it.
@@ -60,7 +65,7 @@ public class Primes {
     private static final int maxInputInt = oneBillion;
 
     /**
-     * Returns an IntStream of the first 30 prime numbers >= the input
+     * Returns an IntStream of the first 30 prime numbers >= the input.
      */
     public static IntStream getPrimes(int input) {
         assertIsInRange(input, minInputInt, maxInputInt);
@@ -75,7 +80,7 @@ public class Primes {
     }
 
     /**
-     * Returns a Stream of the string representations of the first 30 prime numbers >= the input
+     * Returns a Stream of the string representations of the first 30 prime numbers >= the input.
      */
     private static Stream<String> getPrimesStrings(int input) {
         return getPrimes(input).mapToObj(Misc::stringifyWithCommas);
@@ -103,12 +108,12 @@ public class Primes {
 
         @Override
         public String getCliAnswer(int input) {
-            return NTPCLI.stringifyList(getListHeading(input), getPrimesStrings(input));
+            return NTPCLI.streamToString(getListHeading(input), getPrimesStrings(input));
         }
 
         @Override
         public List<Component> getGuiComponents(int input) {
-            return AnswerPanel.createListHeadingAndPanel(getListHeading(input), getPrimesStrings(input));
+            return NTPGUI.createStreamHeadingAndTextArea(getListHeading(input), getPrimesStrings(input));
         }
     }
 }

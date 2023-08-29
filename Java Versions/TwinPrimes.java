@@ -1,7 +1,12 @@
+package com.nicholasschroeder.numbertheoryplayground;
+
 import java.awt.Component;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static com.nicholasschroeder.numbertheoryplayground.Primes.bothArePrime;
 
 /**
  * Utility class related to twin prime numbers and the section for it.
@@ -19,8 +24,10 @@ public class TwinPrimes {
     private static final int maxInputInt = oneBillion;
 
     /**
-     * Returns an IntStream that can find the first 20 pairs of twin prime numbers where the lower of the 2
-     * numbers is >= the input. This Stream will yield the first numbers in each pair.
+     * Returns an IntStream that can find the first 20 pairs of twin primes where the lower of the 2 numbers
+     * is >= the input. For example, if the input is 3, then the pair 3 and 5 will be the first one found
+     * since the lower number in that pair is 3. If the input is 4, then the pair 5 and 7 will be the first
+     * one found. The elements of this Stream are the lower numbers in each pair.
      */
     public static IntStream getTwinPrimePairStarts(int input) {
         assertIsInRange(input, minInputInt, maxInputInt);
@@ -53,7 +60,7 @@ public class TwinPrimes {
 
     /**
      * Returns a Stream of the string representations of the first 20 pairs of twin prime numbers where the
-     * lower of the 2 numbers is >= the input
+     * lower of the 2 numbers is >= the input.
      */
     private static Stream<String> getTwinPrimePairStrings(int input) {
         return getTwinPrimePairStarts(input).mapToObj(i -> intPairToString(i, i + 2));
@@ -81,12 +88,12 @@ public class TwinPrimes {
 
         @Override
         public String getCliAnswer(int input) {
-            return NTPCLI.stringifyList(getListHeading(input), getTwinPrimePairStrings(input));
+            return NTPCLI.streamToString(getListHeading(input), getTwinPrimePairStrings(input));
         }
 
         @Override
         public List<Component> getGuiComponents(int input) {
-            return AnswerPanel.createListHeadingAndPanel(getListHeading(input), getTwinPrimePairStrings(input));
+            return NTPGUI.createStreamHeadingAndTextArea(getListHeading(input), getTwinPrimePairStrings(input));
         }
     }
 }

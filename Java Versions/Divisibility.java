@@ -1,3 +1,5 @@
+package com.nicholasschroeder.numbertheoryplayground;
+
 import java.awt.Component;
 import java.util.List;
 import java.util.StringJoiner;
@@ -21,6 +23,7 @@ public class Divisibility {
     private static final int minInputInt = PrimeFactorization.minInputInt;
     private static final int maxInputInt = PrimeFactorization.maxInputInt;
 
+
     /**
      * Determines if a is divisible by b without using any special tricks.
      */
@@ -37,6 +40,10 @@ public class Divisibility {
     }
 
 
+    /**
+     * Class with data related to special tricks that can be used to determine if a number is divisible
+     * by another number.
+     */
     public static class TricksInfo {
         private static final String paragraph =
             "Some special tricks can be used to find some of the factors of a number. Let's have a variable i " +
@@ -47,12 +54,19 @@ public class Divisibility {
             "by 8. If i is divisible by both 3 and 4 then i is also divisible by 12.";
         
         
+        /**
+         * Will contain a paragraph with divisibility info for the input int found using the tricks.
+         */
         private final String info;
         
         private final int sumOfDigits;
         private final int last2Digits;
         private final int last3Digits;
         
+        /**
+         * The following fields will be set to values found using the tricks. isDivisibleBy3 will
+         * always be set in the constructor and the rest will have their value changed if need be.
+         */
         private final boolean isDivisibleBy3;
         private boolean isDivisibleBy4 = false;
         private boolean isDivisibleBy6 = false;
@@ -205,14 +219,14 @@ public class Divisibility {
 
     private static final String pfInfoParagraph =
         "Another way you can tell what factors a number has and how many factors it has is by looking at " +
-        "its prime factorization, or PF. Let's say we have an integer > 1 and we'll represent it with the " +
-        "variable i. You can find how many factors i has by looking at i's PF, taking all the powers of the " +
-        "prime factors, adding 1 to each, and then multiplying all these together. For example, the prime " +
-        "factorization of 294 is 2 x 3 x 7^2. The powers are 1, 1, and 2; so there are 2 x 2 x 3 = 12 factors. " +
-        "However, that count includes 1 and the number that the PF is for (294 in this case). If you want to " +
-        "exclude those, then subtract 2. That would give us 10 factors. You can find the factors of i by " +
-        "finding all the PFs within i's PF, or the \"sub-factorizations\". For 2 x 3 x 7^2, some " +
-        "sub-factorizations include 2, 2 x 7, and 3 x 7^2. This means that 2, 14, and 147 are factors of 294.";
+        "its prime factorization (PF). Let's have a variable i and let it represent an integer > 1. You can " +
+        "find how many factors i has by looking at i's PF, taking all the powers of the prime factors, adding " +
+        "1 to each, and then multiplying all these together. For example, the PF of 294 is 2 x 3 x 7^2. The " +
+        "powers are 1, 1, and 2; so there are 2 x 2 x 3 = 12 factors. However, that count includes 1 and the " +
+        "number that the PF is for (294 in this case). If you want to exclude those, then subtract 2. That " +
+        "would give us 10 factors. You can find the factors of i by finding all the PFs within i's PF, or the " +
+        "\"sub-factorizations\", as I like to call them. For 2 x 3 x 7^2, some sub-factorizations include " +
+        "2, 2 x 7, and 3 x 7^2. This means that 2, 14, and 147 are factors of 294.";
 
 
     /*
@@ -222,8 +236,7 @@ public class Divisibility {
     */
 
     /**
-     * Returns an IntStream of the factors of the input besides 1 and the input. This method is called by
-     * getFactorPfStrings below and by a unit test.
+     * Returns an IntStream of the factors of the input besides 1 and the input.
      */
     public static IntStream getFactors(int input) {
         assertIsInRange(input, minInputInt, maxInputInt);
@@ -241,7 +254,7 @@ public class Divisibility {
             .mapToObj(i -> new PrimeFactorization(i).toStringWithCorrespondingInt());
     }
     
-    private static String getDivisibilityInfoHeading(int input) {
+    private static String getAnswerMainHeading(int input) {
         return "Divisibility Info for " + stringifyWithCommas(input);
     }
     
@@ -285,7 +298,7 @@ public class Divisibility {
     
             return String.join(
                 "\n",
-                getDivisibilityInfoHeading(input),
+                getAnswerMainHeading(input),
                 "",
                 tricksInfoHeading,
                 NTPCLI.insertNewLines(new TricksInfo(input).toString()),
@@ -317,7 +330,7 @@ public class Divisibility {
             }
             
             return List.of(
-                createCenteredLabel(getDivisibilityInfoHeading(input), answerMainHeadingFont),
+                createCenteredLabel(getAnswerMainHeading(input), answerMainHeadingFont),
                 createGap(15),
                 createCenteredLabel(tricksInfoHeading, answerSubHeadingFont),
                 createGap(5),

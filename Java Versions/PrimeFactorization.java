@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static com.nicholasschroeder.numbertheoryplayground.Divisibility.*;
 
 /**
  * Class that can be instantiated to form an abstraction of a prime factorization. Also has static members related
@@ -47,6 +49,7 @@ public class PrimeFactorization {
     private int correspondingInt;
 
     /**
+     * Constructs a new object to represent the prime factorization of the input.
      */
     public PrimeFactorization(int input) {
         assertIsInRange(input, minInputInt, maxInputInt);
@@ -89,24 +92,18 @@ public class PrimeFactorization {
     }
 
     /**
+     * Constructs a new object to represent the prime factorization whose factors and powers are keys and
+     * values, respectively, in the Map provided.
+     * 
      * We're setting the factorsAndPowers Map in this PrimeFactorization to the Map provided, meaning that
      * any changes to that Map after using it to create this PrimeFactorization will cause unwanted behavior.
      * However, I don't consider this much of a problem since this constructor is private and the only place
      * it's used is at the bottom of the GcdAndLcmInfo constructor below.
      */
     private PrimeFactorization(SortedMap<Integer, Integer> factorsAndPowers) {
-        Set<Map.Entry<Integer, Integer>> entries = factorsAndPowers.entrySet();
-        if (factorsAndPowers.isEmpty() ||
-            entries.stream().anyMatch(
-                entry -> !Primes.isPrime(entry.getKey()) || entry.getValue() < 1
-            )
-        ) {
-            logError("Invalid map provided for PrimeFactorization constructor: " + factorsAndPowers);
-        }
-
         this.factorsAndPowers = factorsAndPowers;
         correspondingInt = 1;
-        for (Map.Entry<Integer, Integer> entry : entries) {
+        for (Map.Entry<Integer, Integer> entry : factorsAndPowers.entrySet()) {
             correspondingInt *= Math.pow(entry.getKey(), entry.getValue());
         }
     }
@@ -163,9 +160,14 @@ public class PrimeFactorization {
     }
 
     /**
-     * The number of factors can be found by taking the powers of all the prime factors in the prime factorization,
-     * adding 1 to each, and multiplying these all together. This method calculates this and returns a string that
-     * says the number of factors and how it was determined.
+     * The number of factors can be found by taking the powers of all the prime factors in the prime
+     * factorization, adding 1 to each, and multiplying these all together. For example, the prime
+     * factorization of 294 is 2 x 3 x 7^2. The powers are 1, 1, and 2; so there are 2 x 2 x 3 = 12
+     * factors. However, that count includes 1 and the number that the prime factorization is for
+     * (294 in this case). If you want to exclude those, then subtract 2. That would give us 10 factors.
+     *
+     * This method calculates the number of factors and returns a string that says the number
+     * of factors and how it was calculated.
      */
     public String getNumberOfFactorsInfo() {
         var numberOfFactors = 1;
@@ -174,7 +176,7 @@ public class PrimeFactorization {
             numberOfFactors *= (power + 1);
             powerStrings.add(String.format("(%d + 1)", power));
         }
-
+        
         return String.format(
             "By looking at the powers, we can see there are %s = %d total factors. If 1 and %s are " +
                 "excluded then there are %d factors.",
@@ -183,118 +185,6 @@ public class PrimeFactorization {
             getCorrespondingIntString(),
             numberOfFactors - 2
         );
-    }
-
-
-    /**
-     * Prime factorizations can be used to find the greatest common divisor (GCD) and least common multiple
-     * (LCM) of 2 integers. This class does just that. An advantage to having this class be a nested class
-     * within the PrimeFactorization class is that we can access the private factorsAndPowers map of the
-     * PrimeFactorizations we create in the constructor for this class.
-     */
-    public static class GcdAndLcmInfo {
-        public static final String infoParagraph =
-            "One way to find the GCD and LCM of 2 numbers is to look at the prime factorizations (PFs) " +
-            "of those numbers. If those numbers do not have any common prime factors, then the GCD is 1. " +
-            "If they do have common prime factors, then the PF of the GCD consists of all the common prime " +
-            "factors and the power of each factor is the minimum power of that factor in the 2 PFs. The PF " +
-            "of the LCM consists of all factors that are in either of the PFs of the 2 numbers. If a factor " +
-            "is in both PFs then the power of that factor in the LCM PF is the max of the powers of that " +
-            "factor the 2 PFs. If a factor is unique to one of the PFs then that factor and its power are " +
-            "in the LCM PF.";
-            
-        public static final String examplesParagraph =
-            "Let's find the GCD and LCM of 6 and 35 using their PFs. 6 has a PF of 2 x 3 and 35 has a " +
-            "PF of 5 x 7. There are no common factors so the GCD is 1. The LCM has a PF of 2 x 3 x 5 x 7 " +
-            "and this equals 210. Let's find the GCD and LCM of 54 and 99. 54 has a PF of 2 x 3^3 and " +
-            "99 has a PF of 3^2 x 11. 3 is the only common factor and the minimum power of that factor is " +
-            "2 so the GCD has a PF of 3^2 and this equals 9. The max power of that factor is 3 so the LCM " +
-            "has a PF that consists of 3^3. The PF of the LCM is 2 x 3^3 x 11 and this equals 594.";
-
-
-        // Since this class has a unique and specific use, I'll use public final fields instead of getter methods
-
-        /**
-         * Prime factorization of the 1st int provided
-         */
-        public final PrimeFactorization int1Pf;
-
-        /**
-         * Prime factorization of the 2nd int provided
-         */
-        public final PrimeFactorization int2Pf;
-
-        /**
-         * If the GCD of the ints provided is 1, then this is an empty Optional. Otherwise, this is an
-         * Optional with the prime factorization of the GCD. The reason for this behavior is that
-         * mathematically, only integers >= 2 have a prime factorization.
-         */
-        public final Optional<PrimeFactorization> gcdPf;
-
-        public final PrimeFactorization lcmPf;
-
-
-        /**
-         * Constructs a new object for info about int1 and int2 and their GCD and LCM.
-         * @throws IllegalArgumentException if int1 or int2 are invalid inputs for creating a PrimeFactorization.
-         */
-        public GcdAndLcmInfo(int int1, int int2) {
-            int1Pf = new PrimeFactorization(int1);
-            int2Pf = new PrimeFactorization(int2);
-
-            /*
-            The prime factorization of the GCD of 2 numbers contains all the prime factors that are in both of the prime
-            factorizations of the 2 numbers. The power of each prime factor is the minimum of the 2 powers in the 2
-            prime factorizations. If there are no common prime factors then the GCD is 1.
-
-            The prime factorization of the LCM of 2 numbers contains all prime factors that are in either of the prime
-            factorizations for the 2 numbers. If a prime factor is in both prime factorizations then the power of that
-            prime factor in the LCM prime factorization is the max of the 2 powers in the 2 prime factorizations. If a
-            prime factor is unique to 1 of the prime factorizations of the 2 numbers, then the power of that prime factor
-            in the LCM prime factorization is the same as in the prime factorization for that 1 number.
-            */
-            TreeMap<Integer, Integer> gcdPfMap = new TreeMap<>();
-            TreeMap<Integer, Integer> lcmPfMap = new TreeMap<>();
-
-            for (Map.Entry<Integer, Integer> entry : int1Pf.factorsAndPowers.entrySet()) {
-                Integer factor = entry.getKey();
-                Integer power1 = entry.getValue();
-                Integer power2 = int2Pf.factorsAndPowers.get(factor);
-                if (power2 == null) {
-                    // Prime factor is unique to the first prime factorization
-                    lcmPfMap.put(factor, power1);
-                } else {
-                    // Common prime factors
-                    gcdPfMap.put(factor, Math.min(power1, power2));
-                    lcmPfMap.put(factor, Math.max(power1, power2));
-                }
-
-            // Find the unique prime factors of the second prime factorization
-            for (Map.Entry<Integer, Integer> entry : int2Pf.factorsAndPowers.entrySet()) {
-                int factor = entry.getKey();
-                if (!int1Pf.factorsAndPowers.containsKey(factor)) {
-                    int power = entry.getValue();
-                    lcmPfMap.put(factor, power);
-                }
-            }
-
-            gcdPf = gcdPfMap.isEmpty() ? Optional.empty() : Optional.of(new PrimeFactorization(gcdPfMap));
-            lcmPf = new PrimeFactorization(lcmPfMap);
-        }
-
-        public String getGcdPfStringOrDefault() {
-            return
-                gcdPf
-                .map(PrimeFactorization::toString)
-                .orElse("N/A");
-        }
-
-        public String getGcdString() {
-            return
-                gcdPf
-                .map(PrimeFactorization::getCorrespondingIntString)
-                .orElse("1");
-        }
     }
 
 
@@ -318,8 +208,98 @@ public class PrimeFactorization {
         @Override
         public List<Component> getGuiComponents(int input) {
             return List.of(
-                NTPGUI.createCenteredLabel(new PrimeFactorization(input).getInfoMessage(), AnswerPanel.contentFont)
+                NTPGUI.createCenteredLabel(new PrimeFactorization(input).getInfoMessage(), NTPGUI.answerContentFont)
             );
+        }
+    }
+
+
+    /**
+     * This class uses prime factorizations to find the greatest common divisor (GCD) and least common multiple (LCM)
+     * of 2 integers. An advantage to having this class be a nested class within the PrimeFactorization class is that we
+     * can access the private factorsAndPowers map of the PrimeFactorizations we create in the constructor for this class.
+     */
+    public static class GcdAndLcmInfo {
+        public static final String infoParagraph =
+            "One way to find the GCD and LCM of 2 numbers is to look at the prime factorizations (PFs) " +
+            "of those numbers. If those numbers do not have any common prime factors, then the GCD is 1. " +
+            "If they do have common prime factors, then the PF of the GCD consists of all the common prime " +
+            "factors and the power of each factor is the minimum power of that factor in the 2 PFs. The PF " +
+            "of the LCM consists of all factors that are in either of the PFs of the 2 numbers. If a factor " +
+            "is in both PFs then the power of that factor in the LCM PF is the max of the powers of that " +
+            "factor the 2 PFs. If a factor is unique to one of the PFs then that factor and its power are " +
+            "in the LCM PF.";
+            
+        public static final String examplesParagraph =
+            "Let's find the GCD and LCM of 6 and 35 using their PFs. 6 has a PF of 2 x 3 and 35 has a " +
+            "PF of 5 x 7. There are no common factors so the GCD is 1. The LCM has a PF of 2 x 3 x 5 x 7 " +
+            "and this equals 210. Let's find the GCD and LCM of 54 and 99. 54 has a PF of 2 x 3^3 and " +
+            "99 has a PF of 3^2 x 11. 3 is the only common factor and the minimum power of that factor is " +
+            "2 so the GCD has a PF of 3^2 and this equals 9. The max power of that factor is 3 so the LCM " +
+            "has a PF that consists of 3^3. The PF of the LCM is 2 x 3^3 x 11 and this equals 594.";
+
+
+        // Since this class has a unique and specific use, I'll use public final fields instead of getter methods.
+
+        public final PrimeFactorization input1Pf;
+
+        public final PrimeFactorization input2Pf;
+
+        /**
+         * If the GCD of the ints provided is 1, then this is an empty Optional. Otherwise, this is an
+         * Optional with the prime factorization of the GCD. The reason for this behavior is that
+         * mathematically, only integers >= 2 have a prime factorization.
+         */
+        public final Optional<PrimeFactorization> gcdPf;
+
+        public final PrimeFactorization lcmPf;
+
+        public GcdAndLcmInfo(int input1, int input2) {
+            input1Pf = new PrimeFactorization(input1);
+            input2Pf = new PrimeFactorization(input2);
+            
+            SortedMap<Integer, Integer> gcdPfMap = new TreeMap<>();
+            SortedMap<Integer, Integer> lcmPfMap = new TreeMap<>();
+
+            for (Map.Entry<Integer, Integer> entry : input1Pf.factorsAndPowers.entrySet()) {
+                int factor = entry.getKey();
+                int power1 = entry.getValue();
+                Integer power2 = input2Pf.factorsAndPowers.get(factor);
+                if (power2 == null) {
+                    // Prime factor is unique to the first prime factorization.
+                    lcmPfMap.put(factor, power1);
+                } else {
+                    // Common prime factors.
+                    gcdPfMap.put(factor, Math.min(power1, power2));
+                    lcmPfMap.put(factor, Math.max(power1, power2));
+                }
+            }
+            
+            // Find the unique prime factors of the second prime factorization.
+            for (Map.Entry<Integer, Integer> entry : input2Pf.factorsAndPowers.entrySet()) {
+                int factor = entry.getKey();
+                if (!input1Pf.factorsAndPowers.containsKey(factor)) {
+                    int power = entry.getValue();
+                    lcmPfMap.put(factor, power);
+                }
+            }
+            
+            gcdPf = gcdPfMap.isEmpty() ? Optional.empty() : Optional.of(new PrimeFactorization(gcdPfMap));
+            lcmPf = new PrimeFactorization(lcmPfMap);
+        }
+
+        public String getGcdPfStringOrDefault() {
+            return
+                gcdPf
+                .map(PrimeFactorization::toString)
+                .orElse("N/A");
+        }
+
+        public String getGcdString() {
+            return
+                gcdPf
+                .map(PrimeFactorization::getCorrespondingIntString)
+                .orElse("1");
         }
     }
 }

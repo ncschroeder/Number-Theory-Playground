@@ -47,27 +47,27 @@ public class AncientMultiplication {
      * multiplication info.
      */
     public static class Row {
-        public final int powerOf2;
-        public final int correspondingMultiple;
-
+        private final int powerOf2;
+        private final int correspondingMultiple;
+        
         public Row(int powerOf2, int correspondingMultiple) {
             this.powerOf2 = powerOf2;
             this.correspondingMultiple = correspondingMultiple;
         }
-
-        public String getPowerOf2String() {
+        
+        private String getPowerOf2String() {
             return stringifyWithCommas(powerOf2);
         }
-
-        public String getCorrespondingMultipleString() {
+        
+        private String getCorrespondingMultipleString() {
             return stringifyWithCommas(correspondingMultiple);
         }
     
         @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof Row) {
-                Row other = (Row) obj;
-                return this.powerOf2 == other.powerOf2 && this.correspondingMultiple == other.correspondingMultiple;
+        public boolean equals(Object o) {
+            if (o instanceof Row) {
+                var row = (Row) o;
+                return this.powerOf2 == row.powerOf2 && this.correspondingMultiple == row.correspondingMultiple;
             }
             return false;
         }
@@ -86,8 +86,8 @@ public class AncientMultiplication {
         private final Stream<Row> rows1;
     
         /**
-         * Will contain rows for all the powers of 2 that sum to input1 and the corresponding multiples
-         * of input2, which will sum up to the product of input1 and input2
+         * Will contain rows for all the powers of 2 that add up to input1 and the corresponding multiples
+         * of input2, which will add up to the product of input1 and input2.
          */
         private final Stream<Row> rows2;
         
@@ -97,19 +97,19 @@ public class AncientMultiplication {
             
             this.input1 = input1;
             this.input2 = input2;
-            // Iterate backwards through the binary string of input1 to find the powers of 2 that are <= input1,
-            // as well as the powers of 2 that sum to input1
             
             Stream.Builder<Row> rows1Builder = Stream.builder();
             Stream.Builder<Row> rows2Builder = Stream.builder();
         
+            // Iterate backwards through the binary string of input1 to find the powers of 2 that are <= input1
+            // and the powers of 2 that add up to input1.
             String input1BinaryString = Integer.toBinaryString(input1);
             for (int index = input1BinaryString.length() - 1, power = 0; index >= 0; index--, power++) {
                 int powerOf2 = (int) Math.pow(2, power);
-                    // powerOf2 is one of the powers of 2 that sum to input1
                 var row = new Row(powerOf2, input2 * powerOf2);
                 rows1Builder.accept(row);
                 if (input1BinaryString.charAt(index) == '1') {
+                    // powerOf2 is one of the powers of 2 that add up to input1.
                     rows2Builder.accept(row);
                 }
             }
@@ -118,11 +118,11 @@ public class AncientMultiplication {
             rows2 = rows2Builder.build();
         }
 
-        public String getInput1String() {
+        private String getInput1String() {
             return stringifyWithCommas(input1);
         }
-    
-        public String getInput2String() {
+        
+        private String getInput2String() {
             return stringifyWithCommas(input2);
         }
         
@@ -142,19 +142,19 @@ public class AncientMultiplication {
             );
         }
     
-        public String getAllPowersOf2ColumnHeading() {
+        private String getAllPowersOf2ColumnHeading() {
             return "Powers of 2 <= " + getInput1String();
         }
     
-        public String getPowersOf2ThatSumToInput1ColumnHeading() {
-            return "Powers of 2 that sum to " + getInput1String();
+        private String getPowersOf2ThatAddUpToInput1ColumnHeading() {
+            return "Powers of 2 That Add Up to " + getInput1String();
         }
     
         /**
          * Returns the column heading that will be used for the corresponding multiples column for both tables
          * that will be displayed.
          */
-        public String getInput2MultiplesColumnHeading() {
+        private String getInput2MultiplesColumnHeading() {
             return "Corresponding Multiples of " + getInput2String();
         }
         

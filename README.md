@@ -45,7 +45,7 @@ The Fundamental Theorem of Arithmetic says that every integer $> 1$ can be expre
 
 #### Calculation
 
-Find the PF of an input number.
+Find the PF of an input number faster than you can say "prime factorization". :slightly_smiling_face:
 
 #### Input Range: 2 - 10,000
 
@@ -58,7 +58,7 @@ Say we have 2 integers that we'll represent with the variables $a$ and $b$. If w
 
 Some special tricks can be used to find some of the factors of a number. Let's have a variable $i$ and let it represent an integer. If the sum of the digits of $i$ is divisible by 3, then $i$ is divisible by 3. If the sum of the digits of $i$ is divisible by 9, then $i$ is divisible by 9. If $i$ is even and divisible by 3, then it is also divisible by 6. If the last 2 digits of $i$ is divisible by 4, then $i$ is divisible by 4. If the last 3 digits of $i$ is divisible by 8, then $i$ is divisible by 8. If $i$ is divisible by both 3 and 4 then it is also divisible by 12.
 
-Another way you can tell what factors a number has and how many factors it has is by looking at its prime factorization (PF). Let's have a variable $i$ and let it represent an integer $> 1$. You can find how many factors $i$ has by looking at $i$'s PF, taking all the powers of the prime factors, adding 1 to each, and then multiplying all these together. For example, the PF of 294 is $2 \times 3 \times 7^2$. The powers are 1, 1, and 2; so there are $2 \times 2 \times 3 = 12$ factors. However, that count includes 1 and the number that the PF is for (294 in this case). If you want to exclude those, then subtract 2. That would give us 10 factors. You can find the factors of $i$ by finding all the PFs within $i$'s PF, or the *sub-factorizations*, as I like to call it. For $2 \times 3 \times 7^2$, some sub-factorizations include $2$, $2 \times 7$, and $3 \times 7^2$. This means that 2, 14, and 147 are factors of 294.
+Another way you can tell what factors a number has and how many factors it has is by looking at its prime factorization (PF). Let's have a variable $i$ and let it represent an integer $> 1$. You can find how many factors $i$ has by looking at $i$'s PF, taking all the powers of the prime factors, adding 1 to each, and then multiplying all these together. For example, the PF of 294 is $2 \times 3 \times 7^2$. The powers are 1, 1, and 2; so there are $2 \times 2 \times 3 = 12$ factors. However, that count includes 1 and the number that the PF is for (294 in this case). If you want to exclude those, then subtract 2. That would give us 10 factors. You can find the factors of $i$ by finding all the PFs within $i$'s PF, or the *sub-factorizations*, as I like to call them. For $2 \times 3 \times 7^2$, some sub-factorizations include $2$, $2 \times 7$, and $3 \times 7^2$. This means that 2, 14, and 147 are factors of 294.
 
 #### Calculations
 
@@ -131,11 +131,11 @@ Find the first prime number $\geq$ an input number that is 1 above a multiple of
 
 I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every following number be the sum of the 2 previous numbers. The Fibonacci Sequence does this and has 1 and 1 as its first 2 numbers. Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence are the Lucas Numbers, which has 2 and 1 as its first 2 numbers. This sequence was named after 1800s French mathematician Francois Edouard Anatole Lucas. Lucas is pronounced like *Lucaw*.
 
-The *Golden Ratio* is an irrational number symbolized by the Greek letter $\Phi$ (Phi). $\Phi = \frac{1 + \sqrt{5}}{2} \approx 1.618$. As we advance further and further into a Fibonacci-like sequence, the ratio between an number and the number before it gets closer and closer to $\Phi$. For example, the first 8 numbers of the Fibonacci Sequence are 1, 1, 2, 3, 5, 8, 13, and 21. $\frac{2}{1} = 2$. $\frac{8}{5} = 1.6$. $\frac{21}{13} \approx 1.615$.
+The *Golden Ratio* is an irrational number symbolized by the Greek letter $\Phi$ (Phi). $\Phi = \frac{1 + \sqrt{5}}{2} \approx 1.618$. As we advance further and further into a Fibonacci-like sequence, the ratio between a number and the number before it gets closer and closer to $\Phi$. For example, the first 8 numbers of the Fibonacci Sequence are 1, 1, 2, 3, 5, 8, 13, and 21. $\frac{2}{1} = 2$. $\frac{8}{5} = 1.6$. $\frac{21}{13} \approx 1.615$.
 
-#### Calculation
+#### Calculations
 
-Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers.
+Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers, as well as the ratio between the last number and the second to last number.
 
 #### Input Range: 1 - 1,000
 
@@ -160,6 +160,8 @@ Let's find the product of 5 and 12. Let's first use 5 for the number represented
 Given 2 input numbers:
 1. Find the powers of 2 $\leq$ the first input number and the corresponding multiples of the second input number. Display these in a table.
 2. Find the powers of 2 that sum to the first input number and the corresponding multiples of the second input number. Display these in another table.
+
+This process will be done faster than you can say "ancient Egyptian multiplication". :slightly_smiling_face:
 
 #### Input Range: 2 - 10,000
 

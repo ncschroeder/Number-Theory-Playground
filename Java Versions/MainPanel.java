@@ -1,323 +1,243 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
+package com.nicholasschroeder.numbertheoryplayground;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionListener;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.nicholasschroeder.numbertheoryplayground.NTPGUI.*;
+import static com.nicholasschroeder.numbertheoryplayground.Divisibility.isEven;
 
 /**
- * JPanel that consists of all the content of the GUI version of the Number Theory Playground.
+ * Panel that consists of all the content of the GUI version of the Number Theory Playground.
  */
-public class MainPanel extends NumberTheoryPlaygroundPanel {
-    JLabel sectionHeading = new JLabel();
-    JTextArea sectionInfoTextArea = new JTextArea();
-    InputPanel inputPanel1 = new InputPanel();
-    InputPanel inputPanel2 = new InputPanel();
-    JButton calcBtn = new JButton("Calculate");
-    AnswerPanel answerPanel = new AnswerPanel();
-    Section currentSection = Section.HOME;
-    int minInputInt, maxInputInt;
+public class MainPanel extends NTPPanel {
+    private Section currentSection;
+    private int minInputInt, maxInputInt;
 
     public MainPanel() {
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        JLabel sectionHeading = createCenteredLabel("", NTPGUI.createBoldGaramondFont(35));
+        var sectionInfoTextArea = new NTPTextArea();
+        var directionsTextArea = new NTPTextArea();
+        var answerPanel = new AnswerPanel();
+        var inputPanel1 = new InputPanel();
+        var inputPanel2 = new InputPanel();
+        
+        NTPPanel inputPanelPanel =
+            new NTPPanel()
+            .setToBoxLayoutWithLineAxis()
+            .add(inputPanel1)
+            .add(inputPanel2);
+        
+        JButton calcBtn = createButton("Calculate", garamondFontSize25);
+        centerComponent(calcBtn);
+        
+        calcBtn.addActionListener(e -> {
+            try {
+                int inputInt1 = inputPanel1.getInputAsInt();
+                List<Component> components;
+                if (currentSection.isSingleInputSection()) {
+                    components = ((SingleInputSection)currentSection).getGuiComponents(inputInt1);
+                } else {
+                    int inputInt2 = inputPanel2.getInputAsInt();
+                    components = ((DoubleInputSection)currentSection).getGuiComponents(inputInt1, inputInt2);
+                }
+                answerPanel.displayComponents(components);
+            } catch (IllegalArgumentException ex) {
+                answerPanel.displayInvalidInputMessage();
+            }
+        });
+        
+        var sectionBtnsPanels = new ArrayList<NTPPanel>(2);
+        NTPPanel sectionBtnsPanel = new NTPPanel().setToBoxLayoutWithLineAxis();
+        Font sectionBtnFont = garamondFontSize25;
+        JButton homeBtn = createButton("Home", sectionBtnFont);
 
-        JLabel mainHeading = new JLabel("Number Theory Playground");
-        mainHeading.setFont(new Font("Garamond", Font.PLAIN, 35));
-        mainHeading.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(mainHeading);
+        homeBtn.addActionListener(e -> {
+            inputPanel1.setVisible(false);
+            inputPanel2.setVisible(false);
+            calcBtn.setVisible(false);
+            answerPanel.clear();
+            sectionHeading.setText(homeBtn.getText());
+            sectionInfoTextArea.setText("Welcome to the Number Theory Playground.");
+            directionsTextArea.setText("");
+        });
 
-        add(Box.createRigidArea(new Dimension(0, 10)));
-
-        add(new ButtonsPanel(new SectionButtonListener()));
-
-        add(Box.createRigidArea(new Dimension(0, 10)));
-
-        sectionHeading.setFont(new Font("Garamond", Font.PLAIN, 30));
-        sectionHeading.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(sectionHeading);
-
-        sectionInfoTextArea.setLineWrap(true);
-        sectionInfoTextArea.setWrapStyleWord(true);
-        sectionInfoTextArea.setEditable(false);
-        sectionInfoTextArea.setFont(contentFont);
-        sectionInfoTextArea.setBackground(bgColor);
-        add(sectionInfoTextArea);
-
-        InputPanelListener ipl = new InputPanelListener();
-
-        // Add ipl to every button on both input panels. Have the action command be the action followed by a space
-        // followed by the number of the input panel to perform that action on.
-        JButton randomBtn1 = inputPanel1.getRandomBtn();
-        randomBtn1.addActionListener(ipl);
-        randomBtn1.setActionCommand("randomize 1");
-
-        JButton incrementBtn1 = inputPanel1.getIncrementBtn();
-        incrementBtn1.addActionListener(ipl);
-        incrementBtn1.setActionCommand("increment 1");
-
-        JButton decrementBtn1 = inputPanel1.getDecrementBtn();
-        decrementBtn1.addActionListener(ipl);
-        decrementBtn1.setActionCommand("decrement 1");
-
-        JButton randomBtn2 = inputPanel2.getRandomBtn();
-        randomBtn2.addActionListener(ipl);
-        randomBtn2.setActionCommand("randomize 2");
-
-        JButton incrementBtn2 = inputPanel2.getIncrementBtn();
-        incrementBtn2.addActionListener(ipl);
-        incrementBtn2.setActionCommand("increment 2");
-
-        JButton decrementBtn2 = inputPanel2.getDecrementBtn();
-        decrementBtn2.addActionListener(ipl);
-        decrementBtn2.setActionCommand("decrement 2");
-
-        add(Box.createRigidArea(new Dimension(0, 10)));
-
-        JPanel inputPanelPanel = new NumberTheoryPlaygroundPanel();
-        inputPanelPanel.setLayout(new BoxLayout(inputPanelPanel, BoxLayout.LINE_AXIS));
-        inputPanelPanel.add(inputPanel1);
-        inputPanelPanel.add(inputPanel2);
-        add(inputPanelPanel);
-
-        add(Box.createRigidArea(new Dimension(0, 10)));
-
-        calcBtn.addActionListener(new CalculateButtonListener());
-        calcBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        calcBtn.setFocusPainted(false);
-        calcBtn.setFont(contentFont);
-        add(calcBtn);
-
-        add(Box.createRigidArea(new Dimension(0, 10)));
-
-        add(answerPanel);
-
-        showHomeSection();
-        final int SECTION_INFO_WIDTH = 800;
-        sectionInfoTextArea.setMaximumSize(new Dimension(SECTION_INFO_WIDTH, sectionInfoTextArea.getPreferredSize().height));
-    }
-
-    void showHomeSection() {
-        sectionHeading.setText("Home");
-        sectionInfoTextArea.setText(Section.HOME.getInfo());
-        inputPanel1.setVisible(false);
-        inputPanel2.setVisible(false);
-        calcBtn.setVisible(false);
-    }
-
-    void showSingleInputPanelSection() {
-        inputPanel1.setVisible(true);
-        inputPanel2.setVisible(false);
-        calcBtn.setVisible(true);
-    }
-
-    void showDoubleInputPanelSection() {
-        inputPanel1.setVisible(true);
-        inputPanel2.setVisible(true);
-        calcBtn.setVisible(true);
-    }
-
-    /**
-     * Responsible for changing sections.
-     */
-    class SectionButtonListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
+        homeBtn.doClick();
+        sectionBtnsPanel.add(homeBtn);
+    
+        /*
+        Let btnsAndSections be a Map where the keys are section buttons and the values are the
+        corresponding Sections. The keys will be Objects because event.getSource in the lambda
+        below will be an Object representation of a button that was clicked.
+        */
+        var btnsAndSections = new HashMap<Object, Section>();
+        
+        ActionListener changeSection = event -> {
             inputPanel1.clearTextField();
             inputPanel2.clearTextField();
-
-            answerPanel.removeAll();
-            answerPanel.revalidate();
-            answerPanel.repaint();
-
-            currentSection = Section.valueOf(e.getActionCommand());
+            answerPanel.clear();
+            
+            currentSection = btnsAndSections.get(event.getSource());
             minInputInt = currentSection.getMinInputInt();
             maxInputInt = currentSection.getMaxInputInt();
-
-            if (currentSection == Section.HOME) {
-                showHomeSection();
-            } else {
-                sectionInfoTextArea.setText(currentSection.getInfo() + "\n\n");
-                String directions = "nothing";
-
-                switch (currentSection) {
-                    case PRIMES:
-                        sectionHeading.setText("Prime Numbers");
-                        directions = "Enter a number to get the first 30 primes that appear after that number. Have this " +
-                                "number be greater than or equal to 0 and less than or equal to 1 billion.";
-                        showSingleInputPanelSection();
-                        break;
-
-                    case TWIN_PRIMES:
-                        sectionHeading.setText("Twin Prime Numbers");
-                        directions = "Enter a number to get the first 20 pairs of twin prime numbers that appear after " +
-                                "that number. Have this number be greater than or equal to 0 and less than or equal to 1 billion.";
-                        showSingleInputPanelSection();
-                        break;
-
-                    case PRIME_FACTORIZATION:
-                        sectionHeading.setText("Prime Factorization");
-                        directions = "Enter a number to get it's prime factorization. Have this number be greater than or " +
-                                "equal to 2 and less than or equal to 10 thousand.";
-                        showSingleInputPanelSection();
-                        break;
-
-                    case DIVISIBILITY:
-                        sectionHeading.setText("Divisibility");
-                        directions = "Enter a number to get it's divisibility info. Have this number be greater than or " +
-                                "equal to 2 and less than or equal to 10 thousand.";
-                        showSingleInputPanelSection();
-                        break;
-
-                    case GCD_LCM:
-                        sectionHeading.setText("GCD and LCM");
-                        directions = "Enter 2 numbers to get their GCD and LCM info. Have these numbers be greater than or " +
-                                "equal to 2 and less than or equal to 10 thousand.";
-                        showDoubleInputPanelSection();
-                        break;
-
-                    case GOLDBACH:
-                        sectionHeading.setText("Goldbach Conjecture");
-                        directions = "Enter a number to get the pairs of prime numbers that sum to that number. Have this " +
-                                "number be even, greater than or equal to 4, and less than or equal to 100 thousand.";
-                        showSingleInputPanelSection();
-                        break;
-
-                    case PYTHAG_TRIPLES:
-                        sectionHeading.setText("Pythagorean Triples");
-                        directions = "Enter a number to get the first 10 Pythagorean triples that appear after that number. " +
-                                "Have this number be greater than or equal to 0 and less than or equal to 1 thousand.";
-                        showSingleInputPanelSection();
-                        break;
-                }
-
-                sectionInfoTextArea.append(directions);
+            
+            sectionHeading.setText(currentSection.getHeadingText());
+            sectionInfoTextArea.setText(String.join("\n\n", currentSection.getInfo()));
+            
+            boolean oneIntNeeded = currentSection.isSingleInputSection();
+            String directions =
+                String.format(
+                    "Enter or generate %s and click the Calculate button to %s. %s.",
+                    oneIntNeeded ? "an integer" : "2 integers",
+                    currentSection.getActionSentenceEnding(),
+                    currentSection.getInputConstraintsSentence()
+                );
+            directionsTextArea.setText(directions);
+            inputPanel1.setVisible(true);
+            inputPanel2.setVisible(!oneIntNeeded);
+            calcBtn.setVisible(true);
+        };
+        
+        // Let the first 7 section buttons be in 1 panel and have the rest of the buttons be in another panel
+        for (Section section : Section.createInstances()) {
+            if (section instanceof PythagoreanTriples.Section) {
+                sectionBtnsPanels.add(sectionBtnsPanel);
+                sectionBtnsPanel = new NTPPanel().setToBoxLayoutWithLineAxis();
             }
-
-            // resize sectionInfoTextArea so that it only takes up the space it needs
-            sectionInfoTextArea.setMaximumSize(sectionInfoTextArea.getPreferredSize());
+            
+            JButton sectionBtn = createButton(section.getHeadingText(), sectionBtnFont);
+            btnsAndSections.put(sectionBtn, section);
+            sectionBtn.addActionListener(changeSection);
+            sectionBtnsPanel.add(sectionBtn);
         }
+        sectionBtnsPanels.add(sectionBtnsPanel);
+        
+        
+        setToBoxLayoutWithPageAxis();
+        
+        addGap(15);
+        addCenteredLabel("Number Theory Playground", createBoldGaramondFont(40));
+        addGap(15);
+        sectionBtnsPanels.forEach(this::add);
+        addGap(15);
+        add(sectionHeading);
+        addGap(10);
+        add(sectionInfoTextArea);
+        addGap(15);
+        add(directionsTextArea);
+        addGap(15);
+        add(inputPanelPanel);
+        addGap(15);
+        add(calcBtn);
+        addGap(15);
+        add(answerPanel);
     }
-
+    
+    
     /**
-     * Responsible for events that occur after the calculate button is hit.
+     * Panel that consists of a text field, a "Randomize" button, an increment ("+") button, and a
+     * decrement ("-") button. This is an inner class so the on-click actions of the buttons can access
+     * the current section and max and min inputs.
      */
-    class CalculateButtonListener implements ActionListener {
+    public class InputPanel extends NTPPanel {
+        private final JTextField textField = new JTextField();
+        
+        public InputPanel() {
+            textField.setMaximumSize(new Dimension(200, 30));
+            textField.setFont(garamondFontSize25);
+            
+            JButton randomBtn = createButton("Randomize", garamondFontSize25);
+            centerComponent(randomBtn);
+            randomBtn.addActionListener(e -> setTextFieldText(currentSection.getRandomValidInt()));
+    
+            var btnSize = new Dimension(60, 50);
+            
+            JButton incrementBtn = createButton("+", garamondFontSize25);
+            incrementBtn.setMinimumSize(btnSize);
+            incrementBtn.setMaximumSize(btnSize);
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            boolean inputError = false;
-            int firstNumber = 0, secondNumber = 0;
-
-            // Validate the user's input and if there are any errors, set inputError to true. Goldbach section must
-            // have even number.
-            try {
-                firstNumber = Integer.parseInt(inputPanel1.getTextField().getText());
-                if (firstNumber < minInputInt || firstNumber > maxInputInt ||
-                        (currentSection == Section.GOLDBACH && firstNumber % 2 != 0)) {
-                    inputError = true;
-                } else if (currentSection == Section.GCD_LCM) {
-                    // GCD and LCM section is the only one that uses a second input number.
-                    secondNumber = Integer.parseInt(inputPanel2.getTextField().getText());
-                    if (secondNumber < minInputInt || secondNumber > maxInputInt) {
-                        inputError = true;
+            // For incrementing and decrementing, if the current section is the Goldbach section, make
+            // the input int even.
+            incrementBtn.addActionListener(e -> {
+                try {
+                    int inputInt = getInputAsInt();
+                    inputInt =
+                        inputInt >= maxInputInt || inputInt < minInputInt
+                        ? minInputInt
+                        : inputInt + (currentSection.isGoldbachSection() && isEven(inputInt) ? 2 : 1);
+                    setTextFieldText(inputInt);
+                } catch (NumberFormatException ex) {
+                    if (hasBlankInput()) {
+                        setTextFieldText(minInputInt);
                     }
                 }
-            } catch (NumberFormatException ex) {
-                // This block is reached if the input panel texts were not able to be parsed as an int
-                inputError = true;
-            }
+            });
+    
+            JButton decrementBtn = createButton("-", garamondFontSize25);
+            decrementBtn.setMinimumSize(btnSize);
+            decrementBtn.setMaximumSize(btnSize);
+            
+            decrementBtn.addActionListener(e -> {
+                try {
+                    int inputInt = getInputAsInt();
+                    inputInt =
+                        inputInt <= minInputInt || inputInt > maxInputInt
+                        ? maxInputInt
+                        : inputInt - (currentSection.isGoldbachSection() && isEven(inputInt) ? 2 : 1);
+                    setTextFieldText(inputInt);
+                } catch (NumberFormatException ex) {
+                    if (hasBlankInput()) {
+                        setTextFieldText(maxInputInt);
+                    }
+                }
+            });
+    
+            NTPPanel btnsPanel =
+                new NTPPanel()
+                .setToBoxLayoutWithLineAxis()
+                .center()
+                .add(incrementBtn)
+                .addGap(5)
+                .add(decrementBtn);
 
-            if (inputError) {
-                answerPanel.displayInvalidInputMessage();
-            } else if (currentSection == Section.GCD_LCM) {
-                answerPanel.displayDoubleInputAnswer(currentSection, firstNumber, secondNumber);
-            } else {
-                answerPanel.displaySingleInputAnswer(currentSection, firstNumber);
-            }
+            setToBoxLayoutWithPageAxis();
+            setMaximumSize(new Dimension(200, 200));
+            
+            add(textField);
+            addGap(5);
+            add(randomBtn);
+            addGap(5);
+            add(btnsPanel);
         }
-    }
-
-    /**
-     * Responsible for changing the input panel text field contents when a user clicks the randomize, increment, and
-     * decrement buttons for one of the input panels.
-     */
-    class InputPanelListener implements ActionListener {
-        private final Random random = new Random();
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // All action commands are a string with the action first followed by a space followed by the number
-            // of the input panel to perform that action on.
-            String[] actionCommandContents = e.getActionCommand().split(" ");
-            String actionToPerform = actionCommandContents[0];
-            String inputPanelNumber = actionCommandContents[1];
-
-            InputPanel inputPanelToModify;
-            if (inputPanelNumber.equals("1")) {
-                inputPanelToModify = inputPanel1;
-            } else if (inputPanelNumber.equals("2")) {
-                inputPanelToModify = inputPanel2;
-            } else {
-                throw new IllegalArgumentException("invalid inputPanelNumber: " + inputPanelNumber);
-            }
-
-            int currentInputNumber;
-            int newInputNumber;
-
-            switch (actionToPerform) {
-                case "randomize":
-                    // generate random number in valid range for current section
-                    int randomNumber = Math.max(random.nextInt(maxInputInt), minInputInt);
-                    // Goldbach section requires even number
-                    if (currentSection == Section.GOLDBACH && randomNumber % 2 != 0) {
-                        randomNumber++;
-                    }
-                    inputPanelToModify.getTextField().setText(String.valueOf(randomNumber));
-                    return;
-
-                case "increment":
-                    try {
-                        currentInputNumber = Integer.parseInt(inputPanelToModify.getTextField().getText());
-                    } catch (NumberFormatException ex) {
-                        // Do nothing if there was not an int in the input panel text field
-                        return;
-                    }
-
-                    if (currentInputNumber >= maxInputInt || currentInputNumber < minInputInt) {
-                        inputPanelToModify.getTextField().setText(String.valueOf(minInputInt));
-                    } else {
-                        newInputNumber = currentInputNumber + 1;
-                        // Make even number displayed for Goldbach section
-                        if (currentSection == Section.GOLDBACH && newInputNumber % 2 != 0) {
-                            newInputNumber++;
-                        }
-                        inputPanelToModify.getTextField().setText(String.valueOf(newInputNumber));
-                    }
-                    return;
-
-                case "decrement":
-                    try {
-                        currentInputNumber = Integer.parseInt(inputPanelToModify.getTextField().getText());
-                    } catch (NumberFormatException ex) {
-                        // Do nothing if there was not an int in the input panel text field
-                        return;
-                    }
-
-                    if (currentInputNumber <= minInputInt || currentInputNumber > maxInputInt) {
-                        inputPanelToModify.getTextField().setText(String.valueOf(maxInputInt));
-                    } else {
-                        newInputNumber = currentInputNumber - 1;
-                        // Make even number displayed for Goldbach section
-                        if (currentSection == Section.GOLDBACH && newInputNumber % 2 != 0) {
-                            newInputNumber--;
-                        }
-                        inputPanelToModify.getTextField().setText(String.valueOf(newInputNumber));
-                    }
-                    return;
-
-                default:
-                    throw new IllegalArgumentException("invalid action: " + actionToPerform);
-            }
+    
+        private void setTextFieldText(int i) {
+            textField.setText(String.valueOf(i));
+        }
+        
+        public void clearTextField() {
+            textField.setText("");
+        }
+    
+        /**
+         * Tries to parse the text field text as an int. If this is successful, that int gets returned.
+         * Otherwise, a NumberFormatException gets thrown.
+         */
+        public int getInputAsInt() {
+            return Integer.parseInt(textField.getText().trim());
+        }
+    
+        /**
+         * Returns true if the text field is empty or only has whitespace, false otherwise.
+         */
+        public boolean hasBlankInput() {
+            return textField.getText().isBlank();
         }
     }
 }

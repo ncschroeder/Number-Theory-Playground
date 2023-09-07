@@ -11,8 +11,10 @@ import static com.nicholasschroeder.numbertheoryplayground.Primes.isPrime;
  */
 public class TwoSquareTheorem {
     private static final String theoremInfo =
-        "The Two Square Theorem says that every prime number that is 1 above a multiple " +
-        "of 4 can be expressed as the sum of 2 squares.";
+        "The Two Square Theorem says that every prime number that is 1 above a multiple of 4 can be expressed " +
+        "as the sum of 2 square numbers. A square number is a number that can be formed by taking a number " +
+        "and multiplying it by itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and " +
+        "9 (3^2). 29 is prime and is 1 above 28 (4 x 7) and can be expressed as 2^2 (4) + 5^2 (25).";
     
     private static final int minInputInt = 0;
     private static final int maxInputInt = oneBillion;
@@ -88,7 +90,7 @@ public class TwoSquareTheorem {
                 minInputInt,
                 maxInputInt,
                 "get the first prime number that is >= that integer and is 1 above a multiple " +
-                    "of 4, as well as the squares that sum to that prime number",
+                    "of 4, as well as the numbers whose squares sum to that prime number",
                 "the Two Square Theorem"
             );
         }

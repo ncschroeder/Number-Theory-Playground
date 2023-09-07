@@ -14,16 +14,16 @@ public class FibonacciLikeSequences {
     private static final List<String> infoParagraphs =
         List.of(
             "I consider a number sequence to be \"Fibonacci-like\" if it starts with 2 numbers and has " +
-                "every following number be the sum of the 2 previous numbers. The Fibonacci Sequence " +
+                "every following number be the sum of the 2 previous numbers. The Fibonacci sequence " +
                 "does this and has 1 and 1 as its first 2 numbers. Fibonacci was a mathematician from " +
-                "the 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence are the Lucas " +
-                "Numbers, which has 2 and 1 as its first 2 numbers. This sequence was named after 1800s " +
+                "the 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence is the Lucas " +
+                "sequence, which has 2 and 1 as its first 2 numbers. This sequence was named after 1800s " +
                 "French mathematician Francois Edouard Anatole Lucas. Lucas is pronounced like Lucaw.",
             "The Golden Ratio is an irrational number symbolized by the Greek letter Phi. " +
                 "Phi = (1 + the square root of 5) / 2, which is approximately " + (1 + Math.sqrt(5)) / 2 + // ~1.618
                 ". As we advance further and further into a Fibonacci-like sequence, the ratio between a " +
                 "number and the number before it gets closer and closer to Phi. For example, the first 8 " +
-                "numbers of the Fibonacci Sequence are 1, 1, 2, 3, 5, 8, 13, and 21. " +
+                "numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. " +
                 "2 / 1 = 2. 8 / 5 = 1.6. 21 / 13 is approximately " + (double) 21 / 13 /* ~1.615 */ + "."
         );
 

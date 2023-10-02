@@ -76,13 +76,14 @@ The user can navigate among the sections using the buttons at the top. The user 
 
 Clicking the "+" button will have one of the effects below:
 - If the text box has a number that's lower than the max input number, the text box will have its text set to the next highest valid input number.
-- If the text box is empty or has a number $\geq$ the max input number, the text box will have its text set to the min input number.
+- If the text box is empty or has a number greater than or equal to the max input number, the text box will have its text set to the min input number.
 
 Clicking the "-" button will have one of the effects below:
 - If the text box has a number that's higher than the min input number, the text box will have its text set to the next lowest valid input number.
-- If the text box is empty or has a number $\leq$ the min input number, the text box will have its text set to the max input number.
+- If the text box is empty or has a number less than or equal to the min input number, the text box will have its text set to the max input number.
 
-In addition to the above, if the text box has something other than a number or a number that's not in the range of the integers that can fit in an `int` type ($-2^{31}$ to $2^{31} - 1$, inclusive), nothing will happen if either the "+" or "-" buttons are clicked.
+In addition to the above, if the text box has something other than a number or a number that's not in the range of the integers that can fit in an `int` type (-2<sup>31</sup> to 2<sup>31</sup> - 1, or -2,147,483,648 to 2,147,483,647), nothing will happen if either the "+" or "-" buttons are clicked.
+
 
 </details>
 

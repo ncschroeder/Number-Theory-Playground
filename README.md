@@ -96,32 +96,34 @@ Shown in the collapsible sections below is info about all sections featured in t
 
 #### Info
 
-A *prime number* is an integer $\geq 2$ whose only integer factors are 1 and itself. There are an infinite amount of them. A *composite number* is an integer $\geq 2$ that has an integer factor other than 1 and itself. Prime numbers are used in 7 of the 10 sections in this application.
+A *prime number*, or a *prime*, is an integer $\geq 2$ whose only integer factors are 1 and itself. A *composite number* is an integer $\geq 2$ that has an integer factor other than 1 and itself. The first 10 primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, and 29. There are an infinite amount of them. The largest known prime is $2^{136,279,841} - 1$. It has 41,024,320 digits! Primes are used in 7 of the 10 sections in this application.
 
-An integer can be determined to be prime if it is not divisible by any prime numbers $\leq$ the square root of that integer. For example, let's determine if 29 and 33 are prime. $5^2 = 25$ and $6^2 = 36$ so $5 < \sqrt{29} < \sqrt{33} < 6$. We check if the numbers are divisible by 2, 3, or 5, which are the prime numbers $\leq$ 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 29 is prime and 33 isn't.
+With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To show why this is the case, let's have a variable $i$ and let it represent any integer $\geq$ 6 that's a multiple of 6. We know that $i$ is divisible by 2 and 3 so $i + 2$ and $i + 4$ are divisible by 2 and $i + 3$ is divisible by 3 but we don't have any guarantees about what $i + 1$ and $i + 5$ are divisible by. Therefore, that's where primes can be.
 
-Fun fact: with the exception of 2 and 3, all prime numbers are either 1 above or 1 below a multiple of 6. To show why this is the case, let's have a variable $i$ and let it represent any integer $\geq$ 6 that is a multiple of 6. We know that $i$ is divisible by 2 and 3 so $i + 2$ and $i + 4$ are divisible by 2 and $i + 3$ is divisible by 3 but we don't have any guarantees about what $i + 1$ and $i + 5$ are divisible by. Therefore, that is where prime numbers can be.
+An integer can be determined to be prime if it's not divisible by any primes $\leq$ the square root of that integer. This is called *trial division*. Let's determine if 29 and 33 are prime. $5^2 = 25$ and $6^2 = 36$ so $5 < \sqrt{29} < \sqrt{33} < 6$. We check if the numbers are divisible by 2, 3, or 5; which are the primes $\leq$ 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 29 is prime and 33 isn't.
 
 #### Calculation
 
-Find the first 30 prime numbers that are $\geq$ an input number.
+Find the first 30 primes that are $\geq$ an input number.
 
-#### Input Range: 0 - 1,000,000,000 (1 billion)
+#### Input Range: 0 - 10,000,000,000,000 (10 trillion)
 
 </details>
 
 <details>
-<summary>Twin Prime Numbers</summary>
+<summary>Twin Prime Pairs</summary>
 
 #### Info
 
-*Twin primes* are pairs of prime numbers that differ by 2. It is conjectured that there are infinitely many of them. A *conjecture* is a statement that is believed to be true but has not been proven to be. Fun fact: all prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this means that all pairs of twin primes besides 3 and 5 consist of 1 number that is 1 below a multiple of 6 and another number that is 1 above that same multiple of 6.
+A *twin prime pair* is a pair of prime numbers that differ by 2. The first 5 twin prime pairs are 3 & 5, 5 & 7, 11 & 13, 17 & 19, and 27 & 29. The largest known twin prime pair is $2,996,863,034,895 \times 2^{1,290,000} \pm 1$. They have 388,342 digits! It is conjectured that there are an infinite amount of twin prime pairs. A *conjecture* is a statement that is believed to be true but has not been proven to be.
+
+All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this means that all twin prime pairs besides 3 and 5 consist of 1 number that is 1 below a multiple of 6 and another number that is 1 above that same multiple of 6. 5 is the only number to be in 2 twin prime pairs.
 
 #### Calculation
 
 Find the first 20 pairs of twin primes where the lowest number in the pair is $\geq$ an input number. For example, if the input number is 3, then the pair 3 and 5 will be the first one found since the lowest number in that pair is 3. If the input number is 4, then the pair 5 and 7 will be the first one found.
 
-#### Input Range: 0 - 1,000,000,000 (1 billion)
+#### Input Range: 0 - 500,000,000,000 (500 billion)
 
 </details>
 
@@ -185,13 +187,13 @@ The Euclidean algorithm can be used to find the GCD of 2 numbers, usually faster
 
 #### Info
 
-The Goldbach Conjecture says that every even number $\geq 4$ can be expressed as the sum of 2 prime numbers. A *conjecture* is a statement that is believed to be true but has not been proven to be true. The Goldbach Conjecture has been verified to be true for all even numbers $\geq 4$ and $\leq$ a very high number. I don't know this number off the top of my head but it's way, way bigger than the max number you're allowed to use for input.
+The Goldbach Conjecture says that every even number $\geq 4$ can be expressed as the sum of 2 prime numbers. This was named after 1700s Prussian mathematician Christian Goldbach. A *conjecture* is a statement that is believed to be true but has not been proven to be true. The Goldbach Conjecture has been verified to be true for all even numbers $\geq 4$ and $\leq 4 \times 10^18$.
 
 #### Calculation
 
 Find the pairs of prime numbers that sum to an even input number.
 
-#### Input Range: 4 - 100,000
+#### Input Range: 4 - 1,500,000
 
 </details>
 

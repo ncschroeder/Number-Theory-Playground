@@ -202,13 +202,15 @@ Find the pairs of prime numbers that sum to an even input number.
 
 #### Info
 
-The Pythagorean Theorem says that for the side lengths of a right triangle, the sum of the squares of the 2 short sides equals the square of the long side (hypotenuse) or $a^2 + b^2 = c^2$. This theorem was named after the ancient Greek mathematician Pythagoras. There are an infinite amount of trios of integers that $a$, $b$, and $c$ can be. These trios are called *Pythagorean Triples*. For example, $3^2 (9) + 4^2 (16) = 5^2 (25)$ and $11^2 (121) + 60^2 (3,600) = 61^2 (3,721)$.
+The Pythagorean Theorem says that for a right triangle, the sum of the squares of the lengths of the 2 short sides equals the square of the long side (hypotenuse) length, or $a^2 + b^2 = c^2$. This theorem was named after the ancient Greek mathematician Pythagoras. A *Pythagorean triple* is a triple of integers that $a$, $b$, and $c$ can be. For example; 3, 4, and 5 is a Pythagorean triple since $3^2 (9) + 4^2 (16) = 5^2 (25)$ and 11, 60, and 61 is another one since $11^2 (121) + 60^2 (3,600) = 61^2 (3,721)$.
+
+Once we know a Pythagorean triple, we can form another one by multiplying $a$, $b$, and $c$ by the same positive integer. Because of this, there are an infinite amount of Pythagorean triples. A Pythagorean triple is considered to be *primitive* if the GCD of $a$, $b$, and $c$ is 1. Therefore, a primitive triple can't be formed by taking another triple and multiplying $a$, $b$, and $c$ by something. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive. 6 ($3 \times 2$), 8 ($4 \times 2$), and 10 ($5 \times 2$) is another triple. $6^2 (36) + 8^2 (64) = 10^2 (100)$. 55 ($11 \times 5$), 300 ($60 \times 5$), and 305 ($61 \times 5$) is another one. $55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025)$.
 
 #### Calculation
 
-Find the first 10 Pythagorean Triples where the lowest number in the triple is $\geq$ an input number. For example, if the input number is 3, then the triple 3, 4, and 5 will be the first one found since the lowest number in that triple is 3. If the input number is 4, then the triple 5, 12, and 13 will be the first one found. The triples that get found will be displayed similarly to how the examples at the end of the "Info" section above are displayed.
+Find the first 10 Pythagorean triples where the lowest number in the triple is $\geq$ an input number. For example, if the input number is 3, then the triple 3, 4, and 5 will be the first one found since the lowest number in that triple is 3. If the input number is 4, then the triple 5, 12, and 13 will be the first one found. These triples will be displayed similarly to how the examples at the end of the paragraphs in the "Info" section above are displayed. If a triple is primitive, then it will be followed by "(primitive)".
 
-#### Input Range: 0 - 1,000
+#### Input Range: 0 - 10,000
 
 </details>
 
@@ -223,7 +225,7 @@ The Two Square Theorem says that every prime number that is 1 above a multiple o
 
 Find the first prime number $\geq$ an input number that is 1 above a multiple of 4, as well as the numbers whose squares sum to that number.
 
-#### Input Range: 0 - 1,000,000,000 (1 billion)
+#### Input Range: 0 - 1,000,000,000,000,000 (1 quadrillion)
 
 </details>
 
@@ -232,15 +234,15 @@ Find the first prime number $\geq$ an input number that is 1 above a multiple of
 
 #### Info
 
-I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every following number be the sum of the 2 previous numbers. The Fibonacci sequence does this and has 1 and 1 as its first 2 numbers. Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence is the Lucas sequence, which has 2 and 1 as its first 2 numbers. This sequence was named after 1800s French mathematician Francois Edouard Anatole Lucas. Lucas is pronounced like *Lucaw*.
+I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every following number be the sum of the 2 previous numbers. The Fibonacci sequence does this and has 1 and 1 as its first 2 numbers. Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence is the Lucas sequence, which has 2 and 1 as its first 2 numbers. This sequence was named after 1800s French mathematician Francois Edouard Anatole Lucas.
 
 The *Golden Ratio* is an irrational number symbolized by the Greek letter $\Phi$ (Phi). $\Phi = \frac{1 + \sqrt{5}}{2} \approx 1.618$. As we advance further and further into a Fibonacci-like sequence, the ratio between a number and the number before it gets closer and closer to $\Phi$. For example, the first 8 numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. $\frac{2}{1} = 2$. $\frac{8}{5} = 1.6$. $\frac{21}{13} \approx 1.615$.
 
 #### Calculations
 
-Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers, as well as the ratio between the last number and the second to last number.
+Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers, as well as the ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup> and 20<sup>th</sup> and 19<sup>th</sup> numbers.
 
-#### Input Range: 1 - 1,000
+#### Input Range: 1 - 9,000,000,000,000,000,000 (9 quintillion)
 
 </details>
 
@@ -253,22 +255,22 @@ The ancient Egyptians had an interesting algorithm for multiplication. My way of
 1. Let variable $a$ represent one of the numbers and variable $b$ represent the other number.
 2. Find all powers of 2 that are $\leq a$. This could be done without modern multiplication by starting with 1, the 1st power of 2 or $2^0$, and finding the next power by adding the previous power to itself. This process will look like: $1 + 1 = 2 (2^1), 2 + 2 = 4 (2^2), 4 + 4 = 8 (2^3)$, and so on until we find a power that's $> a$, which we won't use.
 3. Find the products of $b$ and these powers of 2. Like with the powers of 2, this could be done by starting with $b$ and finding the next product by adding the previous product to itself. If we let $b$ be 5, this process will look like: $5 + 5 = 10 (5 \times 2)$, $10 + 10 = 20 (5 \times 4)$, $20 + 20 = 40 (5 \times 8)$, and so on.
-4. Find the powers of 2 that add up to $a$.
+4. Find the powers of 2 that sum to $a$.
 5. Add up the products of $b$ and these powers.
 
 This gives us the product of the 2 numbers.
 
-Let's find the product of 5 and 12. Let's first use 5 for the number represented by $a$ in the algorithm above and 12 for $b$. The powers of 2 $\leq$ 5 are 1, 2, and 4. The products of 12 and these powers are 12, 24, and 48. The powers of 2 that add up to 5 are 1 and 4. The products of 12 and these powers are 12 and 48. $12 + 48 = (12 \times 1) + (12 \times 4) = 12 \times (1 + 4) = 60$. Now let's use 12 for $a$ and 5 for $b$. The powers of 2 $\leq$ 12 are 1, 2, 4, and 8. The products of 5 and these powers are 5, 10, 20, and 40. The powers of 2 that add up to 12 are 4 and 8. The products of 5 and these powers are 20 and 40. $20 + 40 = (5 \times 4) + (5 \times 8) = 5 \times (4 + 8) = 60$.
+Let's find the product of 5 and 12. Let's first use 5 for the number represented by $a$ in the algorithm above and 12 for $b$. The powers of 2 $\leq$ 5 are 1, 2, and 4. The products of 12 and these powers are 12, 24, and 48. The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers are 12 and 48. $12 + 48 = (12 \times 1) + (12 \times 4) = 12 \times (1 + 4) = 60$. Now let's use 12 for $a$ and 5 for $b$. The powers of 2 $\leq$ 12 are 1, 2, 4, and 8. The products of 5 and these powers are 5, 10, 20, and 40. The powers of 2 that sum to 12 are 4 and 8. The products of 5 and these powers are 20 and 40. $20 + 40 = (5 \times 4) + (5 \times 8) = 5 \times (4 + 8) = 60$.
 
 #### Calculations
 
 Given 2 input numbers:
-1. Find the powers of 2 $\leq$ the first input number and the corresponding multiples of the second input number. Display these in a table.
-2. Find the powers of 2 that sum to the first input number and the corresponding multiples of the second input number. Display these in another table.
+1. Find the powers of 2 $\leq$ the 1<sup>st</sup> input number and the corresponding multiples of the 2<sup>nd</sup> input number. Display these in a table.
+2. Find the powers of 2 that sum to the 1<sup>st</sup> input number and the corresponding multiples of the 2<sup>nd</sup> input number. Display these in another table.
 
 This process will be done faster than you can say "ancient Egyptian multiplication". :slightly_smiling_face:
 
-#### Input Range: 2 - 10,000
+#### Input Range: 2 - 9,000,000,000,000,000,000 (9 quintillion)
 
 </details>
 

@@ -4,105 +4,88 @@ import java.awt.Component;
 import java.util.List;
 
 import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
-import static com.nicholasschroeder.numbertheoryplayground.Primes.isPrime;
+import static com.nicholasschroeder.numbertheoryplayground.PrimeNumbers.isPrime;
 
 /**
  * Utility class related to the Two Square Theorem and the section for it.
  */
 public class TwoSquareTheorem {
-    private static final String theoremInfo =
-        "The Two Square Theorem says that every prime number that is 1 above a multiple of 4 can be expressed " +
-        "as the sum of 2 square numbers. A square number is a number that can be formed by taking a number " +
-        "and multiplying it by itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and " +
-        "9 (3^2). 29 is prime and is 1 above 28 (4 x 7) and can be expressed as 2^2 (4) + 5^2 (25).";
+    private static final String INFO = """
+The Two Square Theorem says that every prime number that is 1 above a multiple of 4 can be expressed as the sum
+of 2 square numbers. A square number is a number that can be formed by taking a number and multiplying it by
+itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9 (3^2). 29 is prime and is
+1 above 28 (4 x 7) and can be expressed as 2^2 (4) + 5^2 (25).""";
     
-    private static final int minInputInt = 0;
-    private static final int maxInputInt = oneBillion;
+    private static final long MIN_INPUT = 0;
+    private static final long MAX_INPUT = ONE_QUADRILLION;
     
-    public static class Info {
+    public static final class Answer {
         /**
-         * This is set to the first prime number >= an input int that is 1 above a multiple of 4.
+         * The first prime number >= the input that is 1 above a multiple of 4.
          */
-        private int primeNumber;
+        public long primeNum;
         
         /**
-         * int1 and int2 are set to the ints whose squares sum to primeNumber.
+         * a and b are the longs whose squares sum to primeNum.
          */
-        private int int1;
-        private final int int2;
+        public long a;
+        
+        public long b;
+        
+        private final String infoSentence;
+        
+        public Answer(long input) {
+            assertIsInRange(input, MIN_INPUT, MAX_INPUT);
+        
+            primeNum = input;
+            while (primeNum % 4 != 1) primeNum++;
+            while (!isPrime(primeNum)) primeNum += 4;
+            
+            b = 0;
 
-        public Info(int input) {
-            assertIsInRange(input, minInputInt, maxInputInt);
-
-            primeNumber = input;
-            while (primeNumber % 4 != 1) {
-                primeNumber++;
-            }
-            while (!isPrime(primeNumber)) {
-                primeNumber += 4;
-            }
-
-            for (int1 = 1; int1 < primeNumber; int1++) {
-                int int1Square = int1 * int1;
-                int number2Square = primeNumber - int1Square;
-                double number2Double = Math.sqrt(number2Square);
-                int number2Int = (int) number2Double;
-                if (number2Int == number2Double) {
-                    this.int2 = number2Int;
-                    return;
+            for (a = 1; a < primeNum; a++) {
+                long aSquared = a * a;
+                long bSquared = primeNum - aSquared;
+                var bDouble = Math.sqrt(bSquared);
+                var bLong = (long) bDouble;
+                if (bDouble == bLong) {
+                    b = bLong;
+                    break;
                 }
             }
             
-            // This part shouldn't be reached.
-            int2 = 0;
-            printError("Numbers not found for Two Square Theorem algorithm with an input of " + input);
-        }
-    
-        public int getPrimeNumber() {
-            return primeNumber;
-        }
-    
-        public int getInt1() {
-            return int1;
-        }
-    
-        public int getInt2() {
-            return int2;
+            infoSentence =
+                String.format(
+                    "The first integer >= %s that is prime and is 1 above a multiple of 4 is %s, which is %s + %s.",
+                    toStringWithCommas(input),
+                    toStringWithCommas(primeNum),
+                    getLongAndSquareString(a),
+                    getLongAndSquareString(b)
+                );
         }
     }
     
-    private static String getInfoString(int input) {
-        var info = new Info(input);
-        return String.format(
-            "The first integer >= %s that is prime and is 1 above a multiple of 4 is %s, which is equal to %s + %s.",
-            stringifyWithCommas(input),
-            stringifyWithCommas(info.primeNumber),
-            getLongAndSquareString(info.int1),
-            getLongAndSquareString(info.int2)
-        );
-    }
-    
-    public static class Section extends SingleInputSection {
+    public static final class Section extends SingleInputSection {
         public Section() {
             super(
                 "Two Square Theorem",
-                List.of(theoremInfo),
-                minInputInt,
-                maxInputInt,
+                MIN_INPUT,
+                MAX_INPUT,
                 "get the first prime number that is >= that integer and is 1 above a multiple " +
                     "of 4, as well as the numbers whose squares sum to that prime number",
-                "the Two Square Theorem"
+                "the Two Square Theorem",
+                INFO
             );
         }
         
         @Override
-        public String getCliAnswer(int input) {
-            return NTPCLI.insertNewLines(getInfoString(input));
+        public String getCliAnswer(long input) {
+            return NTPCLI.insertNewLines(new Answer(input).infoSentence);
         }
     
         @Override
-        public List<Component> getGuiComponents(int input) {
-            return List.of(new NTPTextArea(getInfoString(input)));
+        public List<Component> getGuiComponents(long input) {
+            return List.of(new NTPTextArea(new Answer(input).infoSentence));
         }
     }
 }

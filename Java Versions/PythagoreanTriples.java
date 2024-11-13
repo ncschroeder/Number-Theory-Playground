@@ -5,153 +5,159 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.nicholasschroeder.numbertheoryplayground.Divisibility.isDivisible;
 import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
 
 /**
- * Utility class related to Pythagorean Triples and the section for it.
+ * Utility class related to Pythagorean triples and the section for it.
  */
 public class PythagoreanTriples {
-    private static final String info =
-        "The Pythagorean Theorem says that for the side lengths of a right triangle, the sum of the " +
-        "squares of the 2 short sides equals the square of the long side (hypotenuse) or " +
-        "a^2 + b^2 = c^2. This theorem was named after the ancient Greek mathematician Pythagoras. There " +
-        "are an infinite amount of trios of integers that a, b, and c can be. These trios are called " +
-        "Pythagorean Triples. For example, 3^2 (9) + 4^2 (16) = 5^2 (25) and " +
-        "11^2 (121) + 60^2 (3,600) = 61^2 (3,721).";
+    private static final String INFO = """
+The Pythagorean Theorem says that for a right triangle, the sum of the squares of the lengths of the 2
+short sides equals the square of the long side (hypotenuse) length, or a^2 + b^2 = c^2. This theorem was
+named after the ancient Greek mathematician Pythagoras. A Pythagorean triple is a triple of integers that
+a, b, and c can be. For example; 3, 4, and 5 is a Pythagorean triple since 3^2 (9) + 4^2 (16) = 5^2 (25)
+and 11, 60, and 61 is another one since 11^2 (121) + 60^2 (3,600) = 61^2 (3,721).
+
+Once we know a Pythagorean triple, we can form another one by multiplying a, b, and $ by the same positive
+integer. Because of this, there are an infinite amount of Pythagorean triples. A Pythagorean triple is
+considered to be primitive if the GCD of a, b, and c is 1. Therefore, a primitive triple can't be formed
+by taking another triple and multiplying a, b, and c by something. The triples mentioned above; 3, 4, and 5,
+and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is another triple. 6^2 (36) +
+8^2 (64) = 10^2 (100). 55 (11 x 5), 300 (60 x 5), and 305 (61 x 5) is another one. 55^2 (3,025) +
+300^2 (90,000) = 305^2 (93,025).""";
     
-    private static final int numberOfTriplesToFind = 10;
-    private static final int minInputInt = 0;
-    private static final int maxInputInt = oneThousand;
+    private static final long MIN_INPUT = 0;
+    private static final long MAX_INPUT = 10_000;
+    private static final int NUM_TRIPLES_TO_FIND = 10;
     
     /**
-     * Class with data for the 3 elements of a Pythagorean Triple.
+     * Record for the 3 integers of a Pythagorean triple.
      */
-    public static class PythagoreanTriple {
-        public final int side1;
-        public final int side2;
-        public final int hypotenuse;
-        
-        public PythagoreanTriple(int side1, int side2, int hypotenuse) {
-            this.side1 = side1;
-            this.side2 = side2;
-            this.hypotenuse = hypotenuse;
-        }
-        
+    public record Triple(int a, int b, int c) {
         @Override
         public String toString() {
             return String.format(
-                "%s + %s = %s",
-                getLongAndSquareString(side1),
-                getLongAndSquareString(side2),
-                getLongAndSquareString(hypotenuse)
+                "%s + %s = %s%s",
+                getLongAndSquareString(a),
+                getLongAndSquareString(b),
+                getLongAndSquareString(c),
+                isPrimitive() ? " (primitive)" : ""
             );
         }
-    
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof PythagoreanTriple) {
-                var triple = (PythagoreanTriple) o;
-                return this.side1 == triple.side1 && this.side2 == triple.side2 && this.hypotenuse == triple.hypotenuse;
-            }
-            return false;
+        
+        public boolean isPrimitive() {
+            /*
+            See if there's a common factor other than 1. The iterating only needs to go up to a third of the min
+            of a, b, and c. This is because if the min could be a common factor, then we would be able to divide
+            a, b, and c by the min and get a Pythagorean triple and the min of a, b, and c in that triple would
+            be 1. There's no Pythagorean Triple with 1. The first one is 3, 4, and 5. Because of that, half of
+            the min also can't be a common factor. The next lowest possible common factor is a third of the min.
+             */
+            int maxI = Math.min(a, Math.min(b, c)) / 3;
+            return IntStream.concat(
+                IntStream.of(2),
+                IntStream.iterate(3, i -> i <= maxI, i -> i + 2)
+            )
+            .noneMatch(i -> isDivisible(a, i) && isDivisible(b, i) && isDivisible(c, i));
         }
     }
     
     /**
-     * Returns a list of triple objects to represent the first 10 Pythagorean Triples where the lowest integer
-     * in the triple is >= the input. For example, if the input is 3, then the triple 3, 4, and 5 will be the
-     * first one found since the lowest number in that triple is 3. If the input number is 4, then the triple
-     * 5, 12, and 13 will be the first one found.
+     * Returns a list of triple objects for the first 10 Pythagorean triples where the lowest integer in the
+     * triple is >= the input. For example, if the input is 3 then an object for the triple 3, 4, and 5 will
+     * be the first one since the lowest number in that triple is 3. If the input number is 4, then an object
+     * for the triple 5, 12, and 13 will be the first one.
      */
-    public static List<PythagoreanTriple> getPythagTriples(int input) {
-        assertIsInRange(input, minInputInt, maxInputInt);
+    public static List<Triple> getTriples(long input) {
+        assertIsInRange(input, MIN_INPUT, MAX_INPUT);
 
-        var triples = new ArrayList<PythagoreanTriple>(numberOfTriplesToFind);
-        
-        // sideLength1 represents one of the lengths of one of the two short sides of a right triangle.
-        // 3 is the lowest number to be in a Pythagorean triple so make sideLength1 be at least that.
-        int sideLength1 = Math.max(input, 3);
-        // sideLength2 represents the length of the other short side.
-        int sideLength2 = sideLength1 + 1;
+        var triples = new ArrayList<Triple>(NUM_TRIPLES_TO_FIND);
+        var a = (int) input;
+        var b = a + 1;
         
         while (true) {
-            double hypotLengthDouble = Math.hypot(sideLength1, sideLength2);
-            if (hypotLengthDouble < sideLength2 + 1) {
-                // sideLength2 + 1 is the minimum possible integer value for the hypotenuse length.
-                // If the hypotenuse length is less than this, then the max value for sideLength2 for the
-                // current value of sideLength1 has been exceeded.
-                sideLength1++;
-                sideLength2 = sideLength1 + 1;
+            var cDouble = Math.hypot(a, b);
+
+            if (cDouble < b + 1) {
+                /*
+                b + 1 is the minimum possible integer value for c, so if c is less than that then
+                the max value for b for the current value of a has been exceeded.
+                 */
+                b = ++a + 1;
             } else {
-                int hypotLengthInt = (int) hypotLengthDouble;
-                if (hypotLengthInt == hypotLengthDouble) {
-                    // A Pythagorean Triple has been found.
-                    triples.add(new PythagoreanTriple(sideLength1, sideLength2, hypotLengthInt));
-                    if (triples.size() == numberOfTriplesToFind) {
+                var cInt = (int) cDouble;
+
+                if (cDouble == cInt) {
+                    triples.add(new Triple(a, b, cInt));
+                    if (triples.size() == NUM_TRIPLES_TO_FIND) {
                         return triples;
                     }
                 }
-                sideLength2++;
+                
+                b++;
             }
         }
     }
     
     /**
-     * Returns a Stream of strings that say the first 10 Pythagorean Triples where the lowest integer in
+     * Returns a stream of strings that say the first 10 Pythagorean triples where the lowest integer in
      * the triple is >= the input. Each string contains the 1-based position of that triple followed by ") "
-     * followed by the the string representation of the object for that triple. Currently, numberOfTriplesToFind
-     * is 10 so there'll be a 1 space indent for the strings that start with a single digit.
+     * followed by the the string representation of that triple. Currently, NUM_TRIPLES_TO_FIND is 10 so
+     * there'll be a 1-space indent for the strings that start with a single digit.
      */
-    private static Stream<String> getNumberedPythagTriplesStrings(int input) {
-        var ai = new AtomicInteger(1);
+    private static Stream<String> getNumberedTripleStrings(long input) {
+        // Call getTriples first to see if it throws.
+        List<Triple> triples = getTriples(input);
+        var position = new AtomicInteger(1);
         return
-            getPythagTriples(input)
+            triples
             .stream()
-            .map(pt -> String.format("%s%d) %s", ai.get() < 10 ? " " : "", ai.getAndIncrement(), pt));
+            .map(t -> String.format("%s%d) %s", position.get() < 10 ? " " : "", position.getAndIncrement(), t));
     }
     
-    private static String getListHeading(int input) {
+    private static String getTriplesHeading(long input) {
         return String.format(
-            "The first %d Pythagorean Triples >= %s are:",
-            numberOfTriplesToFind,
-            stringifyWithCommas(input)
+            "The first %d Pythagorean triples >= %s are:",
+            NUM_TRIPLES_TO_FIND,
+            toStringWithCommas(input)
         );
     }
     
-    public static class Section extends SingleInputSection {
+    public static final class Section extends SingleInputSection {
         public Section() {
             super(
                 "Pythagorean Triples",
-                List.of(info),
-                minInputInt,
-                maxInputInt,
-                String.format("get the first %d Pythagorean Triples >= that integer", numberOfTriplesToFind),
-                "Pythagorean Triples"
+                MIN_INPUT,
+                MAX_INPUT,
+                String.format("get the first %d Pythagorean triples >= that integer", NUM_TRIPLES_TO_FIND),
+                "Pythagorean triples",
+                INFO
             );
         }
     
         /**
-         * Returns a string that contains a heading and numbered Pythagorean Triple strings, each on their
-         * own line.
+         * Returns a string that contains a heading and triple strings, each on their own line.
          */
         @Override
-        public String getCliAnswer(int input) {
+        public String getCliAnswer(long input) {
             return
-                getNumberedPythagTriplesStrings(input)
-                .collect(Collectors.joining("\n", getListHeading(input) + "\n", ""));
+                getNumberedTripleStrings(input)
+                .map(s -> NTPCLI.insertNewLines(s, true))
+                .collect(Collectors.joining("\n", getTriplesHeading(input) + '\n', ""));
         }
     
         /**
-         * Returns a list with a heading label and an NTPTextArea that contains numbered
-         * Pythagorean Triple strings, each on their own line.
+         * Returns a list with a heading label and an NTPTextArea with triple strings, each on their own line.
          */
         @Override
-        public List<Component> getGuiComponents(int input) {
+        public List<Component> getGuiComponents(long input) {
             return List.of(
-                NTPGUI.createCenteredLabel(getListHeading(input), NTPGUI.listHeadingFont),
-                new NTPTextArea(getNumberedPythagTriplesStrings(input), "\n")
+                NTPGUI.createCenteredLabel(getTriplesHeading(input), NTPGUI.LIST_HEADING_FONT),
+                new NTPTextArea(getNumberedTripleStrings(input), "\n")
             );
         }
     }

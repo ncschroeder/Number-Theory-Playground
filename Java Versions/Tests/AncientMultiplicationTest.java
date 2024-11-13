@@ -1,75 +1,74 @@
-import com.nicholasschroeder.numbertheoryplayground.AncientMultiplication;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import java.math.BigInteger;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static com.nicholasschroeder.numbertheoryplayground.AncientMultiplication.*;
 
 /**
  * Has tests for code in the AncientMultiplication class.
  */
 class AncientMultiplicationTest {
     /*
-    There are 3 situations I can think of when performing the Ancient Egyptian multiplication algorithm.
-    int1, rows1, and rows2 refer to the corresponding fields on an Info object created.
-    1. int1 is a power of 2 so the binary string consists of a 1 followed by either nothing or some 0s.
-       There's only 1 power of 2 that sums to int1. rows2 is only going to contain a single row.
-    2. int1 is 1 less than a power of 2 and the binary string consists only of 1s and all the powers of 2
-       < int1 sum to the int1. rows1 and rows2 will be the same.
-    3. None of the above. The binary string will be a 1 followed by 1s and 0s. The powers of 2 that sum to
-       int1 will have more than 1 but not all of the powers of 2 <= int1. The length of rows2 will be > 1
-       && < the length of rows1.
-    */
+    I've identified 3 possible outcomes when creating an Answer object. input1 refers to the 1st input used
+    for creating the object and table1Rows and table2Rows refer to those fields on the object.
     
-    /**
-     * Shortened constructor for an AncientMultiplication.Row
+    1. input1 is a power of 2 so its binary string consists of a 1 followed by either nothing or some 0's.
+       There, of course, is only 1 power of 2 that sums to input1. table2Rows will only have a single row.
+    2. input1 is 1 less than a power of 2 so its binary string consists only of 1's and the powers of 2 that
+       sum to input1 are all the powers of 2 less than it. table1Rows and table2Rows will have the same rows.
+    3. None of the above. The binary string of input1 will consist of at least two 1's and at least one 0.
+       The amount of powers of 2 that sum to input1 will be > 1 and < the amount of powers of 2 < input1.
+       table2Rows will have more than 1 row but won't have as many rows as table1Rows.
+
+    I'll test each of these in the order that they're listed.
      */
-    static AncientMultiplication.Row r(int powerOf2, int correspondingMultiple) {
-        return new AncientMultiplication.Row(powerOf2, correspondingMultiple);
-    }
-    
-    @Test
-    void rowEquals() {
-        assertTrue(r(1, 2).equals(r(1, 2)));
-    }
     
     @ParameterizedTest
     @MethodSource("getArgs")
-    @DisplayName("Info objects generate correct rows")
-    void infoObjectRows(int input1, int input2, List<AncientMultiplication.Row> expectedRows1, List<AncientMultiplication.Row> expectedRows2) {
-        var info = new AncientMultiplication.Info(input1, input2);
-        assertEquals(expectedRows1, info.getRows1().collect(Collectors.toList()));
-        assertEquals(expectedRows2, info.getRows2().collect(Collectors.toList()));
+    void answerObjectTableRows(
+        int input1,
+        int input2,
+        List<TableRow> expectedTable1Rows,
+        List<TableRow> expectedTable2Rows
+    ) {
+        var answer = new Answer(input1, input2);
+        assertEquals(expectedTable1Rows, answer.table1Rows.toList());
+        assertEquals(expectedTable2Rows, answer.table2Rows.toList());
+    }
+    
+    /**
+     * Shortened constructor for a TableRow.
+     */
+    static TableRow tr(int powerOf2, int correspondingMultiple) {
+        return new TableRow(powerOf2, BigInteger.valueOf(correspondingMultiple));
     }
     
     static Stream<Arguments> getArgs() {
-        List<AncientMultiplication.Row> rowsFor255And300 =
+        List<TableRow> rowsFor255And300 =
             List.of(
-                r(1, 300), r(2, 600), r(4, 1_200), r(8, 2_400), r(16, 4_800), r(32, 9_600),
-                r(64, 19_200), r(128, 38_400)
+                tr(1, 300), tr(2, 600), tr(4, 1_200), tr(8, 2_400), tr(16, 4_800), tr(32, 9_600),
+                tr(64, 19_200), tr(128, 38_400)
             );
         
         return Stream.of(
-            // Situation from above that gets tested is in the comment
-            arguments( // 1
+            arguments(
                 32, 33,
-                List.of(r(1, 33), r(2, 66), r(4, 132), r(8, 264), r(16, 528), r(32, 1_056)),
-                List.of(r(32, 1_056))
+                List.of(tr(1, 33), tr(2, 66), tr(4, 132), tr(8, 264), tr(16, 528), tr(32, 1_056)),
+                List.of(tr(32, 1_056))
             ),
-            arguments(255, 300, rowsFor255And300, rowsFor255And300), // 2
-            arguments( // 3
+            arguments(255, 300, rowsFor255And300, rowsFor255And300),
+            arguments(
                 800, 971,
                 List.of(
-                    r(1, 971), r(2, 1_942), r(4, 3_884), r(8, 7_768), r(16, 15_536), r(32, 31_072),
-                    r(64, 62_144), r(128, 124_288), r(256, 248_576), r(512, 497_152)
+                    tr(1, 971), tr(2, 1_942), tr(4, 3_884), tr(8, 7_768), tr(16, 15_536), tr(32, 31_072),
+                    tr(64, 62_144), tr(128, 124_288), tr(256, 248_576), tr(512, 497_152)
                 ),
-                List.of(r(32, 31_072), r(256, 248_576), r(512, 497_152))
+                List.of(tr(32, 31_072), tr(256, 248_576), tr(512, 497_152))
             )
         );
     }

@@ -4,7 +4,7 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,279 +15,205 @@ import static com.nicholasschroeder.numbertheoryplayground.NTPGUI.*;
  * Utility class related to GCDs and LCMs and the section for it.
  */
 public class GcdAndLcm {
-    private static final List<String> infoParagraphs =
-        List.of(
-            "GCD stands for greatest common divisor and LCM stands for least common multiple.",
-            PrimeFactorization.GcdAndLcmInfo.infoParagraph,
-            PrimeFactorization.GcdAndLcmInfo.examplesParagraph,
-            "The Euclidean algorithm can be used to find the GCD of 2 numbers, usually faster than " +
-                "calculating the prime factorizations. This algorithm was named after the ancient Greek " +
-                "mathematician Euclid. For this algorithm, first take 2 numbers. If the bigger number is " +
-                "divisible by the smaller number, then the smaller number is the GCD. Otherwise, the GCD " +
-                "of the 2 numbers is the same as the GCD of the smaller number and the remainder when the " +
-                "bigger number is divided by the smaller number. Repeat."
-        );
+    private static final Supplier<String> infoStartSupplier = () -> """
+GCD stands for greatest common divisor and LCM stands for least common multiple. Greatest common
+divisor is also known as greatest common factor, or GCF. To find the GCD and LCM of 2 numbers, you
+could manually do some division and multiplication but there are other ways to find them.
 
+The Euclidean algorithm can be used to find the GCD of 2 numbers. This algorithm was named after the
+ancient Greek mathematician Euclid. For this algorithm, first take 2 numbers. If the bigger number
+is divisible by the smaller number, then the smaller number is the GCD. Otherwise, the GCD of the 2
+numbers is the same as the GCD of the smaller number and the remainder when the bigger number is
+divided by the smaller number. Repeat.""";
+  
     // This section uses prime factorizations so the input constraints for those will be used.
-    private static final int minInputInt = PrimeFactorization.minInputInt;
-    private static final int maxInputInt = PrimeFactorization.maxInputInt;
-
-
+    public static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
+    public static final long MAX_INPUT = PrimeFactorization.MAX_INPUT / 2;
+    
+    
     /**
-     * Class with data for an iteration of the Euclidean algorithm.
+     * Record with data for an iteration of the Euclidean algorithm.
      */
-    public static class EuclideanIteration {
-        public final int max;
-        public final int min;
-        public final int remainder;
-
-        public EuclideanIteration(int max, int min, int remainder) {
-            this.max = max;
-            this.min = min;
-            this.remainder = remainder;
+    public record EuclideanIteration(long max, long min, long remainder) {
+        private String maxString() {
+            return toStringWithCommas(max);
         }
-
-        public String getMaxString() {
-            return stringifyWithCommas(max);
+        
+        private String minString() {
+            return toStringWithCommas(min);
         }
-
-        public String getMinString() {
-            return stringifyWithCommas(min);
-        }
-
-        public String getRemainderString() {
-            return stringifyWithCommas(remainder);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof EuclideanIteration) {
-                var iteration = (EuclideanIteration) o;
-                return this.max == iteration.max && this.min == iteration.min && this.remainder == iteration.remainder;
-            }
-            return false;
+        
+        private String remainderString() {
+            return toStringWithCommas(remainder);
         }
     }
-
+    
     /**
      * Returns a list of iteration objects to represent all iterations of the Euclidean algorithm
      * performed on input1 and input2.
      */
-    public static List<EuclideanIteration> getEuclideanIterations(int input1, int input2) {
-        assertIsInRange(input1, minInputInt, maxInputInt);
-        assertIsInRange(input2, minInputInt, maxInputInt);
+    public static List<EuclideanIteration> getEuclideanIterations(long input1, long input2) {
+        assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
+        assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
+        
+        long max = Math.max(input1, input2);
+        long min = Math.min(input1, input2);
+        long remainder = max % min;
         
         var iterations = new ArrayList<EuclideanIteration>();
-        int max = Math.max(input1, input2);
-        int min = Math.min(input1, input2);
-        int remainder = max % min;
         iterations.add(new EuclideanIteration(max, min, remainder));
-
+        
         while (remainder != 0) {
             max = min;
             min = remainder;
             remainder = max % min;
             iterations.add(new EuclideanIteration(max, min, remainder));
         }
-
+        
         return iterations;
     }
     
     // Text used for the Euclidean algorithm info table.
-    private static final String euclideanHeading = "Euclidean Algorithm Info";
-    private static final String euclideanMaxColumnHeading = "Max";
-    private static final String euclideanMinColumnHeading = "Min";
-    private static final String euclideanRemainderColumnHeading = "Remainder";
-
+    private static final String EUCLIDEAN_TABLE_HEADING = "Euclidean Algorithm Info";
+    private static final String EUCLIDEAN_MAX_COLUMN_HEADING = "Max";
+    private static final String EUCLIDEAN_MIN_COLUMN_HEADING = "Min";
+    private static final String EUCLIDEAN_REMAINDER_COLUMN_HEADING = "Remainder";
+    
     /**
-     * Returns a message about what the GCD of input1 and input2 is. euclideanIterations should be a list
-     * returned from making a call to getEuclideanIterations using input1 and input2. The min field of the
-     * last element in that list is the GCD.
+     * Returns a message about what the GCD of input1 and input2 is. iterations should be a list
+     * returned from making a call to getEuclideanIterations using input1 and input2. The min of
+     * the last element in that list is the GCD.
      */
-    private static String getEuclideanGcdMessage(int input1, int input2, List<EuclideanIteration> euclideanIterations) {
+    private static String getEuclideanGcdMessage(long input1, long input2, List<EuclideanIteration> iterations) {
         return String.format(
             "The GCD of %s and %s is %s.",
-            stringifyWithCommas(input1),
-            stringifyWithCommas(input2),
-            euclideanIterations.get(euclideanIterations.size() - 1).getMinString()
+            toStringWithCommas(input1),
+            toStringWithCommas(input2),
+            iterations.getLast().minString()
         );
     }
-
+    
     /**
      * Returns a string with a heading, table, and message about what the GCD of input1 and input2 is.
      * The table has columns for the max number, min number, and remainder for each iteration of the
      * Euclidean algorithm performed on input1 and input2.
      */
-    private static String getEuclideanCliAnswer(int input1, int input2) {
-        List<EuclideanIteration> euclideanIterations = getEuclideanIterations(input1, input2);
+    private static String getEuclideanCliAnswer(long input1, long input2) {
+        List<EuclideanIteration> iterations = getEuclideanIterations(input1, input2);
     
         // The gap between the end of the longest item in a column and the item in the next column.
-        final int columnGap = 4;
+        var columnGap = 4;
     
-        // Make column widths equal to the length of the longest element in the column + the column gap.
-        // The 1st iteration will have the longest elements of all iterations.
-        EuclideanIteration iteration1 = euclideanIterations.get(0);
+        /*
+        Make column widths equal to the length of the longest element in the column + the column gap.
+        The first iteration will have the longest elements of all iterations.
+         */
+        EuclideanIteration iteration1 = iterations.getFirst();
         
         int maxColumnWidth =
-            Math.max(euclideanMaxColumnHeading.length(), iteration1.getMaxString().length()) +
+            Math.max(EUCLIDEAN_MAX_COLUMN_HEADING.length(), iteration1.maxString().length()) +
             columnGap;
     
         int minColumnWidth =
-            Math.max(euclideanMinColumnHeading.length(), iteration1.getMinString().length()) +
+            Math.max(EUCLIDEAN_MIN_COLUMN_HEADING.length(), iteration1.minString().length()) +
             columnGap;
     
         String headRow =
-            NTPCLI.getRowFor3ColumnTable(euclideanMaxColumnHeading, maxColumnWidth, euclideanMinColumnHeading, minColumnWidth, euclideanRemainderColumnHeading);
+            NTPCLI.getRowFor3ColumnTable(
+                EUCLIDEAN_MAX_COLUMN_HEADING, maxColumnWidth,
+                EUCLIDEAN_MIN_COLUMN_HEADING, minColumnWidth,
+                EUCLIDEAN_REMAINDER_COLUMN_HEADING
+            );
 
-        String collectingPrefix = euclideanHeading + "\n" + headRow + "\n";
-        String collectingSuffix = "\n" + getEuclideanGcdMessage(input1, input2, euclideanIterations);
+        String collectingPrefix = EUCLIDEAN_TABLE_HEADING + '\n' + headRow + '\n';
+        String collectingSuffix = '\n' + getEuclideanGcdMessage(input1, input2, iterations);
     
+        // Create table.
         return
-            euclideanIterations
+            iterations
             .stream()
-            .map(ei ->
-                NTPCLI.getRowFor3ColumnTable(ei.getMaxString(), maxColumnWidth, ei.getMinString(), minColumnWidth, ei.getRemainderString())
+            .map(i ->
+                NTPCLI.getRowFor3ColumnTable(
+                    i.maxString(), maxColumnWidth, i.minString(), minColumnWidth, i.remainderString()
+                )
             )
             .collect(Collectors.joining("\n", collectingPrefix, collectingSuffix));
     }
-
+    
     /**
      * Returns an NTPPanel with a heading label, table, and label with a message about what the GCD of
      * input1 and input2 is. The table has columns for the max number, min number, and remainder for each
      * iteration of the Euclidean algorithm performed on input1 and input2.
      */
-    private static NTPPanel getEuclideanPanel(int input1, int input2) {
-        List<EuclideanIteration> euclideanIterations = getEuclideanIterations(input1, input2);
+    private static NTPPanel getEuclideanPanel(long input1, long input2) {
+        List<EuclideanIteration> iterations = getEuclideanIterations(input1, input2);
     
         NTPPanel iterationsTable =
             new NTPPanel()
             .chainedSetLayout(new GridLayout(0, 3, 4, 4))
             .center();
         
-        List.of(euclideanMaxColumnHeading, euclideanMinColumnHeading, euclideanRemainderColumnHeading)
-        .forEach(s -> iterationsTable.addLabel(s, tableHeadingFont));
+        List.of(EUCLIDEAN_MAX_COLUMN_HEADING, EUCLIDEAN_MIN_COLUMN_HEADING, EUCLIDEAN_REMAINDER_COLUMN_HEADING)
+        .forEach(s -> iterationsTable.addLabel(s, TABLE_HEADING_FONT));
         
-        euclideanIterations
+        iterations
         .stream()
-        .flatMap(ei -> Stream.of(ei.getMaxString(), ei.getMinString(), ei.getRemainderString()))
-        .forEachOrdered(s -> iterationsTable.addLabel(s, answerContentFont));
+        .flatMap(i -> Stream.of(i.maxString(), i.minString(), i.remainderString()))
+        .forEachOrdered(s -> iterationsTable.addLabel(s, ANSWER_CONTENT_FONT));
         
         return
             new NTPPanel()
             .setToBoxLayoutWithPageAxis()
-            .addCenteredLabel(euclideanHeading, answerSubHeadingFont)
+            .addCenteredLabel(EUCLIDEAN_TABLE_HEADING, ANSWER_SUB_HEADING_FONT)
             .add(iterationsTable)
             .addCenteredLabel(
-                getEuclideanGcdMessage(input1, input2, euclideanIterations),
-                answerContentFont
+                getEuclideanGcdMessage(input1, input2, iterations),
+                ANSWER_CONTENT_FONT
             )
             .setMaxSizeToPreferredSize();
     }
     
+    private static final String PF_INFO_HEADING = "Prime Factorization Info";
     
-    // Text used for prime factorization info table.
-    private static final String pfInfoHeading = "Prime Factorization Info";
-    private static final String numberColumnHeading = "Number";
-    private static final String pfColumnHeading = "Prime Factorization";
-    private static final String gcdRowHeading = "GCD";
-    private static final String lcmRowHeading = "LCM";
-
-    /**
-     * Returns a string with a heading and a table where 1 column is for an integer and another column is for the
-     * corresponding prime factorization string. There are rows for input1, input2, the GCD of these, and the
-     * LCM of these. For the GCD and LCM rows, there's also a column that says "GCD" and "LCM", respectively.
-     */
-    private static String getGcdAndLcmViaPfCliAnswer(int input1, int input2) {
-        var info = new PrimeFactorization.GcdAndLcmInfo(input1, input2);
-        
-        String input1String = stringifyWithCommas(input1);
-        String input2String = stringifyWithCommas(input2);
-        String gcdString = info.getGcdString();
-        String lcmString = info.lcmPf.getCorrespondingIntString();
-        
-        // Only contents of column 1 are a row that says "GCD" and another row that says "LCM".
-        var column1Width = 6;
-        
-        // Make column 2 as wide as the longest element in that column + 3.
-        int column2Width =
-            Stream.of(numberColumnHeading, input1String, input2String, gcdString, lcmString)
-            .mapToInt(String::length)
-            .max()
-            .orElseThrow()
-            + 3;
-        
+    private static String getGcdAndLcmViaPfCliAnswer(long input1, long input2) {
         return
-            Stream.of(
-                List.of("", numberColumnHeading, pfColumnHeading),
-                List.of("", input1String, info.int1Pf.toString()),
-                List.of("", input2String, info.int2Pf.toString()),
-                List.of(gcdRowHeading, gcdString, info.getGcdPfStringOrDefault()),
-                List.of(lcmRowHeading, lcmString, info.lcmPf.toString())
-            )
-            .map(l -> NTPCLI.getRowFor3ColumnTable(l.get(0), column1Width, l.get(1), column2Width, l.get(2)))
-            .collect(Collectors.joining("\n", pfInfoHeading + "\n", ""));
+            new PrimeFactorization.GcdAndLcmAnswer(input1, input2)
+            .infoSentences
+            .map(s -> NTPCLI.insertNewLines(s, true))
+            .collect(Collectors.joining("\n", PF_INFO_HEADING + '\n', ""));
     }
-
-    /**
-     * Returns an NTPPanel with a heading label and a table where 1 column is for an integer and another
-     * column is for the corresponding prime factorization string. There are rows for input1, input2, the
-     * GCD of these, and the LCM of these. For the GCD and LCM rows, there's also a column that says "GCD"
-     * and "LCM", respectively.
-     */
-    private static NTPPanel getGcdAndLcmViaPfPanel(int input1, int input2) {
-        var info = new PrimeFactorization.GcdAndLcmInfo(input1, input2);
-        
-        NTPPanel table =
-            new NTPPanel()
-            .chainedSetLayout(new GridLayout(5, 3));
-
-        Consumer<String> addHeading = s -> table.addLabel(s, tableHeadingFont);
-        Consumer<String> addNormalEntry = s -> table.addLabel(s, answerContentFont);
-
-        List.of("", numberColumnHeading, pfColumnHeading)
-        .forEach(addHeading);
-
-        List.of(
-            "", stringifyWithCommas(input1), info.int1Pf.toString(),
-            "", stringifyWithCommas(input2), info.int2Pf.toString()
-        )
-        .forEach(addNormalEntry);
     
-        addHeading.accept(gcdRowHeading);
-        addNormalEntry.accept(info.getGcdString());
-        addNormalEntry.accept(info.getGcdPfStringOrDefault());
-
-        addHeading.accept(lcmRowHeading);
-        addNormalEntry.accept(info.lcmPf.getCorrespondingIntString());
-        addNormalEntry.accept(info.lcmPf.toString());
-
+    private static NTPPanel getGcdAndLcmViaPfPanel(long input1, long input2) {
+        Stream<String> infoSentences =
+            new PrimeFactorization.GcdAndLcmAnswer(input1, input2).infoSentences;
         return
             new NTPPanel()
-            .setToBoxLayoutWithPageAxis()
-            .addCenteredLabel(pfInfoHeading, answerSubHeadingFont)
-            .add(table)
-            .setMaxSizeToPreferredSize();
+            .addCenteredLabel(PF_INFO_HEADING, ANSWER_SUB_HEADING_FONT)
+            .add(new NTPTextArea(infoSentences, "\n"));
     }
     
-    private static String getAnswerMainHeading(int input1, int input2) {
-        return String.format("GCD and LCM Info for %s and %s", stringifyWithCommas(input1), stringifyWithCommas(input2));
+    private static String getAnswerMainHeading(long input1, long input2) {
+        return String.format(
+            "GCD and LCM Info for %s and %s",
+            toStringWithCommas(input1),
+            toStringWithCommas(input2)
+        );
     }
-
-
-    public static class Section extends DoubleInputSection {
+    
+    public static final class Section extends DoubleInputSection {
         public Section() {
             super(
                 "GCD and LCM",
-                infoParagraphs,
-                minInputInt,
-                maxInputInt,
+                MIN_INPUT,
+                MAX_INPUT,
                 "get GCD and LCM info about them",
-                "GCDs and LCMs"
+                "GCDs and LCMs",
+                infoStartSupplier.get() + "\n\n" + PrimeFactorization.gcdAndLcmInfoSupplier.get()
             );
         }
-
+        
         @Override
-        public String getCliAnswer(int input1, int input2) {
+        public String getCliAnswer(long input1, long input2) {
             return String.join(
                 "\n\n",
                 getAnswerMainHeading(input1, input2),
@@ -297,9 +223,9 @@ public class GcdAndLcm {
         }
     
         @Override
-        public List<Component> getGuiComponents(int input1, int input2) {
+        public List<Component> getGuiComponents(long input1, long input2) {
             return List.of(
-                createCenteredLabel(getAnswerMainHeading(input1, input2), answerMainHeadingFont),
+                createCenteredLabel(getAnswerMainHeading(input1, input2), ANSWER_MAIN_HEADING_FONT),
                 createGap(10),
                 getEuclideanPanel(input1, input2),
                 createGap(10),

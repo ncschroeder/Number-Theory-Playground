@@ -132,13 +132,15 @@ Find the first 20 pairs of twin primes where the lowest number in the pair is $\
 
 #### Info
 
-The Fundamental Theorem of Arithmetic says that every integer $> 1$ can be expressed as the product of prime numbers. The *prime factorization* (PF) of an integer is an expression of the prime numbers whose product is that integer. For example, the PF of 5 is just $5$, the PF of 25 is $5^2$, and the PF of 12,250 is $2 \times 5^3 \times 7^2$. There are some interesting applications for this. Visit the GCD and LCM or the Divisibility sections for some applications.
+The Fundamental Theorem of Arithmetic says that every integer $> 1$ can be expressed as the product of prime numbers. The *prime factorization* (PF) of an integer is an expression of the prime numbers whose product is that integer. For example, the PF of 5 is just $5$, the PF of 25 is $5^2$, and the PF of 12,250 is $2 \times 5^3 \times 7^2$. There are some interesting applications for this. See the info for the "Divisibility" or "GCD and LCM" sections for some applications.
+
+The input integer with the highest amount of prime factors is $2^53$, or 9,007,199,254,740,992; the largest power of 2 $\leq$ 10 quadrillion. The input integer with the highest amount of *unique* prime factors is 304,250,263,527,210. This integer is the product of the first 13 prime numbers so it has 13 unique prime factors and its PF is $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$. You could also multiply that integer by 2 or 3 and those integers are $\leq$ the max input and have the same amount of unique prime factors.
 
 #### Calculation
 
 Find the PF of an input number faster than you can say "prime factorization". :slightly_smiling_face:
 
-#### Input Range: 2 - 10,000
+#### Input Range: 2 - 10,000,000,000,000,000 (10 quadrillion)
 
 </details>
 
@@ -147,18 +149,20 @@ Find the PF of an input number faster than you can say "prime factorization". :s
 
 #### Info
 
-Say we have 2 integers that we'll represent with the variables $a$ and $b$. If we divide $a$ by $b$ and get no remainder, then $a$ is said to be *divisible* by $b$ and $b$ is said to be a *factor* or *divisor* of $a$. If you want to find all the factors of an integer, you could manually find all of them but there are some other ways to find them.
+Say we have 2 integers that we'll represent with the variables $a$ and $b$. If we divide $a$ by $b$ and get no remainder, then $a$ is said to be *divisible* by $b$ and $b$ is said to be a *factor* or *divisor* of $a$. If you want to find some factors of an integer, you could manually do some division to find all of them but there are other ways to find them.
 
-Some special tricks can be used to find some of the factors of a number. Let's have a variable $i$ and let it represent an integer. If the sum of the digits of $i$ is divisible by 3, then $i$ is divisible by 3. If the sum of the digits of $i$ is divisible by 9, then $i$ is divisible by 9. If $i$ is even and divisible by 3, then it is also divisible by 6. If the last 2 digits of $i$ is divisible by 4, then $i$ is divisible by 4. If the last 3 digits of $i$ is divisible by 8, then $i$ is divisible by 8. If $i$ is divisible by both 3 and 4 then it is also divisible by 12.
+The factors of an integer can be found by looking at its prime factorization (PF). Let's have a variable $i$ and let it represent an integer $>$ 1. First, you can find how many factors $i$ has by looking at $i$'s PF, taking all the powers of the factors, adding 1 to each, and then multiplying all these together. For example, the PF of 36 is $2^2 \times 3^2$. The powers are 2 and 2, so there are $3 \times 3 = 9$ factors. However, that count includes 1 and the number that the PF is for (36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors. You can find the factors of $i$ by finding all the PFs within $i$'s PF, or the *sub-factorizations*, as I like to call them. For $2^2 \times 3^2$, the sub-factorizations are $2$, $3$, $2^2 (4)$, $2 \times 3 (6)$, $3^2 (9)$, $2^2 x 3 (12)$, and $2 x 3^2 (18)$.
 
-Another way you can tell what factors a number has and how many factors it has is by looking at its prime factorization (PF). Let's have a variable $i$ and let it represent an integer $> 1$. You can find how many factors $i$ has by looking at $i$'s PF, taking all the powers of the prime factors, adding 1 to each, and then multiplying all these together. For example, the PF of 294 is $2 \times 3 \times 7^2$. The powers are 1, 1, and 2; so there are $2 \times 2 \times 3 = 12$ factors. However, that count includes 1 and the number that the PF is for (294 in this case). If you want to exclude those, then subtract 2. That would give us 10 factors. You can find the factors of $i$ by finding all the PFs within $i$'s PF, or the *sub-factorizations*, as I like to call them. For $2 \times 3 \times 7^2$, some sub-factorizations include $2$, $2 \times 7$, and $3 \times 7^2$. This means that 2, 14, and 147 are factors of 294.
+Some rules can be used to find some of the factors of an integer. I'll go over 1 rule for each integer in the range of 3 to 12, excluding 5 and 10, though there are rules for more integers and many integers have multiple rules. I'll go over an example of using these rules to find the factors of an integer in the next paragraph. Let's have a variable $i$ and let it represent an integer. If the last 2 digits of $i$ is divisible by 4, then $i$ is divisible by 4. If the last 3 digits of $i$ is divisible by 8, then $i$ is divisible by 8. If the sum of the digits of $i$ is divisible by 3, then $i$ is divisible by 3. If the sum of the digits of $i$ is divisible by 9, then $i$ is divisible by 9. If $i$ is even and divisible by 3, then it's also divisible by 6. If $i$ is divisible by both 3 and 4, then it's also divisible by 12. For 7, we split the integer into blocks of 3 from right to left. Coincidentally, these are the blocks separated by commas if we write the integer with commas. We do an alternating sum of the blocks from right to left. We start with 0, add the last block, subtract the 2<sup>nd</sup> to last block, add the 3<sup>rd</sup> to last block, and so on for all the blocks. If this alternating sum is divisible by 7, then $i$ is divisible by 7. For 11, we do an alternating sum of digits from left to right. We start with 0, add the 1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all digits. If this alternating sum is divisible by 11, then $i$ is divisible by 11.
+
+Here's an example. Let $i$ be 4,695,768. The PF of $i$ is $2^3 \times 3^2 \times 7^2 \times 11^3$. We can tell from that PF that $i$ is divisible by all the integers mentioned above. Let's check using the rules. The last 2 digits are 68, which is divisible by 4. The last 3 digits are 768, which is divisible by 8. The sum of the digits is 45, which is divisible by 3 and 9. Since $i$ is even and divisible by 3, it's also divisible by 6. Since $i$ is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of blocks of 3 from right to left is $768 - 695 + 4 = 77$, which is divisible by 7. The alternating sum of digits from left to right is $4 - 6 + 9 - 5 + 7 - 6 + 8 = 11$, which, of course, is divisible by 11.
 
 #### Calculations
 
 1. Use the special tricks to see if we can find some factors of an input number and build a paragraph that says info from this.
 2. Find the PF of the input number. If we can determine from this PF that the input number is composite, then manually find the factors and their PFs and show that they are sub-factorizations of the PF of the input number.
 
-#### Input Range: 2 - 10,000
+#### Input Range: 2 - 10,000,000,000,000,000 (10 quadrillion)
 
 </details>
 
@@ -167,18 +171,26 @@ Another way you can tell what factors a number has and how many factors it has i
 
 #### Info
 
-One way to find the GCD and LCM of 2 numbers is to look at the prime factorizations (PFs) of those numbers. If those numbers do not have any common prime factors, then the GCD is 1. If they do have common prime factors, then the PF of the GCD consists of all the common prime factors and the power of each factor is the minimum power of that factor in the 2 PFs. The PF of the LCM consists of all factors that are in either of the PFs of the 2 numbers. If a factor is in both PFs then the power of that factor in the LCM PF is the maximum of the powers of that factor in the 2 PFs. If a factor is unique to one of the PFs then that factor and its power are in the LCM PF.
+Greatest common divisor is also known as greatest common factor, or GCF. To find the GCD and LCM of 2 numbers, you could manually do some division and multiplication but there are some other ways to find them.
 
-For example, let's find the GCD and LCM of 6 and 35 using their PFs. 6 has a PF of $2 \times 3$ and 35 has a PF of $5 \times 7$. There are no common factors so the GCD is 1. The LCM has a PF of $2 \times 3 \times 5 \times 7$ and this equals 210. Let's find the GCD and LCM of 54 and 99. 54 has a PF of $2 \times 3^3$ and 99 has a PF of $3^2 \times 11$. 3 is the only common factor and the minimum power of that factor is 2 so the GCD has a PF of $3^2$ and this equals 9. The maximum power of that factor is 3 so the LCM has a PF that consists of $3^3$. The PF of the LCM is $2 \times 3^3 \times 11$ and this equals 594.
+The Euclidean algorithm can be used to find the GCD of 2 numbers. This algorithm was named after the ancient Greek mathematician Euclid. For this algorithm, first take 2 numbers. If the bigger number is divisible by the smaller number, then the smaller number is the GCD. Otherwise, the GCD of the 2 numbers is the same as the GCD of the smaller number and the remainder when the bigger number is divided by the smaller number. Repeat.
 
-The Euclidean algorithm can be used to find the GCD of 2 numbers, usually faster than calculating the prime factorizations. This algorithm was named after the ancient Greek mathematician Euclid. For this algorithm, first take 2 numbers. If the bigger number is divisible by the smaller number, then the smaller number is the GCD. Otherwise, the GCD of the 2 numbers is the same as the GCD of the smaller number and the remainder when the bigger number is divided by the smaller number. Repeat.
+The GCD and LCM of 2 integers can be found by looking at their prime factorizations (PFs). If those integers don't have any common prime factors, then the GCD is 1. If they do have common prime factors, then the GCD PF consists of all the common prime factors and the power of each factor is the min of the powers of that factor in the 2 PFs. The LCM PF consists of all factors that are in either of the PFs of the 2 integers. If a factor is in both PFs then the power of that factor in the LCM PF is the max of the powers of that factor in the 2 PFs. If a factor is unique to one of the PFs then that factor and its power are in the LCM PF.
+
+Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is $2 \times 3$ and the PF of 35 is $5 \times 7$. There are no common prime factors so the GCD is 1. The LCM PF is $2 \times 3 \times 5 \times 7$, which is 210.
+
+Let's find the GCD and LCM of 54 and 99. The PF of 54 is $2 \times 3^3$ and the PF of 99 is $3^2 \times 11$. 3 is the only common prime factor and the min power of it is 2 so the GCD PF is $3^2$, which is 9. The max power of 3 is 3 so the LCM PF consists of $3^3$. The LCM PF is $2 \times 3^3 \times 11$, which is 594.
+
+The input integers whose LCM is the highest are 5,000,000,000,000,000, the max input, and 4,999,999,999,999,999, the max input $-$ 1. The LCM is 24,999,999,999,999,995,000,000,000,000,000, or 24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion! It has 32 digits. Trillion is before quadrillion.
+
+A pair of input integers whose LCM might have the highest amount of unique prime factors is 304,250,263,527,210, the product of the 1<sup>st</sup> 13 prime numbers, and 133,869,006,807,307, the product of the next 8 prime numbers. The LCM is 40,729,680,599,249,024,150,621,323,470, or 40 octillion ... It has 29 digits and 21 unique prime factors and its PF is $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41 \times 47 \times 53 \times 59 \times 61 \times 67 \times 71 \times 73$! Other pairs of input integers have the same LCM, such as that 1<sup>st</sup> input integer divided by 2 and the 2<sup>nd</sup> input integer multiplied by 2.
 
 #### Calculations
 
 1. Perform the Euclidean algorithm on 2 input numbers and display a table with info about all iterations. Each iteration has a max number, min number, and remainder when the max is divided by the min.
 2. Find the PFs of the input numbers and use these to find the PFs of the GCD and LCM. Display a table with all 4 numbers and their PFs.
 
-#### Input Range: 2 - 10,000
+#### Input Range: 2 - 5,000,000,000,000,000 (5 quadrillion)
 
 </details>
 

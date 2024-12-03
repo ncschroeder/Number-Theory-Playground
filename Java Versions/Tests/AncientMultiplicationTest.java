@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static com.nicholasschroeder.numbertheoryplayground.AncientMultiplication.*;
+import static numbertheoryplayground.sectionclasses.outer.AncientMultiplication.*;
 
 /**
  * Has tests for code in the AncientMultiplication class.

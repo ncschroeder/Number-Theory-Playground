@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static com.nicholasschroeder.numbertheoryplayground.TwinPrimePairs.getPairStarts;
+import static numbertheoryplayground.sectionclasses.outer.TwinPrimePairs.getPairStarts;
 
 /**
  * Has tests for code in the TwinPrimePairs class.

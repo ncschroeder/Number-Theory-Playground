@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -6,8 +6,9 @@ import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import numbertheoryplayground.sectionclasses.abstract_.*;
 
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.Misc.*;
 
 /**
  * Class with code related to the Number Theory Playground Command Line Interface, including the code for

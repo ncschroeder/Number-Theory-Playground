@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static com.nicholasschroeder.numbertheoryplayground.PrimeNumbers.getPrimes;
+import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.getPrimes;
 
 /**
  * Has tests for code in the PrimeNumbers class.

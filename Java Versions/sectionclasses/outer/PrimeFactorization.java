@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.math.BigInteger;
@@ -7,9 +7,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import numbertheoryplayground.NTPCLI;
+import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
-import static com.nicholasschroeder.numbertheoryplayground.Divisibility.*;
+import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
 
 /**
  * Class that can be instantiated and also has static members related to prime factorizations and the

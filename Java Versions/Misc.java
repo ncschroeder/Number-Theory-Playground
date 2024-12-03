@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground;
 
 import java.text.DecimalFormat;
 

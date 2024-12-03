@@ -2,7 +2,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.nicholasschroeder.numbertheoryplayground.Divisibility.RulesAnswer;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.RulesAnswer;
 
 /**
  * Has tests for code in the Divisibility class.

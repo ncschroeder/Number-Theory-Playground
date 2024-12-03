@@ -2,7 +2,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.nicholasschroeder.numbertheoryplayground.TwoSquareTheorem.Answer;
+import static numbertheoryplayground.sectionclasses.outer.TwoSquareTheorem.Answer;
 
 /**
  * Has tests for code in the TwoSquareTheorem class.

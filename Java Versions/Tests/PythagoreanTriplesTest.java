@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static com.nicholasschroeder.numbertheoryplayground.PythagoreanTriples.*;
+import static numbertheoryplayground.sectionclasses.outer.PythagoreanTriples.*;
 
 /**
  * Has tests for code in the PythagoreanTriples class.

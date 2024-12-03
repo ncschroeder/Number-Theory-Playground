@@ -1,11 +1,11 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.gui;
 
 import javax.swing.JTextArea;
 import java.awt.Dimension;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.nicholasschroeder.numbertheoryplayground.Misc.getWhiteSpace;
+import static numbertheoryplayground.Misc.getWhiteSpace;
 
 /**
  * JTextArea with custom default settings and constructors.

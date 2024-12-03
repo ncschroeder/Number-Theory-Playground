@@ -1,13 +1,16 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Supplier;
+import numbertheoryplayground.NTPCLI;
+import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
-import static com.nicholasschroeder.numbertheoryplayground.NTPGUI.*;
+import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.gui.NTPGUI.*;
 
 /**
  * Utility class related to divisibility and the section for it.

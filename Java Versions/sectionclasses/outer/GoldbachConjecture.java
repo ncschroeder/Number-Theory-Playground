@@ -1,14 +1,18 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import numbertheoryplayground.NTPCLI;
+import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
-import static com.nicholasschroeder.numbertheoryplayground.Divisibility.*;
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
-import static com.nicholasschroeder.numbertheoryplayground.PrimeNumbers.bothArePrime;
+import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
+import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePrime;
 
 /**
  * Utility class related to the Goldbach Conjecture and the section for it.

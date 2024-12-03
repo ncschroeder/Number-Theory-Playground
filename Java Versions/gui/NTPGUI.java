@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.gui;
 
 import javax.swing.Box;
 import javax.swing.JButton;

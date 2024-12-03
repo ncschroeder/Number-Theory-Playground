@@ -1,12 +1,15 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import numbertheoryplayground.NTPCLI;
+import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
-import static com.nicholasschroeder.numbertheoryplayground.PrimeNumbers.bothArePrime;
+import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePrime;
 
 /**
  * Utility class related to twin prime pairs and the section for it.

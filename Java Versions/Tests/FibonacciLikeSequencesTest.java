@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.nicholasschroeder.numbertheoryplayground.FibonacciLikeSequences.Answer;
+import static numbertheoryplayground.sectionclasses.outer.FibonacciLikeSequences.Answer;
 
 /**
  * Has tests for code in the FibonacciLikeSequences class.

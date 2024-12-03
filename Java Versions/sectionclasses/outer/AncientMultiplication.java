@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import numbertheoryplayground.NTPCLI;
+import numbertheoryplayground.gui.NTPPanel;
+import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
-import static com.nicholasschroeder.numbertheoryplayground.NTPGUI.*;
+import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.gui.NTPGUI.*;
 
 /**
  * Utility class related to ancient Egyptian multiplication and the section for it.

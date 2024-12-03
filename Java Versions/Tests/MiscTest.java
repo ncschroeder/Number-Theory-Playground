@@ -5,7 +5,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.Misc.*;
 
 /**
  * Has tests for code in the Misc class, except for getLongAndSquareString. That method will be tested

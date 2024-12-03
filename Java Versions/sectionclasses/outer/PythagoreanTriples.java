@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -7,9 +7,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import numbertheoryplayground.NTPCLI;
+import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
-import static com.nicholasschroeder.numbertheoryplayground.Divisibility.isDivisible;
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.isDivisible;
 
 /**
  * Utility class related to Pythagorean triples and the section for it.

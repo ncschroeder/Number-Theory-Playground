@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.gui;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -10,9 +10,11 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import numbertheoryplayground.sectionclasses.abstract_.*;
 
-import static com.nicholasschroeder.numbertheoryplayground.NTPGUI.*;
-import static com.nicholasschroeder.numbertheoryplayground.Divisibility.isEven;
+import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.gui.NTPGUI.*;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.isEven;
 
 /**
  * Panel that consists of all the content of the GUI version of the Number Theory Playground.

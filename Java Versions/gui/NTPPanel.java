@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.gui;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -6,7 +6,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.LayoutManager;
 
-import static com.nicholasschroeder.numbertheoryplayground.NTPGUI.*;
+import static numbertheoryplayground.gui.NTPGUI.*;
 
 /**
  * JPanel whose background color gets automatically set to the correct one and has additional

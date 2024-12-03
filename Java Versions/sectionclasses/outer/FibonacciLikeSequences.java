@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.math.BigDecimal;
@@ -9,8 +9,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import numbertheoryplayground.Misc;
+import numbertheoryplayground.NTPCLI;
+import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.Misc.*;
 
 /**
  * Utility class related to Fibonacci-like sequences and the section for it.
@@ -52,6 +57,7 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         /**
          * Contains a sentence about what Phi approximately is and sentences about the ratios between the 5th and 4th,
          * 10th and 9th, 15th and 14th, and 20th and 19th numbers in bigIntSequence.
+         * ~~The ratios get closer to Phi.~~
          */
         private final Stream<String> phiAndRatioSentences;
 

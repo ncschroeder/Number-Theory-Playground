@@ -1,9 +1,10 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.abstract_;
 
 import java.util.List;
 import java.util.Random;
+import numbertheoryplayground.sectionclasses.outer.*;
 
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.Misc.*;
 
 /**
  * Class for data and functionality of each section of the applications.

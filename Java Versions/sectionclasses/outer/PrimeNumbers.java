@@ -1,12 +1,16 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import numbertheoryplayground.Misc;
+import numbertheoryplayground.NTPCLI;
+import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
-import static com.nicholasschroeder.numbertheoryplayground.Divisibility.*;
-import static com.nicholasschroeder.numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
 
 /**
  * Utility class related to prime numbers and the section for it.

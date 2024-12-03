@@ -1,4 +1,4 @@
-package com.nicholasschroeder.numbertheoryplayground;
+package numbertheoryplayground.sectionclasses.abstract_;
 
 import java.awt.Component;
 import java.util.List;

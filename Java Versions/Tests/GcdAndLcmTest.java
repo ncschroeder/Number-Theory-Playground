@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static com.nicholasschroeder.numbertheoryplayground.GcdAndLcm.*;
+import static numbertheoryplayground.sectionclasses.outer.GcdAndLcm.*;
 
 /**
  * Has tests for code in the GcdAndLcm class.

@@ -35,9 +35,9 @@ public class CalculationsController {
         return new GcdAndLcmAnswer(input1, input2);
     }
     
-    @GetMapping("/goldbachPrimePairs")
-    public List<int[]> getGoldbachPrimePairs(@RequestParam int input) {
-        return Calculations.getGoldbachPrimePairs(input);
+    @GetMapping("/goldbachPrimePairStarts")
+    public int[] getGoldbachPrimePairStarts(@RequestParam int input) {
+        return Calculations.getGoldbachPrimePairStarts(input);
     }
     
     @GetMapping("/pythagoreanTriples")

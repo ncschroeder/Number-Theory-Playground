@@ -78,13 +78,13 @@ public class Calculations {
             .toArray();
     }
     
-    public static List<int[]> getGoldbachPrimePairs(int input) {
+    public static int[] getGoldbachPrimePairStarts(int input) {
         /*
         Check if the input is 4 since 4 is the only even number >= 4 that has 2 in a pair of
         primes that sum to it.
          */
         if (input == 4) {
-            return List.of(new int[] { 2, 2 });
+            return new int[] { 2 };
         }
         
         /*
@@ -97,8 +97,7 @@ public class Calculations {
         return
             IntStream.iterate(3, i -> i <= maxPossiblePairStart, i -> i + 2)
             .filter(i -> bothArePrime(i, input - i))
-            .mapToObj(i -> new int[] { i, input - i })
-            .toList();
+            .toArray();
     }
     
     public record PythagoreanTriple(int a, int b, int c) {

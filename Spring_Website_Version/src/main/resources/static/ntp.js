@@ -143,14 +143,17 @@ function createTable(headings, bodyDataSource, bodyTransform, caption) {
 }
 
 /**
- * @param {number} n 
+ * @param {number} a 
+ * @param {number} b 
  * @returns {boolean}
  */
-const isEven = (n) => n % 2 === 0;
+const isDivisible = (a, b) => a % b === 0;
 
 /**
  * @param {HTMLInputElement} inputField 
  * @returns {number}
+ * @param {number} n 
+ * @returns {boolean}
  */
 function getNum(inputField) {
     const trimmedValue = inputField.value.trim().replaceAll(',', '');
@@ -158,6 +161,7 @@ function getNum(inputField) {
     const containsNonDigit = /\D/.test(trimmedValue);
     return containsNonDigit ? NaN : Number(trimmedValue);
 }
+const isEven = (n) => isDivisible(n, 2);
 
 /**
  * @returns {HTMLInputElement}
@@ -277,6 +281,13 @@ class Section {
     #getElements;
 
     /**
+     * @callback GetElementsFunction
+     * @param {any} responseObj
+     * @param {string} input1String
+     * @param {?string} input2String
+     * @param {number} input1Num
+     * @returns {HTMLElement[]}
+     * 
      * @typedef {Object} SectionParams
      * @property {string} btnIdStart
      * @property {string | HTMLElement[]} infoHtml
@@ -286,7 +297,7 @@ class Section {
      * @property {number} maxInput
      * @property {boolean} [needsEvenInput=false]
      * @property {string} apiEndpoint
-     * @property {(responseObj: any, input1String: string, input2String: ?string) => HTMLElement[]} getElements
+     * @property {GetElementsFunction} getElements
      * 
      * @param {SectionParams} obj 
      */
@@ -396,7 +407,7 @@ getElementById('calculateBtn').onclick = () => {
     fetch(`calculate/${curSection.apiEndpoint}?${urlParams}`)
     .then(async response =>
         response.ok
-        ? curSection.getElements(await response.json(), inputString1, inputString2)
+        ? curSection.getElements(await response.json(), inputString1, inputString2, inputNum1)
         : [errorMessage]
     )
     .then(elementsOrErrorMessage => answerArea.replaceChildren(...elementsOrErrorMessage))
@@ -494,6 +505,8 @@ const pfInfoHtml =
  * @type {object}
  * @property {number} factor
  * @property {number} power
+ * @typedef {FactorAndPower[]} PfArray
+ * @typedef {{pfArr: ?PfArray, correspondingNum: number}} PfArrayAndNumber
  * 
  * @param {FactorAndPower[]} pfArray
  * @returns {HTMLSpanElement}
@@ -586,55 +599,176 @@ const divisbilityInfoHtml =
     divisible by 11.`;
 
 /**
- * @typedef {{factorsAndPowers: ?FactorAndPower[], number: number}} FactorsAndPowersWithNumber
+ * @typedef {{ sum: number, expression: string }} AlternatingSumAndExpression
  * 
- * @param {{rulesInfo: string, pfInfo: ?{inputPf: FactorAndPower[], numFactorsInfo: string, factorPfs: FactorsAndPowersWithNumber[]}}} infoObject
+ * @typedef {Object} DivisibilityRulesData
+ * @property {number} last2Digits
+ * @property {number} last3Digits
+ * @property {number} sumOfDigits
+ * @property {?AlternatingSumAndExpression} blocksOf3AltSumAndExpression
+ * @property {AlternatingSumAndExpression} digitsAltSumAndExpression
+ * 
+ * @typedef {Object} DivisibilityPfAnswer
+ * @property {PfArray} inputPfArr
+ * @property {string} numFactorsExpression
+ * @property {number} numFactors
+ * @property {PfArrayAndNumber[]} factorPfArrsAndNums
+ */
+
+/** 
+ * @param {{ rulesData: ?DivisibilityRulesData, pfAnswer: ?DivisibilityPfAnswer }}
  * @param {string} inputString
+ * @param {number} inputNum 
  * @returns {HTMLElement[]}
  * An array that contains elements with divisibility info about the argument number based on the info in infoObject.
  */
-function getDivisibilityInfoElements(infoObject, inputString) {
-    const { rulesInfo, pfInfo } = infoObject;
-    const rulesInfoDiv = createDiv();
-    rulesInfoDiv.append(createH4('Rules Info'), createP(rulesInfo));
+function getDivisibilityInfoElements({ rulesData, pfAnswer }, inputString, inputString2Ignored, inputNum) {
+    const elements = [createH3(`Divisibility Info for ${inputString}`)];
+    if (rulesData) {
+        elements.push(getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum));
+    }
+    elements.push(getDivisibiltyPfInfoDiv(pfAnswer, inputString));
+    return elements;
+}
 
-    const pfDiv = createDiv();
-    pfDiv.appendChild(createH4('Prime Factorization Info'));
-    const pfInfoParagraph = createP(`The prime factorization for ${inputString} is `);
-    
-    if (!pfInfo) {
+/**
+ * @param {DivisibilityRulesData} rulesData 
+ * @param {string} inputString 
+ * @param {number} inputNum 
+ * @returns {HTMLDivElement}
+ */
+function getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum) {
+    const { last2Digits, last3Digits, sumOfDigits, blocksOf3AltSumAndExpression, digitsAltSumAndExpression } = rulesData;
+    const heading = createH4('Rules Info');
+
+    /**
+     * @param {number} possibleFactor 
+     * @param {number} numFromCalculation 
+     * @param {boolean} isDivisible 
+     */
+    function getDivisibilitySentence(possibleFactor, numFromCalculation, isDivisible) {
+        const isOrIsnt = isDivisible ? 'is' : 'isn\'t';
+        return `${getNumberStringWithCommas(numFromCalculation)} ${isOrIsnt} divisible by ${possibleFactor} \
+            so ${inputString} ${isOrIsnt} divisible by ${possibleFactor}.`;
+    }
+
+    /**
+     * @type {string[]}
+     */
+    const sentences = [];
+    const isEvenVar = isEven(inputNum);
+    const isDivisibleBy4 = isDivisible(last2Digits, 4);
+
+    if (!isEvenVar) {
+        sentences.push(`${inputString} isn't even so it isn't divisible by any even numbers.`);
+    } else if (inputNum >= 100) {
+        sentences.push(
+            `The last 2 digits form the integer ${last2Digits}.`,
+            getDivisibilitySentence(4, last2Digits, isDivisibleBy4)
+        );
+
+        if (isDivisibleBy4) {
+            if (inputNum >= 1_000) {
+                const isDivisibleBy8 = isDivisible(last3Digits, 8);
+                sentences.push(
+                    `The last 3 digits form the integer ${last3Digits}`,
+                    getDivisibilitySentence(8, last3Digits, isDivisibleBy8)
+                );
+            }
+        } else {
+            sentences.push(
+                `Since ${inputString} isn't divisible by 4, it's also not divisible by 8, 12, and any other \
+                multiples of 4.`
+            );
+        }
+    }
+
+    const isDivisibleBy3 = isDivisible(sumOfDigits, 3);
+    sentences.push(
+        `The sum of the digits is ${sumOfDigits}.`,
+        getDivisibilitySentence(3, sumOfDigits, isDivisibleBy3)
+    );
+
+    if (isDivisibleBy3) {
+        if (isEvenVar) {
+            sentences.push(`${inputString} is even and divisible by 3 so it's also divisible by 6.`);
+
+            if (isDivisibleBy4) {
+                sentences.push(`${inputString} is divisible by both 3 and 4 so it's also divisible by 12.`);
+            } else if (inputNum < 100) {
+                sentences.push(`${inputString} isn't divisible by 4 so it isn't divisible by 12.`)
+            }
+        }
+
+        const isDivisibleBy9 = isDivisible(sumOfDigits, 9);
+        sentences.push(getDivisibilitySentence(9, sumOfDigits, isDivisibleBy9));
+    } else {
+        sentences.push(
+            `Since ${inputString} isn't divisible by 3, it's also not divisible by 6, 9, 12, and any \
+            other multiples of 3.`
+        );
+    }
+
+    if (blocksOf3AltSumAndExpression) {
+        const { sum: blocksOf3AltSum, expression: blocksOf3Expression } = blocksOf3AltSumAndExpression;
+        const isDivisibleBy7 = isDivisible(blocksOf3AltSum, 7);
+        sentences.push(
+            `The alternating sum of blocks of 3 from right to left is ${blocksOf3Expression} = ${blocksOf3AltSum}.`,
+            getDivisibilitySentence(7, blocksOf3AltSum, isDivisibleBy7)
+        );
+    }
+
+    const { sum: digitsAltSum, expression: digitsExpression } = digitsAltSumAndExpression;
+    const isDivisibleBy11 = isDivisible(digitsAltSum, 11);
+    sentences.push(
+        `The alternating sum of digits from left to right is ${digitsExpression} = ${digitsAltSum}.`,
+        getDivisibilitySentence(11, digitsAltSum, isDivisibleBy11)
+    );
+
+    return createDiv(heading, createP(sentences.join(' ')));
+}
+
+/**
+ * @param {?DivisibilityPfAnswer} pfAnswer 
+ * @param {string} inputString 
+ * @returns {HTMLDivElement}
+ */
+function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
+    const heading = createH4('Prime Factorization Info');
+    const pfInfoParagraph = createP(`The prime factorization of ${inputString} is `);
+    const pfDiv = createDiv(heading, pfInfoParagraph);
+
+    if (!pfAnswer) {
         pfInfoParagraph.append(
             `${inputString}. ${inputString} is prime and doesn't have any factors other than itself and 1.`
         );
-        pfDiv.appendChild(pfInfoParagraph);
-    } else {
-        const { inputPf, numFactorsInfo, factorPfs } = pfInfo;
-        const subfactorizationsSentence =
-            'By looking at all the "sub-factorizations", we can see the factors are:';
-        pfInfoParagraph.append(getPfSpan(inputPf), '. ', numFactorsInfo, ' ', subfactorizationsSentence);
-        pfDiv.appendChild(pfInfoParagraph);
-
-        /**
-         * @param {FactorsAndPowersWithNumber} pf 
-         * @returns {HTMLSpanElement}
-         */
-        function pfToSpan(pf) {
-            const { factorsAndPowers, number } = pf;
-            const numString = getNumberStringWithCommas(number);
-            const span = createSpan();
-            if (factorsAndPowers) {
-                span.append(getPfSpan(factorsAndPowers), ` (${numString})`);
-            } else {
-                span.append(numString);
-            }
-            return span;
-        }
-
-        pfDiv.appendChild(arrayToOl(factorPfs, pfToSpan));
+        return pfDiv;
     }
 
-    const mainHeading = createH3(`Divisibility Info for ${inputString}`);
-    return [mainHeading, rulesInfoDiv, pfDiv];
+    const { inputPfArr, numFactorsExpression, numFactors, factorPfArrsAndNums } = pfAnswer;
+    pfInfoParagraph.append(getPfSpan(inputPfArr), '. ');
+
+    const numFactorsInfo =
+        `By looking at the powers, we can see that there are ${numFactorsExpression} = \
+        ${getNumberStringWithCommas(numFactors)} factors. If 1 and ${inputString} are excluded then there are \
+        ${getNumberStringWithCommas(numFactors - 2)} factors.`;
+
+    const subfactorizationsSentence =
+        'By looking at all the "sub-factorizations", we can see that the factors are:';
+
+    pfInfoParagraph.append(numFactorsInfo, ' ', subfactorizationsSentence);
+
+    /**
+     * @param {PfArrayAndNumber}
+     * @returns {HTMLLIElement | string}
+     */
+    function getLiOrLiText({ pfArr, correspondingNum }) {
+        const numString = getNumberStringWithCommas(correspondingNum);
+        return pfArr ? createLi(getPfSpan(pfArr), ` (${numString})`) : numString;
+    }
+
+    pfDiv.appendChild(arrayToOl(factorPfArrsAndNums, getLiOrLiText));
+    return pfDiv;
 }
 
 new Section({
@@ -781,17 +915,18 @@ const goldbachConjectureInfoHtml =
     to be true for all even numbers ≥ 4 && ≤ 4 × 10<sup>18</sup>.`;
 
 /**
- * @param {number[][]} primePairs
+ * @param {number[]} primePairStarts
  * @param {string} inputString
+ * @param {number} inputNum 
  * @returns {HTMLElement[]}
  */
-function getGoldbachConjectureElements(primePairs, inputString) {
     const heading = createH3();
     heading.textContent =
         `There${primePairs.length === 1 ? '\'s 1 pair' : ` are ${getNumberStringWithCommas(primePairs.length)} pairs`} \
         of prime numbers that sum to ${inputString}. They are:`;
-    const pairsOl = arrayToOl(primePairs, nums => numPairToString(nums[0], nums[1]));
     return [heading, pairsOl];
+function getGoldbachConjectureElements(primePairStarts, inputString, inputString2Ignored, inputNum) {
+    const pairsOl = arrayToOl(primePairStarts, start => numPairToString(start, inputNum - start));
 }
 
 new Section({
@@ -801,7 +936,7 @@ new Section({
     minInput: 4,
     maxInput: 10,
     needsEvenInput: true,
-    apiEndpoint: 'goldbachPrimePairs',
+    apiEndpoint: 'goldbachPrimePairStarts',
     getElements: getGoldbachConjectureElements
 });
 

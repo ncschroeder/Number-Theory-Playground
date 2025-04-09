@@ -27,7 +27,7 @@ public class DivisibilityAnswer {
         @JsonProperty("factorPfArrsAndNums")
         public final List<PfListAndInt> factorPfListsAndInts;
         
-        private PfAnswer(PrimeFactorization inputPf) {
+        public PfAnswer(PrimeFactorization inputPf) {
             inputPfList = inputPf.toList();
             
             numFactors = 1;

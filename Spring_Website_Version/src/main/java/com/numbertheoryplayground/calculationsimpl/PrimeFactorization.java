@@ -58,7 +58,7 @@ public class PrimeFactorization {
      * Constructs a new PrimeFactorization to represent the prime factorization whose factors
      * and powers are keys and values, respectively, in the map provided.
      */
-    private PrimeFactorization(Map<Integer, Integer> factorsAndPowers) {
+    public PrimeFactorization(Map<Integer, Integer> factorsAndPowers) {
         this.factorsAndPowers = new TreeMap<>(factorsAndPowers);
         correspondingInt = 1;
         
@@ -90,7 +90,7 @@ public class PrimeFactorization {
     /**
      * This method finds the sub-factorizations by finding combinations of factors and powers.
      */
-    List<PfListAndInt> getFactorPfListsAndInts() {
+    public List<PrimeFactorization> getFactorPfs() {
         var factorPfs = new ArrayList<PrimeFactorization>();
         
         factorsAndPowers.forEach((factor, thisPfPower) -> {
@@ -120,8 +120,12 @@ public class PrimeFactorization {
          */
         factorPfs.removeLast();
         factorPfs.sort(Comparator.comparingInt(pf -> pf.correspondingInt));
+        return factorPfs;
+    }
+    
+    List<PfListAndInt> getFactorPfListsAndInts() {
         return
-            factorPfs
+            getFactorPfs()
             .stream()
             .map(PrimeFactorization::toPfListAndInt)
             .toList();

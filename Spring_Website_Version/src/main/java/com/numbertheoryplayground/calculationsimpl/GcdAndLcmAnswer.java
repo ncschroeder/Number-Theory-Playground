@@ -14,7 +14,7 @@ public class GcdAndLcmAnswer {
     
     public record EuclideanIteration(int max, int min, int remainder) {}
     
-    private static List<EuclideanIteration> getEuclideanIterations(int input1, int input2) {
+    public static List<EuclideanIteration> getEuclideanIterations(int input1, int input2) {
         int max = Math.max(input1, input2);
         int min = Math.min(input1, input2);
         int remainder = max % min;

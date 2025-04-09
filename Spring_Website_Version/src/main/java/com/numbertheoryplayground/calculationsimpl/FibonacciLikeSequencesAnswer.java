@@ -4,17 +4,20 @@ import java.math.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FibonacciLikeSequencesAnswer {
+    private static final int SEQUENCE_LENGTH = 20;
+    
+    private final List<BigInteger> bigIntSequence = new ArrayList<>(SEQUENCE_LENGTH);
+    
     public final List<String> stringSequence;
     
     @JsonProperty("ratioDataArray")
     public final List<RatioData> ratioDataList;
     
     public FibonacciLikeSequencesAnswer(long input1, long input2) {
-        final int SEQUENCE_LENGTH = 20;
-        var bigIntSequence = new ArrayList<BigInteger>(SEQUENCE_LENGTH);
         var bigInt1 = BigInteger.valueOf(input1);
         var bigInt2 = BigInteger.valueOf(input2);
         bigIntSequence.add(bigInt1);
@@ -36,6 +39,15 @@ public class FibonacciLikeSequencesAnswer {
         ratioDataList =
             IntStream.of(3, 8, 13, 18)
             .mapToObj(i -> new RatioData(bigIntSequence.get(i), bigIntSequence.get(i + 1)))
+            .toList();
+    }
+    
+    @JsonIgnore
+    public List<Integer> getIntSequence() {
+        return
+            bigIntSequence
+            .stream()
+            .map(BigInteger::intValueExact)
             .toList();
     }
     

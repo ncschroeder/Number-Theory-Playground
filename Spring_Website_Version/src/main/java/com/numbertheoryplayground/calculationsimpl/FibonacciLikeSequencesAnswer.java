@@ -7,7 +7,12 @@ import java.util.stream.IntStream;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static com.numbertheoryplayground.InputValidation.*;
+
 public class FibonacciLikeSequencesAnswer {
+    private static final long MIN_INPUT = 1;
+    private static final long MAX_INPUT = NINE_QUADRILLION;
+    
     private static final int SEQUENCE_LENGTH = 20;
     
     private final List<BigInteger> bigIntSequence = new ArrayList<>(SEQUENCE_LENGTH);
@@ -18,6 +23,9 @@ public class FibonacciLikeSequencesAnswer {
     public final List<RatioData> ratioDataList;
     
     public FibonacciLikeSequencesAnswer(long input1, long input2) {
+        assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
+        assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
+        
         var bigInt1 = BigInteger.valueOf(input1);
         var bigInt2 = BigInteger.valueOf(input2);
         bigIntSequence.add(bigInt1);

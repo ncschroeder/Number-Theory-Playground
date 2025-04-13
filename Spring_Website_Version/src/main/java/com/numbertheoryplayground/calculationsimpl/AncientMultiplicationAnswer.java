@@ -4,7 +4,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.numbertheoryplayground.InputValidation.*;
+
 public class AncientMultiplicationAnswer {
+    private static final long MIN_INPUT = 2;
+    private static final long MAX_INPUT = NINE_QUADRILLION;
+    
     public record TableRow(long powerOf2, String correspondingMultipleString) {}
     
     public final List<TableRow> table1Rows;
@@ -12,6 +17,9 @@ public class AncientMultiplicationAnswer {
     public final String productString;
     
     public AncientMultiplicationAnswer(long input1, long input2) {
+        assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
+        assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
+        
         /*
         Iterate backwards through the binary string of input1 to find the powers of 2 that are
         <= input1 and the powers of 2 that sum to input1.

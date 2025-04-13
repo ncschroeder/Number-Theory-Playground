@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.*;
 public class DivisibilityAnswer {
     public final RulesData rulesData;
     public final PfAnswer pfAnswer;
     
     public DivisibilityAnswer(int input) {
+        assertIsInRange(input, PrimeFactorization.MIN_INPUT, ONE_BILLION);
+        
         rulesData = input >= 10 ? new RulesData(input) : null;
         
         var pf = new PrimeFactorization(input);

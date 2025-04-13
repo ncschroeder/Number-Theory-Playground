@@ -1,5 +1,6 @@
 package com.numbertheoryplayground.calculationsimpl;
 
+import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isPrime;
 
 public class TwoSquareTheoremAnswer {
@@ -8,7 +9,7 @@ public class TwoSquareTheoremAnswer {
     public int b;
     
     public TwoSquareTheoremAnswer(int input) {
-        assertIsInRange(input, 0, 0);
+        assertIsInRange(input, 0, ONE_BILLION);
         
         primeNum = input;
         while (primeNum % 4 != 1) primeNum++;

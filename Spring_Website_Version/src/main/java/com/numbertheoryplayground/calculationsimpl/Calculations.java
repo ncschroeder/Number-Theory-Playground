@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static com.numbertheoryplayground.InputValidation.*;
+
 public class Calculations {
     static boolean isDivisible(int a, int b) {
         return a % b == 0;
@@ -44,6 +46,8 @@ public class Calculations {
     }
     
     public static int[] getPrimes(int input) {
+        assertIsInRange(input, 0, 100_000_000);
+        
         int iterationStart = isOdd(input) ? input : input + 1;
         IntStream oddPrimes =
             IntStream.iterate(iterationStart, l -> l + 2)
@@ -57,6 +61,8 @@ public class Calculations {
     }
     
     public static int[] getTwinPrimePairStarts(int input) {
+        assertIsInRange(input, 0, 1_000_000);
+        
         /*
         Set iterationStart to the first int >= the input that is 1 below a multiple of 6 so
         that we'll be able to iterate through ints that are 1 below a multiple of 6.
@@ -79,6 +85,11 @@ public class Calculations {
     }
     
     public static int[] getGoldbachPrimePairStarts(int input) {
+        assertIsInRange(input, 4, 100_000);
+        if (isOdd(input)) {
+            throw new InvalidInputNumberException();
+        }
+        
         /*
         Check if the input is 4 since 4 is the only even number >= 4 that has 2 in a pair of
         primes that sum to it.
@@ -124,6 +135,8 @@ public class Calculations {
     }
     
     public static List<PythagoreanTriple> getPythagoreanTriples(int input) {
+        assertIsInRange(input, 0, 500);
+        
         final int NUM_TRIPLES_TO_FIND = 10;
         var triples = new ArrayList<PythagoreanTriple>(NUM_TRIPLES_TO_FIND);
         int a = input;

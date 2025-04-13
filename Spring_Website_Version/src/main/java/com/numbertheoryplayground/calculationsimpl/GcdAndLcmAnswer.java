@@ -3,11 +3,18 @@ package com.numbertheoryplayground.calculationsimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.numbertheoryplayground.InputValidation.*;
+
 public class GcdAndLcmAnswer {
+    private static final long MAX_INPUT = ONE_BILLION;
+    
     public final List<EuclideanIteration> euclideanIterations;
     public final PrimeFactorization.GcdAndLcmAnswer pfAnswer;
     
     public GcdAndLcmAnswer(int input1, int input2) {
+        assertIsInRange(input1, PrimeFactorization.MIN_INPUT, MAX_INPUT);
+        assertIsInRange(input2, PrimeFactorization.MIN_INPUT, MAX_INPUT);
+        
         euclideanIterations = getEuclideanIterations(input1, input2);
         pfAnswer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
     }

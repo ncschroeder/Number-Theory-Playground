@@ -3,9 +3,13 @@ package com.numbertheoryplayground.calculationsimpl;
 import java.util.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isDivisible;
 
 public class PrimeFactorization {
+    public static final long MIN_INPUT = 2;
+    private static final long MAX_INPUT = ONE_BILLION;
+    
     public record FactorAndPower(int factor, int power) {}
     
     public record PfListAndInt(
@@ -17,6 +21,8 @@ public class PrimeFactorization {
     
     private final SortedMap<Integer, Integer> factorsAndPowers;
     public PrimeFactorization(int input) {
+        assertIsInRange(input, MIN_INPUT, MAX_INPUT);
+        
         correspondingInt = input;
         factorsAndPowers = new TreeMap<>();
         var maxIntToCheck = (int) Math.sqrt(input);

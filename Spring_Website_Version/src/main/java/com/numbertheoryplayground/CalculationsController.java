@@ -10,52 +10,84 @@ import com.numbertheoryplayground.calculationsimpl.*;
 @RestController
 @RequestMapping("/calculate")
 public class CalculationsController {
-    @GetMapping("/primes")
+    private static final char SLASH = '/';
+    
+    
+    public static final String PRIMES_ENDPOINT = "primes";
+    
+    @GetMapping(SLASH + PRIMES_ENDPOINT)
     public int[] getPrimes(@RequestParam int input) {
         return Calculations.getPrimes(input);
     }
     
-    @GetMapping("/twinPrimePairStarts")
+    
+    public static final String TWIN_PRIME_PAIR_STARTS_ENDPOINT = "twinPrimePairStarts";
+    
+    @GetMapping(SLASH + TWIN_PRIME_PAIR_STARTS_ENDPOINT)
     public int[] getTwinPrimePairStarts(@RequestParam int input) {
         return Calculations.getTwinPrimePairStarts(input);
     }
     
-    @GetMapping("/primeFactorization")
+    
+    public static final String PRIME_FACTORIZATION_ENDPOINT = "primeFactorization";
+    
+    @GetMapping(SLASH + PRIME_FACTORIZATION_ENDPOINT)
     public List<PrimeFactorization.FactorAndPower> getPrimeFactorization(@RequestParam int input) {
         return new PrimeFactorization(input).toList();
     }
     
-    @GetMapping("/divisibilityAnswer")
+    
+    public static final String DIVISIBILITY_ANSWER_ENDPOINT = "divisibilityAnswer";
+    
+    @GetMapping(SLASH + DIVISIBILITY_ANSWER_ENDPOINT)
     public DivisibilityAnswer getDivisibilityAnswer(@RequestParam int input) {
         return new DivisibilityAnswer(input);
     }
     
-    @GetMapping("/gcdAndLcmAnswer")
+    
+    public static final String GCD_AND_LCM_ANSWER_ENDPOINT = "gcdAndLcmAnswer";
+    
+    @GetMapping(SLASH + GCD_AND_LCM_ANSWER_ENDPOINT)
     public GcdAndLcmAnswer getGcdAndLcmAnswer(@RequestParam int input1, @RequestParam int input2) {
         return new GcdAndLcmAnswer(input1, input2);
     }
     
-    @GetMapping("/goldbachPrimePairStarts")
+    
+    public static final String GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT = "goldbachPrimePairStarts";
+    
+    @GetMapping(SLASH + GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT)
     public int[] getGoldbachPrimePairStarts(@RequestParam int input) {
         return Calculations.getGoldbachPrimePairStarts(input);
     }
     
-    @GetMapping("/pythagoreanTriples")
+    
+    public static final String PYTHAGOREAN_TRIPLES_ENDPOINT = "pythagoreanTriples";
+    
+    @GetMapping(SLASH + PYTHAGOREAN_TRIPLES_ENDPOINT)
     public List<Calculations.PythagoreanTriple> getPythagoreanTriples(@RequestParam int input) {
         return Calculations.getPythagoreanTriples(input);
     }
     
-    @GetMapping("/twoSquareTheoremAnswer")
+    
+    public static final String TWO_SQUARE_THEOREM_ANSWER_ENDPOINT = "twoSquareTheoremAnswer";
+    
+    @GetMapping(SLASH + TWO_SQUARE_THEOREM_ANSWER_ENDPOINT)
     public TwoSquareTheoremAnswer getTwoSquareTheoremAnswer(@RequestParam int input) {
         return new TwoSquareTheoremAnswer(input);
     }
     
-    @GetMapping("/fibonacciLikeSequencesAnswer")
+    
+    public static final String FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT = "fibonacciLikeSequencesAnswer";
+    
+    @GetMapping(SLASH + FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT)
     public FibonacciLikeSequencesAnswer getFibonacciLikeSequencesAnswer(@RequestParam long input1, @RequestParam long input2) {
         return new FibonacciLikeSequencesAnswer(input1, input2);
     }
     
-    @GetMapping("/ancientMultiplicationAnswer")
+    
+    public static final String ANCIENT_MULT_ANSWER_ENDPOINT = "ancientMultiplicationAnswer";
+    
+    @GetMapping(SLASH + ANCIENT_MULT_ANSWER_ENDPOINT)
     public AncientMultiplicationAnswer getAncientMultiplicationAnswer(@RequestParam long input1, @RequestParam long input2) {
         return new AncientMultiplicationAnswer(input1, input2);
     }

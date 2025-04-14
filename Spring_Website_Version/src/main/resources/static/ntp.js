@@ -178,12 +178,15 @@ function addInputArea() {
         let randomNumber = Math.floor(Math.random() * (maxInput - minInput + 1) + minInput);
         if (curSection.needsEvenInput && !isEven(randomNumber)) {
             randomNumber++;
+        const { minInput, maxInput } = curSection;
         }
         inputField.value = randomNumber;
     }
 
     const plusBtn = createBtn('+');
     plusBtn.onclick = () => {
+        const { minInput, maxInput } = curSection;
+
         let inputNum = getNum(inputField);
         if (!inputNum) {
             if (inputField.value.length === 0) {
@@ -201,6 +204,8 @@ function addInputArea() {
 
     const minusBtn = createBtn('-');
     minusBtn.onclick = () => {
+        const { minInput, maxInput } = curSection;
+
         let inputNum = getNum(inputField);
         if (!inputNum) {
             if (inputField.value.length === 0) {
@@ -241,15 +246,6 @@ const numPairToString = (a, b) => `${getNumberStringWithCommas(a)} & ${getNumber
  */
 let curSection = null;
 
-/**
- * @type {?number}
- */
-let minInput = null;
-
-/**
- * @type {?number}
- */
-let maxInput = null;
 
 const
     sectionHeading = getElementById('sectionHeading'),
@@ -267,6 +263,14 @@ function clearInputBoxesAndAnswerArea() {
     inputField2.value = '';
     clearAnswerArea();
 }
+
+
+// Max input constants.
+const ONE_MILLION = 1_000_000;
+const ONE_HUNDRED_MILLION = ONE_MILLION * 100;
+const ONE_BILLION = 1_000_000_000;
+const NINE_QUADRILLION = 9_000_000_000_000_000;
+
 
 class Section {
     // Use private fields with public getters to allow for read-only access outside of class.
@@ -319,6 +323,20 @@ class Section {
          */
         let infoHtmlElements;
 
+        const maxInputString = getNumberStringWithCommas(maxInput);
+
+        /*
+        The only max inputs that don't have an entry in here are 500 and 100,000, the ones for the 
+        Pythagorean triples and Goldbach Conjecture sections, respectively.
+         */
+        const numsAndStringsWithWords =
+            new Map([
+                [ONE_MILLION, '1 million'],
+                [ONE_HUNDRED_MILLION, '100 million'],
+                [ONE_BILLION, '1 billion'],
+                [NINE_QUADRILLION, '9 quadrillion']
+            ]);
+
         if (Array.isArray(infoHtml)) {
             infoHtmlElements = infoHtml;
         } else {
@@ -331,13 +349,19 @@ class Section {
                     return p;
                 });
         }
+        /**
+         * @type {?string}
+         */
+        const maxInputStringWithWord = numsAndStringsWithWords.get(maxInput);
+        const maxInputSentencePart =
+            maxInputStringWithWord ? `${maxInputStringWithWord} (${maxInputString})` : maxInputString;
 
         const directions =
             `Enter or generate ${isSingleInputSection ? 'an integer' : '2 integers'} and click the \
             Calculate button to get the ${actionSentenceEnding}. Have \
             ${isSingleInputSection ? 'this integer' : 'these integers'} be \
             ${needsEvenInput ? 'even && ' : ''}>= ${getNumberStringWithCommas(minInput)} && \
-            <= ${getNumberStringWithCommas(maxInput)}. Commas are optional.`;
+            ≤ ${maxInputSentencePart}. Commas are optional.`;
 
         const show = () => {
             clearInputBoxesAndAnswerArea();
@@ -375,17 +399,17 @@ class Section {
     }
 
     /**
-     * @param {number} n 
+     * @param {number} num 
      * @returns {boolean}
      */
-    isValidInput(n) {
-        return n >= this.minInput && n <= this.maxInput && (!this.needsEvenInput || isEven(n));
+    isInvalidInput(num) {
+        return num < this.minInput || num > this.maxInput || (this.needsEvenInput && !isEven(num));
     }
 }
 
 getElementById('calculateBtn').onclick = () => {
     const inputNum1 = getNum(inputField1);
-    if (!inputNum1 || !curSection.isValidInput(inputNum1)) return;
+    if (inputNum1 === null || curSection.isInvalidInput(inputNum1)) return;
     const urlParams = new URLSearchParams();
     let inputNum2, inputString2;
 
@@ -395,7 +419,7 @@ getElementById('calculateBtn').onclick = () => {
         inputString2 = null;
     } else {
         inputNum2 = getNum(inputField2);
-        if (!inputNum2 || !curSection.isValidInput(inputNum2)) return;
+        if (inputNum2 === null || curSection.isInvalidInput(inputNum2)) return;
         inputString2 = getNumberStringWithCommas(inputNum2);
         urlParams.append('input1', inputNum1);
         urlParams.append('input2', inputNum2);
@@ -453,7 +477,7 @@ new Section({
     infoHtml: primesInfoHtml,
     actionSentenceEnding: 'first 30 prime numbers >= that integer',
     minInput: 0,
-    maxInput: 10,
+    maxInput: ONE_HUNDRED_MILLION,
     apiEndpoint: 'primes',
     getElements: getPrimesElements
 });
@@ -487,8 +511,8 @@ new Section({
     infoHtml: twinPrimePairsInfoHtml,
     actionSentenceEnding: 'first 20 twin prime pairs >= that integer',
     minInput: 0,
-    maxInput: 10,
     apiEndpoint: 'twinPrimePairs',
+    maxInput: ONE_MILLION,
     getElements: getTwinPrimePairsElements
 });
 
@@ -543,12 +567,14 @@ function getPfElements(pfArray, inputString) {
     return [heading, getPfSpan(pfArray)];
 }
 
+const PF_MIN_INPUT = 2;
+
 new Section({
     btnIdStart: 'pf',
     infoHtml: pfInfoHtml,
     actionSentenceEnding: 'prime factorization of that integer',
-    minInput: 2,
-    maxInput: 10,
+    minInput: PF_MIN_INPUT,
+    maxInput: ONE_BILLION,
     apiEndpoint: 'primeFactorization',
     getElements: getPfElements
 });
@@ -775,8 +801,8 @@ new Section({
     btnIdStart: 'divisibility',
     infoHtml: divisbilityInfoHtml,
     actionSentenceEnding: 'divisbility info for that integer',
-    minInput: 2,
-    maxInput: 10,
+    minInput: PF_MIN_INPUT,
+    maxInput: ONE_BILLION,
     apiEndpoint: 'divisibilityAnswer',
     getElements: getDivisibilityInfoElements
 });
@@ -901,8 +927,8 @@ new Section({
     infoHtml: gcdAndLcmInfoHtml,
     isSingleInputSection: false,
     actionSentenceEnding: 'GCD and LCM info for those integers',
-    minInput: 2,
-    maxInput: 10,
+    minInput: PF_MIN_INPUT,
+    maxInput: ONE_BILLION,
     apiEndpoint: 'gcdAndLcmAnswer',
     getElements: getGcdAndLcmInfoElements
 });
@@ -934,7 +960,7 @@ new Section({
     infoHtml: goldbachConjectureInfoHtml,
     actionSentenceEnding: 'pairs of prime numbers that sum to that integer',
     minInput: 4,
-    maxInput: 10,
+    maxInput: 100_000,
     needsEvenInput: true,
     apiEndpoint: 'goldbachPrimePairStarts',
     getElements: getGoldbachConjectureElements
@@ -992,7 +1018,7 @@ new Section({
     infoHtml: pythagoreanTriplesInfoHtml,
     actionSentenceEnding: 'first 10 Pythagorean triples >= that integer',
     minInput: 0,
-    maxInput: 10,
+    maxInput: 500,
     apiEndpoint: 'pythagoreanTriples',
     getElements: getPythagoreanTriplesElements
 });
@@ -1029,7 +1055,7 @@ new Section({
     infoHtml: twoSquareTheoremInfoHtml,
     actionSentenceEnding: twoSquareTheoremActionSentenceEnding,
     minInput: 0,
-    maxInput: 10,
+    maxInput: ONE_BILLION,
     apiEndpoint: 'twoSquareTheoremAnswer',
     getElements: getTwoSquareInfoElements
 });
@@ -1094,7 +1120,7 @@ new Section({
     isSingleInputSection: false,
     actionSentenceEnding: fibonacciLikeSequencesActionSentenceEnding,
     minInput: 1,
-    maxInput: 10,
+    maxInput: NINE_QUADRILLION,
     apiEndpoint: 'fibonacciLikeSequencesAnswer',
     getElements: getFibonacciLikeSequencesInfoElements
 });
@@ -1186,7 +1212,7 @@ new Section({
     isSingleInputSection: false,
     actionSentenceEnding: 'ancient Egyptian multiplication info for those integers',
     minInput: 2,
-    maxInput: 10,
+    maxInput: NINE_QUADRILLION,
     apiEndpoint: 'ancientMultiplicationAnswer',
     getElements: getAncientMultiplicationInfoElements
 });

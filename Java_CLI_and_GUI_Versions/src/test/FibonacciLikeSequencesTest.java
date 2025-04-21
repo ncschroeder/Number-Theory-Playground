@@ -1,11 +1,12 @@
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static numbertheoryplayground.sectionclasses.outer.FibonacciLikeSequences.Answer;
+import static numbertheoryplayground.sectionclasses.outer.FibonacciLikeSequences.*;
 
 /**
  * Has tests for code in the FibonacciLikeSequences class.
@@ -35,5 +36,16 @@ class FibonacciLikeSequencesTest {
             );
         
         return Stream.of(fibonacciSequenceStart, anotherSequence);
+    }
+    
+    
+    @ParameterizedTest
+    @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        INPUT_1,  INPUT_2,  EXPECTED_EXPRESSION
+           3,        4,     4 / 3 ≈ 1.333333333333333
+           4,        5,     5 / 4 = 1.25
+        """)
+    void testGetRatioExpression(BigInteger input1, BigInteger input2, String expectedExpression) {
+        assertEquals(expectedExpression, getRatioExpression(input1, input2));
     }
 }

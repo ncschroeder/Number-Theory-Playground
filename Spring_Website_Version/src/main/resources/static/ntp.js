@@ -1082,7 +1082,7 @@ const fibonacciLikeSequencesActionSentenceEnding =
     as well as the ratios between some integers in the sequence';
 
 /**
- * @typedef {{ dividend: string, divisor: string, ratio: number }} RatioData
+ * @typedef {{ num1String: string, num2String: string, ratio: number, isRounded: boolean }} RatioData
  * 
  * @param {{ sequence: string[], ratioDataArray: RatioData[] }} infoObject
  * @param {string} inputString1
@@ -1100,12 +1100,13 @@ function getFibonacciLikeSequencesInfoElements(infoObject, inputString1, inputSt
     const sequenceOl = arrayToOl(sequence, getNumberStringWithCommas);
 
     /**
-     * @param {RatioData} data 
+     * @param {RatioData}
      * @returns {string}
      */
-    function ratioDataToString(data) {
-        const { dividend, divisor, ratio } = data;
-        return `${getNumberStringWithCommas(dividend)} / ${getNumberStringWithCommas(divisor)} is approximately ${ratio}.`;
+    function ratioDataToString({ num1String, num2String, ratio, isRounded }) {
+        const num1StringWithCommas = getNumberStringWithCommas(num1String);
+        const num2StringWithCommas = getNumberStringWithCommas(num2String);
+        return `${num2StringWithCommas} / ${num1StringWithCommas} ${isRounded ? '≈' : '='} ${ratio}`;
     }
 
     const ratioDataOl = arrayToOl(ratioDataArray, ratioDataToString, false);

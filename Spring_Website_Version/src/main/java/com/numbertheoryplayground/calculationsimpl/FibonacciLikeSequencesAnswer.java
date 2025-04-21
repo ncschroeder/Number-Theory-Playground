@@ -60,17 +60,33 @@ public class FibonacciLikeSequencesAnswer {
     }
     
     public static class RatioData {
-        public final String num1String;
-        public final String num2String;
-        public final double ratio;
+        private static final MathContext noRoundingMathContext =
+            new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
         
-        private RatioData(BigInteger bigInt1, BigInteger bigInt2) {
-            num1String = bigInt1.toString();
-            num2String = bigInt2.toString();
-            ratio =
-                new BigDecimal(bigInt2)
-                .divide(new BigDecimal(bigInt1), MathContext.DECIMAL64)
-                .doubleValue();
+        @JsonProperty("num1String")
+        public final String bigInt1String;
+        
+        @JsonProperty("num2String")
+        public final String bigInt2String;
+        
+        public BigDecimal ratio;
+        
+        public boolean isRounded;
+        
+        public RatioData(BigInteger bigInt1, BigInteger bigInt2) {
+            bigInt1String = bigInt1.toString();
+            bigInt2String = bigInt2.toString();
+            var bigDecimal1 = new BigDecimal(bigInt1);
+            var bigDecimal2 = new BigDecimal(bigInt2);
+            
+            try {
+                ratio = bigDecimal2.divide(bigDecimal1, noRoundingMathContext);
+                isRounded = false;
+            } catch (ArithmeticException ex) {
+                ratio = bigDecimal2.divide(bigDecimal1, MathContext.DECIMAL64);
+                isRounded = true;
+            }
+        
         }
     }
 }

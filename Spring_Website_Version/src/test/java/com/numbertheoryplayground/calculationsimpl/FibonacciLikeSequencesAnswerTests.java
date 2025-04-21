@@ -1,11 +1,15 @@
 package com.numbertheoryplayground.calculationsimpl;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.numbertheoryplayground.calculationsimpl.FibonacciLikeSequencesAnswer.RatioData;
 
 class FibonacciLikeSequencesAnswerTests {
     @ParameterizedTest
@@ -31,5 +35,20 @@ class FibonacciLikeSequencesAnswerTests {
             );
         
         return Stream.of(fibonacciSequenceStart, anotherSequence);
+    }
+    
+    
+    @ParameterizedTest
+    @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        INPUT_1,  INPUT_2,  EXPECTED_RATIO,     EXPECTED_IS_ROUNDED
+           3,        4,     1.333333333333333,        true
+           4,        5,          1.25,                false
+        """)
+    void ratioData(BigInteger input1, BigInteger input2, BigDecimal expectedRatio, boolean expectedIsRounded) {
+        var data = new RatioData(input1, input2);
+        assertAll(
+            () -> assertEquals(expectedRatio, data.ratio),
+            () -> assertEquals(expectedIsRounded, data.isRounded)
+        );
     }
 }

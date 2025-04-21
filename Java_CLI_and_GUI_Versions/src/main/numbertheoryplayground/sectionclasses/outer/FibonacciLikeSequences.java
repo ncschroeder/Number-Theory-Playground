@@ -1,9 +1,7 @@
 package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
+import java.math.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +41,32 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
     private static final long MAX_INPUT = NINE_QUINTILLION;
     private static final int SEQUENCE_LENGTH = 20;
     
+    private static final MathContext noRoundingMathContext =
+        new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
+    
+    public static String getRatioExpression(BigInteger bigInt1, BigInteger bigInt2) {
+        var bigDecimal1 = new BigDecimal(bigInt1);
+        var bigDecimal2 = new BigDecimal(bigInt2);
+        BigDecimal ratio;
+        char equalityChar;
+        
+        try {
+            ratio = bigDecimal2.divide(bigDecimal1, noRoundingMathContext);
+            equalityChar = '=';
+        } catch (ArithmeticException ex) {
+            ratio = bigDecimal2.divide(bigDecimal1, MathContext.DECIMAL64);
+            equalityChar = '≈';
+        }
+        
+        return String.format(
+            "%s / %s %s %s",
+            createStringWithCommas(bigInt2),
+            createStringWithCommas(bigInt1),
+            equalityChar,
+            ratio
+        );
+    }
+
     public static final class Answer {
         private final String sequenceHeading;
         
@@ -57,8 +81,8 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         /**
          * Contains a sentence about what Phi approximately is and sentences about the ratios between the 5th and 4th,
          * 10th and 9th, 15th and 14th, and 20th and 19th numbers in bigIntSequence.
+        private final Stream<String> phiAndRatioExpressions;
          */
-        private final Stream<String> phiAndRatioSentences;
         
         public Answer(long input1, long input2) {
             assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
@@ -87,24 +111,13 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
             
             stringSequence = bigIntSequence.stream().map(Misc::toStringWithCommas);
             
-            Stream<String> ratioSentences =
-                IntStream.iterate(3, i -> i <= SEQUENCE_LENGTH - 2, i -> i + 5)
-                .mapToObj(i -> {
-                    BigInteger bi1 = bigIntSequence.get(i);
-                    BigInteger bi2 = bigIntSequence.get(i + 1);
-                    
-                    return String.format(
-                        "%s / %s is approximately %s.",
-                        toStringWithCommas(bi2),
-                        toStringWithCommas(bi1),
-                        new BigDecimal(bi2).divide(new BigDecimal(bi1), MathContext.DECIMAL64)
-                    );
-                });
-            
-            phiAndRatioSentences =
+            Stream<String> ratioExpressions =
+                IntStream.of(3, 8, 13, 18)
+                .mapToObj(i -> getRatioExpression(bigIntSequence.get(i), bigIntSequence.get(i + 1)));
+            phiAndRatioExpressions =
                 Stream.concat(
                     Stream.of(String.format("Phi is approximately %s.", PHI)),
-                    ratioSentences
+                    ratioExpressions
                 );
         }
     }

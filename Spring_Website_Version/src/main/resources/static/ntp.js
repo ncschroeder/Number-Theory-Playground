@@ -314,22 +314,12 @@ const NINE_QUADRILLION = 9_000_000_000_000_000;
 class Section {
     // Use private fields with public getters to allow for read-only access outside of class.
 
-    #isSingleInputSection;
-    /**
-     */
     #minInput;
     #maxInput;
     #needsEvenInput;
     #apiEndpoint;
-    #getElements;
 
     /**
-     * @callback GetElementsFunction
-     * @param {any} responseObj
-     * @param {string} input1String
-     * @param {?string} input2String
-     * @param {number} input1Num
-     * @returns {HTMLElement[]}
      * 
      * @typedef {Object} SectionParams
      * @property {string} btnIdStart
@@ -340,35 +330,44 @@ class Section {
      * @property {number} maxInput
      * @property {boolean} [needsEvenInput=false]
      * @property {string} apiEndpoint
-     * @property {GetElementsFunction} getElements
      * 
-     * @param {SectionParams} obj 
+     * @param {SectionParams} params 
      */
-    constructor(obj) {
-        const { btnIdStart, infoHtml, isSingleInputSection, actionSentenceEnding, minInput, maxInput, needsEvenInput, apiEndpoint, getElements } = obj;
+    constructor(params) {
+        const {
+            btnIdStart, infoHtml, actionSentenceEnding,
+            minInput, maxInput, needsEvenInput = false, apiEndpoint
+        } = params;
 
         this.#minInput = minInput;
         this.#maxInput = maxInput;
-        this.#isSingleInputSection = isSingleInputSection !== undefined ? isSingleInputSection : true;
-        this.#needsEvenInput = needsEvenInput !== undefined ? needsEvenInput : false;
+        this.#needsEvenInput = needsEvenInput;
         this.#apiEndpoint = apiEndpoint;
-        this.#getElements = getElements;
         
+        const isSingleInputSection = this instanceof SingleInputSection;
         const sectionBtn = getElementById(btnIdStart + 'Btn');
         const heading = sectionBtn.textContent;
 
         /**
          * @type {HTMLElement[]}
          */
-        let infoHtmlElements;
+        const infoHtmlElements =
+            Array.isArray(infoHtml)
+            ? infoHtml
+            : infoHtml.split(/\n *\n/).map(createPWithInnerHtml);
 
         const maxInputString = getNumberStringWithCommas(maxInput);
 
         /*
-        The only max inputs that don't have an entry in here are 500 and 100,000, the ones for the 
-        Pythagorean triples and Goldbach Conjecture sections, respectively.
+        If the max input is one of the nums that's a key in the map below, have the 2nd directions sentence
+        say that the input integer(s) should be ≤ the corresponding string value in the map followed by the
+        num with commas in parentheses. If the max input isn't one of the nums that's a key in the map, then
+        have that sentence just say that input integer(s) should be ≤ that num with commas.
+        
+        The max inputs that aren't keys are 500 and 100,000, the max inputs for the Pythagorean triples and
+        Goldbach Conjecture sections, respectively.
          */
-        const numsAndStringsWithWords =
+        const maxInputsAndStringsWithWords =
             new Map([
                 [ONE_MILLION, '1 million'],
                 [ONE_HUNDRED_MILLION, '100 million'],
@@ -376,22 +375,10 @@ class Section {
                 [NINE_QUADRILLION, '9 quadrillion']
             ]);
 
-        if (Array.isArray(infoHtml)) {
-            infoHtmlElements = infoHtml;
-        } else {
-            infoHtmlElements =
-                infoHtml
-                .split('\n\n')
-                .map(s => {
-                    const p = createP();
-                    p.innerHTML = s;
-                    return p;
-                });
-        }
         /**
          * @type {?string}
          */
-        const maxInputStringWithWord = numsAndStringsWithWords.get(maxInput);
+        const maxInputStringWithWord = maxInputsAndStringsWithWords.get(maxInput);
         const maxInputSentencePart =
             maxInputStringWithWord ? `${maxInputStringWithWord} (${maxInputString})` : maxInputString;
 
@@ -399,10 +386,12 @@ class Section {
             `Enter or generate ${isSingleInputSection ? 'an integer' : '2 integers'} and click the \
             Calculate button to get the ${actionSentenceEnding}. Have \
             ${isSingleInputSection ? 'this integer' : 'these integers'} be \
-            ${needsEvenInput ? 'even && ' : ''}>= ${getNumberStringWithCommas(minInput)} && \
+            ${needsEvenInput ? 'even && ' : ''}≥ ${getNumberStringWithCommas(minInput)} && \
             ≤ ${maxInputSentencePart}. Commas are optional.`;
 
-        const show = () => {
+
+        // Use arrow function so that this refers to the Section instance.
+        const goToThisSection = () => {
             curSection = this;
             sectionHeading.textContent = heading;
             sectionInfoDetails.open = false;
@@ -427,12 +416,9 @@ class Section {
             }
         }
 
-        sectionBtn.onclick = show;
+        sectionBtn.onclick = goToThisSection;
     }
 
-    get isSingleInputSection() {
-        return this.#isSingleInputSection;
-    }
 
     get minInput() {
         return this.#minInput;
@@ -450,9 +436,6 @@ class Section {
         return this.#apiEndpoint;
     }
 
-    get getElements() {
-        return this.#getElements;
-    }
 
     /**
      * @param {number} num 
@@ -464,32 +447,66 @@ class Section {
 }
 
 getElementById('calculateBtn').onclick = () => {
-    const inputNum1 = getNum(inputField1);
-    if (inputNum1 === null || curSection.isInvalidInput(inputNum1)) return;
-    const urlParams = new URLSearchParams();
-    let inputNum2, inputString2;
+class SingleInputSection extends Section {
+    #getElements;
 
-    if (curSection.isSingleInputSection) {
-        urlParams.append('input', inputNum1);
-        inputNum2 = null;
-        inputString2 = null;
-    } else {
-        inputNum2 = getNum(inputField2);
-        if (inputNum2 === null || curSection.isInvalidInput(inputNum2)) return;
-        inputString2 = getNumberStringWithCommas(inputNum2);
-        urlParams.append('input1', inputNum1);
-        urlParams.append('input2', inputNum2);
+    /**
+     * @param {SectionParams} sectionParams 
+     * @param {(responseObj: any, inputString: string, inputNum: number) => HTMLElement[]} getElements 
+     */
+    constructor(sectionParams, getElements) {
+        super(sectionParams);
+        this.#getElements = getElements;
     }
 
+    get getElements() {
+        return this.#getElements;
+    }
+}
+
+class DoubleInputSection extends Section {
+    #getElements;
+
+    /**
+     * @param {SectionParams} sectionParams 
+     * @param {(responseObj: any, inputString1: string, inputString2: string) => HTMLElement[]} getElements 
+     */
+    constructor(sectionParams, getElements) {
+        super(sectionParams);
+        this.#getElements = getElements;
+    }
+
+    get getElements() {
+        return this.#getElements;
+    }
+}
+
+
+    const inputNum1 = getNum(inputField1);
+    if (inputNum1 === null || curSection.isInvalidInput(inputNum1)) return;
+    /**
+     * @type {(responseObj: any) => HTMLElement[]}
+     */
+    let getElements;
     const inputString1 = getNumberStringWithCommas(inputNum1);
+    const urlParams = new URLSearchParams();
+
+    if (curSection instanceof SingleInputSection) {
+        urlParams.append('input', inputNum1);
+        getElements = (responseObj) => curSection.getElements(responseObj, inputString1, inputNum1);
+    } else if (curSection instanceof DoubleInputSection) {
+        const inputNum2 = getNum(inputField2);
+        if (inputNum2 === null || curSection.isInvalidInput(inputNum2)) return;
+        urlParams.append('input1', inputNum1);
+        urlParams.append('input2', inputNum2);
+        const inputString2 = getNumberStringWithCommas(inputNum2);
+        getElements = (responseObj) => curSection.getElements(responseObj, inputString1, inputString2);
+    }
+    
     const errorMessage = 'Error with request.';
 
     fetch(`calculate/${curSection.apiEndpoint}?${urlParams}`)
-    .then(async response =>
-        response.ok
-        ? curSection.getElements(await response.json(), inputString1, inputString2, inputNum1)
-        : [errorMessage]
-    )
+    .then(response => response.ok ? response.json().then(getElements) : [errorMessage])
     .then(elementsOrErrorMessage => answerDiv.replaceChildren(...elementsOrErrorMessage))
     .catch(reason => {
         answerDiv.replaceChildren(errorMessage);
@@ -528,15 +545,17 @@ function getPrimesElements(primes, inputString) {
     return [heading, primesOl];
 }
 
-new Section({
-    btnIdStart: 'primeNums',
-    infoHtml: primesInfoHtml,
-    actionSentenceEnding: 'first 30 prime numbers >= that integer',
-    minInput: 0,
-    maxInput: ONE_HUNDRED_MILLION,
-    apiEndpoint: 'primes',
-    getElements: getPrimesElements
-});
+new SingleInputSection(
+    {
+        btnIdStart: 'primeNums',
+        infoHtml: primesInfoHtml,
+        actionSentenceEnding: 'first 30 prime numbers ≥ that integer',
+        minInput: 0,
+        maxInput: ONE_HUNDRED_MILLION,
+        apiEndpoint: 'primes'
+    },
+    getPrimesElements
+);
 
 
 const twinPrimePairsInfoHtml =
@@ -562,15 +581,17 @@ function getTwinPrimePairsElements(pairStarts, inputString) {
     return [heading, twinPrimesOl];
 }
 
-new Section({
-    btnIdStart: 'twinPrimePairs',
-    infoHtml: twinPrimePairsInfoHtml,
-    actionSentenceEnding: 'first 20 twin prime pairs >= that integer',
-    minInput: 0,
-    apiEndpoint: 'twinPrimePairs',
-    maxInput: ONE_MILLION,
-    getElements: getTwinPrimePairsElements
-});
+new SingleInputSection(
+    {
+        btnIdStart: 'twinPrimePairs',
+        infoHtml: twinPrimePairsInfoHtml,
+        actionSentenceEnding: 'first 20 twin prime pairs ≥ that integer',
+        minInput: 0,
+        maxInput: ONE_MILLION,
+        apiEndpoint: 'twinPrimePairStarts'
+    },
+    getTwinPrimePairsElements
+);
 
 
 const pfInfoHtml =
@@ -625,15 +646,17 @@ function getPfElements(pfArray, inputString) {
 
 const PF_MIN_INPUT = 2;
 
-new Section({
-    btnIdStart: 'pf',
-    infoHtml: pfInfoHtml,
-    actionSentenceEnding: 'prime factorization of that integer',
-    minInput: PF_MIN_INPUT,
-    maxInput: ONE_BILLION,
-    apiEndpoint: 'primeFactorization',
-    getElements: getPfElements
-});
+new SingleInputSection(
+    {
+        btnIdStart: 'pf',
+        infoHtml: pfInfoHtml,
+        actionSentenceEnding: 'prime factorization of that integer',
+        minInput: PF_MIN_INPUT,
+        maxInput: ONE_BILLION,
+        apiEndpoint: 'primeFactorization'
+    },
+    getPfElements
+);
 
 
 const divisbilityInfoHtml =
@@ -704,7 +727,7 @@ const divisbilityInfoHtml =
  * @returns {HTMLElement[]}
  * An array that contains elements with divisibility info about the argument number based on the info in infoObject.
  */
-function getDivisibilityInfoElements({ rulesData, pfAnswer }, inputString, inputString2Ignored, inputNum) {
+function getDivisibilityInfoElements({ rulesData, pfAnswer }, inputString, inputNum) {
     const elements = [createH3(`Divisibility Info for ${inputString}`)];
     if (rulesData) {
         elements.push(getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum));
@@ -853,15 +876,17 @@ function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
     return pfDiv;
 }
 
-new Section({
-    btnIdStart: 'divisibility',
-    infoHtml: divisbilityInfoHtml,
-    actionSentenceEnding: 'divisbility info for that integer',
-    minInput: PF_MIN_INPUT,
-    maxInput: ONE_BILLION,
-    apiEndpoint: 'divisibilityAnswer',
-    getElements: getDivisibilityInfoElements
-});
+new SingleInputSection(
+    {
+        btnIdStart: 'divisibility',
+        infoHtml: divisbilityInfoHtml,
+        actionSentenceEnding: 'divisbility info for that integer',
+        minInput: PF_MIN_INPUT,
+        maxInput: ONE_BILLION,
+        apiEndpoint: 'divisibilityAnswer'
+    },
+    getDivisibilityInfoElements
+);
 
 
 const gcdAndLcmInfoHtml =
@@ -987,16 +1012,17 @@ function getGcdAndLcmPfInfoDiv(answer, inputString1, inputString2) {
     );
 }
 
-new Section({
-    btnIdStart: 'gcdAndLcm',
-    infoHtml: gcdAndLcmInfoHtml,
-    isSingleInputSection: false,
-    actionSentenceEnding: 'GCD and LCM info for those integers',
-    minInput: PF_MIN_INPUT,
-    maxInput: ONE_BILLION,
-    apiEndpoint: 'gcdAndLcmAnswer',
-    getElements: getGcdAndLcmInfoElements
-});
+new DoubleInputSection(
+    {
+        btnIdStart: 'gcdAndLcm',
+        infoHtml: gcdAndLcmInfoHtml,
+        actionSentenceEnding: 'GCD and LCM info for those integers',
+        minInput: PF_MIN_INPUT,
+        maxInput: ONE_BILLION,
+        apiEndpoint: 'gcdAndLcmAnswer'
+    },
+    getGcdAndLcmInfoElements
+);
 
 
 const goldbachConjectureInfoHtml =
@@ -1016,20 +1042,22 @@ const goldbachConjectureInfoHtml =
         `There${primePairs.length === 1 ? '\'s 1 pair' : ` are ${getNumberStringWithCommas(primePairs.length)} pairs`} \
         of prime numbers that sum to ${inputString}. They are:`;
     return [heading, pairsOl];
-function getGoldbachConjectureElements(primePairStarts, inputString, inputString2Ignored, inputNum) {
+function getGoldbachConjectureElements(primePairStarts, inputString, inputNum) {
     const pairsOl = arrayToOl(primePairStarts, start => numPairToString(start, inputNum - start));
 }
 
-new Section({
-    btnIdStart: 'goldbachConjecture',
-    infoHtml: goldbachConjectureInfoHtml,
-    actionSentenceEnding: 'pairs of prime numbers that sum to that integer',
-    minInput: 4,
-    maxInput: 100_000,
-    needsEvenInput: true,
-    apiEndpoint: 'goldbachPrimePairStarts',
-    getElements: getGoldbachConjectureElements
-});
+new SingleInputSection(
+    {
+        btnIdStart: 'goldbachConjecture',
+        infoHtml: goldbachConjectureInfoHtml,
+        actionSentenceEnding: 'pairs of prime numbers that sum to that integer',
+        minInput: 4,
+        maxInput: 100_000,
+        needsEvenInput: true,
+        apiEndpoint: 'goldbachPrimePairStarts'
+    },
+    getGoldbachConjectureElements
+);
 
 
 const pythagoreanTriplesInfoHtml =
@@ -1078,15 +1106,17 @@ function getPythagoreanTriplesElements(triples, inputString) {
     return [heading, ol];
 }
 
-new Section({
-    btnIdStart: 'pythagoreanTriples',
-    infoHtml: pythagoreanTriplesInfoHtml,
-    actionSentenceEnding: 'first 10 Pythagorean triples >= that integer',
-    minInput: 0,
-    maxInput: 500,
-    apiEndpoint: 'pythagoreanTriples',
-    getElements: getPythagoreanTriplesElements
-});
+new SingleInputSection(
+    {
+        btnIdStart: 'pythagoreanTriples',
+        infoHtml: pythagoreanTriplesInfoHtml,
+        actionSentenceEnding: 'first 10 Pythagorean triples ≥ that integer',
+        minInput: 0,
+        maxInput: 500,
+        apiEndpoint: 'pythagoreanTriples'
+    },
+    getPythagoreanTriplesElements
+);
 
 
 const twoSquareTheoremInfoHtml =
@@ -1115,15 +1145,17 @@ function getTwoSquareInfoElements(infoObject, inputString) {
     return [sentenceP];
 }
 
-new Section({
-    btnIdStart: 'twoSquareTheorem',
-    infoHtml: twoSquareTheoremInfoHtml,
-    actionSentenceEnding: twoSquareTheoremActionSentenceEnding,
-    minInput: 0,
-    maxInput: ONE_BILLION,
-    apiEndpoint: 'twoSquareTheoremAnswer',
-    getElements: getTwoSquareInfoElements
-});
+new SingleInputSection(
+    {
+        btnIdStart: 'twoSquareTheorem',
+        infoHtml: twoSquareTheoremInfoHtml,
+        actionSentenceEnding: twoSquareTheoremActionSentenceEnding,
+        minInput: 0,
+        maxInput: ONE_BILLION,
+        apiEndpoint: 'twoSquareTheoremAnswer'
+    },
+    getTwoSquareTheoremInfoElements
+);
 
 
 const phiLetter = '𝚽';
@@ -1180,16 +1212,17 @@ function getFibonacciLikeSequencesInfoElements(infoObject, inputString1, inputSt
     return [heading, sequenceOl, ratioDataOl];
 }
 
-new Section({
-    btnIdStart: 'fibonacciLikeSequences',
-    infoHtml: fibonacciLikeSequencesInfoHtml,
-    isSingleInputSection: false,
-    actionSentenceEnding: fibonacciLikeSequencesActionSentenceEnding,
-    minInput: 1,
-    maxInput: NINE_QUADRILLION,
-    apiEndpoint: 'fibonacciLikeSequencesAnswer',
-    getElements: getFibonacciLikeSequencesInfoElements
-});
+new DoubleInputSection(
+    {
+        btnIdStart: 'fiboLikeSequences',
+        infoHtml: fiboLikeSequencesInfoHtml,
+        actionSentenceEnding: fiboLikeSequencesActionSentenceEnding,
+        minInput: 1,
+        maxInput: NINE_QUADRILLION,
+        apiEndpoint: 'fibonacciLikeSequencesAnswer'
+    },
+    getFiboLikeSequencesInfoElements
+);
 
 
 const ancientMultInfoStart =
@@ -1272,13 +1305,15 @@ function getAncientMultiplicationInfoElements(infoObject, inputString1, inputStr
     return [heading, table1, table2, productP];
 }
 
-new Section({
-    btnIdStart: 'ancientMultiplication',
-    infoHtml: ancientMultiplicationInfoHtmlElements,
-    isSingleInputSection: false,
-    actionSentenceEnding: 'ancient Egyptian multiplication info for those integers',
-    minInput: 2,
-    maxInput: NINE_QUADRILLION,
-    apiEndpoint: 'ancientMultiplicationAnswer',
-    getElements: getAncientMultiplicationInfoElements
-});
+new DoubleInputSection(
+    {
+        btnIdStart: 'ancientMult',
+        infoHtml: ancientMultInfoHtmlElements,
+        isSingleInputSection: false,
+        actionSentenceEnding: 'ancient Egyptian multiplication info for those integers',
+        minInput: 2,
+        maxInput: NINE_QUADRILLION,
+        apiEndpoint: 'ancientMultiplicationAnswer'
+    },
+    getAncientMultInfoElements
+);

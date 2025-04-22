@@ -27,8 +27,8 @@ public class DivisibilityAnswer {
         
         public final String numFactorsExpression;
         
-        @JsonProperty("factorPfArrsAndNums")
-        public final List<PfListAndInt> factorPfListsAndInts;
+        @JsonProperty("factorPfArrsAndNumStrings")
+        public final List<PfListAndLongString> factorPfListsAndLongStrings;
         
         public PfAnswer(PrimeFactorization inputPf) {
             inputPfList = inputPf.toList();
@@ -42,7 +42,7 @@ public class DivisibilityAnswer {
             }
             numFactorsExpression = String.join(" × ", numFactorsExpressionParts);
             
-            factorPfListsAndInts = inputPf.getFactorPfListsAndInts();
+            factorPfListsAndLongStrings = inputPf.getFactorPfListsAndLongStrings();
         }
     }
     

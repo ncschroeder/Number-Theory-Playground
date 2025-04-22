@@ -12,18 +12,34 @@ public class PrimeFactorization {
     
     public record FactorAndPower(int factor, int power) {}
     
-    public record PfListAndInt(
+    public record PfListAndLongString(
         @JsonProperty("pfArr") List<FactorAndPower> pfList,
-        @JsonProperty("correspondingNum") int correspondingInt
+        @JsonProperty("correspondingNumString") String correspondingLongString
     ) {}
     
-    private int correspondingInt;
+    /**
+     * The long that this prime factorization is for.
+     *
+     * Why use a long? Well, there are 2 constructors, 1 of which has a map for a param.
+     * 1 place where that one is used is in the constructor for the
+     * PrimeFactorization.GcdAndLcmAnswer class at the bottom of this class. The constructor
+     * for that class creates a map for the prime factors and powers of the LCM of 2 input
+     * longs, and then creates a PrimeFactorization using that map. That PrimeFactorization
+     * constructor will then set this field to the product of all the factors raised to their
+     * powers. The LCM of 2 longs is at most the product of them. The
+     * calculationsimpl.GcdAndLcmAnswer class creates PrimeFactorization.GcdAndLcmAnswer
+     * objects and the GCD and LCM section has a max input of 1 billion. The highest possible
+     * LCM is 1 billion × (1 billion - 1), which is almost 1 quintillion, which is a number
+     * with 19 digits. The max value for an int is 2 billion something and the max value for
+     * a long is 9 quintillion something.
+     */
+    private long correspondingLong;
     
     private final SortedMap<Integer, Integer> factorsAndPowers;
     public PrimeFactorization(int input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        correspondingInt = input;
+        correspondingLong = input;
         factorsAndPowers = new TreeMap<>();
         var maxIntToCheck = (int) Math.sqrt(input);
         int remaining = input;
@@ -66,10 +82,10 @@ public class PrimeFactorization {
      */
     public PrimeFactorization(Map<Integer, Integer> factorsAndPowers) {
         this.factorsAndPowers = new TreeMap<>(factorsAndPowers);
-        correspondingInt = 1;
+        correspondingLong = 1;
         
         for (Map.Entry<Integer, Integer> e : factorsAndPowers.entrySet()) {
-            correspondingInt *= (int) Math.pow(e.getKey(), e.getValue());
+            correspondingLong *= (long) Math.pow(e.getKey(), e.getValue());
         }
     }
     
@@ -89,8 +105,9 @@ public class PrimeFactorization {
         return factorsAndPowers.size() == 1 && factorsAndPowers.containsValue(1);
     }
     
-    PfListAndInt toPfListAndInt() {
-        return new PfListAndInt(isForAPrimeNumber() ? null : toList(), correspondingInt);
+    PfListAndLongString toPfListAndLongString() {
+        List<FactorAndPower> pfList = isForAPrimeNumber() ? null : toList();
+        return new PfListAndLongString(pfList, Long.toString(correspondingLong));
     }
     
     /**
@@ -125,15 +142,15 @@ public class PrimeFactorization {
         of the factors.
          */
         factorPfs.removeLast();
-        factorPfs.sort(Comparator.comparingInt(pf -> pf.correspondingInt));
+        factorPfs.sort(Comparator.comparingLong(pf -> pf.correspondingLong));
         return factorPfs;
     }
     
-    List<PfListAndInt> getFactorPfListsAndInts() {
+    List<PfListAndLongString> getFactorPfListsAndLongStrings() {
         return
             getFactorPfs()
             .stream()
-            .map(PrimeFactorization::toPfListAndInt)
+            .map(PrimeFactorization::toPfListAndLongString)
             .toList();
     }
     
@@ -154,11 +171,11 @@ public class PrimeFactorization {
         /**
          * If the GCD of the inputs is 1, this is null since only integers >= 2 have a prime factorization.
          */
-        @JsonProperty("gcdPfArrAndNum")
-        public final PfListAndInt gcdPfListAndInt;
+        @JsonProperty("gcdPfArrAndNumString")
+        public final PfListAndLongString gcdPfListAndLongString;
         
-        @JsonProperty("lcmPfArrAndNum")
-        public final PfListAndInt lcmPfListAndInt;
+        @JsonProperty("lcmPfArrAndNumString")
+        public final PfListAndLongString lcmPfListAndLongString;
         
         GcdAndLcmAnswer(int input1, int input2) {
             assertIsInRange(input1, 0, 0);
@@ -188,13 +205,13 @@ public class PrimeFactorization {
                 }
             });
             
-            gcdPfListAndInt =
+            gcdPfListAndLongString =
                 gcdPfFactorsAndPowers.isEmpty()
                 ? null
-                : new PrimeFactorization(gcdPfFactorsAndPowers).toPfListAndInt();
+                : new PrimeFactorization(gcdPfFactorsAndPowers).toPfListAndLongString();
             
-            lcmPfListAndInt =
-                new PrimeFactorization(lcmPfFactorsAndPowers).toPfListAndInt();
+            lcmPfListAndLongString =
+                new PrimeFactorization(lcmPfFactorsAndPowers).toPfListAndLongString();
         }
     }
 }

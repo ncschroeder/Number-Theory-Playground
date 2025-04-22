@@ -586,9 +586,9 @@ const pfInfoHtml =
  * @property {number} factor
  * @property {number} power
  * @typedef {FactorAndPower[]} PfArray
- * @typedef {{pfArr: ?PfArray, correspondingNum: number}} PfArrayAndNumber
  * 
  * @param {FactorAndPower[]} pfArray
+ * @typedef {{pfArr: ?PfArray, correspondingNumString: string}} PfArrayAndNumberString
  * @returns {HTMLSpanElement}
  */
 function getPfSpan(pfArray) {
@@ -694,7 +694,7 @@ const divisbilityInfoHtml =
  * @property {PfArray} inputPfArr
  * @property {string} numFactorsExpression
  * @property {number} numFactors
- * @property {PfArrayAndNumber[]} factorPfArrsAndNums
+ * @property {PfArrayAndNumberString[]} factorPfArrsAndNumStrings
  */
 
 /** 
@@ -827,7 +827,7 @@ function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
         return pfDiv;
     }
 
-    const { inputPfArr, numFactorsExpression, numFactors, factorPfArrsAndNums } = pfAnswer;
+    const { inputPfArr, numFactorsExpression, numFactors, factorPfArrsAndNumStrings } = pfAnswer;
     pfInfoParagraph.append(getPfSpan(inputPfArr), '. ');
 
     const numFactorsInfo =
@@ -841,15 +841,15 @@ function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
     pfInfoParagraph.append(numFactorsInfo, ' ', subfactorizationsSentence);
 
     /**
-     * @param {PfArrayAndNumber}
-     * @returns {HTMLLIElement | string}
+     * @param {PfArrayAndNumberString} 
+     * @returns {HTMLLIElement}
      */
-    function getLiOrLiText({ pfArr, correspondingNum }) {
-        const numString = getNumberStringWithCommas(correspondingNum);
-        return pfArr ? createLi(getPfSpan(pfArr), ` (${numString})`) : numString;
+    function pfArrAndNumStringToLi({ pfArr, correspondingNumString }) {
+        const numStringWithCommas = getNumberStringWithCommas(correspondingNumString);
+        return pfArr ? createLi(getPfSpan(pfArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
     }
 
-    pfDiv.appendChild(arrayToOl(factorPfArrsAndNums, getLiOrLiText));
+    pfDiv.appendChild(arrayToOl(factorPfArrsAndNumStrings, pfArrAndNumStringToLi));
     return pfDiv;
 }
 
@@ -902,10 +902,10 @@ const gcdAndLcmInfoHtml =
  * @type {object}
  * @property {FactorAndPower[]} pf1
  * @property {FactorAndPower[]} pf2
- * @property {?FactorsAndPowersWithNumber} gcd
- * @property {FactorsAndPowersWithNumber} lcm
  * 
  * @param {{euclideanIterations: EuclideanIteration[], gcdAndLcmPfAnswer: GcdAndLcmPfAnswer}} infoObject 
+ * @property {?PfArrayAndNumberString} gcdPfArrAndNumString
+ * @property {PfArrayAndNumberString} lcmPfArrAndNumString
  * @param {string} inputString1
  * @param {string} inputString2
  * @returns {HTMLElement[]}
@@ -938,14 +938,12 @@ function getEuclideanDiv(iterations, inputString1, inputString2) {
 }
 
 /**
- * @param {GcdAndLcmPfAnswer} data 
+ * @param {GcdAndLcmPfAnswer} answer 
  * @param {string} inputString1 
  * @param {string} inputString2 
  * @returns {HTMLDivElement}
  */
-function getGcdAndLcmPfInfoDiv(data, inputString1, inputString2) {
-    const { pf1, pf2, gcd, lcm } = data;
-    const div = createDiv();
+function getGcdAndLcmPfInfoDiv(answer, inputString1, inputString2) {
 
     /**
      * @param {string} inputString 
@@ -959,23 +957,34 @@ function getGcdAndLcmPfInfoDiv(data, inputString1, inputString2) {
 
     /**
      * @param {string} gcdOrLcmText 
-     * @param {FactorsAndPowersWithNumber} factorsAndPowersWithNumber 
+     * @param {PfArrayAndNumberString}
      */
-    function createInnerDiv2(gcdOrLcmText, factorsAndPowersWithNumber) {
         const div = createDiv();
         div.append(`The PF of the ${gcdOrLcmText} is `);
-        const { factorsAndPowers, number } = factorsAndPowersWithNumber;
         if (factorsAndPowers) {
             div.append(getPfSpan(factorsAndPowers), `, which is `);
+    function createInnerDiv2(gcdOrLcmText, { pfArr, correspondingNumString }) {
         }
-        div.append(getNumberStringWithCommas(number));
+        div.append(getNumberStringWithCommas(correspondingNumString));
         return div;
     }
 
-    const gcdInfo = gcd ? createInnerDiv2('GCD', gcd) : 'There are no common prime factors so the GCD is 1.';
+    const { input1PfArr, input2PfArr, gcdPfArrAndNumString, lcmPfArrAndNumString } = answer;
 
-    div.append(createInnerDiv1(inputString1, pf1), createInnerDiv1(inputString2, pf2), gcdInfo, createInnerDiv2('LCM', lcm));
-    return div;
+    /**
+     * @type {Appendable}
+     */
+    const gcdInfoAppendable =
+        gcdPfArrAndNumString
+        ? createInnerDiv2('GCD', gcdPfArrAndNumString)
+        : 'There are no common prime factors so the GCD is 1.';
+
+    return createDiv(
+        createInnerDiv1(inputString1, input1PfArr),
+        createInnerDiv1(inputString2, input2PfArr),
+        gcdInfoAppendable,
+        createInnerDiv2('LCM', lcmPfArrAndNumString)
+    );
 }
 
 new Section({

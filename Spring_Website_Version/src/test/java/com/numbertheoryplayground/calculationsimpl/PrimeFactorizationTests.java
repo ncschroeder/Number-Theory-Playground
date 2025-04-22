@@ -129,16 +129,22 @@ class PrimeFactorizationTests {
         assertAll(
             () -> {
                 if (expectedGcd == null) {
-                    assertNull(answer.gcdPfListAndInt);
+                    assertNull(answer.gcdPfListAndLongString);
                 } else {
-                    assertNotNull(answer.gcdPfListAndInt);
-                    assertEquals(expectedGcdPfList, answer.gcdPfListAndInt.pfList());
-                    assertEquals(expectedGcd, answer.gcdPfListAndInt.correspondingInt());
+                    assertNotNull(answer.gcdPfListAndLongString);
+                    assertEquals(expectedGcdPfList, answer.gcdPfListAndLongString.pfList());
+                    assertEquals(
+                        expectedGcd.toString(),
+                        answer.gcdPfListAndLongString.correspondingLongString()
+                    );
                 }
             },
             () -> {
-                assertEquals(expectedLcmPfList, answer.lcmPfListAndInt.pfList());
-                assertEquals(expectedLcm, answer.lcmPfListAndInt.correspondingInt());
+                assertEquals(expectedLcmPfList, answer.lcmPfListAndLongString.pfList());
+                assertEquals(
+                    Integer.toString(expectedLcm),
+                    answer.lcmPfListAndLongString.correspondingLongString()
+                );
             }
         );
     }

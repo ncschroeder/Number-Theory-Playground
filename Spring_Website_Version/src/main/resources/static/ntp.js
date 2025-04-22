@@ -49,6 +49,19 @@ function createPWithInnerHtml(innerHtml) {
 }
 
 /**
+ * @param {string} text
+ * @returns {HTMLButtonElement}
+ */
+function createBtn(text) {
+    /**
+     * @type {HTMLButtonElement}
+     */
+    const btn = createElement('button', text);
+    btn.type = 'button';
+    return btn;
+}
+
+/**
  * @param  {...Appendable} children 
  * @returns {HTMLLIElement}
  */
@@ -56,7 +69,6 @@ const createLi = (...children) => createElement('li', ...children);
 
  * @returns {HTMLDivElement}
  */
-const createBtn = (textContent) => createElement('button', textContent);
 const createDiv = () => createElement('div');
 
 /**
@@ -150,45 +162,59 @@ function createTable(headings, bodyDataSource, bodyTransform, caption) {
 const isDivisible = (a, b) => a % b === 0;
 
 /**
- * @param {HTMLInputElement} inputField 
- * @returns {number}
  * @param {number} n 
  * @returns {boolean}
  */
+
+/**
+ * @type {Section}
+ */
+let curSection;
+
+/**
+ * @param {HTMLInputElement} inputField 
+ * @returns {?number}
+ */
 function getNum(inputField) {
     const trimmedValue = inputField.value.trim().replaceAll(',', '');
-    if (trimmedValue.length === 0) return NaN;
+    if (trimmedValue.length === 0) return null;
     const containsNonDigit = /\D/.test(trimmedValue);
-    return containsNonDigit ? NaN : Number(trimmedValue);
+    if (containsNonDigit) return null;
+    const num = Number(trimmedValue);
+    return Number.isSafeInteger(num) ? num : null;
 }
 const isEven = (n) => isDivisible(n, 2);
 
 /**
- * @returns {HTMLInputElement}
+ * @param {string} id 
+ * @returns {{ inputDiv: HTMLDivElement, inputField: HTMLInputElement }}
  */
-function addInputArea() {
+function createInputDiv(id) {
     /**
      * @type {HTMLInputElement}
      */
     const inputField = createElement('input');
     inputField.setAttribute('type', 'number');
+    inputField.className = 'inputField';
 
-    const randomBtn = createBtn('Randomize');
-    randomBtn.onclick = () => {
-        let randomNumber = Math.floor(Math.random() * (maxInput - minInput + 1) + minInput);
-        if (curSection.needsEvenInput && !isEven(randomNumber)) {
-            randomNumber++;
-        const { minInput, maxInput } = curSection;
+    const randomizeBtn = createBtn('Randomize');
+    randomizeBtn.className = 'randomizeBtn';
+    randomizeBtn.onclick = () => {
+        const { minInput, maxInput, needsEvenInput } = curSection;
+        let randomNum = Math.floor(Math.random() * (maxInput - minInput + 1) + minInput);
+        if (needsEvenInput && !isEven(randomNum)) {
+            randomNum++;
         }
-        inputField.value = randomNumber;
-    }
+        inputField.value = randomNum;
+    };
 
     const plusBtn = createBtn('+');
+    plusBtn.className = 'plusBtn';
     plusBtn.onclick = () => {
-        const { minInput, maxInput } = curSection;
+        const { minInput, maxInput, needsEvenInput } = curSection;
 
         let inputNum = getNum(inputField);
-        if (!inputNum) {
+        if (inputNum === null) {
             if (inputField.value.length === 0) {
                 inputField.value = minInput;
             }
@@ -198,16 +224,17 @@ function addInputArea() {
         inputNum =
             inputNum < minInput || inputNum >= maxInput
             ? minInput
-            : inputNum + (curSection.needsEvenInput && isEven(inputNum) ? 2 : 1);
+            : inputNum + (needsEvenInput && isEven(inputNum) ? 2 : 1);
         inputField.value = inputNum;
     };
 
-    const minusBtn = createBtn('-');
+    const minusBtn = createBtn('−');
+    minusBtn.className = 'minusBtn';
     minusBtn.onclick = () => {
-        const { minInput, maxInput } = curSection;
+        const { minInput, maxInput, needsEvenInput } = curSection;
 
         let inputNum = getNum(inputField);
-        if (!inputNum) {
+        if (inputNum === null) {
             if (inputField.value.length === 0) {
                 inputField.value = maxInput;
             }
@@ -217,52 +244,64 @@ function addInputArea() {
         inputNum =
             inputNum <= minInput || inputNum > maxInput
             ? maxInput
-            : inputNum - (curSection.needsEvenInput && isEven(inputNum) ? 2 : 1);
+            : inputNum - (needsEvenInput && isEven(inputNum) ? 2 : 1);
         inputField.value = inputNum;
     };
 
-    const div = createElement('div');
-    div.className = 'inputArea';
-    div.append(inputField, randomBtn, plusBtn, minusBtn);
-    getElementById('inputAreaDiv').appendChild(div);
+    const inputDiv = createDiv(inputField, randomizeBtn, plusBtn, minusBtn);
+    inputDiv.id = id;
+    inputDiv.className = 'inputDiv';
 
-    return inputField;
+    return { inputDiv, inputField };
 }
 
-const inputField1 = addInputArea(), inputField2 = addInputArea();
 
 const commaAdder = new Intl.NumberFormat();
 const getNumberStringWithCommas = commaAdder.format;
+const sectionHeading = getElementById('sectionHeading');
+const homeHeadingText = sectionHeading.textContent;
+const homeContentDiv = getElementById('homeContentDiv');
 
+const sectionInfoDetailsSummary = createElement('summary', 'Info');
+const sectionInfoDiv = createDiv();
+sectionInfoDiv.id = 'sectionInfoDiv';
+sectionInfoDiv.className = 'nonAnswerInfoDiv';
 /**
  * @param {number} a
  * @param {number} b
  * @returns 
+ * @type {HTMLDetailsElement}
  */
 const numPairToString = (a, b) => `${getNumberStringWithCommas(a)} & ${getNumberStringWithCommas(b)}`;
+const sectionInfoDetails = createElement('details', sectionInfoDetailsSummary, sectionInfoDiv);
 
-/**
- * @type {?Section}
- */
-let curSection = null;
+const LEFT_INPUT_DIV_ID = 'leftInputDiv';
+const { inputDiv: inputDiv1, inputField: inputField1 } = createInputDiv(LEFT_INPUT_DIV_ID);
+const { inputDiv: inputDiv2, inputField: inputField2 } = createInputDiv('rightInputDiv');
+const inputDivDiv = createDiv(inputDiv1, inputDiv2);
+inputDivDiv.id = 'inputDivDiv';
+
+const sectionDirectionsP = createP();
+const calculateBtn = createBtn('Calculate');
+calculateBtn.id = 'calculateBtn';
+const answerDiv = createDiv();
+answerDiv.id = 'answerDiv';
+
+const sectionContentDiv =
+    createDiv(sectionInfoDetails, sectionDirectionsP, inputDivDiv, calculateBtn, answerDiv);
+sectionContentDiv.id = 'sectionContentDiv';
+
+getElementById('homeBtn').onclick = () => {
+    if (Object.is(document.body.lastElementChild, sectionContentDiv)) {
+        sectionHeading.textContent = homeHeadingText;
+        document.body.replaceChild(homeContentDiv, sectionContentDiv);
+    }
+};
 
 
-const
-    sectionHeading = getElementById('sectionHeading'),
-    sectionInfo = getElementById('sectionInfo'),
-    sectionDirections = getElementById('sectionDirections'),
-    answerArea = getElementById('answerArea'),
-    interactionContent = getElementById('interactionContent');
 
-function clearAnswerArea() {
-    answerArea.innerHTML = '';
-}
 
-function clearInputBoxesAndAnswerArea() {
-    inputField1.value = '';
-    inputField2.value = '';
-    clearAnswerArea();
-}
+
 
 
 // Max input constants.
@@ -364,11 +403,28 @@ class Section {
             ≤ ${maxInputSentencePart}. Commas are optional.`;
 
         const show = () => {
-            clearInputBoxesAndAnswerArea();
             curSection = this;
             sectionHeading.textContent = heading;
-            sectionInfo.replaceChildren(...infoHtmlElements);
-            sectionDirections.textContent = directions;
+            sectionInfoDetails.open = false;
+            sectionInfoDiv.replaceChildren(...infoHtmlElements);
+            sectionDirectionsP.textContent = directions;
+            inputField1.value = '';
+            inputField2.value = '';
+            answerDiv.innerHTML = '';
+
+            if (isSingleInputSection) {
+                if (Object.is(inputDivDiv.lastElementChild, inputDiv2)) {
+                    inputDivDiv.removeChild(inputDiv2);
+                    inputDiv1.id = 'onlyInputDiv';
+                }
+            } else if (Object.is(inputDivDiv.lastElementChild, inputDiv1)) {
+                inputDivDiv.appendChild(inputDiv2);
+                inputDiv1.id = LEFT_INPUT_DIV_ID;
+            }
+
+            if (Object.is(document.body.lastElementChild, homeContentDiv)) {
+                document.body.replaceChild(sectionContentDiv, homeContentDiv);
+            }
         }
 
         sectionBtn.onclick = show;
@@ -434,9 +490,9 @@ getElementById('calculateBtn').onclick = () => {
         ? curSection.getElements(await response.json(), inputString1, inputString2, inputNum1)
         : [errorMessage]
     )
-    .then(elementsOrErrorMessage => answerArea.replaceChildren(...elementsOrErrorMessage))
+    .then(elementsOrErrorMessage => answerDiv.replaceChildren(...elementsOrErrorMessage))
     .catch(reason => {
-        answerArea.replaceChildren(errorMessage);
+        answerDiv.replaceChildren(errorMessage);
         console.error(errorMessage, reason);
     });
 }

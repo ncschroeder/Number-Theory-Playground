@@ -6,7 +6,7 @@ body {
     font-family: serif;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, summary {
     text-align: center;
 }
 
@@ -33,9 +33,6 @@ h4 {
 
 p, ol {
     max-width: 40rem;
-}
-
-p {
     margin: 0 auto;
 }
 
@@ -90,60 +87,78 @@ td {
     cursor: pointer;
 }
 
-#calculateBtn {
-    display: block;
-    width: max-content;
-    margin: 1rem auto;
+#sectionContentDiv > :nth-child(n + 2), #sectionInfoDiv {
+    margin-top: 1rem;
 }
 
-#sectionInfo {
-    margin: 1rem auto;
+#sectionContentDiv > #answerDiv {
+    margin-top: 2rem;
 }
 
 /* Spacing between section info paragraphs */
-#sectionInfo > p:nth-child(n + 2) {
-    margin-top: 0.5rem;
+.nonAnswerInfoDiv > :nth-child(n + 2) {
+    margin-top: 1rem;
 }
 
-#inputAreaDiv {
+#sectionInfoDiv > :last-child {
+    margin-bottom: 3rem;
+}
+
+#inputDivDiv {
     display: flex;
-    margin: 1rem auto;
 }
 
-.inputArea {
+.inputDiv {
     display: grid;
     gap: 0.1rem;
 }
 
-/* Input box for both input areas */
-.inputArea > input[type='number'] {
+.inputDiv > .inputField {
     margin: auto;
     width: 7rem;
     grid-column: 1 / 3;
     grid-row: 1;
 }
 
-.inputArea > button:nth-child(2) {
+.inputDiv > .randomizeBtn {
     grid-column: 1 / 3;
     grid-row: 2;
     margin: auto;
 }
 
-.inputArea > button:nth-child(3) {
+.inputDiv > .plusBtn {
     grid-column: 1;
     grid-row: 3;
     margin-right: 0;
     margin-left: auto;
 }
 
-.inputArea > button:nth-child(4) {
+.inputDiv > .minusBtn {
     grid-column: 2;
     grid-row: 3;
     margin-left: 0;
     margin-right: auto;
 }
 
-#interactionContent {
+#onlyInputDiv {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#leftInputDiv {
+    margin-right: min(1rem, 1%);
+    margin-left: auto;
+}
+
+#rightInputDiv {
+    margin-left: min(1rem, 1%);
+    margin-right: auto;
+}
+
+#calculateBtn {
+    display: block;
+    margin: auto;
+}
     margin: 1rem auto;
 }
 

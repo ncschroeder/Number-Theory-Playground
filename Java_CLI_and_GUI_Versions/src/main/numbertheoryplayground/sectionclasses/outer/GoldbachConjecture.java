@@ -31,7 +31,7 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
      * Find the pairs of primes that sum to the input and returns an array that contains the lower numbers
      * of each pair.
      */
-    public static int[] getPrimePairStarts(long input) {
+    static int[] getPrimePairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         if (isOdd(input)) throw invalidInputException;
     

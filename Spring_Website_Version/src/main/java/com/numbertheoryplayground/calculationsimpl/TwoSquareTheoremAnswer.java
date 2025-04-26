@@ -4,9 +4,9 @@ import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isPrime;
 
 public class TwoSquareTheoremAnswer {
-    public int primeNum;
-    public int a;
-    public int b;
+    private int primeNum;
+    private int a;
+    private int b;
     
     public TwoSquareTheoremAnswer(int input) {
         assertIsInRange(input, 0, ONE_BILLION);
@@ -26,5 +26,17 @@ public class TwoSquareTheoremAnswer {
                 break;
             }
         }
+    }
+    
+    public int getPrimeNum() {
+        return primeNum;
+    }
+    
+    public int getA() {
+        return a;
+    }
+    
+    public int getB() {
+        return b;
     }
 }

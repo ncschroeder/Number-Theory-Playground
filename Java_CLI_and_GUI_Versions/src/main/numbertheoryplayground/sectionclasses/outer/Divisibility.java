@@ -26,7 +26,7 @@ ways to find them.""";
     private static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
     private static final long MAX_INPUT = PrimeFactorization.MAX_INPUT;
     
-    public static boolean isDivisible(long a, long b) {
+    static boolean isDivisible(long a, long b) {
         return a % b == 0;
     }
     
@@ -34,7 +34,7 @@ ways to find them.""";
         return isDivisible(i, 2);
     }
     
-    public static boolean isOdd(long i) {
+    static boolean isOdd(long i) {
         return !isEven(i);
     }
     
@@ -64,31 +64,25 @@ of blocks of 3 from right to left is 768 - 695 + 4 = 77, which is divisible by 7
 sum of digits from left to right is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible
 by 11.""";
     
-    public static final class RulesAnswer {
+    static final class RulesAnswer {
         /**
          * Contains divisibility info for the input long found using the mentioned rules.
          */
         private final String infoParagraph;
-        
         private final String inputStringWithCommas;
-        
-        public final int sumOfDigits;
-        
-        public final long last2Digits;
-        
-        public final long last3Digits;
-        
+        private final long last2Digits;
+        private final long last3Digits;
+        private final int sumOfDigits;
         /**
          * Contains text for the alternating sum of blocks of 3 from right to left.
          */
-        public StringBuilder alternatingSumOfBlocksSb;
-        
+        private final StringBuilder blocksOf3AltSumExpressionBuilder;
         /**
          * Contains text for the alternating sum of digits from left to right.
          */
-        public final StringBuilder alternatingSumOfDigitsSb;
         
-        public RulesAnswer(long input) {
+        private final StringBuilder digitsAltSumExpressionBuilder;
+        RulesAnswer(long input) {
             assertIsInRange(input, MIN_INPUT, MAX_INPUT);
             
             inputStringWithCommas = toStringWithCommas(input);
@@ -235,6 +229,29 @@ by 11.""";
                 possibleFactor,
                 inputStringWithCommas
             );
+        }
+        
+        int getSumOfDigits() {
+            return sumOfDigits;
+        }
+        
+        long getLast2Digits() {
+            return last2Digits;
+        }
+        
+        long getLast3Digits() {
+            return last3Digits;
+        }
+        
+        /**
+         * Throws NullPointerException if blocksOf3AltSumExpressionBuilder is null.
+         */
+        String getBlocksOf3AltSumExpression() {
+            return blocksOf3AltSumExpressionBuilder.toString();
+        }
+        
+        String getDigitsAltSumExpression() {
+            return digitsAltSumExpressionBuilder.toString();
         }
     }
     

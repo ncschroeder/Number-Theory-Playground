@@ -17,10 +17,8 @@ public class FibonacciLikeSequencesAnswer {
     
     private final List<BigInteger> bigIntSequence = new ArrayList<>(SEQUENCE_LENGTH);
     
-    public final List<String> stringSequence;
-    
-    @JsonProperty("ratioDataArray")
-    public final List<RatioData> ratioDataList;
+    private final List<String> stringSequence;
+    private final List<RatioData> ratioDataList;
     
     public FibonacciLikeSequencesAnswer(long input1, long input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
@@ -57,23 +55,28 @@ public class FibonacciLikeSequencesAnswer {
             .stream()
             .map(BigInteger::intValueExact)
             .toList();
+    @JsonProperty("sequence")
+    public List<String> getStringSequence() {
+        return stringSequence;
     }
     
     public static class RatioData {
         private static final MathContext noRoundingMathContext =
             new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
+    @JsonProperty("ratioDataArray")
+    public List<RatioData> getRatioDataList() {
+        return ratioDataList;
+    }
         
-        @JsonProperty("num1String")
-        public final String bigInt1String;
         
-        @JsonProperty("num2String")
-        public final String bigInt2String;
         
-        public BigDecimal ratio;
         
-        public boolean isRounded;
+        private final String bigInt1String;
+        private final String bigInt2String;
+        private BigDecimal ratio;
+        private boolean isRounded;
         
-        public RatioData(BigInteger bigInt1, BigInteger bigInt2) {
+        RatioData(BigInteger bigInt1, BigInteger bigInt2) {
             bigInt1String = bigInt1.toString();
             bigInt2String = bigInt2.toString();
             var bigDecimal1 = new BigDecimal(bigInt1);
@@ -86,7 +89,25 @@ public class FibonacciLikeSequencesAnswer {
                 ratio = bigDecimal2.divide(bigDecimal1, MathContext.DECIMAL64);
                 isRounded = true;
             }
+        }
         
+        @JsonProperty("num1String")
+        public String getBigInt1String() {
+            return bigInt1String;
+        }
+        
+        @JsonProperty("num2String")
+        public String getBigInt2String() {
+            return bigInt2String;
+        }
+        
+        public BigDecimal getRatio() {
+            return ratio;
+        }
+        
+        @JsonProperty("isRounded")
+        public boolean isRounded() {
+            return isRounded;
         }
     }
 }

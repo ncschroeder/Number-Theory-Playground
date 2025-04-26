@@ -36,7 +36,7 @@ the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 
     private static final long MAX_INPUT = TEN_TRILLION;
     private static final int NUM_PRIMES_TO_FIND = 30;
     
-    public static boolean isPrime(long input) {
+    static boolean isPrime(long input) {
         if (input < 2) return false;
         if (input <= 3) return true;
         if (isEven(input)) return false;
@@ -53,14 +53,14 @@ the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 
             .noneMatch(l -> isDivisible(input, l));
     }
     
-    public static boolean bothArePrime(long a, long b) {
+    static boolean bothArePrime(long a, long b) {
         return isPrime(a) && isPrime(b);
     }
     
     /**
      * Returns a stream of the first 30 primes >= the input.
      */
-    public static LongStream getPrimes(long input) {
+    static LongStream getPrimes(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         long iterationStart = isOdd(input) ? input : input + 1;

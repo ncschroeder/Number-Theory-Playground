@@ -22,22 +22,20 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
     private static final long MIN_INPUT = 0;
     private static final long MAX_INPUT = ONE_QUADRILLION;
     
-    public static final class Answer {
+    static final class Answer {
         /**
          * The first prime number >= the input that is 1 above a multiple of 4.
          */
-        public long primeNum;
+        private long primeNum;
         
         /**
          * a and b are the longs whose squares sum to primeNum.
          */
-        public long a;
-        
-        public long b;
-        
+        private long a;
+        private long b;
         private final String infoSentence;
         
-        public Answer(long input) {
+        Answer(long input) {
             assertIsInRange(input, MIN_INPUT, MAX_INPUT);
             
             primeNum = input;
@@ -65,6 +63,17 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
                     getLongAndSquareString(a),
                     getLongAndSquareString(b)
                 );
+
+        long getPrimeNum() {
+            return primeNum;
+        }
+        
+        long getA() {
+            return a;
+        }
+        
+        long getB() {
+            return b;
         }
     }
     

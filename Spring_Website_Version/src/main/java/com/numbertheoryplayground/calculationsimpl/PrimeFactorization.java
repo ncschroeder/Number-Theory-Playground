@@ -7,7 +7,7 @@ import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isDivisible;
 
 public class PrimeFactorization {
-    public static final long MIN_INPUT = 2;
+    static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = ONE_BILLION;
     
     public record FactorAndPower(int factor, int power) {}
@@ -113,7 +113,7 @@ public class PrimeFactorization {
     /**
      * This method finds the sub-factorizations by finding combinations of factors and powers.
      */
-    public List<PrimeFactorization> getFactorPfs() {
+    List<PrimeFactorization> getFactorPfs() {
         var factorPfs = new ArrayList<PrimeFactorization>();
         
         factorsAndPowers.forEach((factor, thisPfPower) -> {
@@ -162,20 +162,15 @@ public class PrimeFactorization {
      * this class.
      */
     public static class GcdAndLcmAnswer {
-        @JsonProperty("input1PfArr")
-        public final List<FactorAndPower> input1PfList;
 
-        @JsonProperty("input2PfArr")
-        public final List<FactorAndPower> input2PfList;
         
+        private final List<FactorAndPower> input1PfList;
+        private final List<FactorAndPower> input2PfList;
         /**
          * If the GCD of the inputs is 1, this is null since only integers >= 2 have a prime factorization.
          */
-        @JsonProperty("gcdPfArrAndNumString")
-        public final PfListAndLongString gcdPfListAndLongString;
-        
-        @JsonProperty("lcmPfArrAndNumString")
-        public final PfListAndLongString lcmPfListAndLongString;
+        private final PfListAndLongString gcdPfListAndLongString;
+        private final PfListAndLongString lcmPfListAndLongString;
         
         GcdAndLcmAnswer(int input1, int input2) {
             assertIsInRange(input1, 0, 0);
@@ -212,6 +207,26 @@ public class PrimeFactorization {
             
             lcmPfListAndLongString =
                 new PrimeFactorization(lcmPfFactorsAndPowers).toPfListAndLongString();
+        }
+        
+        @JsonProperty("input1PfArr")
+        public List<FactorAndPower> getInput1PfList() {
+            return input1PfList;
+        }
+        
+        @JsonProperty("input2PfArr")
+        public List<FactorAndPower> getInput2PfList() {
+            return input2PfList;
+        }
+        
+        @JsonProperty("gcdPfArrAndNumString")
+        public PfListAndLongString getGcdPfListAndLongString() {
+            return gcdPfListAndLongString;
+        }
+        
+        @JsonProperty("lcmPfArrAndNumString")
+        public PfListAndLongString getLcmPfListAndLongString() {
+            return lcmPfListAndLongString;
         }
     }
 }

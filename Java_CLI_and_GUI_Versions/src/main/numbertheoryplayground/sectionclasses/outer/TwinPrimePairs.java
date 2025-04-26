@@ -36,7 +36,7 @@ number that is 1 above that same multiple of 6. 5 is the only number to be in 2 
      * one found since the lower number in that pair is 3. If the input is 4, then the pair 5 and 7 will
      * be the first one found. The elements of this stream are the lower numbers in each pair.
      */
-    public static LongStream getPairStarts(long input) {
+    static LongStream getPairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         /*

@@ -53,7 +53,7 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
      * Has data that will be in rows of the tables displayed to the user when showing ancient Egyptian
      * multiplication info.
      */
-    public record TableRow(long powerOf2, BigInteger correspondingMultiple) {
+    record TableRow(long powerOf2, BigInteger correspondingMultiple) {
         private String powerOf2String() {
             return toStringWithCommas(powerOf2);
         }
@@ -63,26 +63,26 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
         }
     }
     
-    public static class Answer {
+    static final class Answer {
         private final String mainHeading;
         
         /**
          * Contains rows for all the powers of 2 <= input1 and the corresponding multiples of input2.
          */
-        public final Stream<TableRow> table1Rows;
         
+        private final Stream<TableRow> table1Rows;
         /**
          * Contains rows for all the powers of 2 that sum to input1 and the corresponding multiples
          * of input2, which sum to the product of input1 and input2.
          */
-        public final Stream<TableRow> table2Rows;
         
+        private final Stream<TableRow> table2Rows;
         private final String allPowersOf2ColumnHeading;
         private final String input2MultiplesColumnHeading;
         private final String powersOf2ThatSumToInput1ColumnHeading;
         private final String productSentence;
         
-        public Answer(long input1, long input2) {
+        Answer(long input1, long input2) {
             assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
             assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
             
@@ -121,6 +121,14 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
             
             table1Rows = table1RowsBuilder.build();
             table2Rows = table2RowsBuilder.build();
+        }
+        
+        List<TableRow> getTable1Rows() {
+            return table1Rows.toList();
+        }
+        
+        List<TableRow> getTable2Rows() {
+            return table2Rows.toList();
         }
     }
     

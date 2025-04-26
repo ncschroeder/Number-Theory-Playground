@@ -6,9 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.*;
-public class DivisibilityAnswer {
-    public final RulesData rulesData;
-    public final PfAnswer pfAnswer;
+
+public final class DivisibilityAnswer {
+    private final RulesData rulesData;
+    private final PfAnswer pfAnswer;
     
     public DivisibilityAnswer(int input) {
         assertIsInRange(input, PrimeFactorization.MIN_INPUT, ONE_BILLION);
@@ -19,18 +20,22 @@ public class DivisibilityAnswer {
         pfAnswer = pf.isForAPrimeNumber() ? null : new PfAnswer(pf);
     }
     
-    public static class PfAnswer {
-        @JsonProperty("inputPfArr")
-        public final List<FactorAndPower> inputPfList;
+    public RulesData getRulesData() {
+        return rulesData;
+    }
+    
+    public PfAnswer getPfAnswer() {
+        return pfAnswer;
+    }
+    
+    
+    public static final class PfAnswer {
+        private final List<FactorAndPower> inputPfList;
+        private int numFactors;
+        private final String numFactorsExpression;
+        private final List<PfListAndLongString> factorPfListsAndLongStrings;
         
-        public int numFactors;
-        
-        public final String numFactorsExpression;
-        
-        @JsonProperty("factorPfArrsAndNumStrings")
-        public final List<PfListAndLongString> factorPfListsAndLongStrings;
-        
-        public PfAnswer(PrimeFactorization inputPf) {
+        PfAnswer(PrimeFactorization inputPf) {
             inputPfList = inputPf.toList();
             
             numFactors = 1;
@@ -44,16 +49,34 @@ public class DivisibilityAnswer {
             
             factorPfListsAndLongStrings = inputPf.getFactorPfListsAndLongStrings();
         }
+        
+        @JsonProperty("inputPfArr")
+        public List<FactorAndPower> getInputPfList() {
+            return inputPfList;
+        }
+        
+        public int getNumFactors() {
+            return numFactors;
+        }
+        
+        public String getNumFactorsExpression() {
+            return numFactorsExpression;
+        }
+        
+        @JsonProperty("factorPfArrsAndNumStrings")
+        public List<PfListAndLongString> getFactorPfListsAndLongStrings() {
+            return factorPfListsAndLongStrings;
+        }
     }
     
     public static class RulesData {
-        public final int last2Digits;
-        public final int last3Digits;
-        public final int sumOfDigits;
-        public final AlternatingSumAndExpression blocksOf3AltSumAndExpression;
-        public final AlternatingSumAndExpression digitsAltSumAndExpression;
+        private final int last2Digits;
+        private final int last3Digits;
+        private final int sumOfDigits;
+        private final AlternatingSumAndExpression blocksOf3AltSumAndExpression;
+        private final AlternatingSumAndExpression digitsAltSumAndExpression;
         
-        public RulesData(int input) {
+        RulesData(int input) {
             last2Digits = input % 100;
             last3Digits = input % 1_000;
             
@@ -69,6 +92,26 @@ public class DivisibilityAnswer {
                 input >= 1_000 ? new BlocksOf3AlternatingSumAndExpression(inputString) : null;
             
             digitsAltSumAndExpression = new DigitsAlternatingSumAndExpression(inputString);
+        }
+        
+        public int getLast2Digits() {
+            return last2Digits;
+        }
+        
+        public int getLast3Digits() {
+            return last3Digits;
+        }
+        
+        public int getSumOfDigits() {
+            return sumOfDigits;
+        }
+        
+        public AlternatingSumAndExpression getBlocksOf3AltSumAndExpression() {
+            return blocksOf3AltSumAndExpression;
+        }
+        
+        public AlternatingSumAndExpression getDigitsAltSumAndExpression() {
+            return digitsAltSumAndExpression;
         }
     }
     

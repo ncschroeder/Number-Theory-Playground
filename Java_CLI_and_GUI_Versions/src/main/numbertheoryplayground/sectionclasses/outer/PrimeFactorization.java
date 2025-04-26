@@ -32,9 +32,9 @@ is 304,250,263,527,210. This number is the product of the first 13 prime numbers
 prime factors and its PF is 2 x 3 x 5 x 7 x 11 x 13 x 17 x 19 x 23 x 29 x 31 x 37 x 41. You could also
 multiply that number by 2 or 3 and those numbers are <= the max input and have the same amount of
 unique prime factors.""";
+    static final long MIN_INPUT = 2;
+    static final long MAX_INPUT = TEN_QUADRILLION;
     
-    public static final long MIN_INPUT = 2;
-    public static final long MAX_INPUT = TEN_QUADRILLION;
     
     /**
      * The BigInteger that this prime factorization is for.
@@ -62,7 +62,7 @@ unique prime factors.""";
     /**
      * Constructs a new object to represent the prime factorization of the input.
      */
-    public PrimeFactorization(long input) {
+    PrimeFactorization(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         correspondingBigInt = BigInteger.valueOf(input);
@@ -116,12 +116,6 @@ unique prime factors.""";
         }
     }
     
-    public BigInteger getCorrespondingBigInt() {
-        return correspondingBigInt;
-    }
-    
-    public String getCorrespondingBigIntString() {
-        return toStringWithCommas(correspondingBigInt);
     }
     
     /**
@@ -142,6 +136,13 @@ unique prime factors.""";
             .toList();
     }
     
+    BigInteger getCorrespondingBigInt() {
+        return correspondingBigInt;
+    }
+
+    private String getCorrespondingBigIntString() {
+        return createStringWithCommas(correspondingBigInt);
+    }
     /**
      * Returns a string that represents this object the same way that the first info paragraph at the
      * top represents PFs. That paragraph says "the PF of 5 is just 5, the PF of 25 is 5^2, and the PF
@@ -164,18 +165,18 @@ unique prime factors.""";
     /**
      * Prime numbers have a prime factorization that consists of a single factor with 1 as its power.
      */
-    public boolean isForAPrimeNumber() {
+    boolean isForAPrimeNumber() {
         return factorsAndPowers.size() == 1 && factorsAndPowers.containsValue(1);
     }
     
-    public String toStringWithCorrespondingBigInt() {
+    String toStringWithCorrespondingBigInt() {
         return
             isForAPrimeNumber()
             ? getCorrespondingBigIntString()
             : String.format("%s (%s)", this, getCorrespondingBigIntString());
     }
     
-    public String getInfoSentence() {
+    String getInfoSentence() {
         return String.format("The PF of %s is %s.", getCorrespondingBigIntString(), this);
     }
     
@@ -194,7 +195,7 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
      * of factors and how it was calculated.
      */
     var powerStrings = new ArrayList<String>(factorsAndPowers.size());
-    public String getNumFactorsInfo() {
+    String getNumFactorsInfo() {
         var numFactors = 1;
         
         for (int power : factorsAndPowers.values()) {
@@ -216,7 +217,7 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
     /**
      * This method finds the sub-factorizations by finding combinations of factors and powers.
      */
-    public List<PrimeFactorization> getFactorPfs() {
+    List<PrimeFactorization> getFactorPfs() {
         var factorPfs = new ArrayList<PrimeFactorization>();
         
         factorsAndPowers.forEach((factor, thisPfPower) -> {
@@ -247,7 +248,7 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
         return factorPfs;
     }
     
-    public Stream<String> getFactorPfStrings() {
+    Stream<String> getFactorPfStrings() {
         return getFactorPfs().stream().map(PrimeFactorization::toStringWithCorrespondingBigInt);
     }
     
@@ -314,22 +315,15 @@ second input integer multiplied by 2.""";
      * PrimeFactorization class is that we can access the private factorsAndPowers map of the
      * PrimeFactorizations we create in the constructor for this class.
      */
-    public static class GcdAndLcmAnswer {
+    static class GcdAndLcmAnswer {
         /**
          * If the GCD of the inputs is 1, this is null since only integers >= 2 have a prime factorization.
          */
-        public final PrimeFactorization gcdPf;
-        
-        public final PrimeFactorization lcmPf;
-        
-        public final Stream<String> infoSentences;
-        
-        public GcdAndLcmAnswer(long input1, long input2) {
-            assertIsInRange(input1, GcdAndLcm.MIN_INPUT, GcdAndLcm.MAX_INPUT);
-            assertIsInRange(input2, GcdAndLcm.MIN_INPUT, GcdAndLcm.MAX_INPUT);
-            
-            var input1Pf = new PrimeFactorization(input1);
-            var input2Pf = new PrimeFactorization(input2);
+        private final PrimeFactorization gcdPf;
+        private final PrimeFactorization lcmPf;
+        GcdAndLcmAnswer(long input1, long input2) {
+            input1Pf = new PrimeFactorization(input1);
+            input2Pf = new PrimeFactorization(input2);
             var gcdPfFactorsAndPowers = new HashMap<Long, Integer>();
             var lcmPfFactorsAndPowers = new HashMap<Long, Integer>();
             
@@ -350,24 +344,33 @@ second input integer multiplied by 2.""";
                 }
             });
             
-            String gcdInfo;
-            
-            if (gcdPfFactorsAndPowers.isEmpty()) {
-                gcdPf = null;
-                gcdInfo = "There are no common prime factors so the GCD is 1.";
-            } else {
-                gcdPf = new PrimeFactorization(gcdPfFactorsAndPowers);
-                var infoEnding =
-                    gcdPf.isForAPrimeNumber() ? "" : ", which is " + gcdPf.getCorrespondingBigIntString();
-                gcdInfo = String.format("The GCD PF is %s%s.", gcdPf, infoEnding);
-            }
-            
+            gcdPf =
+                gcdPfFactorsAndPowers.isEmpty()
+                ? null
+                : new PrimeFactorization(gcdPfFactorsAndPowers);
+
             lcmPf = new PrimeFactorization(lcmPfFactorsAndPowers);
-            String lcmInfo =
-                String.format("The LCM PF is %s, which is %s.", lcmPf, lcmPf.getCorrespondingBigIntString());
+        }
+        
+        Stream<String> getInfoSentences() {
+            String gcdSentence =
+                gcdPf != null
+                ? getGcdOrLcmPfSentence("GCD", gcdPf)
+                : "There are no common prime factors so the GCD is 1.";
             
-            infoSentences =
-                Stream.of(input1Pf.getInfoSentence(), input2Pf.getInfoSentence(), gcdInfo, lcmInfo);
+            String lcmSentence = getGcdOrLcmPfSentence("LCM", lcmPf);
+            
+            return Stream.of(
+                input1Pf.getInfoSentence(), input2Pf.getInfoSentence(), gcdSentence, lcmSentence
+            );
+        }
+        
+        PrimeFactorization getGcdPf() {
+            return gcdPf;
+        }
+        
+        PrimeFactorization getLcmPf() {
+            return lcmPf;
         }
     }
 }

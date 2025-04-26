@@ -31,14 +31,14 @@ numbers is the same as the GCD of the smaller number and the remainder when the 
 divided by the smaller number. Repeat.""";
     
     // This section uses prime factorizations so the input constraints for those will be used.
-    public static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
-    public static final long MAX_INPUT = PrimeFactorization.MAX_INPUT / 2;
     
     
+    static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
+    static final long MAX_INPUT = PrimeFactorization.MAX_INPUT / 2;
     /**
      * Record with data for an iteration of the Euclidean algorithm.
      */
-    public record EuclideanIteration(long max, long min, long remainder) {
+    record EuclideanIteration(long max, long min, long remainder) {
         private String maxString() {
             return toStringWithCommas(max);
         }
@@ -56,7 +56,7 @@ divided by the smaller number. Repeat.""";
      * Returns a list of iteration objects to represent all iterations of the Euclidean algorithm
      * performed on input1 and input2.
      */
-    public static List<EuclideanIteration> getEuclideanIterations(long input1, long input2) {
+    static List<EuclideanIteration> getEuclideanIterations(long input1, long input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
         assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
         

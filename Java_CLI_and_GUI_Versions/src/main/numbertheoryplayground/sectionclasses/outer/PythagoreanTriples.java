@@ -41,7 +41,7 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
     /**
      * Record for the 3 integers of a Pythagorean triple.
      */
-    public record Triple(int a, int b, int c) {
+    record Triple(int a, int b, int c) {
         @Override
         public String toString() {
             return String.format(
@@ -53,7 +53,7 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
             );
         }
         
-        public boolean isPrimitive() {
+        boolean isPrimitive() {
             /*
             See if there's a common factor other than 1. The iterating only needs to go up to a third of the min
             of a, b, and c. This is because if the min could be a common factor, then we would be able to divide
@@ -76,7 +76,7 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
      * be the first one since the lowest number in that triple is 3. If the input number is 4, then an object
      * for the triple 5, 12, and 13 will be the first one.
      */
-    public static List<Triple> getTriples(long input) {
+    static List<Triple> getTriples(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         var triples = new ArrayList<Triple>(NUM_TRIPLES_TO_FIND);

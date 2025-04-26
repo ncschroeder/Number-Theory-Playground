@@ -12,9 +12,9 @@ public class AncientMultiplicationAnswer {
     
     public record TableRow(long powerOf2, String correspondingMultipleString) {}
     
-    public final List<TableRow> table1Rows;
-    public final List<TableRow> table2Rows;
-    public final String productString;
+    private final List<TableRow> table1Rows;
+    private final List<TableRow> table2Rows;
+    private final String productString;
     
     public AncientMultiplicationAnswer(long input1, long input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
@@ -49,5 +49,17 @@ public class AncientMultiplicationAnswer {
             BigInteger.valueOf(input1)
             .multiply(BigInteger.valueOf(input2))
             .toString();
+    }
+    
+    public List<TableRow> getTable1Rows() {
+        return table1Rows;
+    }
+    
+    public List<TableRow> getTable2Rows() {
+        return table2Rows;
+    }
+    
+    public String getProductString() {
+        return productString;
     }
 }

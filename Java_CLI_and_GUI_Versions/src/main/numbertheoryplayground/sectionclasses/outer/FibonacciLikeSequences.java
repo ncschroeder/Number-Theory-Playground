@@ -44,7 +44,7 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
     private static final MathContext noRoundingMathContext =
         new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
     
-    public static String getRatioExpression(BigInteger bigInt1, BigInteger bigInt2) {
+    static String getRatioExpression(BigInteger bigInt1, BigInteger bigInt2) {
         var bigDecimal1 = new BigDecimal(bigInt1);
         var bigDecimal2 = new BigDecimal(bigInt2);
         BigDecimal ratio;

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.PythagoreanTriple;
 
-public class CalculationsTests {
+class CalculationsTests {
     @ParameterizedTest
     @MethodSource("getArgsForGetPrimes")
     void getPrimes(int input, int[] expectedPrimes) {

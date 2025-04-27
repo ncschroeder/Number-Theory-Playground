@@ -1,5 +1,6 @@
 package com.numbertheoryplayground.calculationsimpl;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
 import java.util.*;
@@ -14,9 +15,6 @@ class PrimeFactorizationTests {
         return new FactorAndPower(factor, power);
     }
     
-    static Map.Entry<Integer, Integer> me(int key, int value) {
-        return Map.entry(key, value);
-    }
     
     static int pow(int a, int b) {
         return (int) Math.pow(a, b);
@@ -24,12 +22,12 @@ class PrimeFactorizationTests {
     
     
     @ParameterizedTest
-    @FieldSource("argsForIntConstructor")
+    @FieldSource("intConstructorArgs")
     void intConstructor(int input, List<FactorAndPower> expectedFactorsAndPowers) {
         assertEquals(expectedFactorsAndPowers, new PrimeFactorization(input).toList());
     }
     
-    static final List<Arguments> argsForIntConstructor =
+    static final List<Arguments> intConstructorArgs =
         List.of(
             arguments(2, List.of(fp(2, 1))),
             arguments(pow(2, 3), List.of(fp(2, 3))),
@@ -47,22 +45,22 @@ class PrimeFactorizationTests {
     @ParameterizedTest
     @MethodSource("getArgsForGetFactorPfs")
     void getFactorPfs(
-        Map<Integer, Integer> input,
-        List<List<FactorAndPower>> expectedFactorsAndPowersForFactorPfs
+        List<FactorAndPower> input,
+        List<List<FactorAndPower>> expectedPfListsForFactorPfs
     ) {
-        List<List<FactorAndPower>> actualFactorsAndPowersForFactorPfs =
+        List<List<FactorAndPower>> actualPfListsForFactorPfs =
             new PrimeFactorization(input)
             .getFactorPfs()
             .stream()
             .map(PrimeFactorization::toList)
             .toList();
         
-        assertEquals(expectedFactorsAndPowersForFactorPfs, actualFactorsAndPowersForFactorPfs);
+        assertEquals(expectedPfListsForFactorPfs, actualPfListsForFactorPfs);
     }
     
     static Stream<Arguments> getArgsForGetFactorPfs() {
-        Map<Integer, Integer> input4 = Map.ofEntries(me(2, 2), me(3, 1));
-        List<List<FactorAndPower>> expectedFactorsAndPowersForFactorPfs4 =
+        List<FactorAndPower> input4 = List.of(fp(2, 2), fp(3, 1));
+        List<List<FactorAndPower>> expectedPfListsForFactorPfs4 =
             List.of(
                 List.of(fp(2, 1)),
                 List.of(fp(3, 1)),
@@ -70,8 +68,8 @@ class PrimeFactorizationTests {
                 List.of(fp(2, 1), fp(3, 1))
             );
         
-        Map<Integer, Integer> input5 = Map.ofEntries(me(2, 1), me(3, 2), me(5, 2));
-        List<List<FactorAndPower>> expectedFactorsAndPowersForFactorPfs5 =
+        List<FactorAndPower> input5 = List.of(fp(2, 1), fp(3, 2), fp(5, 2));
+        List<List<FactorAndPower>> expectedPfListsForFactorPfs5 =
             List.of(
                 // The comments show the corresponding factor.
                 List.of(fp(2, 1)), // 2
@@ -93,75 +91,77 @@ class PrimeFactorizationTests {
             );
         
         return Stream.of(
-            arguments(Map.of(2, 1), Collections.emptyList()),
+            arguments(List.of(fp(2, 1)), Collections.emptyList()),
             arguments(
-                Map.of(2, 4),
+                List.of(fp(2, 4)),
                 List.of(List.of(fp(2, 1)), List.of(fp(2, 2)), List.of(fp(2, 3)))
             ),
             arguments(
-                Map.ofEntries(me(2, 1), me(3, 1)),
+                List.of(fp(2, 1), fp(3, 1)),
                 List.of(List.of(fp(2, 1)), List.of(fp(3, 1)))
             ),
-            arguments(input4, expectedFactorsAndPowersForFactorPfs4),
-            arguments(input5, expectedFactorsAndPowersForFactorPfs5)
+            arguments(input4, expectedPfListsForFactorPfs4),
+            arguments(input5, expectedPfListsForFactorPfs5)
         );
     }
     
     
+    void assertPfListAndLongString(
+        PfListAndLongString pfListAndLongString,
+        List<FactorAndPower> expectedPfList,
+        long expectedCorrespondingLong
+    ) {
+        assertEquals(expectedPfList, pfListAndLongString.pfList());
+        assertEquals(
+            Long.toString(expectedCorrespondingLong),
+            pfListAndLongString.correspondingLongString()
+        );
+    }
+    
     /**
      * 2 integers are coprime if their GCD is 1 and they don't have any common prime factors.
-     * If input1 and input2 are coprime then expectedGcdPfList and expectedGcd will be null.
-     * If the GCD of input1 and input2 is a prime number then expectedGcdPfList will be null
-     * but expectedGcd won't be.
+     * As a result, if a PrimeFactorization.GcdAndLcmAnswer object is created with coprime
+     * inputs, then the GCD PfListAndLongString of that object should be null.
      */
+    @Test
+    void gcdAndLcmAnswerForCoprimeInputs() {
+        int input1 = 2 * 3;
+        int input2 = 5 * 7;
+        List<FactorAndPower> expectedLcmPfList =
+            List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1));
+        int expectedLcm = 2 * 3 * 5 * 7;
+        var answer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
+        
+        assertAll(
+            () -> assertNull(answer.getGcdPfListAndLongString()),
+            () -> assertPfListAndLongString(answer.getLcmPfListAndLongString(), expectedLcmPfList, expectedLcm)
+        );
+    }
+    
     @ParameterizedTest
-    @MethodSource("getArgsForGcdAndLcmAnswer")
-    void gcdAndLcmAnswer(
-        int input1,
-        int input2,
-        List<FactorAndPower> expectedGcdPfList,
-        Integer expectedGcd,
-        List<FactorAndPower> expectedLcmPfList,
-        int expectedLcm
+    @MethodSource("getArgsForGcdAndLcmAnswerForNonCoprimeInputs")
+    void gcdAndLcmAnswerForNonCoprimeInputs(
+        int input1, int input2,
+        List<FactorAndPower> expectedGcdPfList, int expectedGcd,
+        List<FactorAndPower> expectedLcmPfList, int expectedLcm
     ) {
         var answer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
         
         assertAll(
             () -> {
-                if (expectedGcd == null) {
-                    assertNull(answer.gcdPfListAndLongString);
-                } else {
-                    assertNotNull(answer.gcdPfListAndLongString);
-                    assertEquals(expectedGcdPfList, answer.gcdPfListAndLongString.pfList());
-                    assertEquals(
-                        expectedGcd.toString(),
-                        answer.gcdPfListAndLongString.correspondingLongString()
-                    );
-                }
+                var gcdPfListAndLongString = answer.getGcdPfListAndLongString();
+                assertNotNull(gcdPfListAndLongString);
+                assertPfListAndLongString(gcdPfListAndLongString, expectedGcdPfList, expectedGcd);
             },
-            () -> {
-                assertEquals(expectedLcmPfList, answer.lcmPfListAndLongString.pfList());
-                assertEquals(
-                    Integer.toString(expectedLcm),
-                    answer.lcmPfListAndLongString.correspondingLongString()
-                );
-            }
+            () -> assertPfListAndLongString(answer.getLcmPfListAndLongString(), expectedLcmPfList, expectedLcm)
         );
     }
     
-    static Stream<Arguments> getArgsForGcdAndLcmAnswer() {
+    static Stream<Arguments> getArgsForGcdAndLcmAnswerForNonCoprimeInputs() {
         List<FactorAndPower> pfFactorsAndPowersFor10 = List.of(fp(2, 1), fp(5, 1));
         
         return Stream.of(
             arguments(10, 10, pfFactorsAndPowersFor10, 10, pfFactorsAndPowersFor10, 10),
-            arguments(
-                2 * 3,
-                5 * 7,
-                null,
-                null,
-                List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1)),
-                2 * 3 * 5 * 7
-            ),
             arguments(
                 pow(2, 2) * 3 * pow(5, 2) * 7,
                 2 * pow(3, 2) * 5 * pow(7, 2),

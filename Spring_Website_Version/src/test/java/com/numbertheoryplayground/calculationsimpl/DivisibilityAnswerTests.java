@@ -20,18 +20,23 @@ INPUT,      LAST_2_DIGITS, LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_OF_3_ALT_SUM_E
     void rulesData(
         int input,
         int expectedLast2Digits, int expectedLast3Digits, int expectedSumOfDigits,
-        String expectedBlocksOf3AlternatingSumExpression, int expectedBlocksOf3AlternatingSum,
-        String expectedDigitsAlternatingSumExpression, int expectedDigitsAlternatingSum
+        String expectedBlocksOf3AltSumExpression, int expectedBlocksOf3AltSum,
+        String expectedDigitsAltSumExpression, int expectedDigitsAltSum
     ) {
         var data = new RulesData(input);
+        AlternatingSumAndExpression blocksOf3AltSumAndExpression =
+            data.getBlocksOf3AltSumAndExpression();
+        AlternatingSumAndExpression digitsAltSumAndExpression =
+            data.getDigitsAltSumAndExpression();
+        
         assertAll(
-            () -> assertEquals(expectedLast2Digits, data.last2Digits),
-            () -> assertEquals(expectedLast3Digits, data.last3Digits),
-            () -> assertEquals(expectedSumOfDigits, data.sumOfDigits),
-            () -> assertEquals(expectedBlocksOf3AlternatingSumExpression, data.blocksOf3AltSumAndExpression.getExpression()),
-            () -> assertEquals(expectedBlocksOf3AlternatingSum, data.blocksOf3AltSumAndExpression.getSum()),
-            () -> assertEquals(expectedDigitsAlternatingSumExpression, data.digitsAltSumAndExpression.getExpression()),
-            () -> assertEquals(expectedDigitsAlternatingSum, data.digitsAltSumAndExpression.getSum())
+            () -> assertEquals(expectedLast2Digits, data.getLast2Digits()),
+            () -> assertEquals(expectedLast3Digits, data.getLast3Digits()),
+            () -> assertEquals(expectedSumOfDigits, data.getSumOfDigits()),
+            () -> assertEquals(expectedBlocksOf3AltSumExpression, blocksOf3AltSumAndExpression.getExpression()),
+            () -> assertEquals(expectedBlocksOf3AltSum, blocksOf3AltSumAndExpression.getSum()),
+            () -> assertEquals(expectedDigitsAltSumExpression, digitsAltSumAndExpression.getExpression()),
+            () -> assertEquals(expectedDigitsAltSum, digitsAltSumAndExpression.getSum())
         );
     }
     
@@ -41,8 +46,8 @@ INPUT,      LAST_2_DIGITS, LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_OF_3_ALT_SUM_E
     void pfAnswerNumFactorsFields(int input, String expectedNumFactorsExpression, int expectedNumFactors) {
         var answer = new PfAnswer(new PrimeFactorization(input));
         assertAll(
-            () -> assertEquals(expectedNumFactorsExpression, answer.numFactorsExpression),
-            () -> assertEquals(expectedNumFactors, answer.numFactors)
+            () -> assertEquals(expectedNumFactorsExpression, answer.getNumFactorsExpression()),
+            () -> assertEquals(expectedNumFactors, answer.getNumFactors())
         );
     }
     

@@ -4,7 +4,6 @@ import java.math.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
@@ -15,26 +14,11 @@ public class FibonacciLikeSequencesAnswer {
     
     private static final int SEQUENCE_LENGTH = 20;
     
-    private final List<BigInteger> bigIntSequence = new ArrayList<>(SEQUENCE_LENGTH);
-    
     private final List<String> stringSequence;
     private final List<RatioData> ratioDataList;
     
     public FibonacciLikeSequencesAnswer(long input1, long input2) {
-        assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
-        assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
-        
-        var bigInt1 = BigInteger.valueOf(input1);
-        var bigInt2 = BigInteger.valueOf(input2);
-        bigIntSequence.add(bigInt1);
-        bigIntSequence.add(bigInt2);
-        
-        while (bigIntSequence.size() < SEQUENCE_LENGTH) {
-            var nextBigInt = bigInt1.add(bigInt2);
-            bigIntSequence.add(nextBigInt);
-            bigInt1 = bigInt2;
-            bigInt2 = nextBigInt;
-        }
+        List<BigInteger> bigIntSequence = getBigIntSequence(input1, input2);
         
         stringSequence =
             bigIntSequence
@@ -48,28 +32,40 @@ public class FibonacciLikeSequencesAnswer {
             .toList();
     }
     
-    @JsonIgnore
-    public List<Integer> getIntSequence() {
-        return
-            bigIntSequence
-            .stream()
-            .map(BigInteger::intValueExact)
-            .toList();
     @JsonProperty("sequence")
     public List<String> getStringSequence() {
         return stringSequence;
     }
     
-    public static class RatioData {
-        private static final MathContext noRoundingMathContext =
-            new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
     @JsonProperty("ratioDataArray")
     public List<RatioData> getRatioDataList() {
         return ratioDataList;
     }
+    
+    
+    static List<BigInteger> getBigIntSequence(long input1, long input2) {
+        assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
+        assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
         
+        var sequence = new ArrayList<BigInteger>(SEQUENCE_LENGTH);
+        var bigInt1 = BigInteger.valueOf(input1);
+        var bigInt2 = BigInteger.valueOf(input2);
+        sequence.add(bigInt1);
+        sequence.add(bigInt2);
         
+        while (sequence.size() < SEQUENCE_LENGTH) {
+            var nextBigInt = bigInt1.add(bigInt2);
+            sequence.add(nextBigInt);
+            bigInt1 = bigInt2;
+            bigInt2 = nextBigInt;
+        }
         
+        return sequence;
+    }
+    
+    public static final class RatioData {
+        private static final MathContext noRoundingMathContext =
+            new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
         
         private final String bigInt1String;
         private final String bigInt2String;

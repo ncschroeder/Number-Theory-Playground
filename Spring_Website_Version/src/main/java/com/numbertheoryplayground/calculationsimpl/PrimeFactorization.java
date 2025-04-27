@@ -1,6 +1,7 @@
 package com.numbertheoryplayground.calculationsimpl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
@@ -80,13 +81,21 @@ public class PrimeFactorization {
      * Constructs a new PrimeFactorization to represent the prime factorization whose factors
      * and powers are keys and values, respectively, in the map provided.
      */
-    public PrimeFactorization(Map<Integer, Integer> factorsAndPowers) {
+    private PrimeFactorization(Map<Integer, Integer> factorsAndPowers) {
         this.factorsAndPowers = new TreeMap<>(factorsAndPowers);
         correspondingLong = 1;
         
         for (Map.Entry<Integer, Integer> e : factorsAndPowers.entrySet()) {
             correspondingLong *= (long) Math.pow(e.getKey(), e.getValue());
         }
+    }
+    
+    PrimeFactorization(List<FactorAndPower> factorAndPowers) {
+        this(
+            factorAndPowers
+            .stream()
+            .collect(Collectors.toMap(FactorAndPower::factor, FactorAndPower::power))
+        );
     }
     
     public List<FactorAndPower> toList() {

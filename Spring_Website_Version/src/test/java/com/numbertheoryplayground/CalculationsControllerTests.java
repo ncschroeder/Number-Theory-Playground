@@ -18,7 +18,7 @@ public class CalculationsControllerTests {
     private MockMvc mockMvc;
     
     void testBadRequest(String endpoint, String queryParams) {
-        String url = String.format("/calculate/%s?%s", endpoint, queryParams);
+        String url = String.format("/calculate%s?%s", endpoint, queryParams);
         
         try {
             mockMvc

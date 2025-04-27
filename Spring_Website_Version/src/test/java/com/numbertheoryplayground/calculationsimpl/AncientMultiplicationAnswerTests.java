@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static com.numbertheoryplayground.calculationsimpl.AncientMultiplicationAnswer.TableRow;
 
-public class AncientMultiplicationAnswerTests {
+class AncientMultiplicationAnswerTests {
     /*
     I've identified 3 possible outcomes when creating an AncientMultiplicationAnswer object:
 
@@ -37,13 +37,10 @@ public class AncientMultiplicationAnswerTests {
         List<TableRow> expectedTable2Rows
     ) {
         var answer = new AncientMultiplicationAnswer(input1, input2);
-        assertEquals(expectedTable1Rows, answer.table1Rows);
-        assertEquals(expectedTable2Rows, answer.table2Rows);
+        assertEquals(expectedTable1Rows, answer.getTable1Rows());
+        assertEquals(expectedTable2Rows, answer.getTable2Rows());
     }
     
-    /**
-     * Shortened constructor for a TableRow.
-     */
     static TableRow tr(int powerOf2, int correspondingMultiple) {
         return new TableRow(powerOf2, Integer.toString(correspondingMultiple));
     }

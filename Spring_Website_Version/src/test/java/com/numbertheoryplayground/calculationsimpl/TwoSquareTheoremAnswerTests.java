@@ -31,8 +31,8 @@ class TwoSquareTheoremAnswerTests {
         """)
     void twoSquareTheoremAnswer(int input, int expectedPrimeNum, int expectedA, int expectedB) {
         var answer = new TwoSquareTheoremAnswer(input);
-        assertEquals(expectedPrimeNum, answer.primeNum);
-        assertEquals(expectedA, answer.a);
-        assertEquals(expectedB, answer.b);
+        assertEquals(expectedPrimeNum, answer.getPrimeNum());
+        assertEquals(expectedA, answer.getA());
+        assertEquals(expectedB, answer.getB());
     }
 }

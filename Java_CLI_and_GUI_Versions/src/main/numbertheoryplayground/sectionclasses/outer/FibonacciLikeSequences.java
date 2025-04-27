@@ -40,6 +40,63 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
     private static final long MIN_INPUT = 1;
     private static final long MAX_INPUT = NINE_QUINTILLION;
     private static final int SEQUENCE_LENGTH = 20;
+    private static final class Answer {
+        private final String sequenceHeading;
+
+        private final Stream<String> stringSequence;
+
+        /**
+         * Contains a sentence about what Phi approximately is and sentences about the ratios between the
+         * 5th and 4th, 10th and 9th, 15th and 14th, and 20th and 19th numbers in bigIntSequence.
+         */
+        private final Stream<String> phiAndRatioExpressions;
+
+        private Answer(long input1, long input2) {
+            // Call getBigIntSequence first to see if it throws.
+            List<BigInteger> bigIntSequence = getBigIntSequence(input1, input2);
+            
+            sequenceHeading =
+                String.format(
+                    "The first %d integers in the Fibonacci-like sequence that starts with %s and %s are:",
+                    SEQUENCE_LENGTH,
+                    createStringWithCommas(input1),
+                    createStringWithCommas(input2)
+                );
+
+            stringSequence = bigIntSequence.stream().map(Misc::createStringWithCommas);
+
+            Stream<String> ratioExpressions =
+                IntStream.of(3, 8, 13, 18)
+                .mapToObj(i -> getRatioExpression(bigIntSequence.get(i), bigIntSequence.get(i + 1)));
+                
+            phiAndRatioExpressions =
+                Stream.concat(
+                    Stream.of(String.format("Phi ≈ %s.", PHI)),
+                    ratioExpressions
+                );
+        }
+    }
+    
+    
+    static List<BigInteger> getBigIntSequence(long input1, long input2) {
+        assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
+        assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
+        
+        var sequence = new ArrayList<BigInteger>(SEQUENCE_LENGTH);
+        var bigInt1 = BigInteger.valueOf(input1);
+        var bigInt2 = BigInteger.valueOf(input2);
+        sequence.add(bigInt1);
+        sequence.add(bigInt2);
+        
+        while (sequence.size() < SEQUENCE_LENGTH) {
+            var nextBigInt = bigInt1.add(bigInt2);
+            sequence.add(nextBigInt);
+            bigInt1 = bigInt2;
+            bigInt2 = nextBigInt;
+        }
+        
+        return sequence;
+    }
     
     private static final MathContext noRoundingMathContext =
         new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
@@ -67,60 +124,6 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         );
     }
 
-    public static final class Answer {
-        private final String sequenceHeading;
-        
-        /**
-         * Is as long as SEQUENCE_LENGTH and contains BigIntegers for numbers in a Fibonacci-like sequence.
-         * The first 2 BigIntegers in this sequence are from 2 input longs.
-         */
-        public final List<BigInteger> bigIntSequence;
-        
-        private final Stream<String> stringSequence;
-        
-        /**
-         * Contains a sentence about what Phi approximately is and sentences about the ratios between the 5th and 4th,
-         * 10th and 9th, 15th and 14th, and 20th and 19th numbers in bigIntSequence.
-        private final Stream<String> phiAndRatioExpressions;
-         */
-        
-        public Answer(long input1, long input2) {
-            assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
-            assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
-            
-            sequenceHeading =
-                String.format(
-                    "The first %d numbers in the Fibonacci-like sequence that begins with %s and %s are:",
-                    SEQUENCE_LENGTH,
-                    toStringWithCommas(input1),
-                    toStringWithCommas(input2)
-                );
-            
-            bigIntSequence = new ArrayList<>(SEQUENCE_LENGTH);
-            var bigInt1 = BigInteger.valueOf(input1);
-            var bigInt2 = BigInteger.valueOf(input2);
-            bigIntSequence.add(bigInt1);
-            bigIntSequence.add(bigInt2);
-            
-            while (bigIntSequence.size() < SEQUENCE_LENGTH) {
-                var nextBigInt = bigInt1.add(bigInt2);
-                bigIntSequence.add(nextBigInt);
-                bigInt1 = bigInt2;
-                bigInt2 = nextBigInt;
-            }
-            
-            stringSequence = bigIntSequence.stream().map(Misc::toStringWithCommas);
-            
-            Stream<String> ratioExpressions =
-                IntStream.of(3, 8, 13, 18)
-                .mapToObj(i -> getRatioExpression(bigIntSequence.get(i), bigIntSequence.get(i + 1)));
-            phiAndRatioExpressions =
-                Stream.concat(
-                    Stream.of(String.format("Phi is approximately %s.", PHI)),
-                    ratioExpressions
-                );
-        }
-    }
     
     public static final class Section extends DoubleInputSection {
         public Section() {

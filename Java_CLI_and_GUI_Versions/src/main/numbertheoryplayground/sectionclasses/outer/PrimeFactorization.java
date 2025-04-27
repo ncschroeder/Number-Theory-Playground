@@ -36,6 +36,8 @@ unique prime factors.""";
     static final long MAX_INPUT = TEN_QUADRILLION;
     
     
+    record FactorAndPower(long factor, int power) {}
+
     /**
      * The BigInteger that this prime factorization is for.
      *
@@ -106,7 +108,7 @@ unique prime factors.""";
      * Constructs a new PrimeFactorization to represent the prime factorization whose factors and powers
      * are keys and values, respectively, in the map provided.
      */
-    public PrimeFactorization(Map<Long, Integer> factorsAndPowers) {
+    private PrimeFactorization(Map<Long, Integer> factorsAndPowers) {
         this.factorsAndPowers = new TreeMap<>(factorsAndPowers);
         correspondingBigInt = BigInteger.ONE;
         
@@ -116,23 +118,20 @@ unique prime factors.""";
         }
     }
     
+    PrimeFactorization(List<FactorAndPower> factorAndPowers) {
+        this(
+            factorAndPowers
+            .stream()
+            .collect(Collectors.toMap(FactorAndPower::factor, FactorAndPower::power))
+        );
     }
     
-    /**
-     * Returns a list of map entries where each key is a factor and each value is the corresponding
-     * power in this prime factorization.
-     *
-     * According to the documentation, the entrySet method "returns a Set view of the mappings
-     * contained in this map. The set is backed by the map, so changes to the map are reflected in
-     * the set, and vice-versa." That's just kinda scary to me, so I'll have this method return an
-     * unmodifiable list of immutable copies of entries in the entry set.
-     */
-    public List<Map.Entry<Long, Integer>> getFactorsAndPowers() {
+    List<FactorAndPower> toList() {
         return
             factorsAndPowers
             .entrySet()
             .stream()
-            .map(e -> Map.entry(e.getKey(), e.getValue()))
+            .map(e -> new FactorAndPower(e.getKey(), e.getValue()))
             .toList();
     }
     

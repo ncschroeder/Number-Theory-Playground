@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.Misc;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -103,7 +103,7 @@ the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 
         
         @Override
         public String getCliAnswer(long input) {
-            return NTPCLI.streamToString(getListHeading(input), getPrimesStrings(input));
+            return NtpCli.buildStringWithStreamElementsOnShortLines(getPrimesHeading(input), getPrimesStrings(input));
         }
         
         @Override

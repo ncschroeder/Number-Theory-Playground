@@ -19,7 +19,7 @@ import static numbertheoryplayground.NtpCli.*;
  */
 class NtpCliTests {
     @Test
-    void testInsertNewLines() {
+    void testPutNewLineChars() {
         /*
         Create some strings to help with testing. The number ending is the length.
         All of these strings contain a space except for string10WithoutASpace.
@@ -35,41 +35,41 @@ class NtpCliTests {
                 // Strings ≤ 90 characters shouldn't have any changes made.
                 assertEquals(
                     string10,
-                    insertNewLines(string10),
+                    putNewLineChars(string10),
                     "10 character string doesn't have any changes made."
                 );
                 assertEquals(
                     string90,
-                    insertNewLines(string90),
+                    putNewLineChars(string90),
                     "90 character string doesn't have any changes made."
                 );
             },
             () -> {
                 /*
-                If the 91st character is a space, insertNewLines should replace that character
+                If the 91st character is a space, putNewLines should replace that character
                 with a new line character and an indent if the indent arg is set to true.
                  */
                 var testMessage = """
-                    If the 91st character is a space, insertNewLines replaces that \
+                    If the 91st character is a space, putNewLines replaces that \
                     character with a new line character
                     """;
                 
                 var string90AndAnA = string90 + " a";
-                assertEquals(string90 + "\na", insertNewLines(string90AndAnA), testMessage + '.');
+                assertEquals(string90 + "\na", putNewLineChars(string90AndAnA), testMessage + '.');
 
                 // Next test does the same thing but with indenting.
                 testMessage += " and an indent.";
-                assertEquals(string90 + "\n    a", insertNewLines(string90AndAnA, true), testMessage);
+                assertEquals(string90 + "\n    a", putNewLineChars(string90AndAnA, true), testMessage);
 
                 // Next test is the same as the first but loops more than once.
                 testMessage = """
-                    In each loop, if the 91st character is a space, insertNewLines replaces \
+                    In each loop, if the 91st character is a space, putNewLines replaces \
                     that character with a new line character
                     """;
                 
                 String arg = String.join(" ", string90, string90, string10WithoutASpace);
                 String expectedResult = String.join("\n", string90, string90, string10WithoutASpace);
-                assertEquals(expectedResult, insertNewLines(arg), testMessage + '.');
+                assertEquals(expectedResult, putNewLineChars(arg), testMessage + '.');
 
                 /*
                 Next test is the same as the 2nd but loops more than once. We're expecting
@@ -81,16 +81,16 @@ class NtpCliTests {
                 testMessage += " and an indent.";
                 arg = String.join(" ", string90, string86, string10WithoutASpace);
                 expectedResult = String.join("\n    ", string90, string86, string10WithoutASpace);
-                assertEquals(expectedResult, insertNewLines(arg, true), testMessage);
+                assertEquals(expectedResult, putNewLineChars(arg, true), testMessage);
             },
             () -> {
                 var testMessage =
-                    "If the 91st character isn't a space, insertNewLines goes back to find a space.";
+                    "If the 91st character isn't a space, putNewLines goes back to find a space.";
                 var string91 = string80 + ' ' + string10WithoutASpace;
                 assumeTrue(string91.length() == 91);
                 assertEquals(
                     string80 + '\n' + string10WithoutASpace,
-                    insertNewLines(string91),
+                    putNewLineChars(string91),
                     testMessage
                 );
             }

@@ -7,8 +7,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -265,7 +265,7 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
         
         @Override
         public String getCliAnswer(long input) {
-            return NTPCLI.insertNewLines(new PrimeFactorization(input).getInfoSentence());
+            return NtpCli.putNewLineChars(new PrimeFactorization(input).getInfoSentence());
         }
         
         @Override

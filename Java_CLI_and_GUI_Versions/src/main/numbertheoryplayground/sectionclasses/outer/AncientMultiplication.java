@@ -5,10 +5,11 @@ import java.awt.GridLayout;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPPanel;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -132,15 +133,7 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
         }
     }
     
-    private static String createTableString(String headRow, Stream<TableRow> rows, int column1Width) {
-        return
-            rows
-            .map(r ->
-                NTPCLI.getRowFor2ColumnTable(r.powerOf2String(), column1Width, r.correspondingMultipleString())
-            )
-            .collect(Collectors.joining("\n", headRow + '\n', ""));
-    }
-    
+
     public static final class Section extends DoubleInputSection {
         public Section() {
             super(
@@ -160,22 +153,30 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
         public String getCliAnswer(long input1, long input2) {
             var answer = new Answer(input1, input2);
             
-            // Gap between the heading in the 1st column and the start of the 2nd column in each table.
-            // The heading should always be the longest item in the 1st column.
-            var columnGap = 3;
+            BiFunction<String, Stream<TableRow>, String> createTableString =
+                (powersOf2ColumnHeading, rows) -> {
+                    // powersOf2ColumnHeading should always be the longest element in the 1st column.
+                    int column1Width = powersOf2ColumnHeading.length() + 3;
+                    String headRow =
+                        NtpCli.getRowFor2ColumnTable(
+                            powersOf2ColumnHeading, column1Width, answer.input2MultiplesColumnHeading
+                        );
+                    
+                    return
+                        rows
+                        .map(r ->
+                            NtpCli.getRowFor2ColumnTable(
+                                r.powerOf2String(), column1Width, r.correspondingMultipleString()
+                            )
+                        )
+                        .collect(Collectors.joining("\n", headRow + '\n', ""));
+                };
             
-            String powersOf2ColumnHeading = answer.allPowersOf2ColumnHeading;
-            int tableColumn1Width = powersOf2ColumnHeading.length() + columnGap;
-            String headRow =
-                NTPCLI.getRowFor2ColumnTable(powersOf2ColumnHeading, tableColumn1Width, answer.input2MultiplesColumnHeading);
-            var table1 = createTableString(headRow, answer.table1Rows, tableColumn1Width);
-            
-            powersOf2ColumnHeading = answer.powersOf2ThatSumToInput1ColumnHeading;
-            tableColumn1Width = powersOf2ColumnHeading.length() + columnGap;
-            headRow =
-                NTPCLI.getRowFor2ColumnTable(powersOf2ColumnHeading, tableColumn1Width, answer.input2MultiplesColumnHeading);
-            var table2 = createTableString(headRow, answer.table2Rows, tableColumn1Width);
-            
+            var table1 =
+                createTableString.apply(answer.allPowersOf2ColumnHeading, answer.table1Rows);
+            var table2 =
+                createTableString.apply(answer.powersOf2ThatSumToInput1ColumnHeading, answer.table2Rows);
+
             return String.join(
                 "\n\n",
                 answer.mainHeading,

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Supplier;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -306,7 +306,7 @@ by 11.""";
             if (input >= 10) {
                 linesJoiner
                 .add(RULES_INFO_HEADING)
-                .add(NTPCLI.insertNewLines(new RulesAnswer(input).infoParagraph))
+                .add(NtpCli.putNewLineChars(new RulesAnswer(input).infoParagraph))
                 .add("");
             }
             
@@ -314,14 +314,16 @@ by 11.""";
             
             if (pf.isForAPrimeNumber()) {
                 linesJoiner.add(
-                    NTPCLI.insertNewLines(pf.getInfoSentence() + ' ' + getPrimeNumberSentence(input))
+                    NtpCli.putNewLineChars(pf.getInfoSentence() + ' ' + getPrimeNumberSentence(input))
                 );
             } else {
                 String textAboveFactorPfs =
-                    NTPCLI.insertNewLines(
+                    NtpCli.putNewLineChars(
                         pf.getInfoSentence() + ' ' + pf.getNumFactorsInfo() + ' ' + FACTORS_AND_PFS_SENTENCE
                     );
-                linesJoiner.add(NTPCLI.streamToString(textAboveFactorPfs, pf.getFactorPfStrings()));
+                linesJoiner.add(
+                    NtpCli.buildStringWithStreamElementsOnLongLines(textAboveFactorPfs, pf.getFactorPfStrings())
+                );
             }
             
             return linesJoiner.toString();

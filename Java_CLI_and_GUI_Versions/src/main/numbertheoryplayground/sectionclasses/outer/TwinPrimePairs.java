@@ -4,8 +4,8 @@ import java.awt.Component;
 import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPGUI;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -85,7 +85,7 @@ number that is 1 above that same multiple of 6. 5 is the only number to be in 2 
         
         @Override
         public String getCliAnswer(long input) {
-            return NTPCLI.streamToString(getListHeading(input), getPairStrings(input));
+            return NtpCli.buildStringWithStreamElementsOnShortLines(getPairsHeading(input), getPairStrings(input));
         }
         
         @Override

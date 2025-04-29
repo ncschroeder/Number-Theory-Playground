@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPGUI;
 import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -83,8 +83,8 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
         @Override
         public String getCliAnswer(long input) {
             int[] pairStarts = getPrimePairStarts(input);
-            return NTPCLI.streamToString(
                 getListHeading(pairStarts.length, input),
+            return NtpCli.buildStringWithStreamElementsOnLongLines(
                 getPrimePairStrings(pairStarts, input)
             );
         }

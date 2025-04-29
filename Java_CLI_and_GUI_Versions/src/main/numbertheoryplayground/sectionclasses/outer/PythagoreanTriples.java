@@ -7,9 +7,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPGUI;
 import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -148,10 +148,11 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
          */
         @Override
         public String getCliAnswer(long input) {
-            return
-                getNumberedTripleStrings(input)
-                .map(s -> NTPCLI.insertNewLines(s, true))
-                .collect(Collectors.joining("\n", getTriplesHeading(input) + '\n', ""));
+            Stream<String> tripleStrings = getNumberedTripleStrings(input, 1);
+            return NtpCli.buildStringWithStreamElementsOnSeparateLines(
+                getTriplesHeading(input),
+                tripleStrings
+            );
         }
         
         /**

@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPPanel;
 import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -123,7 +123,7 @@ divided by the smaller number. Repeat.""";
             columnGap;
         
         String headRow =
-            NTPCLI.getRowFor3ColumnTable(
+            NtpCli.getRowFor3ColumnTable(
                 EUCLIDEAN_MAX_COLUMN_HEADING, maxColumnWidth,
                 EUCLIDEAN_MIN_COLUMN_HEADING, minColumnWidth,
                 EUCLIDEAN_REMAINDER_COLUMN_HEADING
@@ -132,12 +132,11 @@ divided by the smaller number. Repeat.""";
         String collectingPrefix = EUCLIDEAN_TABLE_HEADING + '\n' + headRow + '\n';
         String collectingSuffix = '\n' + getEuclideanGcdMessage(input1, input2, iterations);
         
-        // Create table.
         return
             iterations
             .stream()
             .map(i ->
-                NTPCLI.getRowFor3ColumnTable(
+                NtpCli.getRowFor3ColumnTable(
                     i.maxString(), maxColumnWidth, i.minString(), minColumnWidth, i.remainderString()
                 )
             )
@@ -177,15 +176,6 @@ divided by the smaller number. Repeat.""";
             .setMaxSizeToPreferredSize();
     }
     
-    private static final String PF_INFO_HEADING = "Prime Factorization Info";
-    
-    private static String getGcdAndLcmViaPfCliAnswer(long input1, long input2) {
-        return
-            new PrimeFactorization.GcdAndLcmAnswer(input1, input2)
-            .infoSentences
-            .map(s -> NTPCLI.insertNewLines(s, true))
-            .collect(Collectors.joining("\n", PF_INFO_HEADING + '\n', ""));
-    }
     
     private static NTPPanel getGcdAndLcmViaPfPanel(long input1, long input2) {
         Stream<String> infoSentences =
@@ -203,6 +193,9 @@ divided by the smaller number. Repeat.""";
             toStringWithCommas(input2)
         );
     }
+
+    private static final String PF_INFO_HEADING = "Prime Factorization Info";
+
     
     public static final class Section extends DoubleInputSection {
         public Section() {
@@ -218,11 +211,17 @@ divided by the smaller number. Repeat.""";
         
         @Override
         public String getCliAnswer(long input1, long input2) {
+            // Call getEuclideanCliAnswer first to see if it throws.
+            String euclideanAnswer = getEuclideanCliAnswer(input1, input2);
+            Stream<String> pfInfoSentences =
+                new PrimeFactorization.GcdAndLcmAnswer(input1, input2).getInfoSentences();
+            String pfAnswer =
+                NtpCli.buildStringWithStreamElementsOnSeparateLines(PF_INFO_HEADING, pfInfoSentences);
             return String.join(
                 "\n\n",
                 getAnswerMainHeading(input1, input2),
-                getEuclideanCliAnswer(input1, input2),
-                getGcdAndLcmViaPfCliAnswer(input1, input2)
+                euclideanAnswer,
+                pfAnswer
             );
         }
         

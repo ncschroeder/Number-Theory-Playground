@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.Misc;
-import numbertheoryplayground.NTPCLI;
 import numbertheoryplayground.gui.NTPGUI;
 import numbertheoryplayground.gui.NTPTextArea;
+import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -144,16 +144,13 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         @Override
         public String getCliAnswer(long input1, long input2) {
             var answer = new Answer(input1, input2);
+            String heading = NtpCli.putNewLineChars(answer.sequenceHeading);
+            var sequenceStringWithHeading =
+                NtpCli.buildStringWithStreamElementsOnShortLines(heading, answer.stringSequence);
+            var phiAndRatioExpressionsString =
+                NtpCli.buildStringWithStreamElementsOnSeparateLines(answer.phiAndRatioExpressions);
             
-            var phiAndRatioSentencesString =
-                answer
-                .phiAndRatioSentences
-                .map(s -> NTPCLI.insertNewLines(s, true))
-                .collect(Collectors.joining("\n"));
-            
-            return
-                NTPCLI.streamToString(NTPCLI.insertNewLines(answer.sequenceHeading), answer.stringSequence) +
-                "\n\n" + phiAndRatioSentencesString;
+            return sequenceStringWithHeading + "\n\n" + phiAndRatioExpressionsString;
         }
         
         @Override

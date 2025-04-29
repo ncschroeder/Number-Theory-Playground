@@ -25,7 +25,6 @@ public final class NtpTextArea extends JTextArea {
         if (text.length() > 50_000) {
             throw StringTooLongException.instance;
         }
-//        System.out.println((text.length()));
         setText(text);
     }
     
@@ -58,28 +57,12 @@ public final class NtpTextArea extends JTextArea {
         setText("");
     }
     
-    /**
-     * If a text area's text is set to a long string, . This class is mostly used to display short strings
-     * that are less than a thousand chars long. The Divisibility class uses this class to display factor
-     * PFs. The GoldbachConjecture class uses this class to display prime number pairs. These strings can
-     * be pretty long.
-     */
     public static final class StringTooLongException extends IllegalArgumentException {
         private StringTooLongException() {}
         
         private static final StringTooLongException instance = new StringTooLongException();
         
-        /**
-         *
-         */
         public static final String ERROR_MESSAGE =
             "They take up too much text so they won't be displayed.";
     }
 }
-
-//    public void setTextAndResize(String text) {
-//        System.out.println(getPreferredSize().height);
-//        setText(text);
-//        setMaximumSize(new Dimension(800, getPreferredSize().height));
-//        setMaximumSize(new Dimension(800, 1000));
-//    }

@@ -10,7 +10,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import numbertheoryplayground.sectionclasses.outer.GoldbachConjecture;
 
 /**
  * Utility class with a little code related to the Number Theory Playground Graphical User Interface,
@@ -20,8 +19,6 @@ import numbertheoryplayground.sectionclasses.outer.GoldbachConjecture;
 public class NtpGui {
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(() -> {
-            GoldbachConjecture.setMaxInputForGui();
-            
             var frame = new JFrame("Number Theory Playground");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1400, 900);
@@ -67,9 +64,6 @@ public class NtpGui {
         return new Font("Garamond", Font.BOLD, size);
     }
     
-    /**
-     * Common font and size used.
-     */
     static final Font GARAMOND_25 = createGaramondFont(25);
     static final Font BOLD_GARAMOND_25 = createBoldGaramondFont(25);
     private static final Font ANSWER_MAIN_HEADING_FONT = createBoldGaramondFont(30);
@@ -114,107 +108,3 @@ public class NtpGui {
         return createCenteredLabel(heading, ANSWER_CONTENT_FONT);
     }
 }
-
-//    public static List<Component> createStreamHeadingAndTextArea(String heading, Stream<String> strings) {
-//        return List.of(
-//            createCenteredLabel(heading, LIST_HEADING_FONT)
-////            new NTPTextArea(strings)
-//        );
-//    }
-
-
-/**
- * Returns an NTPTextArea that displays the strings of the Stream provided with each string
- * separated by 7 spaces.
- */
-//    public static JTextArea createListTextArea(Stream<String> strings) {
-//        return new NTPTextArea(strings);
-//        var ta = NTPGUI.createTextArea();
-//        ta.setMaximumSize(new Dimension(800, 100_000));
-//        ta.setText(strings.collect(textCollector));
-//        return ta;
-//    }
-
-//    public static List<Component> createListHeadingAndTextArea(String heading, Stream<String> strings, String separator) {
-//        return createListHeadingAndTextArea(heading, new NTPTextArea(strings, separator));
-//        return List.of(
-//            NTPGUI.createCenteredLabel(heading, listHeadingFont),
-//            NTPGUI.createTextArea(strings.collect(Collectors.joining(separator)))
-//        );
-//    }
-
-/**
- * Returns a JTextArea with some
- */
-//    public static JTextArea createTextArea(String text) {
-//        var t = new JTextArea(text);
-//        t.setLineWrap(true);
-//        t.setWrapStyleWord(true);
-//        t.setEditable(false);
-////        setFont(NumberTheoryPlaygroundPanel.contentFont);
-//        t.setFont(garamondFontSize25);
-//        t.setBackground(backgroundColor);
-//        t.setMaximumSize(new Dimension(800, 100_000));
-//        return t;
-//    }
-//
-//    public static JTextArea createTextArea() {
-//        return createTextArea("");
-//    }
-//
-//    /**
-//     * Returns an JTextArea that displays the strings of the Stream provided with each string
-//     * separated by 7 spaces.
-//     */
-//    public static JTextArea createTextArea(Stream<String> strings) {
-//        JTextArea t = createTextArea();
-//        t.setText(strings.collect(Collectors.joining(Misc.getWhiteSpace(7))));
-//        return t;
-//    }
-
-//    public static Component createEmptyComponent() {
-//        return createGap(0);
-//    }
-
-//        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                createAndShowGUI();
-//            }
-//        });
-
-//    static void createAndShowGUI() {
-//        JFrame frame = new JFrame("Number Theory Playground");
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setSize(1400, 900);
-//        JScrollPane sp = new JScrollPane(new MainPanel());
-//        sp.getVerticalScrollBar().setUnitIncrement(5);
-//        frame.getContentPane().add(sp);
-//        frame.setVisible(true);
-//    }
-
-//    public static JLabel createLabel(String text, Font font, float alignmentX) {
-//        JLabel l = new JLabel(text);
-//        l.setFont(font);
-//        l.setAlignmentX(alignmentX);
-//        return l;
-//    }
-
-//    public static JLabel createLabel(String text, Font font) {
-//        // maybe use Float for other method and pass in null from this overload
-//        JLabel l = new JLabel(text);
-//        l.setFont(font);
-//        return l;
-//    }
-
-//    /**
-//     *
-//     * @param text
-//     * @param font
-//     * @return A JLabel with the text and font provided and the X alignment set
-//     * to Component.CENTER_ALIGNMENT.
-//     */
-//    public static JLabel createCenteredLabel(String text, Font font) {
-//        JLabel l = createLabel(text, font);
-//        l.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        return l;
-//    }

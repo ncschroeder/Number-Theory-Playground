@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Supplier;
-import numbertheoryplayground.gui.NTPTextArea;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
-import static numbertheoryplayground.gui.NTPGUI.*;
+import static numbertheoryplayground.gui.NtpGui.*;
 
 /**
  * Utility class related to divisibility and the section for it.
@@ -340,31 +340,40 @@ by 11.""";
             var pf = new PrimeFactorization(input);
             
             var comps = new ArrayList<Component>(10);
-            comps.add(createCenteredLabel(getAnswerMainHeading(input), ANSWER_MAIN_HEADING_FONT));
-            comps.add(createGap(15));
+            comps.add(createAnswerMainHeadingLabel(getAnswerMainHeading(input)));
+            comps.add(createGapBetweenAnswerSections());
             
             if (input >= 10) {
                 comps.addAll(
                     List.of(
-                        createCenteredLabel(RULES_INFO_HEADING, ANSWER_SUB_HEADING_FONT),
+                        createAnswerSubHeadingLabel(RULES_INFO_HEADING),
                         createGap(5),
-                        new NTPTextArea(new RulesAnswer(input).infoParagraph),
-                        createGap(10)
+                        new NtpTextArea(new RulesAnswer(input).infoParagraph),
+                        createGapBetweenAnswerSections()
                     )
                 );
             }
             
-            comps.add(createCenteredLabel(PF_INFO_HEADING, ANSWER_SUB_HEADING_FONT));
+            comps.add(createAnswerSubHeadingLabel(PF_INFO_HEADING));
             
             if (pf.isForAPrimeNumber()) {
                 String textToDisplay = pf.getInfoSentence() + ' ' + getPrimeNumberSentence(input);
-                comps.add(new NTPTextArea(textToDisplay));
+                comps.add(new NtpTextArea(textToDisplay));
             } else {
-                var factorPfsArea = new NTPTextArea(pf.getFactorPfStrings());
-                String textAboveFactorPfs =
-                    pf.getInfoSentence() + ' ' + pf.getNumFactorsInfo() + ' ' + FACTORS_AND_PFS_SENTENCE;
-                comps.add(new NTPTextArea(textAboveFactorPfs));
-                comps.add(factorPfsArea);
+                try {
+                    var factorPfsArea =
+                        NtpTextArea.createWideOneWithStreamElements(pf.getFactorPfStrings());
+                    String textAboveFactorPfs =
+                        pf.getInfoSentence() + ' ' + pf.getNumFactorsInfo() + ' ' +
+                        FACTORS_AND_PFS_SENTENCE;
+                    comps.add(new NtpTextArea(textAboveFactorPfs));
+                    comps.add(factorPfsArea);
+                } catch (NtpTextArea.StringTooLongException ex) {
+                    String textToDisplay =
+                        pf.getInfoSentence() + ' ' + pf.getNumFactorsInfo() + ' ' +
+                        NtpTextArea.StringTooLongException.ERROR_MESSAGE;
+                    comps.add(new NtpTextArea(textToDisplay));
+                }
             }
             
             return comps;

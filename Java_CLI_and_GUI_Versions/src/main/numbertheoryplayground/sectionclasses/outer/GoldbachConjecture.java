@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.gui.NTPGUI;
-import numbertheoryplayground.gui.NTPTextArea;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpGui;
+import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -92,10 +92,20 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
         @Override
         public List<Component> getGuiComponents(long input) {
             int[] pairStarts = getPrimePairStarts(input);
-            return NTPGUI.createStreamHeadingAndTextArea(
-                getListHeading(pairStarts.length, input),
-                getPrimePairStrings(pairStarts, input)
-            );
+            
+            try {
+                var pairsTextArea =
+                    NtpTextArea.createWideOneWithStreamElements(getPrimePairStrings(pairStarts, input));
+                return List.of(
+                    NtpGui.createListHeadingLabel(getPairsHeading(pairStarts.length, input)),
+                    pairsTextArea
+                );
+            } catch (NtpTextArea.StringTooLongException ex) {
+                String textToDisplay =
+                    getNumPairsSentence(pairStarts.length, input) + ' ' +
+                    NtpTextArea.StringTooLongException.ERROR_MESSAGE;
+                return List.of(new NtpTextArea(textToDisplay));
+            }
         }
         
         @Override

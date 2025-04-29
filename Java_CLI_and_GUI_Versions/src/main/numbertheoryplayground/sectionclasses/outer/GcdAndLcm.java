@@ -1,19 +1,19 @@
 package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import numbertheoryplayground.gui.NTPPanel;
-import numbertheoryplayground.gui.NTPTextArea;
+import java.util.stream.*;
+import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpPanel;
+import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
 import static numbertheoryplayground.Misc.*;
-import static numbertheoryplayground.gui.NTPGUI.*;
+import static numbertheoryplayground.gui.NtpGui.*;
 
 /**
  * Utility class related to GCDs and LCMs and the section for it.
@@ -148,42 +148,30 @@ divided by the smaller number. Repeat.""";
      * input1 and input2 is. The table has columns for the max number, min number, and remainder for each
      * iteration of the Euclidean algorithm performed on input1 and input2.
      */
-    private static NTPPanel getEuclideanPanel(long input1, long input2) {
+    private static NtpPanel getEuclideanPanel(long input1, long input2) {
         List<EuclideanIteration> iterations = getEuclideanIterations(input1, input2);
         
-        NTPPanel iterationsTable =
-            new NTPPanel()
-            .chainedSetLayout(new GridLayout(0, 3, 4, 4))
-            .center();
+        Function<EuclideanIteration, Stream<String>> getIterationRowStrings =
+            ei ->
+                LongStream.of(ei.max, ei.min, ei.remainder)
+                .mapToObj(Misc::createStringWithCommas);
         
-        List.of(EUCLIDEAN_MAX_COLUMN_HEADING, EUCLIDEAN_MIN_COLUMN_HEADING, EUCLIDEAN_REMAINDER_COLUMN_HEADING)
-        .forEach(s -> iterationsTable.addLabel(s, TABLE_HEADING_FONT));
+        NtpPanel iterationsTable =
+            NtpPanel.createTablePanel(
+                EUCLIDEAN_COLUMN_HEADINGS,
+                iterations.stream(),
+                getIterationRowStrings
+            );
         
-        iterations
-        .stream()
-        .flatMap(i -> Stream.of(i.maxString(), i.minString(), i.remainderString()))
-        .forEachOrdered(s -> iterationsTable.addLabel(s, ANSWER_CONTENT_FONT));
+        String gcdMessage = getEuclideanGcdMessage(input1, input2, iterations);
         
         return
-            new NTPPanel()
+            new NtpPanel()
             .setToBoxLayoutWithPageAxis()
-            .addCenteredLabel(EUCLIDEAN_TABLE_HEADING, ANSWER_SUB_HEADING_FONT)
+            .add(createAnswerSubHeadingLabel(EUCLIDEAN_TABLE_HEADING))
             .add(iterationsTable)
-            .addCenteredLabel(
-                getEuclideanGcdMessage(input1, input2, iterations),
-                ANSWER_CONTENT_FONT
-            )
+            .add(createCenteredAnswerContentLabel(gcdMessage))
             .setMaxSizeToPreferredSize();
-    }
-    
-    
-    private static NTPPanel getGcdAndLcmViaPfPanel(long input1, long input2) {
-        Stream<String> infoSentences =
-            new PrimeFactorization.GcdAndLcmAnswer(input1, input2).infoSentences;
-        return
-            new NTPPanel()
-            .addCenteredLabel(PF_INFO_HEADING, ANSWER_SUB_HEADING_FONT)
-            .add(new NTPTextArea(infoSentences, "\n"));
     }
     
     private static String getAnswerMainHeading(long input1, long input2) {
@@ -227,12 +215,21 @@ divided by the smaller number. Repeat.""";
         
         @Override
         public List<Component> getGuiComponents(long input1, long input2) {
+            Stream<String> pfInfoSentences =
+                new PrimeFactorization.GcdAndLcmAnswer(input1, input2).getInfoSentences();
+            
+            NtpPanel pfInfoPanel =
+                new NtpPanel()
+                .setToBoxLayoutWithPageAxis()
+                .add(createAnswerSubHeadingLabel(PF_INFO_HEADING))
+                .add(NtpTextArea.createWithStreamElementsOnSeparateLines(pfInfoSentences));
+            
             return List.of(
-                createCenteredLabel(getAnswerMainHeading(input1, input2), ANSWER_MAIN_HEADING_FONT),
-                createGap(10),
+                createAnswerMainHeadingLabel(getAnswerMainHeading(input1, input2)),
+                createGapBetweenAnswerSections(),
                 getEuclideanPanel(input1, input2),
-                createGap(10),
-                getGcdAndLcmViaPfPanel(input1, input2)
+                createGapBetweenAnswerSections(),
+                pfInfoPanel
             );
         }
     }

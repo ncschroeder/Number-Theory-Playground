@@ -2,8 +2,8 @@ package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.List;
-import numbertheoryplayground.gui.NTPTextArea;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -97,7 +97,7 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
         
         @Override
         public List<Component> getGuiComponents(long input) {
-            return List.of(new NTPTextArea(new Answer(input).infoSentence));
+            return List.of(new NtpTextArea(new Answer(input).infoSentence));
         }
     }
 }

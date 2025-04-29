@@ -7,8 +7,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.gui.NTPGUI;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpGui;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -271,9 +271,8 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
         @Override
         public List<Component> getGuiComponents(long input) {
             return List.of(
-                NTPGUI.createCenteredLabel(
-                    new PrimeFactorization(input).getInfoSentence(),
-                    NTPGUI.ANSWER_CONTENT_FONT
+                NtpGui.createCenteredAnswerContentLabel(
+                    new PrimeFactorization(input).getInfoSentence()
                 )
             );
         }

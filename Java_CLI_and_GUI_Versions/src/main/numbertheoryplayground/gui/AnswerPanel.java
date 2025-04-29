@@ -1,35 +1,35 @@
 package numbertheoryplayground.gui;
 
-import javax.swing.JLabel;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Panel that displays either nothing, an invalid input message, or an answer for the current section.
  */
-public class AnswerPanel extends NTPPanel {
-    private final JLabel invalidInputLabel =
-        NTPGUI.createCenteredLabel("Invalid input", NTPGUI.garamondFontSize25);
+final class AnswerPanel extends NtpPanel {
+    private final List<Component> invalidInputLabelList =
+        List.of(NtpGui.createCenteredLabel("Invalid input", NtpGui.GARAMOND_25));
     
-    public AnswerPanel() {
+    AnswerPanel() {
         setToBoxLayoutWithPageAxis();
         center();
-        setMaximumSize(new Dimension(1_000, 1_000));
+        setMaximumSize(new Dimension(1_250, Integer.MAX_VALUE));
     }
     
-    public void displayComponents(List<Component> components) {
+    void displayComponents(List<Component> components) {
         removeAll();
         components.forEach(this::add);
         revalidate();
         repaint();
     }
     
-    public void clear() {
-        displayComponents(List.of());
+    void clear() {
+        displayComponents(Collections.emptyList());
     }
     
-    public void displayInvalidInputMessage() {
-        displayComponents(List.of(invalidInputLabel));
+    void displayInvalidInputMessage() {
+        displayComponents(invalidInputLabelList);
     }
 }

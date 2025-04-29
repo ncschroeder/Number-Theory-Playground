@@ -4,8 +4,9 @@ import java.awt.Component;
 import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.gui.NTPGUI;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpGui;
+import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -90,7 +91,10 @@ number that is 1 above that same multiple of 6. 5 is the only number to be in 2 
         
         @Override
         public List<Component> getGuiComponents(long input) {
-            return NTPGUI.createStreamHeadingAndTextArea(getListHeading(input), getPairStrings(input));
+            return List.of(
+                NtpGui.createListHeadingLabel(getPairsHeading(input)),
+                NtpTextArea.createNarrowOneWithStreamElements(getPairStrings(input))
+            );
         }
     }
 }

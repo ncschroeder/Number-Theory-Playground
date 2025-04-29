@@ -7,9 +7,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.gui.NTPGUI;
-import numbertheoryplayground.gui.NTPTextArea;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpGui;
+import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
@@ -113,14 +113,18 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
      * followed by the the string representation of that triple. Currently, NUM_TRIPLES_TO_FIND is 10 so
      * there'll be a 1-space indent for the strings that start with a single digit.
      */
-    private static Stream<String> getNumberedTripleStrings(long input) {
+    private static Stream<String> getNumberedTripleStrings(long input, int indentLength) {
         // Call getTriples first to see if it throws.
         List<Triple> triples = getTriples(input);
+        String indent = getSpace(indentLength);
         var position = new AtomicInteger(1);
         return
             triples
             .stream()
-            .map(t -> String.format("%s%d) %s", position.get() < 10 ? " " : "", position.getAndIncrement(), t));
+            .map(t -> {
+                String maybeIndent = position.get() < 10 ? indent : "";
+                return String.format("%s%d) %s", maybeIndent, position.getAndIncrement(), t);
+            });
     }
     
     private static String getTriplesHeading(long input) {
@@ -160,9 +164,10 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
          */
         @Override
         public List<Component> getGuiComponents(long input) {
+            Stream<String> tripleStrings = getNumberedTripleStrings(input, 2);
             return List.of(
-                NTPGUI.createCenteredLabel(getTriplesHeading(input), NTPGUI.LIST_HEADING_FONT),
-                new NTPTextArea(getNumberedTripleStrings(input), "\n")
+                NtpGui.createListHeadingLabel(getTriplesHeading(input)),
+                NtpTextArea.createWithStreamElementsOnSeparateLines(tripleStrings)
             );
         }
     }

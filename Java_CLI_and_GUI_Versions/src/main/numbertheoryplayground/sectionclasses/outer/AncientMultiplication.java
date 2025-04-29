@@ -1,19 +1,17 @@
 package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
+import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import numbertheoryplayground.gui.NTPPanel;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpPanel;
 import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
 import static numbertheoryplayground.Misc.*;
-import static numbertheoryplayground.gui.NTPGUI.*;
+import static numbertheoryplayground.gui.NtpGui.*;
 
 /**
  * Utility class related to ancient Egyptian multiplication and the section for it.
@@ -193,37 +191,36 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
         @Override
         public List<Component> getGuiComponents(long input1, long input2) {
             var answer = new Answer(input1, input2);
-            var tableLayout = new GridLayout(0, 2);
             
-            NTPPanel table1 =
-                new NTPPanel()
-                .chainedSetLayout(tableLayout)
-                .addCenteredLabel(answer.allPowersOf2ColumnHeading, TABLE_HEADING_FONT)
-                .addCenteredLabel(answer.input2MultiplesColumnHeading, TABLE_HEADING_FONT);
+            Function<TableRow, Stream<String>> getRowStrings =
+                tr ->
+                    Stream.of(
+                        createStringWithCommas(tr.powerOf2),
+                        createStringWithCommas(tr.correspondingMultiple)
+                    );
             
-            NTPPanel table2 =
-                new NTPPanel()
-                .chainedSetLayout(tableLayout)
-                .addCenteredLabel(answer.powersOf2ThatSumToInput1ColumnHeading, TABLE_HEADING_FONT)
-                .addCenteredLabel(answer.input2MultiplesColumnHeading, TABLE_HEADING_FONT);
+            NtpPanel table1 =
+                NtpPanel.createTablePanel(
+                    List.of(answer.allPowersOf2ColumnHeading, answer.input2MultiplesColumnHeading),
+                    answer.table1Rows,
+                    getRowStrings
+                );
             
-            BiConsumer<Stream<TableRow>, NTPPanel> addRows =
-                (rows, table) ->
-                    rows
-                    .flatMap(r -> Stream.of(r.powerOf2String(), r.correspondingMultipleString()))
-                    .forEachOrdered(s -> table.addCenteredLabel(s, ANSWER_CONTENT_FONT));
-            
-            addRows.accept(answer.table1Rows, table1);
-            addRows.accept(answer.table2Rows, table2);
+            NtpPanel table2 =
+                NtpPanel.createTablePanel(
+                    List.of(answer.powersOf2ThatSumToInput1ColumnHeading, answer.input2MultiplesColumnHeading),
+                    answer.table2Rows,
+                    getRowStrings
+                );
             
             return List.of(
-                createCenteredLabel(answer.mainHeading, ANSWER_MAIN_HEADING_FONT),
-                createGap(15),
+                createAnswerMainHeadingLabel(answer.mainHeading),
+                createGapBetweenAnswerSections(),
                 table1,
-                createGap(15),
+                createGapBetweenAnswerSections(),
                 table2,
-                createGap(15),
-                createCenteredLabel(answer.productSentence, ANSWER_CONTENT_FONT)
+                createGapBetweenAnswerSections(),
+                createCenteredAnswerContentLabel(answer.productSentence)
             );
         }
     }

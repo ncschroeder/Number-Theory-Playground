@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.Misc;
-import numbertheoryplayground.gui.NTPGUI;
-import numbertheoryplayground.gui.NTPTextArea;
 import numbertheoryplayground.NtpCli;
+import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
 import static numbertheoryplayground.Misc.*;
+import static numbertheoryplayground.gui.NtpGui.*;
 
 /**
  * Utility class related to Fibonacci-like sequences and the section for it.
@@ -156,13 +156,12 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         @Override
         public List<Component> getGuiComponents(long input1, long input2) {
             var answer = new Answer(input1, input2);
-            List<Component> headingAndTextArea =
-                NTPGUI.createStreamHeadingAndTextArea(answer.sequenceHeading, answer.stringSequence);
             
             return List.of(
-                headingAndTextArea.get(0),
-                headingAndTextArea.get(1),
-                new NTPTextArea(answer.phiAndRatioSentences, "\n")
+                createListHeadingLabel(answer.sequenceHeading),
+                NtpTextArea.createNarrowOneWithStreamElements(answer.stringSequence),
+                createGapBetweenAnswerSections(),
+                NtpTextArea.createWithStreamElementsOnSeparateLines(answer.phiAndRatioExpressions)
             );
         }
     }

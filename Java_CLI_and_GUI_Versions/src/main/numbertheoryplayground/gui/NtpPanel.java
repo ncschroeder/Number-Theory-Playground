@@ -17,24 +17,6 @@ public class NtpPanel extends JPanel {
         setBackground(BACKGROUND_COLOR);
     }
     
-//    public static NTPPanel createWithBoxLayoutAndPageAxis() {
-////        var p = new NTPPanel();
-////        p.setToBoxLayoutWithPageAxis();
-//        return new NTPPanel().setToBoxLayoutWithPageAxis();
-//    }
-
-//    public static NTPPanel createWithBoxLayoutAndLineAxis() {
-//        var p = new NTPPanel();
-//        p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
-//        return p;
-//    }
-
-//    @Override
-//    public NTPPanel setLayout(LayoutManager mgr) {
-//        super.setLayout(mgr);
-//        return this;
-//    }
-    
     /**
      * setLayout has a void return type so, unlike with the add method below, it can't be overridden
      * to return this NtpPanel.
@@ -58,7 +40,6 @@ public class NtpPanel extends JPanel {
     }
     
     public NtpPanel setMaxSizeToPreferredSize() {
-//        setMaximumSize(getPreferredSize());
         return chainedSetMaxSize(getPreferredSize());
     }
     
@@ -67,12 +48,6 @@ public class NtpPanel extends JPanel {
         return this;
     }
     
-    /**
-     * ~~Adds the component and returns this NTPPanel. This method is overriding the add method in the
-     * Container class, which returns a Component. NTPPanel is an indirect subclass of Component. That
-     * seems to be the explanation for being allowed to change the return type to NTPPanel.~~
-     */
-
     /**
      * The add method in the Container class (super.add) returns a Component and NtpPanel is an
      * indirect subclass of Component so we can override the add method to return this NtpPanel.
@@ -117,19 +92,3 @@ public class NtpPanel extends JPanel {
             .addAll(contentLabels);
     }
 }
-
-//    /**
-//     * Adds a rigid square area that's as wide and tall as the size param. Whether components are
-//     * laid out horizontally or vertically, this will add a gap.
-//     */
-//    public NtpPanel addGap(int size) {
-//        return add(createGap(size));
-//    }
-//
-//    public NtpPanel addLabel(String text, Font font) {
-//        return add(createLabel(text, font));
-//    }
-//
-//    public NtpPanel addCenteredLabel(String text, Font font) {
-//        return add(createCenteredLabel(text, font));
-//    }

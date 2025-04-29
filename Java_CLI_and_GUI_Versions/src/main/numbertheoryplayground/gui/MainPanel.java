@@ -3,242 +3,227 @@ package numbertheoryplayground.gui;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.awt.*;
 import java.util.List;
+import java.util.function.Function;
 import numbertheoryplayground.sectionclasses.abstract_.*;
 
 import static numbertheoryplayground.Misc.*;
-import static numbertheoryplayground.gui.NTPGUI.*;
+import static numbertheoryplayground.gui.NtpGui.*;
 import static numbertheoryplayground.sectionclasses.outer.Divisibility.isEven;
 
 /**
  * Panel that consists of all the content of the GUI version of the Number Theory Playground.
  */
-public class MainPanel extends NTPPanel {
-    private Section currentSection;
-    private int minInputInt, maxInputInt;
+final class MainPanel extends NtpPanel {
+    private Section curSection;
+    private long minInput, maxInput;
     
-    public MainPanel() {
-        JLabel sectionHeading = createCenteredLabel("", NTPGUI.createBoldGaramondFont(35));
-        var sectionInfoTextArea = new NTPTextArea();
-        var directionsTextArea = new NTPTextArea();
-        var answerPanel = new AnswerPanel();
+    MainPanel() {
+        JLabel mainHeadingLabel =
+            createCenteredLabel("Number Theory Playground", createBoldGaramondFont(40));
+        JLabel sectionHeadingLabel = createCenteredLabel("", createBoldGaramondFont(35));
+        var sectionInfoTextArea = new NtpTextArea(900);
+        var directionsTextArea = new NtpTextArea(750);
         var inputPanel1 = new InputPanel();
         var inputPanel2 = new InputPanel();
-        
-        NTPPanel inputPanelPanel =
-            new NTPPanel()
+        NtpPanel inputPanelPanel =
+            new NtpPanel()
             .setToBoxLayoutWithLineAxis()
-            .add(inputPanel1)
-            .add(inputPanel2);
+            .addAll(inputPanel1, inputPanel2);
+        var answerPanel = new AnswerPanel();
         
-        JButton calcBtn = createButton("Calculate", garamondFontSize25);
+        JButton calcBtn = createButton("Calculate", GARAMOND_25);
         centerComponent(calcBtn);
-        
         calcBtn.addActionListener(e -> {
             try {
-                int inputInt1 = inputPanel1.getInputAsInt();
-                List<Component> components;
-                if (currentSection.isSingleInputSection()) {
-                    components = ((SingleInputSection)currentSection).getGuiComponents(inputInt1);
-                } else {
-                    int inputInt2 = inputPanel2.getInputAsInt();
-                    components = ((DoubleInputSection)currentSection).getGuiComponents(inputInt1, inputInt2);
+                var inputLong1 = inputPanel1.getInputAsLong();
+                List<Component> components = null;
+                
+                if (curSection instanceof SingleInputSection sis) {
+                    components = sis.getGuiComponents(inputLong1);
+                } else if (curSection instanceof DoubleInputSection dis) {
+                    var inputLong2 = inputPanel2.getInputAsLong();
+                    components = dis.getGuiComponents(inputLong1, inputLong2);
                 }
+                
                 answerPanel.displayComponents(components);
-            } catch (IllegalArgumentException ex) {
+            } catch (NumberFormatException | InvalidInputNumberException ex) {
                 answerPanel.displayInvalidInputMessage();
             }
         });
         
-        var sectionBtnsPanels = new ArrayList<NTPPanel>(2);
-        NTPPanel sectionBtnsPanel = new NTPPanel().setToBoxLayoutWithLineAxis();
-        Font sectionBtnFont = garamondFontSize25;
-        JButton homeBtn = createButton("Home", sectionBtnFont);
+        Font sectionBtnFont = GARAMOND_25;
         
+        var homeText = """
+            Welcome to the Number Theory Playground.
+            """;
+        
+        JButton homeBtn = createButton("Home", sectionBtnFont);
         homeBtn.addActionListener(e -> {
             inputPanel1.setVisible(false);
             inputPanel2.setVisible(false);
             calcBtn.setVisible(false);
             answerPanel.clear();
-            sectionHeading.setText(homeBtn.getText());
-            sectionInfoTextArea.setText("Welcome to the Number Theory Playground.");
-            directionsTextArea.setText("");
+            sectionHeadingLabel.setText(homeBtn.getText());
+            sectionInfoTextArea.setText(homeText);
+            directionsTextArea.clear();
         });
-        
         homeBtn.doClick();
-        sectionBtnsPanel.add(homeBtn);
-    
-        /*
-        Let btnsAndSections be a Map where the keys are section buttons and the values are the
-        corresponding Sections. The keys will be Objects because event.getSource in the lambda
-        below will be an Object representation of a button that was clicked.
-        */
-        var btnsAndSections = new HashMap<Object, Section>();
         
-        ActionListener changeSection = event -> {
-            inputPanel1.clearTextField();
-            inputPanel2.clearTextField();
-            answerPanel.clear();
+        Function<Section, JButton> createSectionBtn = (section) -> {
+            JButton btn = createButton(section.getHeading(), sectionBtnFont);
             
-            currentSection = btnsAndSections.get(event.getSource());
-            minInputInt = currentSection.getMinInputInt();
-            maxInputInt = currentSection.getMaxInputInt();
+            btn.addActionListener(e -> {
+                curSection = section;
+                minInput = section.getMinInput();
+                maxInput = section.getMaxInput();
+                sectionHeadingLabel.setText(section.getHeading());
+                sectionInfoTextArea.setText(String.join("\n\n", section.getInfoParagraphs()));
+                boolean oneIntegerNeeded = section.isSingleInputSection();
+                
+                String actionSentence =
+                    String.format(
+                        "Enter or generate %s and click the Calculate button to %s",
+                        oneIntegerNeeded ? "an integer" : "2 integers",
+                        section.getActionSentenceEnding()
+                    );
+                directionsTextArea.setText(actionSentence + ' ' + section.getInputInfoSentences());
+                
+                inputPanel1.clearTextField();
+                inputPanel1.setVisible(true);
+                inputPanel2.clearTextField();
+                inputPanel2.setVisible(!oneIntegerNeeded);
+                calcBtn.setVisible(true);
+                answerPanel.clear();
+            });
             
-            sectionHeading.setText(currentSection.getHeadingText());
-            sectionInfoTextArea.setText(String.join("\n\n", currentSection.getInfo()));
-            
-            boolean oneIntNeeded = currentSection.isSingleInputSection();
-            String directions =
-                String.format(
-                    "Enter or generate %s and click the Calculate button to %s. %s.",
-                    oneIntNeeded ? "an integer" : "2 integers",
-                    currentSection.getActionSentenceEnding(),
-                    currentSection.getInputConstraintsSentence()
-                );
-            directionsTextArea.setText(directions);
-            inputPanel1.setVisible(true);
-            inputPanel2.setVisible(!oneIntNeeded);
-            calcBtn.setVisible(true);
+            return btn;
         };
         
-        // Let the first 7 section buttons be in 1 panel and have the rest of the buttons be in another panel
-        for (Section section : Section.createInstances()) {
-            if (section instanceof PythagoreanTriples.Section) {
-                sectionBtnsPanels.add(sectionBtnsPanel);
-                sectionBtnsPanel = new NTPPanel().setToBoxLayoutWithLineAxis();
-            }
-            
-            JButton sectionBtn = createButton(section.getHeadingText(), sectionBtnFont);
-            btnsAndSections.put(sectionBtn, section);
-            sectionBtn.addActionListener(changeSection);
-            sectionBtnsPanel.add(sectionBtn);
-        }
-        sectionBtnsPanels.add(sectionBtnsPanel);
+        List<Section> sections = Section.createInstances();
         
+        NtpPanel sectionBtnsPanel1 =
+            new NtpPanel()
+            .setToBoxLayoutWithLineAxis()
+            .add(homeBtn)
+            .addAll(sections.stream().limit(6).map(createSectionBtn));
+        
+        NtpPanel sectionBtnsPanel2 =
+            new NtpPanel()
+            .setToBoxLayoutWithLineAxis()
+            .addAll(sections.stream().skip(6).map(createSectionBtn));
         
         setToBoxLayoutWithPageAxis();
-        
-        addGap(15);
-        addCenteredLabel("Number Theory Playground", createBoldGaramondFont(40));
-        addGap(15);
-        sectionBtnsPanels.forEach(this::add);
-        addGap(15);
-        add(sectionHeading);
-        addGap(10);
-        add(sectionInfoTextArea);
-        addGap(15);
-        add(directionsTextArea);
-        addGap(15);
-        add(inputPanelPanel);
-        addGap(15);
-        add(calcBtn);
-        addGap(15);
-        add(answerPanel);
+        addAll(
+            createGap(15),
+            mainHeadingLabel,
+            createGap(15),
+            sectionBtnsPanel1,
+            sectionBtnsPanel2,
+            createGap(15),
+            sectionHeadingLabel,
+            createGap(10),
+            sectionInfoTextArea,
+            createGap(15),
+            directionsTextArea,
+            createGap(15),
+            inputPanelPanel,
+            createGap(15),
+            calcBtn,
+            createGap(15),
+            answerPanel
+        );
     }
     
     
     /**
-     * Panel that consists of a text field, a "Randomize" button, an increment ("+") button, and a
-     * decrement ("-") button. This is an inner class so the on-click actions of the buttons can access
-     * the current section and max and min inputs.
+     * Panel that consists of a text field, a "Randomize" button, a "+" button, and a "−" button.
+     * This is an inner class so the on-click actions of the buttons can access curSection,
+     * minInput, and maxInput of this MainPanel.
      */
-    public class InputPanel extends NTPPanel {
+    private final class InputPanel extends NtpPanel {
         private final JTextField textField = new JTextField();
         
-        public InputPanel() {
-            textField.setMaximumSize(new Dimension(200, 30));
-            textField.setFont(garamondFontSize25);
+        private InputPanel() {
+            setToBoxLayoutWithPageAxis();
+            setMaximumSize(new Dimension(300, 200));
             
-            JButton randomBtn = createButton("Randomize", garamondFontSize25);
+            textField.setMaximumSize(new Dimension(250, 30));
+            textField.setFont(GARAMOND_25);
+            textField.setHorizontalAlignment(JTextField.CENTER);
+            
+            JButton randomBtn = createButton("Randomize", GARAMOND_25);
             centerComponent(randomBtn);
-            randomBtn.addActionListener(e -> setTextFieldText(currentSection.getRandomValidInt()));
+            randomBtn.addActionListener(e -> setTextFieldText(curSection.getRandomInput()));
             
-            var btnSize = new Dimension(60, 50);
+            var incrementAndDecrementBtnSize = new Dimension(60, 50);
             
-            JButton incrementBtn = createButton("+", garamondFontSize25);
-            incrementBtn.setMinimumSize(btnSize);
-            incrementBtn.setMaximumSize(btnSize);
+            JButton incrementBtn = createButton("+", GARAMOND_25);
+            incrementBtn.setMinimumSize(incrementAndDecrementBtnSize);
+            incrementBtn.setMaximumSize(incrementAndDecrementBtnSize);
             
-            // For incrementing and decrementing, if the current section is the Goldbach section, make
-            // the input int even.
             incrementBtn.addActionListener(e -> {
                 try {
-                    int inputInt = getInputAsInt();
-                    inputInt =
-                        inputInt >= maxInputInt || inputInt < minInputInt
-                        ? minInputInt
-                        : inputInt + (currentSection.isGoldbachSection() && isEven(inputInt) ? 2 : 1);
-                    setTextFieldText(inputInt);
+                    var inputLong = getInputAsLong();
+                    inputLong =
+                        inputLong < minInput || inputLong >= maxInput
+                        ? minInput
+                        : inputLong + (curSection.needsEvenInput() && isEven(inputLong) ? 2 : 1);
+                    setTextFieldText(inputLong);
                 } catch (NumberFormatException ex) {
                     if (hasBlankInput()) {
-                        setTextFieldText(minInputInt);
+                        setTextFieldText(minInput);
                     }
                 }
             });
             
-            JButton decrementBtn = createButton("-", garamondFontSize25);
-            decrementBtn.setMinimumSize(btnSize);
-            decrementBtn.setMaximumSize(btnSize);
-            
+            JButton decrementBtn = createButton("−", GARAMOND_25);
+            decrementBtn.setMinimumSize(incrementAndDecrementBtnSize);
+            decrementBtn.setMaximumSize(incrementAndDecrementBtnSize);
             decrementBtn.addActionListener(e -> {
                 try {
-                    int inputInt = getInputAsInt();
-                    inputInt =
-                        inputInt <= minInputInt || inputInt > maxInputInt
-                        ? maxInputInt
-                        : inputInt - (currentSection.isGoldbachSection() && isEven(inputInt) ? 2 : 1);
-                    setTextFieldText(inputInt);
+                    var inputLong = getInputAsLong();
+                    inputLong =
+                        inputLong <= minInput || inputLong > maxInput
+                        ? maxInput
+                        : inputLong - (curSection.needsEvenInput() && isEven(inputLong) ? 2 : 1);
+                    setTextFieldText(inputLong);
                 } catch (NumberFormatException ex) {
                     if (hasBlankInput()) {
-                        setTextFieldText(maxInputInt);
+                        setTextFieldText(maxInput);
                     }
                 }
             });
             
-            NTPPanel btnsPanel =
-                new NTPPanel()
+            NtpPanel btnsPanel =
+                new NtpPanel()
                 .setToBoxLayoutWithLineAxis()
                 .center()
-                .add(incrementBtn)
-                .addGap(5)
-                .add(decrementBtn);
+                .addAll(incrementBtn, createGap(5), decrementBtn);
             
-            setToBoxLayoutWithPageAxis();
-            setMaximumSize(new Dimension(200, 200));
-            
-            add(textField);
-            addGap(5);
-            add(randomBtn);
-            addGap(5);
-            add(btnsPanel);
+            addAll(textField, createGap(5), randomBtn, createGap(5), btnsPanel);
         }
         
-        private void setTextFieldText(int i) {
-            textField.setText(String.valueOf(i));
+        private void setTextFieldText(long l) {
+            textField.setText(Long.toString(l));
         }
         
-        public void clearTextField() {
+        private void clearTextField() {
             textField.setText("");
         }
         
         /**
-         * Tries to parse the text field text as an int. If this is successful, that int gets returned.
-         * Otherwise, a NumberFormatException gets thrown.
+         * If parsing is unsuccessful, a NumberFormatException gets thrown.
          */
-        public int getInputAsInt() {
-            return Integer.parseInt(textField.getText().trim());
+        private long getInputAsLong() {
+            return stripCommasAndParse(textField.getText().trim());
         }
         
         /**
          * Returns true if the text field is empty or only has whitespace, false otherwise.
          */
-        public boolean hasBlankInput() {
+        private boolean hasBlankInput() {
             return textField.getText().isBlank();
         }
     }

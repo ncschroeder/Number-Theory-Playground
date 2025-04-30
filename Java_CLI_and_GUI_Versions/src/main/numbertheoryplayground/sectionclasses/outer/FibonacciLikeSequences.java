@@ -132,8 +132,8 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
                 MIN_INPUT,
                 MAX_INPUT,
                 String.format(
-                    "get the first %d numbers in the Fibonacci-like sequence that begins with those integers, " +
-                        "as well as the ratios between some consecutive numbers in the sequence",
+                    "first %d integers in the Fibonacci-like sequence that starts with those integers, " +
+                        "as well as the ratios between some consecutive integers in the sequence",
                     SEQUENCE_LENGTH
                 ),
                 "Fibonacci-like sequences",

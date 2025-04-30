@@ -6,62 +6,32 @@ import java.util.List;
 /**
  * Superclass for Sections that require 1 input int for their algorithm(s).
  */
-public abstract class SingleInputSection extends Section {
+public abstract non-sealed class SingleInputSection extends Section {
     protected SingleInputSection(
-        String headingText,
-        List<String> info,
-        int minInputInt,
-        int maxInputInt,
-        String actionSentenceEnding,
-        String cliInfoOptionEnding
-    ) {
-        super(
-            headingText,
-            info,
-            minInputInt,
-            maxInputInt,
-            actionSentenceEnding,
-            cliInfoOptionEnding
-        );
-    }
-    
-    /**
-     * Constructor that the Goldbach section can use since it has a unique input constraints sentence format.
-     */
-    protected SingleInputSection(
-        String headingText,
-        List<String> info,
-        int minInputInt,
-        int maxInputInt,
-        String actionSentenceEnding,
+        String heading,
+        long minInput,
+        long maxInput,
+        String actionSentencesEnding,
         String cliInfoOptionEnding,
-        String inputConstraintsSentenceFormat
+        String info
     ) {
-        super(
-            headingText,
-            info,
-            minInputInt,
-            maxInputInt,
-            actionSentenceEnding,
-            cliInfoOptionEnding,
-            inputConstraintsSentenceFormat
-        );
+        super(heading, minInput, maxInput, actionSentencesEnding, cliInfoOptionEnding, info);
     }
     
     /**
      * Used by the CLI to run the algorithm(s) for this section using the input and create a string with
      * info about the results of the algorithm(s).
      */
-    public abstract String getCliAnswer(int input);
+    public abstract String getCliAnswer(long input);
     
     /**
      * Used by the GUI to run the algorithm(s) for this section using the input and create GUI components
      * with info about the results of the algorithm(s).
      */
-    public abstract List<Component> getGuiComponents(int input);
+    public abstract List<Component> getGuiComponents(long input);
     
     @Override
     public final String getRandomCliAnswer() {
-        return getCliAnswer(getRandomValidInt());
+        return getCliAnswer(getRandomInput());
     }
 }

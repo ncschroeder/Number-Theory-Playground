@@ -138,7 +138,7 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
                 "Ancient Egyptian Multiplication",
                 MIN_INPUT,
                 MAX_INPUT,
-                "get the ancient Egyptian multiplication info for those integers",
+                "ancient Egyptian multiplication info for those integers",
                 "ancient Egyptian multiplication",
                 INFO
             );

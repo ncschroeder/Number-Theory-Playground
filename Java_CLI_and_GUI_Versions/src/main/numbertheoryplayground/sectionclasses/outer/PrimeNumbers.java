@@ -96,7 +96,7 @@ the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 
                 "Prime Numbers",
                 MIN_INPUT,
                 MAX_INPUT,
-                String.format("get the first %d prime numbers >= that integer", NUM_PRIMES_TO_FIND),
+                String.format("first %d prime numbers ≥ that integer", NUM_PRIMES_TO_FIND),
                 "prime numbers",
                 INFO
             );

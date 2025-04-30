@@ -1,7 +1,6 @@
 package numbertheoryplayground.sectionclasses.abstract_;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import numbertheoryplayground.sectionclasses.outer.*;
 
 import static numbertheoryplayground.Misc.*;
@@ -9,15 +8,17 @@ import static numbertheoryplayground.Misc.*;
 /**
  * Class for data and functionality of each section of the applications.
  */
-public abstract class Section {
+public abstract sealed class Section
+    permits SingleInputSection, DoubleInputSection {
+    
     public static List<Section> createInstances() {
         return List.of(
-            new Primes.Section(),
-            new TwinPrimes.Section(),
+            new PrimeNumbers.Section(),
+            new TwinPrimePairs.Section(),
             new PrimeFactorization.Section(),
             new Divisibility.Section(),
             new GcdAndLcm.Section(),
-            new Goldbach.Section(),
+            new GoldbachConjecture.Section(),
             new PythagoreanTriples.Section(),
             new TwoSquareTheorem.Section(),
             new FibonacciLikeSequences.Section(),
@@ -25,112 +26,102 @@ public abstract class Section {
         );
     }
     
+    private static final Random random = new Random();
     
-    private final String headingText;
+    
+    private final String heading;
     
     /**
-     * List of paragraphs of information about this section. Each constructor creates this List using
-     * List.of, which makes this List immutable.
+     * This list is immutable since Steam.toList returns an immutable list and that method is used
+     * to create this list.
      */
-    private final List<String> info;
+    private final List<String> infoParagraphs;
     
-    private final int minInputInt;
-    private final int maxInputInt;
+    private final long minInput;
+    
+    private final long maxInput;
     
     /**
-     * There are a few "action" sentences used that say what the user is to do and what will happen in
-     * response. For the GUI, there's 1 action sentence that starts with "Enter or generate an integer
-     * and click the Calculate button to ". For the CLI, there's 1 action sentence for the custom input
-     * option and 1 for the random input option. The custom input option starts with "An integer to ".
-     * The random input option starts with "(r) to generate a random integer and ". This field is for
-     * the endings of those sentences.
+     * There are a few "action" sentences used that say what the user is to do and what will happen
+     * in response. For the GUI, there's 1 action sentence that starts with "Enter or generate an
+     * integer and click the Calculate button to ". For the CLI, there's 1 action sentence for the
+     * custom input option and 1 for the random input option. The custom input option starts with
+     * "An integer to ". The random input option starts with "(r) to generate a random integer
+     * and ". This field is for the ending of those sentences. For example, for PrimeNumbers.Section,
+     * this field is "get the first 30 prime numbers ≥ that integer."
      */
-    private final String actionSentenceEnding;
+    private final String actionSentencesEnding;
     
     /**
-     * Mentions that the input int(s) should be >= what minInputInt is and <= what maxInputInt is.
-     * For the Goldbach section, it's also mentioned that the input should be even.
+     * The 1st input info sentence mentions that the input integer(s) should be ≥ what the min
+     * input is and ≤ what the max input is. For the Goldbach Conjecture section, it's also
+     * mentioned that the input should be even. The 2nd input info sentence is "Commas are optional."
      */
-    private final String inputConstraintsSentence;
+    private final String inputInfoSentences;
     
     /**
-     * The beginning of the CLI info option is "(i) to get info about ". This field is what the ending
-     * should be.
+     * The beginning of the CLI info option is "(i) to get info about ".
      */
     private final String cliInfoOptionEnding;
     
     
-    /**
-     * Creates a new Section with the info provided. inputConstraintsSentence is initialized using a
-     * default input constraints sentence format.
-     */
     protected Section(
-        String headingText,
-        List<String> info,
-        int minInputInt,
-        int maxInputInt,
-        String actionSentenceEnding,
-        String cliInfoOptionEnding
-    ) {
-        this(
-            headingText,
-            info,
-            minInputInt,
-            maxInputInt,
-            actionSentenceEnding,
-            cliInfoOptionEnding,
-            "Have %s be >= %d && <= %s"
-        );
-    }
-    
-    /**
-     * The inputConstraintsSentenceFormat is a format string consisting of an %s, %d, and %s in that order.
-     */
-    protected Section(
-        String headingText,
-        List<String> info,
-        int minInputInt,
-        int maxInputInt,
-        String actionSentenceEnding,
+        String heading,
+        long minInput,
+        long maxInput,
+        String actionSentencesEnding,
         String cliInfoOptionEnding,
-        String inputConstraintsSentenceFormat
+        String info
     ) {
-        this.headingText = headingText;
-        this.info = info;
-        this.minInputInt = minInputInt;
-        this.maxInputInt = maxInputInt;
-        this.actionSentenceEnding = actionSentenceEnding;
+        this.heading = heading;
+        this.minInput = minInput;
+        this.maxInput = maxInput;
+        this.actionSentencesEnding = String.format("get the %s.", actionSentencesEnding);
         this.cliInfoOptionEnding = cliInfoOptionEnding;
         
-        String maxInputString;
-        switch (maxInputInt) {
-            case oneThousand:
-                maxInputString = "1 thousand";
-                break;
-            
-            case tenThousand:
-                maxInputString = "10 thousand";
-                break;
-            
-            case oneHundredThousand:
-                maxInputString = "100 thousand";
-                break;
-            
-            case oneBillion:
-                maxInputString = "1 billion";
-                break;
-            
-            default:
-                logError("maxInputString not properly initialized");
-                maxInputString = stringifyWithCommas(maxInputInt);
-        }
+        infoParagraphs =
+            Arrays.stream(info.split("\n\n"))
+            .map(s -> s.replace('\n', ' '))
+            .toList();
         
-        inputConstraintsSentence =
+        var maxInputString = createStringWithCommas(maxInput);
+
+        /*
+        If the max input is one of the longs that's a key in the map below, have the 1st input
+        info sentence say that the input integer(s) should be ≤ the corresponding string value
+        in the map followed by the long with commas in parentheses. If the max input isn't one of
+        the longs that's a key in the map, then just say that input integer(s) should be less than
+        that long with commas. The max inputs that aren't keys are 10,000 and 1.5 million, the
+        max inputs for the Pythagorean triples and Goldbach Conjecture sections, respectively.
+        
+        Longs can't be used as the selector for switch statements and expressions, which seems
+        pathetic. Using a map seems to be the next best option.
+         */
+        
+        Map<Long, String> maxInputsAndStringsWithWords =
+            Map.of(
+                FIVE_HUNDRED_BILLION, "500 billion",
+                TEN_TRILLION, "10 trillion",
+                ONE_QUADRILLION, "1 quadrillion",
+                FIVE_QUADRILLION, "5 quadrillion",
+                TEN_QUADRILLION, "10 quadrillion",
+                NINE_QUINTILLION, "9 quintillion"
+            );
+        
+        String maxInputSentencePart =
+            Optional.ofNullable(maxInputsAndStringsWithWords.get(maxInput))
+            .map(maxInputStringWithWord ->
+                String.format("%s (%s)", maxInputStringWithWord, maxInputString)
+            )
+            .orElse(maxInputString);
+
+        inputInfoSentences =
             String.format(
-                inputConstraintsSentenceFormat,
+                "Have %s be %s≥ %d & ≤ %s. Commas are optional.",
                 isSingleInputSection() ? "this integer" : "these integers",
-                minInputInt,
-                maxInputString
+                needsEvenInput() ? "even && " : "",
+                minInput,
+                maxInputSentencePart
             );
     }
     
@@ -141,19 +132,19 @@ public abstract class Section {
     public final boolean isSingleInputSection() {
         return this instanceof SingleInputSection;
     }
-    
-    public final boolean isGoldbachSection() {
-        return this instanceof Goldbach.Section;
+
+    /**
+     * Used in the constructor above and also by the InputPanel class nested within the MainPanel class.
+     */
+    public final boolean needsEvenInput() {
+        return this instanceof GoldbachConjecture.Section;
     }
-    
-    
-    private static final Random random = new Random();
     
     /**
      * Returns a random int in the range of valid input ints for this Section.
      */
-    public int getRandomValidInt() {
-        return Math.max(minInputInt, random.nextInt(maxInputInt));
+    public long getRandomInput() {
+        return random.nextLong(minInput, maxInput + 1);
     }
     
     /**
@@ -162,29 +153,28 @@ public abstract class Section {
      */
     public abstract String getRandomCliAnswer();
     
-    
-    public final String getHeadingText() {
-        return headingText;
+    public final String getHeading() {
+        return heading;
     }
     
-    public final List<String> getInfo() {
-        return info;
+    public final List<String> getInfoParagraphs() {
+        return infoParagraphs;
     }
     
-    public final int getMinInputInt() {
-        return minInputInt;
+    public final long getMinInput() {
+        return minInput;
     }
     
-    public final int getMaxInputInt() {
-        return maxInputInt;
+    public final long getMaxInput() {
+        return maxInput;
     }
     
-    public final String getActionSentenceEnding() {
-        return actionSentenceEnding;
+    public final String getActionSentencesEnding() {
+        return actionSentencesEnding;
     }
     
-    public final String getInputConstraintsSentence() {
-        return inputConstraintsSentence;
+    public final String getInputInfoSentences() {
+        return inputInfoSentences;
     }
     
     public final String getCliInfoOptionEnding() {

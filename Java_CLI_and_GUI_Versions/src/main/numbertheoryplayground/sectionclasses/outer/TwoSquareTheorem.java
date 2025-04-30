@@ -83,8 +83,8 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
                 "Two Square Theorem",
                 MIN_INPUT,
                 MAX_INPUT,
-                "get the first prime number that is >= that integer and is 1 above a multiple " +
-                    "of 4, as well as the numbers whose squares sum to that prime number",
+                "first prime number that's ≥ that integer and is 1 above a multiple of " +
+                    "4, as well as the integers whose squares sum to that prime number",
                 "the Two Square Theorem",
                 INFO
             );

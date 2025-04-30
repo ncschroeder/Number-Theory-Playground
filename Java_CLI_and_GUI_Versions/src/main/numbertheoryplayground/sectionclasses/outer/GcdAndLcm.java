@@ -191,7 +191,7 @@ divided by the smaller number. Repeat.""";
                 "GCD and LCM",
                 MIN_INPUT,
                 MAX_INPUT,
-                "get GCD and LCM info about them",
+                "GCD and LCM info for those integers",
                 "GCDs and LCMs",
                 infoStartSupplier.get() + "\n\n" + PrimeFactorization.gcdAndLcmInfoSupplier.get()
             );

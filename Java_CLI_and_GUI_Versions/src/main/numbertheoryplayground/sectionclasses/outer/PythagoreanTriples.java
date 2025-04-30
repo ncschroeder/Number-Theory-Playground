@@ -141,7 +141,7 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
                 "Pythagorean Triples",
                 MIN_INPUT,
                 MAX_INPUT,
-                String.format("get the first %d Pythagorean triples >= that integer", NUM_TRIPLES_TO_FIND),
+                String.format("first %d Pythagorean triples ≥ that integer", NUM_TRIPLES_TO_FIND),
                 "Pythagorean triples",
                 INFO
             );

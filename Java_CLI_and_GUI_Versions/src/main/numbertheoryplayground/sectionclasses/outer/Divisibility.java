@@ -278,7 +278,7 @@ by 11.""";
                 "Divisibility",
                 MIN_INPUT,
                 MAX_INPUT,
-                "get divisibility info about it",
+                "divisibility info for that integer",
                 "divisibility",
                 String.join(
                     "\n\n",

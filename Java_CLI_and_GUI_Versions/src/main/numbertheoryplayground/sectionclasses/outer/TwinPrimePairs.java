@@ -78,7 +78,7 @@ number that is 1 above that same multiple of 6. 5 is the only number to be in 2 
                 "Twin Prime Pairs",
                 MIN_INPUT,
                 MAX_INPUT,
-                String.format("get the first %d twin prime pairs >= that integer", NUM_PAIRS_TO_FIND),
+                String.format("first %d twin prime pairs ≥ that integer", NUM_PAIRS_TO_FIND),
                 "twin prime pairs",
                 INFO
             );

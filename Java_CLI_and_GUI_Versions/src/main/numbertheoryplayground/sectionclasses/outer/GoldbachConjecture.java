@@ -74,7 +74,7 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
                 "Goldbach Conjecture",
                 MIN_INPUT,
                 MAX_INPUT,
-                "get the pairs of prime numbers that sum to it",
+                "pairs of prime numbers that sum to that integer",
                 "the Goldbach Conjecture",
                 INFO
             );

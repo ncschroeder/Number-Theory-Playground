@@ -257,7 +257,7 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
                 "Prime Factorization",
                 MIN_INPUT,
                 MAX_INPUT,
-                "get its prime factorization",
+                "prime factorization of that integer",
                 "prime factorizations",
                 infoSupplier.get()
             );

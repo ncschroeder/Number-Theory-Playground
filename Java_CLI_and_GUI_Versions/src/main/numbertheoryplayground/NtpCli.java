@@ -143,7 +143,7 @@ public class NtpCli {
                     try {
                         if (section instanceof SingleInputSection sis) {
                             var inputLong = stripCommasAndParse(input);
-                            var inputString = toStringWithCommas(inputLong);
+                            var inputString = createStringWithCommas(inputLong);
                             println(sis.getCliAnswer(inputLong, inputString));
                         } else if (section instanceof DoubleInputSection dis) {
                             String[] inputContents = input.split(" +");
@@ -152,8 +152,8 @@ public class NtpCli {
                             } else {
                                 var input1Long = stripCommasAndParse(inputContents[0]);
                                 var input2Long = stripCommasAndParse(inputContents[1]);
-                                var input1String = toStringWithCommas(input1Long);
-                                var input2String = toStringWithCommas(input2Long);
+                                var input1String = createStringWithCommas(input1Long);
+                                var input2String = createStringWithCommas(input2Long);
                                 println(dis.getCliAnswer(input1Long, input2Long, input1String, input2String));
                             }
                         }
@@ -321,10 +321,10 @@ public class NtpCli {
     public static String getRowFor2ColumnTable(String column1Contents, int column1Width, String column2Contents) {
         int column1EndGap = column1Width - column1Contents.length();
         if (column1EndGap < 1) {
-            logError("column1Width wasn't > the length of column1Contents");
+            printError("column1Width wasn't > the length of column1Contents");
             column1EndGap = 1;
         }
-        return column1Contents + getWhiteSpace(column1EndGap) + column2Contents;
+        return column1Contents + getSpace(column1EndGap) + column2Contents;
     }
     
     /**
@@ -345,9 +345,9 @@ public class NtpCli {
         String first2Columns = getRowFor2ColumnTable(column1Contents, column1Width, column2Contents);
         int column2EndGap = column2Width - column2Contents.length();
         if (column2EndGap < 1) {
-            logError("column2Width wasn't > than the length of column2Contents");
+            printError("column2Width wasn't > than the length of column2Contents");
             column2EndGap = 1;
         }
-        return first2Columns + getWhiteSpace(column2EndGap) + column3Contents;
+        return first2Columns + getSpace(column2EndGap) + column3Contents;
     }
 }

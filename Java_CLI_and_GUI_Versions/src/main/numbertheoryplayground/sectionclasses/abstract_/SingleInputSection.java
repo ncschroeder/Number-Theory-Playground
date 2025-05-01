@@ -3,7 +3,7 @@ package numbertheoryplayground.sectionclasses.abstract_;
 import java.awt.Component;
 import java.util.List;
 
-import static numbertheoryplayground.Misc.toStringWithCommas;
+import static numbertheoryplayground.Misc.createStringWithCommas;
 
 /**
  * Superclass for Sections that require 1 input int for their algorithm(s).
@@ -35,6 +35,6 @@ public abstract non-sealed class SingleInputSection extends Section {
     @Override
     public final String getRandomCliAnswer() {
         var inputLong = getRandomInput();
-        return getCliAnswer(inputLong, toStringWithCommas(inputLong));
+        return getCliAnswer(inputLong, createStringWithCommas(inputLong));
     }
 }

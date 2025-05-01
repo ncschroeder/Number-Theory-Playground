@@ -33,8 +33,10 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
      */
     static int[] getPrimePairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
-        if (isOdd(input)) throw invalidInputException;
-    
+        if (isOdd(input)) {
+            throw InvalidInputNumberException.instance;
+        }
+        
         /*
         Check if the input is 4 since 4 is the only even number >= 4 that has 2 in a pair of primes that
         sum to it. If the input isn't 4, check pairs of odd ints that sum to the input for primality.

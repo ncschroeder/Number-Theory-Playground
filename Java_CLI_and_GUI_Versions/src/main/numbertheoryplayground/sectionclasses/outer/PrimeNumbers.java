@@ -79,7 +79,7 @@ the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 
      * Returns a stream of the string representations of the first 30 primes >= the input.
      */
     private static Stream<String> getPrimesStrings(long input) {
-        return getPrimes(input).mapToObj(Misc::toStringWithCommas);
+        return getPrimes(input).mapToObj(Misc::createStringWithCommas);
     }
     
     private static String getPrimesHeading(String inputString) {

@@ -54,11 +54,11 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
      */
     record TableRow(long powerOf2, BigInteger correspondingMultiple) {
         private String powerOf2String() {
-            return toStringWithCommas(powerOf2);
+            return createStringWithCommas(powerOf2);
         }
         
         private String correspondingMultipleString() {
-            return toStringWithCommas(correspondingMultiple);
+            return createStringWithCommas(correspondingMultiple);
         }
     }
     
@@ -92,7 +92,10 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
             powersOf2ThatSumToInput1ColumnHeading = "Powers of 2 That Sum to " + input1String;
             BigInteger product = BigInteger.valueOf(input1).multiply(BigInteger.valueOf(input2));
             productSentence =
-                String.format("The sum of the bottom right column is %s, which is the product.", toStringWithCommas(product));
+                String.format(
+                    "The sum of the bottom right column is %s, which is the product.",
+                    createStringWithCommas(product)
+                );
             
             Stream.Builder<TableRow> table1RowsBuilder = Stream.builder();
             Stream.Builder<TableRow> table2RowsBuilder = Stream.builder();

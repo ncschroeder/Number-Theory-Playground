@@ -59,9 +59,9 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
                 String.format(
                     "The first integer >= %s that is prime and is 1 above a multiple of 4 is %s, which is %s + %s.",
                     inputString,
-                    toStringWithCommas(primeNum),
-                    getLongAndSquareString(a),
-                    getLongAndSquareString(b)
+                    createStringWithCommas(primeNum),
+                    createLongAndSquareString(a),
+                    createLongAndSquareString(b)
                 );
 
         long getPrimeNum() {

@@ -46,9 +46,9 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
         public String toString() {
             return String.format(
                 "%s + %s = %s%s",
-                getLongAndSquareString(a),
-                getLongAndSquareString(b),
-                getLongAndSquareString(c),
+                createLongAndSquareString(a),
+                createLongAndSquareString(b),
+                createLongAndSquareString(c),
                 isPrimitive() ? " (primitive)" : ""
             );
         }

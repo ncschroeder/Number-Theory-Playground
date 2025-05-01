@@ -3,7 +3,7 @@ package numbertheoryplayground.sectionclasses.abstract_;
 import java.awt.Component;
 import java.util.List;
 
-import static numbertheoryplayground.Misc.toStringWithCommas;
+import static numbertheoryplayground.Misc.createStringWithCommas;
 
 /**
  * Superclass for Sections that require 2 input ints for their algorithm(s).
@@ -42,8 +42,8 @@ public abstract non-sealed class DoubleInputSection extends Section {
     public final String getRandomCliAnswer() {
         var input1Long = getRandomInput();
         var input2Long = getRandomInput();
-        var input1String = toStringWithCommas(input1Long);
-        var input2String = toStringWithCommas(input2Long);
+        var input1String = createStringWithCommas(input1Long);
+        var input2String = createStringWithCommas(input2Long);
         return getCliAnswer(input1Long, input2Long, input1String, input2String);
     }
 }

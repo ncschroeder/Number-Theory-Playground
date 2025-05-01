@@ -40,15 +40,15 @@ divided by the smaller number. Repeat.""";
      */
     record EuclideanIteration(long max, long min, long remainder) {
         private String maxString() {
-            return toStringWithCommas(max);
+            return createStringWithCommas(max);
         }
         
         private String minString() {
-            return toStringWithCommas(min);
+            return createStringWithCommas(min);
         }
         
         private String remainderString() {
-            return toStringWithCommas(remainder);
+            return createStringWithCommas(remainder);
         }
     }
     

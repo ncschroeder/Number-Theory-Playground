@@ -119,7 +119,7 @@ unique prime factors.""";
             BigInteger multiplicand = BigInteger.valueOf((long) Math.pow(e.getKey(), e.getValue()));
             correspondingBigInt = correspondingBigInt.multiply(multiplicand);
         }
-        correspondingBigIntString = toStringWithCommas(correspondingBigInt);
+        correspondingBigIntString = createStringWithCommas(correspondingBigInt);
     }
     
     PrimeFactorization(List<FactorAndPower> factorAndPowers) {
@@ -208,9 +208,9 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
                 "excluded then there are %s factors.",
             factorsAndPowers.size() == 1 ? "" : "s",
             String.join(" x ", powerStrings),
-            toStringWithCommas(numFactors),
+            createStringWithCommas(numFactors),
             correspondingBigIntString,
-            toStringWithCommas(numFactors - 2)
+            createStringWithCommas(numFactors - 2)
         );
     }
     

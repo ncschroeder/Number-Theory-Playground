@@ -38,14 +38,14 @@ final class MainPanel extends NtpPanel {
         calcBtn.addActionListener(e -> {
             try {
                 var input1Long = inputPanel1.getInputAsLong();
-                var input1String = toStringWithCommas(input1Long);
+                var input1String = createStringWithCommas(input1Long);
                 List<Component> components = null;
                 
                 if (curSection instanceof SingleInputSection sis) {
                     components = sis.getGuiComponents(input1Long, input1String);
                 } else if (curSection instanceof DoubleInputSection dis) {
                     var input2Long = inputPanel2.getInputAsLong();
-                    var input2String = toStringWithCommas(input2Long);
+                    var input2String = createStringWithCommas(input2Long);
                     components =
                         dis.getGuiComponents(input1Long, input2Long, input1String, input2String);
                 }

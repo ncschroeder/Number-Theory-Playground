@@ -2,6 +2,7 @@ package com.numbertheoryplayground.calculationsimpl;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
@@ -34,14 +35,18 @@ public class PrimeFactorization {
      * with 19 digits. The max value for an int is 2 billion something and the max value for
      * a long is 9 quintillion something.
      */
-    private long correspondingLong;
+    private final long correspondingLong;
     
-    private final SortedMap<Integer, Integer> factorsAndPowers;
+    /**
+     * This list is sorted by factors and immutable.
+     */
+    private final List<FactorAndPower> factorsAndPowers;
+    
     public PrimeFactorization(int input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         correspondingLong = input;
-        factorsAndPowers = new TreeMap<>();
+        var factorsAndPowersArrList = new ArrayList<FactorAndPower>();
         var maxIntToCheck = (int) Math.sqrt(input);
         int remaining = input;
 
@@ -58,60 +63,53 @@ public class PrimeFactorization {
                 power++;
                 remaining /= 2;
             } while (isDivisible(remaining, 2));
-            factorsAndPowers.put(2, power);
-            if (remaining == 1) return;
+            factorsAndPowersArrList.add(new FactorAndPower(2, power));
         }
         
-        for (var possiblePrimeFactor = 3; possiblePrimeFactor <= maxIntToCheck; possiblePrimeFactor += 2) {
-            if (isDivisible(remaining, possiblePrimeFactor)) {
-                var power = 0;
-                do {
-                    power++;
-                    remaining /= possiblePrimeFactor;
-                } while (isDivisible(remaining, possiblePrimeFactor));
-                factorsAndPowers.put(possiblePrimeFactor, power);
-                if (remaining == 1) return;
+        if (remaining > 1) {
+            for (var possiblePrimeFactor = 3; possiblePrimeFactor <= maxIntToCheck; possiblePrimeFactor += 2) {
+                if (isDivisible(remaining, possiblePrimeFactor)) {
+                    var power = 0;
+                    do {
+                        power++;
+                        remaining /= possiblePrimeFactor;
+                    } while (isDivisible(remaining, possiblePrimeFactor));
+                    factorsAndPowersArrList.add(new FactorAndPower(possiblePrimeFactor, power));
+                    if (remaining == 1) break;
+                }
             }
         }
         
-        factorsAndPowers.put(remaining, 1);
-    }
-    
-    /**
-     * Constructs a new PrimeFactorization to represent the prime factorization whose factors
-     * and powers are keys and values, respectively, in the map provided.
-     */
-    private PrimeFactorization(Map<Integer, Integer> factorsAndPowers) {
-        this.factorsAndPowers = new TreeMap<>(factorsAndPowers);
-        correspondingLong = 1;
-        
-        for (Map.Entry<Integer, Integer> e : factorsAndPowers.entrySet()) {
-            correspondingLong *= (long) Math.pow(e.getKey(), e.getValue());
+        if (remaining > 1) {
+            factorsAndPowersArrList.add(new FactorAndPower(remaining, 1));
         }
+        
+        factorsAndPowers = List.copyOf(factorsAndPowersArrList);
     }
     
-    PrimeFactorization(List<FactorAndPower> factorAndPowers) {
-        this(
-            factorAndPowers
+    PrimeFactorization(List<FactorAndPower> factorsAndPowers) {
+        this.factorsAndPowers =
+            factorsAndPowers
             .stream()
-            .collect(Collectors.toMap(FactorAndPower::factor, FactorAndPower::power))
-        );
+            .sorted(Comparator.comparingLong(FactorAndPower::factor))
+            .toList();
+        
+        long tempCorrespondingLong = 1;
+        for (FactorAndPower fp : factorsAndPowers) {
+            tempCorrespondingLong *= (long) Math.pow(fp.factor, fp.power);
+        }
+        correspondingLong = tempCorrespondingLong;
     }
     
     public List<FactorAndPower> toList() {
-        return
-            factorsAndPowers
-            .entrySet()
-            .stream()
-            .map(e -> new FactorAndPower(e.getKey(), e.getValue()))
-            .toList();
+        return factorsAndPowers;
     }
     
     /**
      * Prime numbers have a prime factorization that consists of a single factor with 1 as its power.
      */
     boolean isForAPrimeNumber() {
-        return factorsAndPowers.size() == 1 && factorsAndPowers.containsValue(1);
+        return factorsAndPowers.size() == 1 && factorsAndPowers.getFirst().power == 1;
     }
     
     PfListAndLongString toPfListAndLongString() {
@@ -124,8 +122,10 @@ public class PrimeFactorization {
      */
     List<PrimeFactorization> getFactorPfs() {
         var factorPfs = new ArrayList<PrimeFactorization>();
-        
-        factorsAndPowers.forEach((factor, thisPfPower) -> {
+        for (FactorAndPower fp : factorsAndPowers) {
+            int factor = fp.factor;
+            int thisPfPower = fp.power;
+            
             /*
             In the 2nd for loop below, we want to iterate through all the PFs that are in
             factorPfs at this point, and not the ones that get added below. Use this variable
@@ -134,17 +134,27 @@ public class PrimeFactorization {
             int lastPfIndexToUse = factorPfs.size() - 1;
             
             for (var factorPfPower = 1; factorPfPower <= thisPfPower; factorPfPower++) {
-                factorPfs.add(new PrimeFactorization(Map.of(factor, factorPfPower)));
+                var singleton = List.of(new FactorAndPower(factor, factorPfPower));
+                factorPfs.add(new PrimeFactorization(singleton));
                 
                 for (var i = 0; i <= lastPfIndexToUse; i++) {
-                    var factorPfFactorsAndPowers =
-                        new HashMap<Integer, Integer>(factorPfs.get(i).factorsAndPowers);
-                    factorPfFactorsAndPowers.put(factor, factorPfPower);
-                    factorPfs.add(new PrimeFactorization(factorPfFactorsAndPowers));
+                    var newFactorAndPower = new FactorAndPower(factor, factorPfPower);
+                    List<FactorAndPower> factorPfFactorsAndPowersList =
+                        new ArrayList<>(factorPfs.get(i).factorsAndPowers);
+                    
+                    IntStream.range(0, factorPfFactorsAndPowersList.size())
+                        .filter(j -> factorPfFactorsAndPowersList.get(j).factor == factor)
+                        .findFirst()
+                        .ifPresentOrElse(
+                            indexToUpdate -> factorPfFactorsAndPowersList.set(indexToUpdate, newFactorAndPower),
+                            () -> factorPfFactorsAndPowersList.add(newFactorAndPower)
+                        );
+                    
+                    factorPfs.add(new PrimeFactorization(factorPfFactorsAndPowersList));
                 }
             }
-        });
 
+        }
         /*
         The last PF has all the factors that this PF has and each power is the same as the
         powers in this PF, so it's the same as this PF. We don't want to include that as part
@@ -161,6 +171,15 @@ public class PrimeFactorization {
             .stream()
             .map(PrimeFactorization::toPfListAndLongString)
             .toList();
+    }
+    
+    private OptionalInt getPowerOf(int factor) {
+        return
+            factorsAndPowers
+            .stream()
+            .filter(fp -> fp.factor == factor)
+            .mapToInt(FactorAndPower::power)
+            .findFirst();
     }
     
     /**
@@ -187,27 +206,33 @@ public class PrimeFactorization {
             
             var input1Pf = new PrimeFactorization(input1);
             var input2Pf = new PrimeFactorization(input2);
-            var gcdPfFactorsAndPowers = new HashMap<Integer, Integer>();
-            var lcmPfFactorsAndPowers = new HashMap<Integer, Integer>();
             
             input1PfList = input1Pf.toList();
             input2PfList = input2Pf.toList();
+            var gcdPfFactorsAndPowers = new ArrayList<FactorAndPower>();
+            var lcmPfFactorsAndPowers = new ArrayList<FactorAndPower>();
             
-            input1Pf.factorsAndPowers.forEach((factor, power1) -> {
-                Integer power2 = input2Pf.factorsAndPowers.get(factor);
-                if (power2 != null) {
-                    gcdPfFactorsAndPowers.put(factor, Math.min(power1, power2));
-                    lcmPfFactorsAndPowers.put(factor, Math.max(power1, power2));
-                } else {
-                    lcmPfFactorsAndPowers.put(factor, power1);
-                }
-            });
+            for (FactorAndPower fp : input1Pf.factorsAndPowers) {
+                int factor = fp.factor;
+                int power1 = fp.power;
+                
+                input2Pf
+                .getPowerOf(factor)
+                .ifPresentOrElse(
+                    power2 -> {
+                        gcdPfFactorsAndPowers.add(new FactorAndPower(factor, Math.min(power1, power2)));
+                        lcmPfFactorsAndPowers.add(new FactorAndPower(factor, Math.max(power1, power2)));
+                    },
+                    () -> lcmPfFactorsAndPowers.add(new FactorAndPower(factor, power1))
+                );
+            }
             
-            input2Pf.factorsAndPowers.forEach((factor, power) -> {
-                if (!input1Pf.factorsAndPowers.containsKey(factor)) {
-                    lcmPfFactorsAndPowers.put(factor, power);
+            // Find the unique prime factors of input2Pf.
+            for (FactorAndPower fp : input2Pf.factorsAndPowers) {
+                if (input1Pf.getPowerOf(fp.factor).isEmpty()) {
+                    lcmPfFactorsAndPowers.add(new FactorAndPower(fp.factor, fp.power));
                 }
-            });
+            }
             
             gcdPfListAndLongString =
                 gcdPfFactorsAndPowers.isEmpty()

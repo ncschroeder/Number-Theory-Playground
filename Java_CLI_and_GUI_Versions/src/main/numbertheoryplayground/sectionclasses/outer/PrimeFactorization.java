@@ -54,6 +54,8 @@ unique prime factors.""";
      */
     private BigInteger correspondingBigInt;
     
+    private final String correspondingBigIntString;
+    
     /**
      * A map whose keys are prime factors and values are the corresponding powers for this prime
      * factorization. A SortedMap is used so that the entries are ordered by the factors, which is
@@ -64,13 +66,14 @@ unique prime factors.""";
     /**
      * Constructs a new object to represent the prime factorization of the input.
      */
-    PrimeFactorization(long input) {
-        assertIsInRange(input, MIN_INPUT, MAX_INPUT);
+    PrimeFactorization(long inputLong, String inputString) {
+        assertIsInRange(inputLong, MIN_INPUT, MAX_INPUT);
         
-        correspondingBigInt = BigInteger.valueOf(input);
+        correspondingBigInt = BigInteger.valueOf(inputLong);
+        correspondingBigIntString = inputString;
         factorsAndPowers = new TreeMap<>();
-        var maxLongToCheck = (long) Math.sqrt(input);
-        long remaining = input;
+        var maxLongToCheck = (long) Math.sqrt(inputLong);
+        long remaining = inputLong;
 
         /*
         Find all the prime factors and their powers and put these in factorsAndPowers. Divide remaining
@@ -116,6 +119,7 @@ unique prime factors.""";
             BigInteger multiplicand = BigInteger.valueOf((long) Math.pow(e.getKey(), e.getValue()));
             correspondingBigInt = correspondingBigInt.multiply(multiplicand);
         }
+        correspondingBigIntString = toStringWithCommas(correspondingBigInt);
     }
     
     PrimeFactorization(List<FactorAndPower> factorAndPowers) {
@@ -139,9 +143,6 @@ unique prime factors.""";
         return correspondingBigInt;
     }
 
-    private String getCorrespondingBigIntString() {
-        return createStringWithCommas(correspondingBigInt);
-    }
     /**
      * Returns a string that represents this object the same way that the first info paragraph at the
      * top represents PFs. That paragraph says "the PF of 5 is just 5, the PF of 25 is 5^2, and the PF
@@ -176,7 +177,7 @@ unique prime factors.""";
     }
     
     String getInfoSentence() {
-        return String.format("The PF of %s is %s.", getCorrespondingBigIntString(), this);
+        return String.format("The PF of %s is %s.", correspondingBigIntString, this);
     }
     
     public static final Supplier<String> factorsInfoSupplier = () -> """
@@ -208,7 +209,7 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
             factorsAndPowers.size() == 1 ? "" : "s",
             String.join(" x ", powerStrings),
             toStringWithCommas(numFactors),
-            getCorrespondingBigIntString(),
+            correspondingBigIntString,
             toStringWithCommas(numFactors - 2)
         );
     }
@@ -264,17 +265,15 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 x 3 (6), 3^2 (9), 2^2 x 3 (12), and 
         }
         
         @Override
-        public String getCliAnswer(long input) {
-            return NtpCli.putNewLineChars(new PrimeFactorization(input).getInfoSentence());
+        public String getCliAnswer(long inputLong, String inputString) {
+            String info = new PrimeFactorization(inputLong, inputString).getInfoSentence();
+            return NtpCli.putNewLineChars(info);
         }
         
         @Override
-        public List<Component> getGuiComponents(long input) {
-            return List.of(
-                NtpGui.createCenteredAnswerContentLabel(
-                    new PrimeFactorization(input).getInfoSentence()
-                )
-            );
+        public List<Component> getGuiComponents(long inputLong, String inputString) {
+            String info = new PrimeFactorization(inputLong, inputString).getInfoSentence();
+            return List.of(NtpGui.createCenteredAnswerContentLabel(info));
         }
     }
     
@@ -319,9 +318,9 @@ second input integer multiplied by 2.""";
          */
         private final PrimeFactorization gcdPf;
         private final PrimeFactorization lcmPf;
-        GcdAndLcmAnswer(long input1, long input2) {
-            input1Pf = new PrimeFactorization(input1);
-            input2Pf = new PrimeFactorization(input2);
+        GcdAndLcmAnswer(long input1Long, long input2Long, String input1String, String input2String) {
+            input1Pf = new PrimeFactorization(input1Long, input1String);
+            input2Pf = new PrimeFactorization(input2Long, input2String);
             var gcdPfFactorsAndPowers = new HashMap<Long, Integer>();
             var lcmPfFactorsAndPowers = new HashMap<Long, Integer>();
             

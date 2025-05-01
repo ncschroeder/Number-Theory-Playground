@@ -82,11 +82,10 @@ the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 
         return getPrimes(input).mapToObj(Misc::toStringWithCommas);
     }
     
-    private static String getListHeading(long input) {
+    private static String getPrimesHeading(String inputString) {
         return String.format(
-            "The first %d prime numbers >= %s are:",
-            NUM_PRIMES_TO_FIND,
-            toStringWithCommas(input)
+            "The first %d prime numbers ≥ %s are:",
+            NUM_PRIMES_TO_FIND, inputString
         );
     }
     
@@ -103,14 +102,17 @@ the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 
         }
         
         @Override
-        public String getCliAnswer(long input) {
-            return NtpCli.buildStringWithStreamElementsOnShortLines(getPrimesHeading(input), getPrimesStrings(input));
+        public String getCliAnswer(long inputLong, String inputString) {
+            return NtpCli.buildStringWithStreamElementsOnShortLines(
+                getPrimesHeading(inputString),
+                getPrimesStrings(inputLong)
+            );
         }
         
         @Override
-        public List<Component> getGuiComponents(long input) {
+        public List<Component> getGuiComponents(long input, String inputString) {
             return List.of(
-                NtpGui.createListHeadingLabel(getPrimesHeading(input)),
+                NtpGui.createListHeadingLabel(getPrimesHeading(inputString)),
                 NtpTextArea.createNarrowOneWithStreamElements(getPrimesStrings(input))
             );
         }

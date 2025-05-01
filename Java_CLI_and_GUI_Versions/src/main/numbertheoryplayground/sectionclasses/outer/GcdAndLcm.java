@@ -88,22 +88,27 @@ divided by the smaller number. Repeat.""";
      * returned from making a call to getEuclideanIterations using input1 and input2. The min of
      * the last element in that list is the GCD.
      */
-    private static String getEuclideanGcdMessage(long input1, long input2, List<EuclideanIteration> iterations) {
+    private static String getEuclideanGcdMessage(
+        String input1String,
+        String input2String,
+        List<EuclideanIteration> iterations
+    ) {
         return String.format(
             "The GCD of %s and %s is %s.",
-            toStringWithCommas(input1),
-            toStringWithCommas(input2),
-            iterations.getLast().minString()
+            input1String, input2String, iterations.getLast().minString()
         );
     }
     
     /**
-     * Returns a string with a heading, table, and message about what the GCD of input1 and input2 is.
+     * Returns a string with a heading, table, and message about what the GCD of input1Long and input2Long is.
      * The table has columns for the max number, min number, and remainder for each iteration of the
-     * Euclidean algorithm performed on input1 and input2.
+     * Euclidean algorithm performed on input1Long and input2Long.
      */
-    private static String getEuclideanCliAnswer(long input1, long input2) {
-        List<EuclideanIteration> iterations = getEuclideanIterations(input1, input2);
+    private static String getEuclideanCliAnswer(
+        long input1Long, long input2Long,
+        String input1String, String input2String
+    ) {
+        List<EuclideanIteration> iterations = getEuclideanIterations(input1Long, input2Long);
         
         // The gap between the end of the longest item in a column and the item in the next column.
         var columnGap = 4;
@@ -130,7 +135,7 @@ divided by the smaller number. Repeat.""";
             );
         
         String collectingPrefix = EUCLIDEAN_TABLE_HEADING + '\n' + headRow + '\n';
-        String collectingSuffix = '\n' + getEuclideanGcdMessage(input1, input2, iterations);
+        String collectingSuffix = '\n' + getEuclideanGcdMessage(input1String, input2String, iterations);
         
         return
             iterations
@@ -145,11 +150,14 @@ divided by the smaller number. Repeat.""";
     
     /**
      * Returns an NTPPanel with a heading label, table, and label with a message about what the GCD of
-     * input1 and input2 is. The table has columns for the max number, min number, and remainder for each
-     * iteration of the Euclidean algorithm performed on input1 and input2.
+     * input1Long and input2Long is. The table has columns for the max number, min number, and remainder for each
+     * iteration of the Euclidean algorithm performed on input1Long and input2Long.
      */
-    private static NtpPanel getEuclideanPanel(long input1, long input2) {
-        List<EuclideanIteration> iterations = getEuclideanIterations(input1, input2);
+    private static NtpPanel getEuclideanPanel(
+        long input1Long, long input2Long,
+        String input1String, String input2String
+    ) {
+        List<EuclideanIteration> iterations = getEuclideanIterations(input1Long, input2Long);
         
         Function<EuclideanIteration, Stream<String>> getIterationRowStrings =
             ei ->
@@ -163,7 +171,7 @@ divided by the smaller number. Repeat.""";
                 getIterationRowStrings
             );
         
-        String gcdMessage = getEuclideanGcdMessage(input1, input2, iterations);
+        String gcdMessage = getEuclideanGcdMessage(input1String, input2String, iterations);
         
         return
             new NtpPanel()
@@ -174,12 +182,8 @@ divided by the smaller number. Repeat.""";
             .setMaxSizeToPreferredSize();
     }
     
-    private static String getAnswerMainHeading(long input1, long input2) {
-        return String.format(
-            "GCD and LCM Info for %s and %s",
-            toStringWithCommas(input1),
-            toStringWithCommas(input2)
-        );
+    private static String getAnswerMainHeading(String input1String, String input2String) {
+        return String.format("GCD and LCM Info for %s and %s", input1String, input2String);
     }
 
     private static final String PF_INFO_HEADING = "Prime Factorization Info";
@@ -198,25 +202,36 @@ divided by the smaller number. Repeat.""";
         }
         
         @Override
-        public String getCliAnswer(long input1, long input2) {
+        public String getCliAnswer(
+            long input1Long, long input2Long,
+            String input1String, String input2String
+        ) {
             // Call getEuclideanCliAnswer first to see if it throws.
-            String euclideanAnswer = getEuclideanCliAnswer(input1, input2);
+            String euclideanAnswer =
+                getEuclideanCliAnswer(input1Long, input2Long, input1String, input2String);
             Stream<String> pfInfoSentences =
-                new PrimeFactorization.GcdAndLcmAnswer(input1, input2).getInfoSentences();
+                new PrimeFactorization.GcdAndLcmAnswer(input1Long, input2Long, input1String, input2String)
+                .getInfoSentences();
             String pfAnswer =
                 NtpCli.buildStringWithStreamElementsOnSeparateLines(PF_INFO_HEADING, pfInfoSentences);
             return String.join(
                 "\n\n",
-                getAnswerMainHeading(input1, input2),
+                getAnswerMainHeading(input1String, input2String),
                 euclideanAnswer,
                 pfAnswer
             );
         }
         
         @Override
-        public List<Component> getGuiComponents(long input1, long input2) {
+        public List<Component> getGuiComponents(
+            long input1Long, long input2Long,
+            String input1String, String input2String
+        ) {
+            NtpPanel euclideanPanel =
+                getEuclideanPanel(input1Long, input2Long, input1String, input2String);
             Stream<String> pfInfoSentences =
-                new PrimeFactorization.GcdAndLcmAnswer(input1, input2).getInfoSentences();
+                new PrimeFactorization.GcdAndLcmAnswer(input1Long, input2Long, input1String, input2String)
+                .getInfoSentences();
             
             NtpPanel pfInfoPanel =
                 new NtpPanel()
@@ -225,9 +240,9 @@ divided by the smaller number. Repeat.""";
                 .add(NtpTextArea.createWithStreamElementsOnSeparateLines(pfInfoSentences));
             
             return List.of(
-                createAnswerMainHeadingLabel(getAnswerMainHeading(input1, input2)),
+                createAnswerMainHeadingLabel(getAnswerMainHeading(input1String, input2String)),
                 createGapBetweenAnswerSections(),
-                getEuclideanPanel(input1, input2),
+                euclideanPanel,
                 createGapBetweenAnswerSections(),
                 pfInfoPanel
             );

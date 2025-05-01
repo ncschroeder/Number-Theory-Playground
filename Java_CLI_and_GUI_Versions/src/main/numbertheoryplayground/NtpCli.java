@@ -143,15 +143,18 @@ public class NtpCli {
                     try {
                         if (section instanceof SingleInputSection sis) {
                             var inputLong = stripCommasAndParse(input);
-                            println(sis.getCliAnswer(inputLong));
+                            var inputString = toStringWithCommas(inputLong);
+                            println(sis.getCliAnswer(inputLong, inputString));
                         } else if (section instanceof DoubleInputSection dis) {
                             String[] inputContents = input.split(" +");
                             if (inputContents.length != 2) {
                                 printInvalidInput();
                             } else {
-                                var inputLong1 = stripCommasAndParse(inputContents[0]);
-                                var inputLong2 = stripCommasAndParse(inputContents[1]);
-                                println(dis.getCliAnswer(inputLong1, inputLong2));
+                                var input1Long = stripCommasAndParse(inputContents[0]);
+                                var input2Long = stripCommasAndParse(inputContents[1]);
+                                var input1String = toStringWithCommas(input1Long);
+                                var input2String = toStringWithCommas(input2Long);
+                                println(dis.getCliAnswer(input1Long, input2Long, input1String, input2String));
                             }
                         }
                     } catch (NumberFormatException | InvalidInputNumberException ex) {

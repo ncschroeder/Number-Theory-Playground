@@ -51,16 +51,14 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
          */
         private final Stream<String> phiAndRatioExpressions;
 
-        private Answer(long input1, long input2) {
+        private Answer(long input1, long input2, String input1String, String input2String) {
             // Call getBigIntSequence first to see if it throws.
             List<BigInteger> bigIntSequence = getBigIntSequence(input1, input2);
             
             sequenceHeading =
                 String.format(
                     "The first %d integers in the Fibonacci-like sequence that starts with %s and %s are:",
-                    SEQUENCE_LENGTH,
-                    createStringWithCommas(input1),
-                    createStringWithCommas(input2)
+                    SEQUENCE_LENGTH, input1String, input2String
                 );
 
             stringSequence = bigIntSequence.stream().map(Misc::createStringWithCommas);
@@ -142,8 +140,11 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         }
         
         @Override
-        public String getCliAnswer(long input1, long input2) {
-            var answer = new Answer(input1, input2);
+        public String getCliAnswer(
+            long input1Long, long input2Long,
+            String input1String, String input2String
+        ) {
+            var answer = new Answer(input1Long, input2Long, input1String, input2String);
             String heading = NtpCli.putNewLineChars(answer.sequenceHeading);
             var sequenceStringWithHeading =
                 NtpCli.buildStringWithStreamElementsOnShortLines(heading, answer.stringSequence);
@@ -154,8 +155,11 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         }
         
         @Override
-        public List<Component> getGuiComponents(long input1, long input2) {
-            var answer = new Answer(input1, input2);
+        public List<Component> getGuiComponents(
+            long input1Long, long input2Long,
+            String input1String, String input2String
+        ) {
+            var answer = new Answer(input1Long, input2Long, input1String, input2String);
             
             return List.of(
                 createListHeadingLabel(answer.sequenceHeading),

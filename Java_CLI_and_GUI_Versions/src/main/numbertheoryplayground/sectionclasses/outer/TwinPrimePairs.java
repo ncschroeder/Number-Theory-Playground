@@ -64,11 +64,10 @@ number that is 1 above that same multiple of 6. 5 is the only number to be in 2 
         return getPairStarts(input).mapToObj(l -> longPairToString(l, l + 2));
     }
     
-    private static String getListHeading(long input) {
+    private static String getPairsHeading(String inputString) {
         return String.format(
-            "The first %d twin prime pairs >= %s are:",
-            NUM_PAIRS_TO_FIND,
-            toStringWithCommas(input)
+            "The first %d twin prime pairs ≥ %s are:",
+            NUM_PAIRS_TO_FIND, inputString
         );
     }
     
@@ -85,14 +84,17 @@ number that is 1 above that same multiple of 6. 5 is the only number to be in 2 
         }
         
         @Override
-        public String getCliAnswer(long input) {
-            return NtpCli.buildStringWithStreamElementsOnShortLines(getPairsHeading(input), getPairStrings(input));
+        public String getCliAnswer(long inputLong, String inputString) {
+            return NtpCli.buildStringWithStreamElementsOnShortLines(
+                getPairsHeading(inputString),
+                getPairStrings(inputLong)
+            );
         }
         
         @Override
-        public List<Component> getGuiComponents(long input) {
+        public List<Component> getGuiComponents(long input, String inputString) {
             return List.of(
-                NtpGui.createListHeadingLabel(getPairsHeading(input)),
+                NtpGui.createListHeadingLabel(getPairsHeading(inputString)),
                 NtpTextArea.createNarrowOneWithStreamElements(getPairStrings(input))
             );
         }

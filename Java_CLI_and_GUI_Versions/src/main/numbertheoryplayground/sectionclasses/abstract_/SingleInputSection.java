@@ -3,6 +3,8 @@ package numbertheoryplayground.sectionclasses.abstract_;
 import java.awt.Component;
 import java.util.List;
 
+import static numbertheoryplayground.Misc.toStringWithCommas;
+
 /**
  * Superclass for Sections that require 1 input int for their algorithm(s).
  */
@@ -19,19 +21,20 @@ public abstract non-sealed class SingleInputSection extends Section {
     }
     
     /**
-     * Used by the CLI to run the algorithm(s) for this section using the input and create a string with
-     * info about the results of the algorithm(s).
-     */
-    public abstract String getCliAnswer(long input);
-    
-    /**
-     * Used by the GUI to run the algorithm(s) for this section using the input and create GUI components
+     * Used by the CLI to run the algorithm(s) for this section using inputLong and create a string
      * with info about the results of the algorithm(s).
      */
-    public abstract List<Component> getGuiComponents(long input);
+    public abstract String getCliAnswer(long inputLong, String inputString);
+    
+    /**
+     * Used by the GUI to run the algorithm(s) for this section using inputLong and create GUI
+     * components with info about the results of the algorithm(s).
+     */
+    public abstract List<Component> getGuiComponents(long inputLong, String inputString);
     
     @Override
     public final String getRandomCliAnswer() {
-        return getCliAnswer(getRandomInput());
+        var inputLong = getRandomInput();
+        return getCliAnswer(inputLong, toStringWithCommas(inputLong));
     }
 }

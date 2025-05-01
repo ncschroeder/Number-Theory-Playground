@@ -34,7 +34,7 @@ class TwoSquareTheoremTests {
         340_000,       340_037,            166,         559
         """)
     void answer(long input, long expectedPrimeNum, long expectedA, long expectedB) {
-        var answer = new Answer(input);
+        var answer = new Answer(input, "");
         assertEquals(expectedPrimeNum, answer.getPrimeNum());
         assertEquals(expectedA, answer.getA());
         assertEquals(expectedB, answer.getB());

@@ -127,11 +127,10 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
             });
     }
     
-    private static String getTriplesHeading(long input) {
+    private static String getTriplesHeading(String inputString) {
         return String.format(
-            "The first %d Pythagorean triples >= %s are:",
-            NUM_TRIPLES_TO_FIND,
-            toStringWithCommas(input)
+            "The first %d Pythagorean triples ≥ %s are:",
+            NUM_TRIPLES_TO_FIND, inputString
         );
     }
     
@@ -151,10 +150,10 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
          * Returns a string that contains a heading and triple strings, each on their own line.
          */
         @Override
-        public String getCliAnswer(long input) {
-            Stream<String> tripleStrings = getNumberedTripleStrings(input, 1);
+        public String getCliAnswer(long inputLong, String inputString) {
+            Stream<String> tripleStrings = getNumberedTripleStrings(inputLong, 1);
             return NtpCli.buildStringWithStreamElementsOnSeparateLines(
-                getTriplesHeading(input),
+                getTriplesHeading(inputString),
                 tripleStrings
             );
         }
@@ -163,10 +162,10 @@ and 11, 60, and 61; are primitive. 6 (3 x 2), 8 (4 x 2), and 10 (5 x 2) is anoth
          * Returns a list with a heading label and an NTPTextArea with triple strings, each on their own line.
          */
         @Override
-        public List<Component> getGuiComponents(long input) {
-            Stream<String> tripleStrings = getNumberedTripleStrings(input, 2);
+        public List<Component> getGuiComponents(long inputLong, String inputString) {
+            Stream<String> tripleStrings = getNumberedTripleStrings(inputLong, 2);
             return List.of(
-                NtpGui.createListHeadingLabel(getTriplesHeading(input)),
+                NtpGui.createListHeadingLabel(getTriplesHeading(inputString)),
                 NtpTextArea.createWithStreamElementsOnSeparateLines(tripleStrings)
             );
         }

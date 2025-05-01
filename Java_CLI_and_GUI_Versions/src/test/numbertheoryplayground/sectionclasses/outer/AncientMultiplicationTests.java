@@ -39,7 +39,7 @@ class AncientMultiplicationTests {
         List<TableRow> expectedTable1Rows,
         List<TableRow> expectedTable2Rows
     ) {
-        var answer = new Answer(input1, input2);
+        var answer = new Answer(input1, input2, "", "");
         assertEquals(expectedTable1Rows, answer.getTable1Rows());
         assertEquals(expectedTable2Rows, answer.getTable2Rows());
     }

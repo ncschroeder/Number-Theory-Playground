@@ -81,12 +81,9 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
         private final String powersOf2ThatSumToInput1ColumnHeading;
         private final String productSentence;
         
-        Answer(long input1, long input2) {
-            assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
-            assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
-            
-            var input1String = toStringWithCommas(input1);
-            var input2String = toStringWithCommas(input2);
+        Answer(long input1Long, long input2Long, String input1String, String input2String) {
+            assertIsInRange(input1Long, MIN_INPUT, MAX_INPUT);
+            assertIsInRange(input2Long, MIN_INPUT, MAX_INPUT);
             
             mainHeading =
                 String.format("Ancient Egyptian Multiplication Info for %s and %s", input1String, input2String);
@@ -104,9 +101,9 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
             Iterate backwards through the binary string of input1 to find the powers of 2 that are <= input1
             and the powers of 2 that sum to input1.
              */
-            var input1BinaryString = Long.toBinaryString(input1);
+            var input1BinaryString = Long.toBinaryString(input1Long);
             var powerOf2 = 1L;
-            var input2BigInt = BigInteger.valueOf(input2);
+            var input2BigInt = BigInteger.valueOf(input2Long);
             
             for (int i = input1BinaryString.length() - 1; i >= 0; i--) {
                 var row = new TableRow(powerOf2, input2BigInt.multiply(BigInteger.valueOf(powerOf2)));
@@ -148,8 +145,11 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
          * Returns a string with a heading, 2 tables, and a sentence about what the product of input1 and input2 is.
          */
         @Override
-        public String getCliAnswer(long input1, long input2) {
-            var answer = new Answer(input1, input2);
+        public String getCliAnswer(
+            long input1Long, long input2Long,
+            String input1String, String input2String
+        ) {
+            var answer = new Answer(input1Long, input2Long, input1String, input2String);
             
             BiFunction<String, Stream<TableRow>, String> createTableString =
                 (powersOf2ColumnHeading, rows) -> {
@@ -189,8 +189,11 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
          * product of input1 and input2 is, and gaps in between these.
          */
         @Override
-        public List<Component> getGuiComponents(long input1, long input2) {
-            var answer = new Answer(input1, input2);
+        public List<Component> getGuiComponents(
+            long input1Long, long input2Long,
+            String input1String, String input2String
+        ) {
+            var answer = new Answer(input1Long, input2Long, input1String, input2String);
             
             Function<TableRow, Stream<String>> getRowStrings =
                 tr ->

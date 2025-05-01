@@ -60,11 +60,7 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
         return Arrays.stream(pairStarts).mapToObj(i -> longPairToString(i, input - i));
     }
     
-    private static String getListHeading(int numPairs, long input) {
         return String.format(
-            "There are %s pairs of prime numbers that sum to %s. They are:",
-            toStringWithCommas(numPairs),
-            toStringWithCommas(input)
         );
     }
     
@@ -81,28 +77,27 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
         }
         
         @Override
-        public String getCliAnswer(long input) {
-            int[] pairStarts = getPrimePairStarts(input);
-                getListHeading(pairStarts.length, input),
+        public String getCliAnswer(long inputLong, String inputString) {
+            int[] pairStarts = getPrimePairStarts(inputLong);
             return NtpCli.buildStringWithStreamElementsOnLongLines(
-                getPrimePairStrings(pairStarts, input)
+                getPrimePairStrings(pairStarts, inputLong)
             );
         }
         
         @Override
-        public List<Component> getGuiComponents(long input) {
-            int[] pairStarts = getPrimePairStarts(input);
+        public List<Component> getGuiComponents(long inputLong, String inputString) {
+            int[] pairStarts = getPrimePairStarts(inputLong);
             
             try {
                 var pairsTextArea =
-                    NtpTextArea.createWideOneWithStreamElements(getPrimePairStrings(pairStarts, input));
+                    NtpTextArea.createWideOneWithStreamElements(getPrimePairStrings(pairStarts, inputLong));
                 return List.of(
-                    NtpGui.createListHeadingLabel(getPairsHeading(pairStarts.length, input)),
+                    NtpGui.createListHeadingLabel(getPairsHeading(pairStarts.length, inputString)),
                     pairsTextArea
                 );
             } catch (NtpTextArea.StringTooLongException ex) {
                 String textToDisplay =
-                    getNumPairsSentence(pairStarts.length, input) + ' ' +
+                    getNumPairsSentence(pairStarts.length, inputString) + ' ' +
                     NtpTextArea.StringTooLongException.ERROR_MESSAGE;
                 return List.of(new NtpTextArea(textToDisplay));
             }

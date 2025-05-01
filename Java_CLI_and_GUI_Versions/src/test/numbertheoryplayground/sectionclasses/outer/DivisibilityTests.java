@@ -26,7 +26,7 @@ INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_OF_3_ALT_SUM_
         String expectedBlocksOf3AltSumExpression,
         String expectedDigitsAltSumExpression
     ) {
-        var answer = new RulesAnswer(input);
+        var answer = new RulesAnswer(input, "");
         assertAll(
             () -> assertEquals(expectedLast2Digits, answer.getLast2Digits()),
             () -> assertEquals(expectedLast3Digits, answer.getLast3Digits()),

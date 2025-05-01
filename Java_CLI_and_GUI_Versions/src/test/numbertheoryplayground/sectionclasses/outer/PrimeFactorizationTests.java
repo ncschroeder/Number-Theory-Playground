@@ -27,7 +27,7 @@ class PrimeFactorizationTests {
     @ParameterizedTest
     @FieldSource("longConstructorArgs")
     void longConstructor(long input, List<FactorAndPower> expectedFactorsAndPowers) {
-        assertEquals(expectedFactorsAndPowers, new PrimeFactorization(input).toList());
+        assertEquals(expectedFactorsAndPowers, new PrimeFactorization(input, "").toList());
     }
 
     static final List<Arguments> longConstructorArgs =
@@ -48,7 +48,7 @@ class PrimeFactorizationTests {
     @ParameterizedTest
     @FieldSource("toStringArgs")
     void toString(int input, String expectedString) {
-        assertEquals(expectedString, new PrimeFactorization(input).toString());
+        assertEquals(expectedString, new PrimeFactorization(input, "").toString());
     }
 
     static final List<Arguments> toStringArgs =
@@ -143,7 +143,7 @@ class PrimeFactorizationTests {
         List<FactorAndPower> expectedLcmPfList =
             List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1));
         int expectedLcm = 2 * 3 * 5 * 7;
-        var answer = new GcdAndLcmAnswer(input1, input2);
+        var answer = new GcdAndLcmAnswer(input1, input2, "", "");
         
         assertAll(
             () -> assertNull(answer.getGcdPf()),
@@ -161,7 +161,7 @@ class PrimeFactorizationTests {
         List<FactorAndPower> expectedLcmPfList,
         int expectedLcm
     ) {
-        var answer = new GcdAndLcmAnswer(input1, input2);
+        var answer = new GcdAndLcmAnswer(input1, input2, "", "");
 
         assertAll(
             () -> {

@@ -35,10 +35,10 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
         private long b;
         private final String infoSentence;
         
-        Answer(long input) {
-            assertIsInRange(input, MIN_INPUT, MAX_INPUT);
+        Answer(long inputLong, String inputString) {
+            assertIsInRange(inputLong, MIN_INPUT, MAX_INPUT);
             
-            primeNum = input;
+            primeNum = inputLong;
             while (primeNum % 4 != 1) primeNum++;
             while (!isPrime(primeNum)) primeNum += 4;
             
@@ -58,7 +58,7 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
             infoSentence =
                 String.format(
                     "The first integer >= %s that is prime and is 1 above a multiple of 4 is %s, which is %s + %s.",
-                    toStringWithCommas(input),
+                    inputString,
                     toStringWithCommas(primeNum),
                     getLongAndSquareString(a),
                     getLongAndSquareString(b)
@@ -91,13 +91,15 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
         }
         
         @Override
-        public String getCliAnswer(long input) {
-            return NtpCli.putNewLineChars(new Answer(input).infoSentence);
+        public String getCliAnswer(long inputLong, String inputString) {
+            String info = new Answer(inputLong, inputString).infoSentence;
+            return NtpCli.putNewLineChars(info);
         }
         
         @Override
-        public List<Component> getGuiComponents(long input) {
-            return List.of(new NtpTextArea(new Answer(input).infoSentence));
+        public List<Component> getGuiComponents(long input, String inputString) {
+            String info = new Answer(input, inputString).infoSentence;
+            return List.of(new NtpTextArea(info));
         }
     }
 }

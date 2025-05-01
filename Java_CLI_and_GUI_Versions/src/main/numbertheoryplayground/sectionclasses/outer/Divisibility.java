@@ -82,28 +82,27 @@ by 11.""";
          */
         
         private final StringBuilder digitsAltSumExpressionBuilder;
-        RulesAnswer(long input) {
-            assertIsInRange(input, MIN_INPUT, MAX_INPUT);
+        RulesAnswer(long inputLong, String inputStringWithCommas) {
+            assertIsInRange(inputLong, MIN_INPUT, MAX_INPUT);
             
-            inputStringWithCommas = toStringWithCommas(input);
-            var inputStringWithoutCommas = Long.toString(input);
+            var inputStringWithoutCommas = Long.toString(inputLong);
             var infoSentencesJoiner = new StringJoiner(". ", "", ".");
-            last2Digits = input % 100;
-            last3Digits = input % 1_000;
+            last2Digits = inputLong % 100;
+            last3Digits = inputLong % 1_000;
             boolean isDivisibleBy4 = isDivisible(last2Digits, 4);
-            boolean isEven = isEven(input);
+            boolean isEven = isEven(inputLong);
             
             if (!isEven) {
                 infoSentencesJoiner.add(
                     inputStringWithCommas + " isn't even so it isn't divisible by any even numbers"
                 );
-            } else if (input >= 100) {
+            } else if (inputLong >= 100) {
                 infoSentencesJoiner
                 .add("The last 2 digits form the integer " + last2Digits)
                 .add(getDivisibilitySentence(4, last2Digits, isDivisibleBy4));
                 
                 if (isDivisibleBy4) {
-                    if (input >= 1_000) {
+                    if (inputLong >= 1_000) {
                         boolean isDivisibleBy8 = isDivisible(last3Digits, 8);
                         
                         infoSentencesJoiner
@@ -145,7 +144,7 @@ by 11.""";
                             inputStringWithCommas + " is divisible by both 3 and 4 so it's also " +
                             "divisible by 12"
                         );
-                    } else if (input < 100) {
+                    } else if (inputLong < 100) {
                         infoSentencesJoiner.add(
                             inputStringWithCommas + " isn't divisible by 4 so it's not divisible by 12"
                         );
@@ -255,8 +254,8 @@ by 11.""";
         }
     }
     
-    private static String getAnswerMainHeading(long input) {
-        return "Divisibility Info for " + toStringWithCommas(input);
+    private static String getAnswerMainHeading(String inputString) {
+        return "Divisibility Info for " + inputString;
     }
     
     private static final String RULES_INFO_HEADING = "Rules Info";
@@ -266,10 +265,8 @@ by 11.""";
     private static final String FACTORS_AND_PFS_SENTENCE =
         "The factors and their prime factorizations are:";
     
-    private static String getPrimeNumberSentence(long input) {
-        return
-            toStringWithCommas(input) +
-            " is prime and doesn't have any factors other than 1 and itself.";
+    private static String getPrimeNumberSentence(String inputString) {
+        return inputString + " is prime and doesn't have any factors other than 1 and itself.";
     }
     
     public static final class Section extends SingleInputSection {
@@ -294,19 +291,21 @@ by 11.""";
          * related to prime factorizations.
          */
         @Override
-        public String getCliAnswer(long input) {
+        public String getCliAnswer(long inputLong, String inputString) {
             // Call PF constructor first to see if it throws.
-            var pf = new PrimeFactorization(input);
+            var pf = new PrimeFactorization(inputLong, inputString);
             
             StringJoiner linesJoiner =
                 new StringJoiner("\n")
-                .add(getAnswerMainHeading(input))
+                .add(getAnswerMainHeading(inputString))
                 .add("");
             
-            if (input >= 10) {
+            if (inputLong >= 10) {
+                String rulesInfo = new RulesAnswer(inputLong, inputString).infoParagraph;
+                
                 linesJoiner
                 .add(RULES_INFO_HEADING)
-                .add(NtpCli.putNewLineChars(new RulesAnswer(input).infoParagraph))
+                .add(NtpCli.putNewLineChars(rulesInfo))
                 .add("");
             }
             
@@ -314,7 +313,7 @@ by 11.""";
             
             if (pf.isForAPrimeNumber()) {
                 linesJoiner.add(
-                    NtpCli.putNewLineChars(pf.getInfoSentence() + ' ' + getPrimeNumberSentence(input))
+                    NtpCli.putNewLineChars(pf.getInfoSentence() + ' ' + getPrimeNumberSentence(inputString))
                 );
             } else {
                 String textAboveFactorPfs =
@@ -335,20 +334,21 @@ by 11.""";
          * where appropriate.
          */
         @Override
-        public List<Component> getGuiComponents(long input) {
+        public List<Component> getGuiComponents(long inputLong, String inputString) {
             // Call PF constructor first to see if it throws.
-            var pf = new PrimeFactorization(input);
+            var pf = new PrimeFactorization(inputLong, inputString);
             
             var comps = new ArrayList<Component>(10);
-            comps.add(createAnswerMainHeadingLabel(getAnswerMainHeading(input)));
+            comps.add(createAnswerMainHeadingLabel(getAnswerMainHeading(inputString)));
             comps.add(createGapBetweenAnswerSections());
             
-            if (input >= 10) {
+            if (inputLong >= 10) {
+                String rulesInfo = new RulesAnswer(inputLong, inputString).infoParagraph;
                 comps.addAll(
                     List.of(
                         createAnswerSubHeadingLabel(RULES_INFO_HEADING),
                         createGap(5),
-                        new NtpTextArea(new RulesAnswer(input).infoParagraph),
+                        new NtpTextArea(rulesInfo),
                         createGapBetweenAnswerSections()
                     )
                 );
@@ -357,7 +357,7 @@ by 11.""";
             comps.add(createAnswerSubHeadingLabel(PF_INFO_HEADING));
             
             if (pf.isForAPrimeNumber()) {
-                String textToDisplay = pf.getInfoSentence() + ' ' + getPrimeNumberSentence(input);
+                String textToDisplay = pf.getInfoSentence() + ' ' + getPrimeNumberSentence(inputString);
                 comps.add(new NtpTextArea(textToDisplay));
             } else {
                 try {

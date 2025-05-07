@@ -11,7 +11,7 @@ import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
-import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.isOdd;
 import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePrime;
 
 /**
@@ -107,8 +107,11 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
         
         @Override
         public long getRandomInput() {
-            long randomInput = super.getRandomInput();
-            return isEven(randomInput) ? randomInput : randomInput + 1;
+            long randomInput;
+            do {
+                randomInput = super.getRandomInput();
+            } while (isOdd(randomInput));
+            return randomInput;
         }
     }
 }

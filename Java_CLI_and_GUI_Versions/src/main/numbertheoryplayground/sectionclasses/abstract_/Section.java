@@ -141,10 +141,27 @@ public abstract sealed class Section
     }
     
     /**
-     * Returns a random int in the range of valid input ints for this Section.
+     * First, a random number of digits will be generated for a random number. The min number of
+     * random digits is 1 since all sections have a single digit integer for their min input. If
+     * the max input is a power of 10, then the max number of digits for the random number is the
+     * number of digits of the max input - 1. Otherwise, the max number of random number digits is
+     * the number of digits of the max input.
+     *
+     * Then, a random number with the generated random number of digits will be generated and
+     * returned. The random number will be > the min input & < the max input of this section.
      */
     public long getRandomInput() {
-        return random.nextLong(minInput, maxInput + 1);
+        double log10MaxInput = Math.log10(maxInput);
+        int numMaxInputDigits = (int) log10MaxInput + 1;
+        // If the floor of log10MaxInput == log10MaxInput, then the max input is a power of 10.
+        int numMaxRandomInputDigits =
+            Math.floor(log10MaxInput) == log10MaxInput ? numMaxInputDigits - 1 : numMaxInputDigits;
+        int numRandomInputDigits = random.nextInt(1, numMaxRandomInputDigits + 1);
+        long lowerBound =
+            numRandomInputDigits == 1 ? minInput : (long) Math.pow(10, numRandomInputDigits - 1);
+        long upperBound =
+            numRandomInputDigits == numMaxInputDigits ? maxInput + 1 : (long) Math.pow(10, numRandomInputDigits);
+        return random.nextLong(lowerBound, upperBound);
     }
     
     /**

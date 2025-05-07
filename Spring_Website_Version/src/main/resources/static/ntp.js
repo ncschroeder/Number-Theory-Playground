@@ -167,6 +167,12 @@ const isDivisible = (a, b) => a % b === 0;
  */
 
 /**
+ * @param {number} num 
+ * @returns {boolean}
+ */
+const isOdd = (num) => !isEven(num);
+
+/**
  * @type {Section}
  */
 let curSection;
@@ -199,14 +205,7 @@ function createInputDiv(id) {
 
     const randomizeBtn = createBtn('Randomize');
     randomizeBtn.className = 'randomizeBtn';
-    randomizeBtn.onclick = () => {
-        const { minInput, maxInput, needsEvenInput } = curSection;
-        let randomNum = Math.floor(Math.random() * (maxInput - minInput + 1) + minInput);
-        if (needsEvenInput && !isEven(randomNum)) {
-            randomNum++;
-        }
-        inputField.value = randomNum;
-    };
+    randomizeBtn.onclick = () => inputField.value = curSection.getRandomInput();
 
     const plusBtn = createBtn('+');
     plusBtn.className = 'plusBtn';
@@ -312,11 +311,13 @@ const NINE_QUADRILLION = 9_000_000_000_000_000;
 
 
 class Section {
-    // Use private fields with public getters to allow for read-only access outside of class.
+    /*
+    For this class and its subclasses, use private fields with
+    public getters to allow for read-only access outside the class.
+     */
 
     #minInput;
     #maxInput;
-    #needsEvenInput;
     #apiEndpoint;
 
     /**
@@ -328,20 +329,17 @@ class Section {
      * @property {string} actionSentenceEnding
      * @property {number} minInput
      * @property {number} maxInput
-     * @property {boolean} [needsEvenInput=false]
      * @property {string} apiEndpoint
      * 
      * @param {SectionParams} params 
      */
     constructor(params) {
-        const {
-            btnIdStart, infoHtml, actionSentenceEnding,
-            minInput, maxInput, needsEvenInput = false, apiEndpoint
+        const { 
+            btnIdStart, infoHtml, actionSentenceEnding, minInput, maxInput, apiEndpoint
         } = params;
 
         this.#minInput = minInput;
         this.#maxInput = maxInput;
-        this.#needsEvenInput = needsEvenInput;
         this.#apiEndpoint = apiEndpoint;
         
         const isSingleInputSection = this instanceof SingleInputSection;
@@ -386,7 +384,7 @@ class Section {
             `Enter or generate ${isSingleInputSection ? 'an integer' : '2 integers'} and click the \
             Calculate button to get the ${actionSentenceEnding}. Have \
             ${isSingleInputSection ? 'this integer' : 'these integers'} be \
-            ${needsEvenInput ? 'even && ' : ''}≥ ${getNumberStringWithCommas(minInput)} && \
+            ${this.needsEvenInput ? 'even & ' : ''}≥ ${getNumberStringWithCommas(minInput)} & \
             ≤ ${maxInputSentencePart}. Commas are optional.`;
 
 
@@ -428,12 +426,12 @@ class Section {
         return this.#maxInput;
     }
 
-    get needsEvenInput() {
-        return this.#needsEvenInput;
-    }
-
     get apiEndpoint() {
         return this.#apiEndpoint;
+    }
+
+    get needsEvenInput() {
+        return this instanceof GoldbachConjectureSection;
     }
 
 
@@ -442,7 +440,40 @@ class Section {
      * @returns {boolean}
      */
     isInvalidInput(num) {
-        return num < this.minInput || num > this.maxInput || (this.needsEvenInput && !isEven(num));
+        return num < this.minInput || num > this.maxInput;
+    }
+
+    /**
+     * @param {number} lowerBound 
+     * @param {number} upperBound This is an exclusive bound.
+     */
+    static #getRandomNum = (lowerBound, upperBound) =>
+        Math.floor(Math.random() * (upperBound - lowerBound)) + lowerBound;
+
+    /**
+     * First, a random number of digits will be generated for a random number. The min number of random digits
+     * is 1 since all sections have a single digit integer for their min input. If the max input is a power of
+     * 10, then the max number of digits for the random number is the number of digits of the max input - 1.
+     * Otherwise, the max number of random digits is the number of digits of the max input.
+     * 
+     * Then, a random number with the generated random number of digits will be generated and returned. The
+     * random number will be > the min input & < the max input of this section.
+     * 
+     * @returns {number}
+     */
+    getRandomInput() {
+        const log10MaxInput = Math.log10(this.maxInput);
+        const log10MaxInputFloor = Math.floor(log10MaxInput);
+        // If the above 2 numbers are equal, then the max input is a power of 10.
+        const numMaxInputDigits = log10MaxInputFloor + 1;
+        const numMaxRandomInputDigits =
+            log10MaxInputFloor == log10MaxInput ? numMaxInputDigits - 1 : numMaxInputDigits;
+        const numRandomInputDigits = Section.#getRandomNum(1, numMaxRandomInputDigits + 1);
+        const lowerBound =
+            numRandomInputDigits === 1 ? this.minInput : Math.pow(10, numRandomInputDigits - 1);
+        const upperBound =
+            numRandomInputDigits === numMaxInputDigits ? this.maxInput + 1 : Math.pow(10, numRandomInputDigits);
+        return Section.#getRandomNum(lowerBound, upperBound);
     }
 }
 
@@ -451,8 +482,12 @@ class SingleInputSection extends Section {
     #getElements;
 
     /**
+     * @typedef {(responseObj: any, inputString: string, inputNum: number) => HTMLElement[]} SingleInputGetElementsFunction
+     */
+
+    /**
      * @param {SectionParams} sectionParams 
-     * @param {(responseObj: any, inputString: string, inputNum: number) => HTMLElement[]} getElements 
+     * @param {SingleInputGetElementsFunction} getElements 
      */
     constructor(sectionParams, getElements) {
         super(sectionParams);
@@ -461,6 +496,35 @@ class SingleInputSection extends Section {
 
     get getElements() {
         return this.#getElements;
+    }
+}
+
+class GoldbachConjectureSection extends SingleInputSection {
+    /**
+     * @param {SectionParams} sectionParams 
+     * @param {SingleInputGetElementsFunction} getElements 
+     */
+    constructor(sectionParams, getElements) {
+        super(sectionParams, getElements);
+    }
+
+    /**
+     * @param {number} num 
+     * @returns {boolean}
+     */
+    isInvalidInput(num) {
+        return super.isInvalidInput(num) || isOdd(num);
+    }
+
+    /**
+     * @returns {number}
+     */
+    getRandomInput() {
+        let randomInput;
+        do {
+            randomInput = super.getRandomInput();
+        } while (isOdd(randomInput));
+        return randomInput;
     }
 }
 
@@ -1046,14 +1110,13 @@ function getGoldbachConjectureElements(primePairStarts, inputString, inputNum) {
     const pairsOl = arrayToOl(primePairStarts, start => numPairToString(start, inputNum - start));
 }
 
-new SingleInputSection(
+new GoldbachConjectureSection(
     {
         btnIdStart: 'goldbachConjecture',
         infoHtml: goldbachConjectureInfoHtml,
         actionSentenceEnding: 'pairs of prime numbers that sum to that integer',
         minInput: 4,
         maxInput: 100_000,
-        needsEvenInput: true,
         apiEndpoint: 'goldbachPrimePairStarts'
     },
     getGoldbachConjectureElements

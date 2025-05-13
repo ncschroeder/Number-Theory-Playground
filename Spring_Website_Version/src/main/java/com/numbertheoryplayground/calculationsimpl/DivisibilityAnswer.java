@@ -30,29 +30,29 @@ public final class DivisibilityAnswer {
     
     
     public static final class PfAnswer {
-        private final List<FactorAndPower> inputPfList;
+        private final List<FactorAndPower> inputFpList;
         private int numFactors;
         private final String numFactorsExpression;
-        private final List<PfListAndLongString> factorPfListsAndLongStrings;
+        private final List<FactorAndPowerListAndLongString> factorFpListsAndLongStrings;
         
         PfAnswer(PrimeFactorization inputPf) {
-            inputPfList = inputPf.toList();
+            inputFpList = inputPf.getFactorsAndPowers();
             
             numFactors = 1;
-            var numFactorsExpressionParts = new ArrayList<String>(inputPfList.size());
-            for (var factorAndPower : inputPfList) {
+            var numFactorsExpressionParts = new ArrayList<String>(inputFpList.size());
+            for (var factorAndPower : inputFpList) {
                 int power = factorAndPower.power();
                 numFactors *= power + 1;
                 numFactorsExpressionParts.add(String.format("(%d + 1)", power));
             }
             numFactorsExpression = String.join(" × ", numFactorsExpressionParts);
             
-            factorPfListsAndLongStrings = inputPf.getFactorPfListsAndLongStrings();
+            factorFpListsAndLongStrings = inputPf.getFactorFpListsAndLongStrings();
         }
         
-        @JsonProperty("inputPfArr")
-        public List<FactorAndPower> getInputPfList() {
-            return inputPfList;
+        @JsonProperty("inputFpArr")
+        public List<FactorAndPower> getInputFpList() {
+            return inputFpList;
         }
         
         public int getNumFactors() {
@@ -63,9 +63,9 @@ public final class DivisibilityAnswer {
             return numFactorsExpression;
         }
         
-        @JsonProperty("factorPfArrsAndNumStrings")
-        public List<PfListAndLongString> getFactorPfListsAndLongStrings() {
-            return factorPfListsAndLongStrings;
+        @JsonProperty("factorFpArrsAndNumStrings")
+        public List<FactorAndPowerListAndLongString> getFactorFpListsAndLongStrings() {
+            return factorFpListsAndLongStrings;
         }
     }
     

@@ -130,7 +130,7 @@ unique prime factors.""";
     }
     
     
-    List<FactorAndPower> toList() {
+    List<FactorAndPower> getFactorsAndPowers() {
         return factorsAndPowers;
     }
     

@@ -670,17 +670,17 @@ const pfInfoHtml =
  * @type {object}
  * @property {number} factor
  * @property {number} power
- * @typedef {FactorAndPower[]} PfArray
- * 
- * @param {FactorAndPower[]} pfArray
  * @typedef {{pfArr: ?PfArray, correspondingNumString: string}} PfArrayAndNumberString
+ * @typedef {{ factor: number, power: number }} FactorAndPower
+ * @typedef {{ fpArr: ?FactorAndPower[], correspondingNumString: string }} FactorAndPowerArrayAndNumberString
+ * @param {FactorAndPower[]} fpArr
  * @returns {HTMLSpanElement}
  */
-function getPfSpan(pfArray) {
+function getPfSpan(fpArr) {
     const span = createSpan();
+    for (let i = 0; i < fpArr.length; i++) {
 
-    for (let i = 0; i < pfArray.length; i++) {
-        const { factor, power } = pfArray[i];
+        const { factor, power } = fpArr[i];
         span.append(getNumberStringWithCommas(factor));
 
         if (power !== 1) {
@@ -697,15 +697,15 @@ function getPfSpan(pfArray) {
 }
 
 /**
- * @param {FactorAndPower[]} pfArray
+ * @param {FactorAndPower[]} fpArr
  * @param {string} inputString
  * Array that represents the prime factorization of inputNumber.
  * @returns {HTMLElement[]}
  * An array with a heading and a span that displays the prime factorization from pfArray.
  */
-function getPfElements(pfArray, inputString) {
     const heading = createH3(`The prime factorization of ${inputString} is:`);
-    return [heading, getPfSpan(pfArray)];
+function getPfElements(fpArr, inputString) {
+    return [heading, getPfSpan(fpArr)];
 }
 
 const PF_MIN_INPUT = 2;
@@ -778,10 +778,10 @@ const divisbilityInfoHtml =
  * @property {AlternatingSumAndExpression} digitsAltSumAndExpression
  * 
  * @typedef {Object} DivisibilityPfAnswer
- * @property {PfArray} inputPfArr
+ * @property {FactorAndPower[]} inputFpArr
  * @property {string} numFactorsExpression
  * @property {number} numFactors
- * @property {PfArrayAndNumberString[]} factorPfArrsAndNumStrings
+ * @property {FactorAndPowerArrayAndNumberString[]} factorFpArrsAndNumStrings
  */
 
 /** 
@@ -914,8 +914,8 @@ function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
         return pfDiv;
     }
 
-    const { inputPfArr, numFactorsExpression, numFactors, factorPfArrsAndNumStrings } = pfAnswer;
-    pfInfoParagraph.append(getPfSpan(inputPfArr), '. ');
+    const { inputFpArr, numFactorsExpression, numFactors, factorFpArrsAndNumStrings } = pfAnswer;
+    pfInfoParagraph.append(getPfSpan(inputFpArr), '. ');
 
     const numFactorsInfo =
         `By looking at the powers, we can see that there are ${numFactorsExpression} = \
@@ -928,15 +928,15 @@ function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
     pfInfoParagraph.append(numFactorsInfo, ' ', subfactorizationsSentence);
 
     /**
-     * @param {PfArrayAndNumberString} 
+     * @param {FactorAndPowerArrayAndNumberString} 
      * @returns {HTMLLIElement}
      */
-    function pfArrAndNumStringToLi({ pfArr, correspondingNumString }) {
+    function fpArrAndNumStringToLi({ fpArr, correspondingNumString }) {
         const numStringWithCommas = getNumberStringWithCommas(correspondingNumString);
-        return pfArr ? createLi(getPfSpan(pfArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
+        return fpArr ? createLi(getPfSpan(fpArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
     }
 
-    pfDiv.appendChild(arrayToOl(factorPfArrsAndNumStrings, pfArrAndNumStringToLi));
+    pfDiv.appendChild(arrayToOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi));
     return pfDiv;
 }
 
@@ -989,12 +989,12 @@ const gcdAndLcmInfoHtml =
  * 
  * @typedef GcdAndLcmPfAnswer
  * @type {object}
- * @property {FactorAndPower[]} pf1
- * @property {FactorAndPower[]} pf2
  * 
  * @param {{euclideanIterations: EuclideanIteration[], gcdAndLcmPfAnswer: GcdAndLcmPfAnswer}} infoObject 
- * @property {?PfArrayAndNumberString} gcdPfArrAndNumString
- * @property {PfArrayAndNumberString} lcmPfArrAndNumString
+ * @property {FactorAndPower[]} input1FpArr
+ * @property {FactorAndPower[]} input2FpArr
+ * @property {?FactorAndPowerArrayAndNumberString} gcdFpArrAndNumString
+ * @property {FactorAndPowerArrayAndNumberString} lcmFpArrAndNumString
  * @param {string} inputString1
  * @param {string} inputString2
  * @returns {HTMLElement[]}
@@ -1046,7 +1046,7 @@ function getGcdAndLcmPfInfoDiv(answer, inputString1, inputString2) {
 
     /**
      * @param {string} gcdOrLcmText 
-     * @param {PfArrayAndNumberString}
+     * @param {FactorAndPowerArrayAndNumberString}
      */
         const div = createDiv();
         div.append(`The PF of the ${gcdOrLcmText} is `);
@@ -1058,14 +1058,14 @@ function getGcdAndLcmPfInfoDiv(answer, inputString1, inputString2) {
         return div;
     }
 
-    const { input1PfArr, input2PfArr, gcdPfArrAndNumString, lcmPfArrAndNumString } = answer;
+    const { input1FpArr, input2FpArr, gcdFpArrAndNumString, lcmFpArrAndNumString } = answer;
 
     /**
      * @type {Appendable}
      */
     const gcdInfoAppendable =
-        gcdPfArrAndNumString
         ? createInnerDiv2('GCD', gcdPfArrAndNumString)
+        gcdFpArrAndNumString
         : 'There are no common prime factors so the GCD is 1.';
 
     return createDiv(

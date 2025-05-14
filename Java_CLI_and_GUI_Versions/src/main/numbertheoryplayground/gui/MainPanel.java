@@ -6,6 +6,7 @@ import javax.swing.JTextField;
 import java.awt.*;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import numbertheoryplayground.sectionclasses.abstract_.*;
 
 import static numbertheoryplayground.Misc.*;
@@ -58,9 +59,10 @@ final class MainPanel extends NtpPanel {
         
         Font sectionBtnFont = GARAMOND_25;
         
-        var homeText = """
-            Welcome to the Number Theory Playground.
-            """;
+        String homeText =
+            ntpInfoParagraphStreamSupplier
+            .get()
+            .collect(Collectors.joining("\n\n"));
         
         JButton homeBtn = createButton("Home", sectionBtnFont);
         homeBtn.addActionListener(e -> {

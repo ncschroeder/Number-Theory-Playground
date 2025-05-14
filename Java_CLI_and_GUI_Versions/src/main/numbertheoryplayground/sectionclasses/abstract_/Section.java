@@ -67,22 +67,19 @@ public abstract sealed class Section
     
     protected Section(
         String heading,
+        List<String> infoParagraphs,
         long minInput,
         long maxInput,
         String actionSentencesEnding,
-        String cliInfoOptionEnding,
-        String info
+        String cliInfoOptionEnding
     ) {
         this.heading = heading;
+        this.infoParagraphs = infoParagraphs;
         this.minInput = minInput;
         this.maxInput = maxInput;
         this.actionSentencesEnding = String.format("get the %s.", actionSentencesEnding);
         this.cliInfoOptionEnding = cliInfoOptionEnding;
         
-        infoParagraphs =
-            Arrays.stream(info.split("\n\n"))
-            .map(s -> s.replace('\n', ' '))
-            .toList();
         
         var maxInputString = createStringWithCommas(maxInput);
 

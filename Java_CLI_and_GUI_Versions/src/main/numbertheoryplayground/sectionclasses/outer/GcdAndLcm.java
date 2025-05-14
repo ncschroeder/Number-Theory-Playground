@@ -4,9 +4,7 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.*;
-import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpPanel;
 import numbertheoryplayground.gui.NtpTextArea;
@@ -19,7 +17,7 @@ import static numbertheoryplayground.gui.NtpGui.*;
  * Utility class related to GCDs and LCMs and the section for it.
  */
 public class GcdAndLcm {
-    private static final Supplier<String> infoStartSupplier = () -> """
+    private static final List<String> INFO_PARAGRAPHS = """
 GCD stands for greatest common divisor and LCM stands for least common multiple. Greatest common
 divisor is also known as greatest common factor, or GCF. To find the GCD and LCM of 2 numbers, you
 could manually do some division and multiplication but there are other ways to find them.
@@ -28,7 +26,14 @@ The Euclidean algorithm can be used to find the GCD of 2 numbers. This algorithm
 ancient Greek mathematician Euclid. For this algorithm, first take 2 numbers. If the bigger number
 is divisible by the smaller number, then the smaller number is the GCD. Otherwise, the GCD of the 2
 numbers is the same as the GCD of the smaller number and the remainder when the bigger number is
-divided by the smaller number. Repeat.""";
+divided by the smaller number. Repeat."""
+    .transform(infoAbove ->
+        Stream.concat(
+            getParagraphStream(infoAbove),
+            PrimeFactorization.gcdAndLcmInfoParagraphStreamSupplier.get()
+        )
+        .toList()
+    );
     
     // This section uses prime factorizations so the input constraints for those will be used.
     
@@ -193,11 +198,11 @@ divided by the smaller number. Repeat.""";
         public Section() {
             super(
                 "GCD and LCM",
+                INFO_PARAGRAPHS,
                 MIN_INPUT,
                 MAX_INPUT,
                 "GCD and LCM info for those integers",
-                "GCDs and LCMs",
-                infoStartSupplier.get() + "\n\n" + PrimeFactorization.gcdAndLcmInfoSupplier.get()
+                "GCDs and LCMs"
             );
         }
         

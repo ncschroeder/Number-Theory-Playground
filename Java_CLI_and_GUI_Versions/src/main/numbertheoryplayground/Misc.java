@@ -2,11 +2,33 @@ package numbertheoryplayground;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Utility class with members that are used by multiple classes and don't fit in any other class.
  */
 public class Misc {
+    public static final Supplier<Stream<String>> ntpInfoParagraphStreamSupplier = () -> """
+"""
+        .transform(Misc::getParagraphStream);
+    
+    public static String replaceNewLineCharsWithSpaces(String s) {
+        return s.replace('\n', ' ');
+    }
+    
+    public static Stream<String> getParagraphStream(String info) {
+        return
+            Arrays.stream(info.split("\n\n"))
+            .map(Misc::replaceNewLineCharsWithSpaces);
+    }
+    
+    public static List<String> getParagraphList(String info) {
+        return getParagraphStream(info).toList();
+    }
+    
     // Max input constants
     public static final long FIVE_HUNDRED_BILLION = 500_000_000_000L;
     public static final long TEN_TRILLION = 10_000_000_000_000L;

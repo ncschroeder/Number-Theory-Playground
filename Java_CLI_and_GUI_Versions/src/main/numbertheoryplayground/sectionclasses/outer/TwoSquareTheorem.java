@@ -2,6 +2,8 @@ package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.List;
+import java.util.function.Supplier;
+import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
@@ -17,8 +19,9 @@ public class TwoSquareTheorem {
 The Two Square Theorem says that every prime number that is 1 above a multiple of 4 can be expressed as the sum
 of 2 square numbers. A square number is a number that can be formed by taking a number and multiplying it by
 itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9 (3^2). 29 is prime and is
-1 above 28 (4 x 7) and can be expressed as 2^2 (4) + 5^2 (25).""";
-    
+1 above 28 (4 × 7) and can be expressed as 2^2 (4) + 5^2 (25)."""
+        .transform(Misc::replaceNewLineCharsWithSpaces);
+
     private static final long MIN_INPUT = 0;
     private static final long MAX_INPUT = ONE_QUADRILLION;
     
@@ -81,12 +84,12 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
         public Section() {
             super(
                 "Two Square Theorem",
+                List.of(INFO),
                 MIN_INPUT,
                 MAX_INPUT,
                 "first prime number that's ≥ that integer and is 1 above a multiple of " +
                     "4, as well as the integers whose squares sum to that prime number",
-                "the Two Square Theorem",
-                INFO
+                "the Two Square Theorem"
             );
         }
         

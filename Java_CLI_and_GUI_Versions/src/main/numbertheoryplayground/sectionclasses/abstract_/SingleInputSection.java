@@ -11,13 +11,13 @@ import static numbertheoryplayground.Misc.createStringWithCommas;
 public abstract non-sealed class SingleInputSection extends Section {
     protected SingleInputSection(
         String heading,
+        List<String> infoParagraphs,
         long minInput,
         long maxInput,
         String actionSentencesEnding,
-        String cliInfoOptionEnding,
-        String info
+        String cliInfoOptionEnding
     ) {
-        super(heading, minInput, maxInput, actionSentencesEnding, cliInfoOptionEnding, info);
+        super(heading, infoParagraphs, minInput, maxInput, actionSentencesEnding, cliInfoOptionEnding);
     }
     
     /**

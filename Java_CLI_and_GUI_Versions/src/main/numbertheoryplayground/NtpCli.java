@@ -37,6 +37,10 @@ public class NtpCli {
     
     public static void main(String[] args) {
         inputReader = new Scanner(System.in);
+        String ntpInfo =
+            buildStringWithHeadingAndInfoParagraphs(
+                "Number Theory Playground", ntpInfoParagraphStreamSupplier.get()
+            );
         
         /*
         Setup and show main menu. There'll be options to go to the sections and an exit option.
@@ -51,7 +55,8 @@ public class NtpCli {
         
         
         var inputsAndSections = new HashMap<String, Section>();
-        var exitValue = "e";
+        final String ntpInfoValue = "i";
+        final String exitValue = "e";
         String menuString;
         
         {
@@ -75,18 +80,23 @@ public class NtpCli {
         while (true) {
             print(menuString);
             String input = getFormattedInput();
-            if (input.equals(exitValue)) {
-                println("\nI hope you found this interesting");
-                return;
-            }
             
-            var sectionToGoTo = inputsAndSections.get(input);
-            if (sectionToGoTo != null) {
-                goToSection(sectionToGoTo);
-            } else {
-                println();
-                printInvalidInput();
-                println();
+            switch (input) {
+                case ntpInfoValue:
+                    println(ntpInfo);
+                    break;
+                
+                case exitValue:
+                    println("I hope you found this interesting.");
+                    return;
+                    
+                default:
+                    var sectionToGoTo = inputsAndSections.get(input);
+                    if (sectionToGoTo != null) {
+                        goToSection(sectionToGoTo);
+                    } else {
+                        printInvalidInput();
+                    }
             }
         }
     }
@@ -104,19 +114,14 @@ public class NtpCli {
         final String randomValue = "r";
         final String infoValue = "i";
         final String menuValue = "m";
-        var sectionChoicesString =
-            getSectionChoicesString(section, randomValue, infoValue, menuValue);
         
-        /*
-        Let sectionInfo contain the paragraphs of section info with new lines inserted into the
-        paragraphs and with each paragraph separated by a blank line.
-         */
+        var sectionChoicesString =
+            buildSectionChoicesString(section, randomValue, infoValue, menuValue);
+        String sectionHeading = section.getHeading();
         String sectionInfo =
-            section
-            .getInfoParagraphs()
-            .stream()
-            .map(NtpCli::putNewLineChars)
-            .collect(Collectors.joining("\n\n"));
+            buildStringWithHeadingAndInfoParagraphs(
+                sectionHeading, section.getInfoParagraphs().stream()
+            );
         
         println();
         
@@ -201,6 +206,17 @@ public class NtpCli {
             );
         
         return buildStringWithStreamElementsOnSeparateLines(lines);
+    }
+    
+    private static String buildStringWithHeadingAndInfoParagraphs(
+        String headingStart, Stream<String> infoParagraphsStream
+    ) {
+        return
+            Stream.concat(
+                Stream.of(headingStart + " Info"),
+                infoParagraphsStream.map(NtpCli::putNewLineChars)
+            )
+            .collect(Collectors.joining("\n\n"));
     }
     
     /**

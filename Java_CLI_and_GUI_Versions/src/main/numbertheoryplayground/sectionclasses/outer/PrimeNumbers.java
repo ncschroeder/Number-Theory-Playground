@@ -17,21 +17,22 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
  * Utility class related to prime numbers and the section for it.
  */
 public class PrimeNumbers {
-    private static final String INFO = """
-A prime number, or a prime, is an integer >= 2 whose only integer factors are 1 and itself. A composite number
-is an integer >= 2 that has an integer factor other than 1 and itself. The first 10 primes are
-2, 3, 5, 7, 11, 13, 17, 19, 23, and 29. There are an infinite amount of them. The largest known prime is
+    private static final List<String> INFO_PARAGRAPHS = """
+A prime number, or a prime, is an integer ≥ 2 whose only integer factors are 1 and itself. A composite number
+is an integer ≥ 2 that has an integer factor other than 1 and itself. The first 10 primes are
+2, 3, 5, 7, 11, 13, 17, 19, 23, and 29. There are an infinite amount of primes. The largest known prime is
 2^136,279,841 - 1. It has 41,024,320 digits! Primes are used in 7 of the 10 sections in this application.
 
 With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To show why this is
 the case, let's have a variable i and let it represent any integer >= 6 that's a multiple of 6. We know that
 i is divisible by 2 and 3 so i + 2 and i + 4 are divisible by 2 and i + 3 is divisible by 3 but we don't have
 any guarantees about what i + 1 and i + 5 are divisible by. Therefore, that's where primes can be.
+the primes ≤ 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 29 is prime and 33 isn't."""
+        .transform(Misc::getParagraphList);
 
 An integer can be determined to be prime if it's not divisible by any primes <= the square root of that
 integer. This is called trial division. Let's determine if 29 and 33 are prime. 5^2 = 25 and 6^2 = 36 so the
 square roots of 29 and 33 are between 5 and 6. We check if the integers are divisible by 2, 3, or 5; which are
-the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     
     private static final long MIN_INPUT = 0;
     private static final long MAX_INPUT = TEN_TRILLION;
@@ -93,11 +94,11 @@ the primes <= 5. 29 isn't divisible by any of those and 33 is divisible by 3 so 
         public Section() {
             super(
                 "Prime Numbers",
+                INFO_PARAGRAPHS,
                 MIN_INPUT,
                 MAX_INPUT,
                 String.format("first %d prime numbers ≥ that integer", NUM_PRIMES_TO_FIND),
-                "prime numbers",
-                INFO
+                "prime numbers"
             );
         }
         

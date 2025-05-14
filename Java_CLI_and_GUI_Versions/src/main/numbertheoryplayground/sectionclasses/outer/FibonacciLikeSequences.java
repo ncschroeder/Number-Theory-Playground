@@ -19,23 +19,47 @@ import static numbertheoryplayground.gui.NtpGui.*;
  * Utility class related to Fibonacci-like sequences and the section for it.
  */
 public class FibonacciLikeSequences {
+    /*
+    BigIntegers are used to create sequences and BigDecimals must be used to find the ratio
+    between BigIntegers. The MathContexts below are used as part of the division between
+    BigDecimals. For consistency, MATH_CONTEXT_WITH_ROUNDING will also be used to calculate Phi
+    and 21 / 13.
+     */
+    
+    private static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
+    private static final MathContext MATH_CONTEXT_WITHOUT_ROUNDING =
+        new MathContext(MATH_CONTEXT_WITH_ROUNDING.getPrecision(), RoundingMode.UNNECESSARY);
+    
+    /**
+     * Phi = (1 + the square root of 5) / 2 ≈ 1.618.
+     */
+    public static final String PHI_STRING =
+        BigDecimal.valueOf(5)
+        .sqrt(MATH_CONTEXT_WITH_ROUNDING)
+        .add(BigDecimal.ONE, MATH_CONTEXT_WITH_ROUNDING)
+        .divide(BigDecimal.TWO, MATH_CONTEXT_WITH_ROUNDING)
+        .toPlainString();
+    
     /**
      * Approximately 1.618.
      */
-    private static final double PHI = (1 + Math.sqrt(5)) / 2;
     
-    public static final String INFO = """
+    private static final List<String> INFO_PARAGRAPHS = """
 I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every following number
 be the sum of the 2 previous numbers. The Fibonacci sequence does this and has 1 and 1 as its first 2 numbers.
 Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence
 is the Lucas sequence, which has 2 and 1 as its first 2 numbers. This sequence was named after 1800s French
 mathematician Francois Edouard Anatole Lucas.
 
-The Golden Ratio is an irrational number symbolized by the Greek letter Phi. Phi = (1 + the square root of 5) / 2,
-which is approximately %s. As we advance further and further into a Fibonacci-like sequence, the ratio between
-a number and the number before it gets closer and closer to Phi. For example, the first 8 numbers of the
-Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 / 13 is approximately %s."""
-    .formatted(PHI, (double) 21 / 13 /* ~1.615 */);
+The Golden Ratio is an irrational number symbolized by the Greek letter Phi. Phi =
+(1 + the square root of 5) / 2 ≈ %s. As we advance further and further into a Fibonacci-like sequence, the
+ratio between a number and the number before it gets closer and closer to Phi. For example, the first 8
+numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ %s."""
+        .formatted(
+            PHI_STRING,
+            BigDecimal.valueOf(21).divide(BigDecimal.valueOf(13), MATH_CONTEXT_WITH_ROUNDING) /* ~1.615 */
+        )
+        .transform(Misc::getParagraphList);
     
     private static final long MIN_INPUT = 1;
     private static final long MAX_INPUT = NINE_QUINTILLION;
@@ -96,9 +120,6 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         return sequence;
     }
     
-    private static final MathContext noRoundingMathContext =
-        new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
-    
     static String getRatioExpression(BigInteger bigInt1, BigInteger bigInt2) {
         var bigDecimal1 = new BigDecimal(bigInt1);
         var bigDecimal2 = new BigDecimal(bigInt2);
@@ -127,6 +148,7 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
         public Section() {
             super(
                 "Fibonacci-Like Sequences",
+                INFO_PARAGRAPHS,
                 MIN_INPUT,
                 MAX_INPUT,
                 String.format(
@@ -134,8 +156,7 @@ Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2. 8 / 5 = 1.6. 21 
                         "as well as the ratios between some consecutive integers in the sequence",
                     SEQUENCE_LENGTH
                 ),
-                "Fibonacci-like sequences",
-                INFO
+                "Fibonacci-like sequences"
             );
         }
         

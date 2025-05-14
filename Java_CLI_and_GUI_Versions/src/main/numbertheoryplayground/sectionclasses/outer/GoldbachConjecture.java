@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
 import numbertheoryplayground.gui.NtpTextArea;
@@ -19,10 +20,11 @@ import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePr
  */
 public class GoldbachConjecture {
     private static final String INFO = """
-The Goldbach Conjecture says that every even number >= 4 can be expressed as the sum of 2 prime numbers.
+The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers.
 This was named after 1700s Prussian mathematician Christian Goldbach. A conjecture is a statement that is
 believed to be true but has not been proven to be true. The Goldbach Conjecture has been verified to be
-true for all even numbers >= 4 && <= 4 x 10^18.""";
+true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
+        .transform(Misc::replaceNewLineCharsWithSpaces);
     
     private static final long MIN_INPUT = 4;
     private static final long MAX_INPUT = 1_500_000;
@@ -70,11 +72,11 @@ true for all even numbers >= 4 && <= 4 x 10^18.""";
         public Section() {
             super(
                 "Goldbach Conjecture",
+                List.of(INFO),
                 MIN_INPUT,
                 MAX_INPUT,
                 "pairs of prime numbers that sum to that integer",
-                "the Goldbach Conjecture",
-                INFO
+                "the Goldbach Conjecture"
             );
         }
         

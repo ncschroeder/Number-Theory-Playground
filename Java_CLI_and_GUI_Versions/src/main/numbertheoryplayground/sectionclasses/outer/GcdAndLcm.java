@@ -18,22 +18,32 @@ import static numbertheoryplayground.gui.NtpGui.*;
  */
 public class GcdAndLcm {
     private static final List<String> INFO_PARAGRAPHS = """
-GCD stands for greatest common divisor and LCM stands for least common multiple. Greatest common
-divisor is also known as greatest common factor, or GCF. To find the GCD and LCM of 2 numbers, you
-could manually do some division and multiplication but there are other ways to find them.
+GCD stands for greatest common divisor and is also known as greatest common factor, or GCF.
+LCM stands for least common multiple. To find the GCD and LCM of 2 whole numbers, you could
+manually do some division and multiplication but there are other ways to find them.
 
-The Euclidean algorithm can be used to find the GCD of 2 numbers. This algorithm was named after the
-ancient Greek mathematician Euclid. For this algorithm, first take 2 numbers. If the bigger number
-is divisible by the smaller number, then the smaller number is the GCD. Otherwise, the GCD of the 2
-numbers is the same as the GCD of the smaller number and the remainder when the bigger number is
-divided by the smaller number. Repeat."""
-    .transform(infoAbove ->
-        Stream.concat(
-            getParagraphStream(infoAbove),
-            PrimeFactorization.gcdAndLcmInfoParagraphStreamSupplier.get()
-        )
-        .toList()
-    );
+The Euclidean algorithm can be used to find just the GCD of 2 integers. This was named after
+the ancient Greek mathematician Euclid.
+
+A simple way of explaining this algorithm is that it starts with 2 whole numbers that we want
+to find the GCD of and if the max of those numbers is divisible by the min, then that min is
+the GCD. Otherwise, the GCD of the 2 numbers is the same as the GCD of the min and the
+remainder when the max is divided by the min. Repeat.
+
+Another way of explaining this algorithm is that it consists of iterations and each one
+consists of a max number, min number, and remainder when the max number is divided by the min
+number. These'll be referred to as just the max, min, and remainder. The first iteration has a
+max of the max of 2 whole numbers that you want to find the GCD of. The min of this iteration
+is the min of those 2 numbers. If the remainder is 0, then the algorithm is done and the GCD of
+the 2 numbers that we wanted to find the GCD of is the min of this iteration. Otherwise, we do
+another iteration and the max of the new iteration is the min of the last iteration and the min
+of the new iteration is the remainder of the last iteration. Again, we check if the remainder
+is 0 and if it is, then the min of this iteration is the GCD. Otherwise, we keep doing
+iterations until we get a remainder of 0.
+
+%s"""
+        .formatted(PrimeFactorization.gcdAndLcmInfoSupplier.get())
+        .transform(getParagraphList);
     
     // This section uses prime factorizations so the input constraints for those will be used.
     
@@ -201,7 +211,7 @@ divided by the smaller number. Repeat."""
                 INFO_PARAGRAPHS,
                 MIN_INPUT,
                 MAX_INPUT,
-                "GCD and LCM info for those integers",
+                "GCD and LCM info for those numbers",
                 "GCDs and LCMs"
             );
         }

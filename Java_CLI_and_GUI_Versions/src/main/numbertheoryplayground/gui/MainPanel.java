@@ -85,20 +85,19 @@ final class MainPanel extends NtpPanel {
                 maxInput = section.getMaxInput();
                 sectionHeadingLabel.setText(section.getHeading());
                 sectionInfoTextArea.setText(String.join("\n\n", section.getInfoParagraphs()));
-                boolean oneIntegerNeeded = section.isSingleInputSection();
                 
                 String actionSentence =
                     String.format(
-                        "Enter or generate %s and click the Calculate button to %s",
-                        oneIntegerNeeded ? "an integer" : "2 integers",
-                        section.getActionSentenceEnding()
+                        "Enter or generate %s and click the \"Calculate\" button to %s",
+                        section.isSingleInputSection() ? "a number" : "2 numbers",
+                        section.getActionSentencesEnding()
                     );
                 directionsTextArea.setText(actionSentence + ' ' + section.getInputInfoSentences());
                 
                 inputPanel1.clearTextField();
                 inputPanel1.setVisible(true);
                 inputPanel2.clearTextField();
-                inputPanel2.setVisible(!oneIntegerNeeded);
+                inputPanel2.setVisible(!section.isSingleInputSection());
                 calcBtn.setVisible(true);
                 answerPanel.clear();
             });

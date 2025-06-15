@@ -19,15 +19,15 @@ import static numbertheoryplayground.gui.NtpGui.*;
  */
 public class AncientMultiplication {
     private static final List<String> INFO_PARAGRAPHS = """
-The ancient Egyptians had an interesting algorithm for multiplication. My way of explaining the algorithm
-goes like this:
+The ancient Egyptians had an interesting algorithm for multiplication of 2 whole numbers.
+My way of explaining the algorithm goes like this:
 
-1. Let variable a represent 1 of the numbers and variable b represent the other number.
+1. Let variable a represent one of the numbers and variable b represent the other number.
 
-2. Find all powers of 2 that are ≤ a. This could be done without modern multiplication by starting with 1,
-the 1st power of 2 or 2^0, and finding the next power by adding the previous power to itself. This process
-will look like: 1 + 1 = 2 (2^1), 2 + 2 = 4 (2^2), 4 + 4 = 8 (2^3), and so on until we find a power that's > a,
-which we won't use.
+2. Find all powers of 2 that are ≤ a. This could be done without modern multiplication by
+starting with 1, the first power of 2 or 2^0, and finding the next power by adding the previous
+power to itself. This process will look like: 1 + 1 = 2 (2^1), 2 + 2 = 4 (2^2), 4 + 4 = 8 (2^3),
+and so on until we find a power that's > a, which we won't use.
 
 3. Find the products of b and these powers of 2. Like with the powers of 2, this could be done by starting
 with b and finding the next product by adding the previous product to itself. If we let b be 5, this process
@@ -39,13 +39,15 @@ will look like: 5 + 5 = 10 (5 × 2), 10 + 10 = 20 (5 × 4), 20 + 20 = 40 (5 × 8
 
 This gives us the product of the 2 numbers.
 
-Let's find the product of 5 and 12. Let's first use 5 for the number represented by a in the algorithm above
-and 12 for b. The powers of 2 ≤ 5 are 1, 2, and 4. The products of 12 and these powers are 12, 24, and 48.
-The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers are 12 and 48. 12 + 48 =
-(12 × 1) + (12 × 4) = 12 × (1 + 4) = 60. Now let's use 12 for a and 5 for b. The powers of 2 ≤ 12 are
-1, 2, 4, and 8. The products of 5 and these powers are 5, 10, 20, and 40. The powers of 2 that sum to 12 are
-4 and 8. The products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 × (4 + 8) = 60."""
     .transform(Misc::getParagraphList);
+Let's find the product of 5 and 12. Let's first use 5 for the number represented by a in the
+algorithm above and 12 for b. The powers of 2 ≤ 5 are 1, 2, and 4. The products of 12 and these
+powers are 12, 24, and 48. The powers of 2 that sum to 5 are 1 and 4. The products of 12 and
+these powers are 12 and 48. 12 + 48 = (12 × 1) + (12 × 4) = 12 × (1 + 4) = 60.
+
+Now let's use 12 for a and 5 for b. The powers of 2 ≤ 12 are 1, 2, 4, and 8. The products of 5
+and these powers are 5, 10, 20, and 40. The powers of 2 that sum to 12 are 4 and 8. The
+products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 × (4 + 8) = 60."""
     
     private static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = NINE_QUINTILLION;
@@ -89,7 +91,7 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
             
             mainHeading =
                 String.format("Ancient Egyptian Multiplication Info for %s and %s", input1String, input2String);
-            allPowersOf2ColumnHeading = "Powers of 2 <= " + input1String;
+            allPowersOf2ColumnHeading = "Powers of 2 ≤ " + input1String;
             input2MultiplesColumnHeading = "Corresponding Multiples of " + input2String;
             powersOf2ThatSumToInput1ColumnHeading = "Powers of 2 That Sum to " + input1String;
             BigInteger product = BigInteger.valueOf(input1).multiply(BigInteger.valueOf(input2));
@@ -141,7 +143,7 @@ The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers a
                 INFO_PARAGRAPHS,
                 MIN_INPUT,
                 MAX_INPUT,
-                "ancient Egyptian multiplication info for those integers",
+                "ancient Egyptian multiplication info for those numbers",
                 "ancient Egyptian multiplication"
             );
         }

@@ -16,11 +16,13 @@ import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.isPrime;
  */
 public class TwoSquareTheorem {
     private static final String INFO = """
-The Two Square Theorem says that every prime number that is 1 above a multiple of 4 can be expressed as the sum
-of 2 square numbers. A square number is a number that can be formed by taking a number and multiplying it by
-itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9 (3^2). 29 is prime and is
-1 above 28 (4 × 7) and can be expressed as 2^2 (4) + 5^2 (25)."""
         .transform(Misc::replaceNewLineCharsWithSpaces);
+The Two Square Theorem says that every prime number that's 1 above a multiple of 4 can be
+expressed as the sum of 2 square numbers. A square number, also known as a perfect square, is
+a number that can be formed by taking an integer and multiplying it by itself, or squaring it.
+The first 4 square numbers are 0 (0^2), 1 (1^2 or (-1)^2), 4 (2^2 or (-2)^2), and
+9 (3^2 or (-3)^2). An example of a number that's prime and is 1 above a multiple of 4 is 29
+and it can be expressed as 2^2 (4) + 5^2 (25)."""
 
     private static final long MIN_INPUT = 0;
     private static final long MAX_INPUT = ONE_QUADRILLION;
@@ -60,7 +62,8 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
             
             infoSentence =
                 String.format(
-                    "The first integer >= %s that is prime and is 1 above a multiple of 4 is %s, which is %s + %s.",
+                    "The first number ≥ %s that's prime and is 1 above a multiple of 4 is %s, " +
+                        "which is %s + %s.",
                     inputString,
                     createStringWithCommas(primeNum),
                     createLongAndSquareString(a),
@@ -87,8 +90,8 @@ itself, or squaring it. The first few square numbers are 1 (1^2), 4 (2^2), and 9
                 List.of(INFO),
                 MIN_INPUT,
                 MAX_INPUT,
-                "first prime number that's ≥ that integer and is 1 above a multiple of " +
-                    "4, as well as the integers whose squares sum to that prime number",
+                "the first prime number that's ≥ that number and is 1 above a multiple " +
+                    "of 4, as well as the whole numbers whose squares sum to that prime number",
                 "the Two Square Theorem"
             );
         }

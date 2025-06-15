@@ -19,19 +19,23 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
  */
 public final class PrimeFactorization {
     private static final List<String> INFO_PARAGRAPHS = """
-The Fundamental Theorem of Arithmetic says that every integer > 1 can be expressed as the product of
-prime numbers. The prime factorization (PF) of an integer is an expression of the prime numbers whose
-product is that integer. For example; the PF of 5 is just 5, the PF of 25 is 5^2, and the PF of 12,250
-is 2 × 5^3 × 7^2. There are some interesting applications for this. Visit the "Divisibility" or
+The Fundamental Theorem of Arithmetic says that every whole number > 1 can be expressed as the
+product of prime numbers in 1 way if you ignore the order of those prime numbers. The prime
+factorization (PF) of a whole number > 1 is an expression of the prime numbers whose product is
+that number. For example; the PF of 5 is just 5, the PF of 25 is 5^2, and the PF of 12,250 is
+2 × 5^3 × 7^2 if the prime numbers are in ascending order. 12,250 could also be expressed as
+5^3 × 2 × 7^2 but that's the same expression as the previous one if you ignore the order of the
+prime numbers. The Number Theory Playground displays PFs with the prime numbers in ascending
+order. There are some interesting applications for PFs. See the info for the "Divisibility" or
 "GCD and LCM" sections for some applications.
 
 The input number with the highest amount of prime factors is 2^53, or 9,007,199,254,740,992; the
-largest power of 2 <= 10 quadrillion. An input number with the highest amount of unique prime factors
-is 304,250,263,527,210. This number is the product of the first 13 prime numbers so it has 13 unique
-multiply that number by 2 or 3 and those numbers are <= the max input and have the same amount of
-prime factors and its PF is 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41. You could also
-unique prime factors."""
         .transform(Misc::getParagraphList);
+largest power of 2 ≤ 10 quadrillion, the max input. An input number with the highest amount of
+unique prime factors is 304,250,263,527,210. This number is the product of the first 13 prime
+numbers so it has 13 unique prime factors and its PF is
+2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41. You could also multiply that number
+by 2 or 3 and those numbers are ≤ the max input and have the same amount of unique prime factors."""
     static final long MIN_INPUT = 2;
     static final long MAX_INPUT = TEN_QUADRILLION;
     
@@ -175,16 +179,16 @@ unique prime factors."""
         return String.format("The PF of %s is %s.", correspondingBigIntString, this);
     }
     
-    static final String FACTORS_INFO_PARAGRAPH = """
-The factors of an integer can be found by looking at its prime factorization (PF). Let's have a
-variable i and let it represent an integer > 1. First, you can find how many factors i has by looking
-at i's PF, taking all the powers of the factors, adding 1 to each, and then multiplying all these
-together. For example, the PF of 36 is 2^2 × 3^2. The powers are 2 and 2, so there are 3 × 3 = 9
-factors. However, that count includes 1 and the number that the PF is for (36 in this case). If you
-want to exclude those, then subtract 2. That would give us 7 factors. You can find the factors of i by
-finding all the PFs within i's PF, or the "sub-factorizations", as I like to call them. For 2^2 × 3^2,
-the sub-factorizations are 2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18)."""
-        .transform(Misc::replaceNewLineCharsWithSpaces);
+    static final Supplier<String> factorsInfoParagraphSupplier = () -> """
+The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's
+have a variable n and let it represent a whole number > 1. First, you can find how many factors
+n has by looking at n's PF, taking all the powers of the factors, adding 1 to each, and then
+multiplying all these together. For example, the PF of 36 is 2^2 × 3^2. The powers are 2 and 2,
+so there are 3 × 3 = 9 factors. However, that count includes 1 and the number that the PF is for
+(36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors.
+You can find the factors of n by finding all the PFs within n's PF, or the "sub-factorizations",
+as I like to call them. For 2^2 × 3^2, the sub-factorizations are
+2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).""";
     
     /**
      * This method calculates the number of factors and returns a string that says the number
@@ -199,14 +203,19 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), an
             powerStrings.add(String.format("(%d + 1)", fp.power));
         }
         
+        var infoEnd =
+            numFactors == 3
+            ? "'s 1 factor"
+            : String.format(" are %s factors", createStringWithCommas(numFactors - 2));
+        
         return String.format(
             "By looking at the power%s, we can see there are %s = %s factors. If 1 and %s are " +
-                "excluded then there are %s factors.",
+                "excluded then there%s.",
             factorsAndPowers.size() == 1 ? "" : "s",
-            String.join(" x ", powerStrings),
+            String.join(" × ", powerStrings),
             createStringWithCommas(numFactors),
             correspondingBigIntString,
-            createStringWithCommas(numFactors - 2)
+            infoEnd
         );
     }
     
@@ -275,7 +284,7 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), an
                 INFO_PARAGRAPHS,
                 MIN_INPUT,
                 MAX_INPUT,
-                "prime factorization of that integer",
+                "the prime factorization of that number",
                 "prime factorizations"
             );
         }
@@ -293,35 +302,35 @@ the sub-factorizations are 2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), an
         }
     }
     
-    static final Supplier<Stream<String>> gcdAndLcmInfoParagraphStreamSupplier = () -> """
-The GCD and LCM of 2 integers can be found by looking at their prime factorizations (PFs). If those
-integers don't have any common prime factors, then the GCD is 1. If they do have common prime factors,
-then the GCD PF consists of all the common prime factors and the power of each factor is the min of
-the powers of that factor in the 2 PFs. The LCM PF consists of all factors that are in either of the
-PFs of the 2 integers. If a factor is in both PFs then the power of that factor in the LCM PF is the
-max of the powers of that factor in the 2 PFs. If a factor is unique to one of the PFs then that
-factor and its power are in the LCM PF.
+    
+    static final Supplier<String> gcdAndLcmInfoSupplier = () -> """
+The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs).
+If those numbers don't have any common prime factors, then the GCD is 1. If they do have common
+prime factors, then the GCD PF consists of all the common prime factors and the power of each
+factor is the min of the powers of that factor in the 2 PFs. The LCM PF consists of all factors
+that are in either of the PFs of the 2 numbers. If a factor is in both PFs, then the power of
+that factor in the LCM PF is the max of the powers of that factor in the 2 PFs. If a factor is
+unique to one of the PFs, then that factor and its power are in the LCM PF.
 
 Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is 2 × 3 and the PF of 35 is 5 × 7.
 There are no common prime factors so the GCD is 1. The LCM PF is 2 × 3 × 5 × 7, which is 210.
 
-Let's find the GCD and LCM of 54 and 99. The PF of 54 is 2 × 3^3 and the PF of 99 is 3^2 × 11. 3 is
-the only common prime factor and the min power of it is 2 so the GCD PF is 3^2, which is 9. The max
-power of 3 is 3 so the LCM PF consists of 3^3. The LCM PF is 2 × 3^3 × 11, which is 594.
+Let's find the GCD and LCM of 54 and 99. The PF of 54 is 2 × 3^3 and the PF of 99 is 3^2 × 11.
+3 is the only common prime factor and the min power of it is 2 so the GCD PF is 3^2, which is 9.
+The max power of 3 is 3 so 3^3 is in the LCM PF. The LCM PF is 2 × 3^3 × 11, which is 594.
 
-The input integers whose LCM is the highest are 5,000,000,000,000,000, the max input, and
-4,999,999,999,999,999, the max input - 1. The LCM is 24,999,999,999,999,995,000,000,000,000,000, or
-24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion! It has 32
-digits. Trillion is before quadrillion.
+The input numbers whose LCM is the highest are 5 quadrillion (5,000,000,000,000,000),
+the max input; and 5 quadrillion - 1. The LCM is 24,999,999,999,999,995,000,000,000,000,000,
+or 24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion!
+It has 32 digits. Trillion is before quadrillion.
 
-A pair of input integers whose LCM might have the highest amount of unique prime factors is
-304,250,263,527,210, the product of the first 13 prime numbers, and 133,869,006,807,307, the product
-of the next 8 prime numbers. The LCM is 40,729,680,599,249,024,150,621,323,470, or 40 octillion ...
-It has 29 digits and 21 unique prime factors and its PF is
+A pair of input numbers whose LCM might have the highest amount of unique prime factors is
+304,250,263,527,210, the product of the first 13 prime numbers; and 133,869,006,807,307,
+the product of the next 8 prime numbers. The LCM is 40,729,680,599,249,024,150,621,323,470,
+or 40 octillion ... It has 29 digits and 21 unique prime factors and its PF is
 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41 × 47 × 53 × 59 × 61 × 67 × 71 × 73!
-Other pairs of input integers have the same LCM, such as that first input integer divided by 2 and the
-second input integer multiplied by 2."""
-        .transform(Misc::getParagraphStream);
+Other pairs of input numbers have the same LCM, such as that first input number divided by 2 and
+the second input number multiplied by 2.""";
     
     /**
      * This class uses prime factorizations to find the greatest common divisor (GCD) and least common

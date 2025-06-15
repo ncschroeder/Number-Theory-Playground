@@ -77,7 +77,7 @@ public abstract sealed class Section
         this.infoParagraphs = infoParagraphs;
         this.minInput = minInput;
         this.maxInput = maxInput;
-        this.actionSentencesEnding = String.format("get the %s.", actionSentencesEnding);
+        this.actionSentencesEnding = String.format("get %s.", actionSentencesEnding);
         this.cliInfoOptionEnding = cliInfoOptionEnding;
         
         
@@ -85,11 +85,12 @@ public abstract sealed class Section
 
         /*
         If the max input is one of the longs that's a key in the map below, have the 1st input
-        info sentence say that the input integer(s) should be ≤ the corresponding string value
+        info sentence say that the input number(s) should be ≤ the corresponding string value
         in the map followed by the long with commas in parentheses. If the max input isn't one of
-        the longs that's a key in the map, then just say that input integer(s) should be less than
-        that long with commas. The max inputs that aren't keys are 10,000 and 1.5 million, the
-        max inputs for the Pythagorean triples and Goldbach Conjecture sections, respectively.
+        the longs that's a key in the map, then have that sentence just say that input number(s)
+        should be ≤ that long with commas. The max inputs that aren't keys are 10,000 and
+        1.5 million, the max inputs for the Pythagorean triples and Goldbach Conjecture sections,
+        respectively.
         
         Longs can't be used as the selector for switch statements and expressions, which seems
         pathetic. Using a map seems to be the next best option.
@@ -112,13 +113,23 @@ public abstract sealed class Section
             )
             .orElse(maxInputString);
 
+        var inputInfoSentence1Part1 =
+            isSingleInputSection()
+            ? "this number be a whole number that's"
+            : "these numbers be whole numbers that are";
+        
+        var inputInfoSentence1Part2Format =
+            needsEvenInput()
+            ? "even, ≥ %d, & ≤ %s"
+            : "≥ %d & ≤ %s";
+        
+        var inputInfoSentence1Part2 =
+            String.format(inputInfoSentence1Part2Format, minInput, maxInputSentencePart);
+
         inputInfoSentences =
             String.format(
-                "Have %s be %s≥ %d & ≤ %s. Commas are optional.",
-                isSingleInputSection() ? "this integer" : "these integers",
-                needsEvenInput() ? "even && " : "",
-                minInput,
-                maxInputSentencePart
+                "Have %s %s. Commas are optional.",
+                inputInfoSentence1Part1, inputInfoSentence1Part2
             );
     }
     

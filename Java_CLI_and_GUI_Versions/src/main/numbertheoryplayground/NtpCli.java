@@ -62,8 +62,9 @@ public class NtpCli {
         {
             var menuLines = new ArrayList<String>();
             menuLines.add("You're at the main menu. Which section would you like to go to?");
-            var inputForSection = 1;
+            menuLines.add(String.format(" (%s) Get info about the Number Theory Playground", ntpInfoValue));
             
+            var inputForSection = 1;
             for (var section : Section.createInstances()) {
                 var maybeIndent = inputForSection < 10 ? " " : "";
                 menuLines.add(String.format("%s(%d) %s", maybeIndent, inputForSection, section.getHeading()));
@@ -174,13 +175,12 @@ public class NtpCli {
     /**
      */
     private static String getSectionChoicesString(Section section, String randomValue, String infoValue, String menuValue) {
-        boolean oneIntegerNeeded = section.isSingleInputSection();
         
         String actionSentence =
             String.format(
                 "%s to %s",
-                oneIntegerNeeded ? "An integer" : "2 space-separated integers",
                 section.getActionSentenceEnding()
+                section.isSingleInputSection() ? "A number" : "2 space-separated numbers",
             );
         String intChoice = actionSentence + ' ' + section.getInputInfoSentences();
         
@@ -188,8 +188,8 @@ public class NtpCli {
             String.format(
                 "(%s) to generate %s and %s",
                 randomValue,
-                oneIntegerNeeded ? "a random integer" : "2 random integers",
                 section.getActionSentenceEnding()
+                section.isSingleInputSection() ? "a random number" : "2 random numbers",
             );
         
         String infoChoice =

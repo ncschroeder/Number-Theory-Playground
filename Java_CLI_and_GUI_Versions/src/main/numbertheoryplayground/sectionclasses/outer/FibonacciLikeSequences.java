@@ -45,16 +45,18 @@ public class FibonacciLikeSequences {
      */
     
     private static final List<String> INFO_PARAGRAPHS = """
-I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every following number
-be the sum of the 2 previous numbers. The Fibonacci sequence does this and has 1 and 1 as its first 2 numbers.
-Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence
-is the Lucas sequence, which has 2 and 1 as its first 2 numbers. This sequence was named after 1800s French
-mathematician Francois Edouard Anatole Lucas.
+I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every
+following number be the sum of the 2 previous numbers. The Fibonacci sequence does this and the
+first 8 numbers of it are 1, 1, 2, 3, 5, 8, 13, and 21. Fibonacci was a mathematician from the
+1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence is the Lucas sequence and
+the first 8 numbers of it are 2, 1, 3, 4, 7, 11, 18, and 29. This sequence was named after
+1800s French mathematician Francois Edouard Anatole Lucas.
 
-The Golden Ratio is an irrational number symbolized by the Greek letter Phi. Phi =
-(1 + the square root of 5) / 2 ≈ %s. As we advance further and further into a Fibonacci-like sequence, the
-ratio between a number and the number before it gets closer and closer to Phi. For example, the first 8
-numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ %s."""
+The Golden Ratio is an irrational number symbolized by the Greek letter Phi.
+Phi = (1 + the square root of 5) / 2 ≈ %s. As we advance further and further into a
+Fibonacci-like sequence, the ratio between a number and the number before it gets closer and
+closer to Phi. For example, recall that the first 8 numbers of the Fibonacci sequence are
+1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ %s."""
         .formatted(
             PHI_STRING,
             BigDecimal.valueOf(21).divide(BigDecimal.valueOf(13), MATH_CONTEXT_WITH_ROUNDING) /* ~1.615 */
@@ -70,10 +72,11 @@ numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8
         private final Stream<String> stringSequence;
 
         /**
-         * Contains a sentence about what Phi approximately is and sentences about the ratios between the
-         * 5th and 4th, 10th and 9th, 15th and 14th, and 20th and 19th numbers in bigIntSequence.
+         * The first 4 elements are expressions about the ratios between the 5th and 4th,
+         * 10th and 9th, 15th and 14th, and 20th and 19th numbers in bigIntSequence.
+         * The 5th element is an expression about what Phi approximately is.
          */
-        private final Stream<String> phiAndRatioExpressions;
+        private final Stream<String> ratioAndPhiExpressions;
 
         private Answer(long input1, long input2, String input1String, String input2String) {
             // Call getBigIntSequence first to see if it throws.
@@ -81,7 +84,7 @@ numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8
             
             sequenceHeading =
                 String.format(
-                    "The first %d integers in the Fibonacci-like sequence that starts with %s and %s are:",
+                    "The first %d numbers in the Fibonacci-like sequence that starts with %s and %s are:",
                     SEQUENCE_LENGTH, input1String, input2String
                 );
 
@@ -90,11 +93,11 @@ numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8
             Stream<String> ratioExpressions =
                 IntStream.of(3, 8, 13, 18)
                 .mapToObj(i -> getRatioExpression(bigIntSequence.get(i), bigIntSequence.get(i + 1)));
-                
-            phiAndRatioExpressions =
+            
+            ratioAndPhiExpressions =
                 Stream.concat(
-                    Stream.of(String.format("Phi ≈ %s.", PHI)),
-                    ratioExpressions
+                    ratioExpressions,
+                    Stream.of("Phi ≈ " + PHI_STRING)
                 );
         }
     }
@@ -152,8 +155,8 @@ numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8
                 MIN_INPUT,
                 MAX_INPUT,
                 String.format(
-                    "first %d integers in the Fibonacci-like sequence that starts with those integers, " +
-                        "as well as the ratios between some consecutive integers in the sequence",
+                    "the first %d numbers in the Fibonacci-like sequence that starts with those numbers, " +
+                        "as well as the ratios between some consecutive numbers in that sequence",
                     SEQUENCE_LENGTH
                 ),
                 "Fibonacci-like sequences"
@@ -170,8 +173,7 @@ numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8
             var sequenceStringWithHeading =
                 NtpCli.buildStringWithStreamElementsOnShortLines(heading, answer.stringSequence);
             var phiAndRatioExpressionsString =
-                NtpCli.buildStringWithStreamElementsOnSeparateLines(answer.phiAndRatioExpressions);
-            
+                NtpCli.buildStringWithStreamElementsOnSeparateLines(answer.ratioAndPhiExpressions);
             return sequenceStringWithHeading + "\n\n" + phiAndRatioExpressionsString;
         }
         
@@ -186,7 +188,7 @@ numbers of the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8
                 createListHeadingLabel(answer.sequenceHeading),
                 NtpTextArea.createNarrowOneWithStreamElements(answer.stringSequence),
                 createGapBetweenAnswerSections(),
-                NtpTextArea.createWithStreamElementsOnSeparateLines(answer.phiAndRatioExpressions)
+                NtpTextArea.createWithStreamElementsOnSeparateLines(answer.ratioAndPhiExpressions)
             );
         }
     }

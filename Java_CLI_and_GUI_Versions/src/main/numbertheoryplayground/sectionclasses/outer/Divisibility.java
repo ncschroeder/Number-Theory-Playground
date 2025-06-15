@@ -17,42 +17,41 @@ import static numbertheoryplayground.gui.NtpGui.*;
  */
 public class Divisibility {
     private static final List<String> INFO_PARAGRAPHS = """
-Say we have 2 integers that we'll represent with the variables a and b. If we divide a by b and get
-no remainder, then a is said to be divisible by b and b is said to be a factor or divisor of a. If
-you want to find some factors of an integer, you could manually do some division but there are other
-ways to find them.
+Say we have 2 whole numbers that we'll represent with the variables a and b. If we divide a by
+b and get no remainder, then a is said to be divisible by b and b is said to be a factor or
+divisor of a. If you want to find some whole number factors of a whole number, you could
+manually do some division but there are other ways to find them.
 
-Some rules can be used to find some of the factors of an integer. I'll go over 1 rule for each
-integer in the range of 3 to 12, excluding 5 and 10, though there are rules for more integers and
-many integers have multiple rules. I'll go over an example of using these rules to find the factors
-of an integer in the next paragraph. Let's have a variable i and let it represent an integer. If the
-last 2 digits of i is divisible by 4, then i is divisible by 4. If the last 3 digits of i is
-divisible by 8, then i is divisible by 8. If the sum of the digits of i is divisible by 3, then i is
-divisible by 3. If the sum of the digits of i is divisible by 9, then i is divisible by 9. If i is
-even and divisible by 3, then it's also divisible by 6. If i is divisible by both 3 and 4, then it's
-also divisible by 12. For 7, we split the integer into blocks of 3 from right to left. Coincidentally,
-these are the blocks separated by commas if we write the integer with commas. We do an alternating
-sum of the blocks from right to left. We start with 0, add the last block, subtract the second to
-last block, add the third to last block, and so on for all the blocks. If this alternating sum is
-divisible by 7, then i is divisible by 7. For 11, we do an alternating sum of digits from left to
-right. We start with 0, add the first digit, subtract the second digit, add the third digit, and so
-on for all digits. If this alternating sum is divisible by 11, then i is divisible by 11.
+%s
 
-PF that i is divisible by all the numbers mentioned above. Let's check using the rules. The last 2
-Here's an example. Let i be 4,695,768. The PF of i is 2^3 × 3^2 × 7^2 × 11^3. We can tell from that
-digits are 68, which is divisible by 4. The last 3 digits are 768, which is divisible by 8. The sum
-of the digits is 45, which is divisible by 3 and 9. Since i is even and divisible by 3, it's also
-divisible by 6. Since i is divisible by both 3 and 4, it's also divisible by 12. The alternating sum
-of blocks of 3 from right to left is 768 - 695 + 4 = 77, which is divisible by 7. The alternating
-sum of digits from left to right is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible
-by 11."""
-    .transform(infoAbove ->
-        Stream.concat(
-            getParagraphStream(infoAbove),
-            Stream.of(PrimeFactorization.FACTORS_INFO_PARAGRAPH)
-        )
-        .toList()
-    );
+Some rules can be used to determine if a whole number is divisible by another whole number.
+I'll go over 1 rule for each whole number in the range of 3 to 12, excluding 5 and 10, though
+there are rules for more whole numbers and many whole numbers have multiple rules. I'll go over
+an example of using these rules to find the factors of a whole number in the next paragraph.
+Let's have a variable n and let it represent an whole number. If the last 2 digits of n is
+divisible by 4, then n is divisible by 4. If the last 3 digits of n is divisible by 8, then n
+is divisible by 8. If the sum of the digits of n is divisible by 3, then n is divisible by 3.
+If the sum of the digits of n is divisible by 9, then n is divisible by 9. If n is even and
+divisible by 3, then it's also divisible by 6. If n is divisible by both 3 and 4, then it's
+also divisible by 12. For 7, we split n into blocks of 3 from right to left. Coincidentally,
+these are the blocks separated by commas if we write n with commas. We do an alternating sum of
+the blocks from right to left. We start with 0, add the last block, subtract the second to last
+block, add the third to last block, and so on for all the blocks. If this alternating sum is
+divisible by 7, then n is divisible by 7. For 11, we do an alternating sum of digits of n from
+left to right. We start with 0, add the first digit, subtract the second digit, add the third
+digit, and so on for all digits. If this alternating sum is divisible by 11, then n is
+divisible by 11.
+
+Here's an example. Let n be 4,695,768. The PF of n is 2^3 × 3^2 × 7^2 × 11^3. We can tell from
+that PF that n is divisible by all the numbers that had rules mentioned about them above. Let's
+check using the rules. The last 2 digits are 68, which is divisible by 4. The last 3 digits are
+768, which is divisible by 8. The sum of the digits is 45, which is divisible by 3 and 9. Since
+n is even and divisible by 3, it's also divisible by 6. Since n is divisible by both 3 and 4,
+it's also divisible by 12. The alternating sum of blocks of 3 from right to left is
+768 - 695 + 4 = 77, which is divisible by 7. The alternating sum of digits from left to right
+is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
+        .formatted(PrimeFactorization.factorsInfoParagraphSupplier.get())
+        .transform(getParagraphList);
     
     static boolean isDivisible(long a, long b) {
         return a % b == 0;
@@ -281,7 +280,7 @@ by 11."""
                 INFO_PARAGRAPHS,
                 MIN_INPUT,
                 MAX_INPUT,
-                "divisibility info for that integer",
+                "divisibility info for that number",
                 "divisibility"
             );
         }

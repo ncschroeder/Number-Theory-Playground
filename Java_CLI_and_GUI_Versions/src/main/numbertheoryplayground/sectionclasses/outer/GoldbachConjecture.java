@@ -64,8 +64,22 @@ true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
         return Arrays.stream(pairStarts).mapToObj(i -> longPairToString(i, input - i));
     }
     
+    private static String getNumPairsSentence(int numPairs, String inputString) {
+        String textAfterThere =
+            numPairs == 1
+            ? "'s 1 pair"
+            : String.format(" are %s pairs", createStringWithCommas(numPairs));
+        
         return String.format(
+            "There%s of prime numbers that sum to %s.",
+            textAfterThere, inputString
         );
+    }
+    
+    private static String getPairsHeading(int numPairs, String inputString) {
+        return
+            getNumPairsSentence(numPairs, inputString) + ' ' +
+            (numPairs == 1 ? "It is" : "They are") + ':';
     }
     
     public static final class Section extends SingleInputSection {
@@ -75,7 +89,7 @@ true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
                 List.of(INFO),
                 MIN_INPUT,
                 MAX_INPUT,
-                "pairs of prime numbers that sum to that integer",
+                "the pairs of prime numbers that sum to that number",
                 "the Goldbach Conjecture"
             );
         }
@@ -84,6 +98,7 @@ true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
         public String getCliAnswer(long inputLong, String inputString) {
             int[] pairStarts = getPrimePairStarts(inputLong);
             return NtpCli.buildStringWithStreamElementsOnLongLines(
+                getPairsHeading(pairStarts.length, inputString),
                 getPrimePairStrings(pairStarts, inputLong)
             );
         }

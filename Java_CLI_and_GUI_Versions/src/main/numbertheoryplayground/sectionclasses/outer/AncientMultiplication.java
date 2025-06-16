@@ -18,7 +18,7 @@ import static numbertheoryplayground.gui.NtpGui.*;
  * Utility class related to ancient Egyptian multiplication and the section for it.
  */
 public class AncientMultiplication {
-    private static final List<String> INFO_PARAGRAPHS = """
+    private static final String INFO = """
 The ancient Egyptians had an interesting algorithm for multiplication of 2 whole numbers.
 My way of explaining the algorithm goes like this:
 
@@ -39,7 +39,6 @@ will look like: 5 + 5 = 10 (5 × 2), 10 + 10 = 20 (5 × 4), 20 + 20 = 40 (5 × 8
 
 This gives us the product of the 2 numbers.
 
-    .transform(Misc::getParagraphList);
 Let's find the product of 5 and 12. Let's first use 5 for the number represented by a in the
 algorithm above and 12 for b. The powers of 2 ≤ 5 are 1, 2, and 4. The products of 12 and these
 powers are 12, 24, and 48. The powers of 2 that sum to 5 are 1 and 4. The products of 12 and
@@ -47,7 +46,7 @@ these powers are 12 and 48. 12 + 48 = (12 × 1) + (12 × 4) = 12 × (1 + 4) = 60
 
 Now let's use 12 for a and 5 for b. The powers of 2 ≤ 12 are 1, 2, 4, and 8. The products of 5
 and these powers are 5, 10, 20, and 40. The powers of 2 that sum to 12 are 4 and 8. The
-products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 × (4 + 8) = 60."""
+products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 × (4 + 8) = 60.""";
     
     private static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = NINE_QUINTILLION;
@@ -140,7 +139,7 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
         public Section() {
             super(
                 "Ancient Egyptian Multiplication",
-                INFO_PARAGRAPHS,
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 "ancient Egyptian multiplication info for those numbers",

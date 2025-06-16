@@ -44,7 +44,7 @@ public class FibonacciLikeSequences {
      * Approximately 1.618.
      */
     
-    private static final List<String> INFO_PARAGRAPHS = """
+    private static final String INFO = """
 I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every
 following number be the sum of the 2 previous numbers. The Fibonacci sequence does this and the
 first 8 numbers of it are 1, 1, 2, 3, 5, 8, 13, and 21. Fibonacci was a mathematician from the
@@ -60,8 +60,7 @@ closer to Phi. For example, recall that the first 8 numbers of the Fibonacci seq
         .formatted(
             PHI_STRING,
             BigDecimal.valueOf(21).divide(BigDecimal.valueOf(13), MATH_CONTEXT_WITH_ROUNDING) /* ~1.615 */
-        )
-        .transform(Misc::getParagraphList);
+        );
     
     private static final long MIN_INPUT = 1;
     private static final long MAX_INPUT = NINE_QUINTILLION;
@@ -151,7 +150,7 @@ closer to Phi. For example, recall that the first 8 numbers of the Fibonacci seq
         public Section() {
             super(
                 "Fibonacci-Like Sequences",
-                INFO_PARAGRAPHS,
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 String.format(

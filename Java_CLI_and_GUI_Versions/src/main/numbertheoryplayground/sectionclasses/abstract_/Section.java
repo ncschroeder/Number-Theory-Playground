@@ -67,14 +67,14 @@ public abstract sealed class Section
     
     protected Section(
         String heading,
-        List<String> infoParagraphs,
+        String info,
         long minInput,
         long maxInput,
         String actionSentencesEnding,
         String cliInfoOptionEnding
     ) {
         this.heading = heading;
-        this.infoParagraphs = infoParagraphs;
+        infoParagraphs = getParagraphs(info).toList();
         this.minInput = minInput;
         this.maxInput = maxInput;
         this.actionSentencesEnding = String.format("get %s.", actionSentencesEnding);

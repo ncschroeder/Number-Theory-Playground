@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
 import numbertheoryplayground.gui.NtpTextArea;
@@ -24,7 +23,6 @@ The Goldbach Conjecture says that every even number ≥ 4 can be expressed as th
 This was named after 1700s Prussian mathematician Christian Goldbach. A conjecture is a statement that is
 believed to be true but has not been proven to be true. The Goldbach Conjecture has been verified to be
 true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
-        .transform(Misc::replaceNewLineCharsWithSpaces);
     
     private static final long MIN_INPUT = 4;
     private static final long MAX_INPUT = 1_500_000;
@@ -86,7 +84,7 @@ true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
         public Section() {
             super(
                 "Goldbach Conjecture",
-                List.of(INFO),
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 "the pairs of prime numbers that sum to that number",

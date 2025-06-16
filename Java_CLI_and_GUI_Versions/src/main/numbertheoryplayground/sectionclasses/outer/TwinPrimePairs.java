@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.util.List;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
 import numbertheoryplayground.gui.NtpTextArea;
@@ -17,14 +16,13 @@ import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePr
  * Utility class related to twin prime pairs and the section for it.
  */
 public class TwinPrimePairs {
-    private static final List<String> INFO_PARAGRAPHS = """
+    private static final String INFO = """
 A twin prime pair is a pair of prime numbers that differ by 2. The first 5 twin prime pairs are
 3 & 5, 5 & 7, 11 & 13, 17 & 19, and 29 & 31. The largest known twin prime pair is
 infinite amount of twin prime pairs. A conjecture is a statement that is believed to be true but has
 not been proven to be.
 (2,996,863,034,895 × 2^1,290,000) ± 1. They have 388,342 digits! It's conjectured that there are
 
-        .transform(Misc::getParagraphList);
 All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this means
 that all twin prime pairs besides 3 and 5 consist of 1 number that is 1 below a multiple of 6
 and another number that is 1 above that same multiple of 6. 5 is the only number to be in 2
@@ -78,7 +76,7 @@ twin prime pairs, the first 2 mentioned above."""
         public Section() {
             super(
                 "Twin Prime Pairs",
-                INFO_PARAGRAPHS,
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 String.format("the first %d twin prime pairs ≥ that number", NUM_PAIRS_TO_FIND),

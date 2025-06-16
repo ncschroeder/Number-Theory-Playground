@@ -3,9 +3,7 @@ package numbertheoryplayground.sectionclasses.outer;
 import java.awt.Component;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.*;
-import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
@@ -18,7 +16,7 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
  * section for it.
  */
 public final class PrimeFactorization {
-    private static final List<String> INFO_PARAGRAPHS = """
+    private static final String INFO = """
 The Fundamental Theorem of Arithmetic says that every whole number > 1 can be expressed as the
 product of prime numbers in 1 way if you ignore the order of those prime numbers. The prime
 factorization (PF) of a whole number > 1 is an expression of the prime numbers whose product is
@@ -30,12 +28,11 @@ order. There are some interesting applications for PFs. See the info for the "Di
 "GCD and LCM" sections for some applications.
 
 The input number with the highest amount of prime factors is 2^53, or 9,007,199,254,740,992; the
-        .transform(Misc::getParagraphList);
 largest power of 2 ≤ 10 quadrillion, the max input. An input number with the highest amount of
 unique prime factors is 304,250,263,527,210. This number is the product of the first 13 prime
 numbers so it has 13 unique prime factors and its PF is
 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41. You could also multiply that number
-by 2 or 3 and those numbers are ≤ the max input and have the same amount of unique prime factors."""
+by 2 or 3 and those numbers are ≤ the max input and have the same amount of unique prime factors.""";
     static final long MIN_INPUT = 2;
     static final long MAX_INPUT = TEN_QUADRILLION;
     
@@ -179,7 +176,7 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
         return String.format("The PF of %s is %s.", correspondingBigIntString, this);
     }
     
-    static final Supplier<String> factorsInfoParagraphSupplier = () -> """
+    static final String FACTORS_INFO = """
 The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's
 have a variable n and let it represent a whole number > 1. First, you can find how many factors
 n has by looking at n's PF, taking all the powers of the factors, adding 1 to each, and then
@@ -281,7 +278,7 @@ as I like to call them. For 2^2 × 3^2, the sub-factorizations are
         public Section() {
             super(
                 "Prime Factorization",
-                INFO_PARAGRAPHS,
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 "the prime factorization of that number",
@@ -303,7 +300,7 @@ as I like to call them. For 2^2 × 3^2, the sub-factorizations are
     }
     
     
-    static final Supplier<String> gcdAndLcmInfoSupplier = () -> """
+    static final String GCD_AND_LCM_INFO = """
 The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs).
 If those numbers don't have any common prime factors, then the GCD is 1. If they do have common
 prime factors, then the GCD PF consists of all the common prime factors and the power of each

@@ -17,7 +17,7 @@ import static numbertheoryplayground.gui.NtpGui.*;
  * Utility class related to GCDs and LCMs and the section for it.
  */
 public class GcdAndLcm {
-    private static final List<String> INFO_PARAGRAPHS = """
+    private static final String INFO = """
 GCD stands for greatest common divisor and is also known as greatest common factor, or GCF.
 LCM stands for least common multiple. To find the GCD and LCM of 2 whole numbers, you could
 manually do some division and multiplication but there are other ways to find them.
@@ -42,8 +42,7 @@ is 0 and if it is, then the min of this iteration is the GCD. Otherwise, we keep
 iterations until we get a remainder of 0.
 
 %s"""
-        .formatted(PrimeFactorization.gcdAndLcmInfoSupplier.get())
-        .transform(getParagraphList);
+        .formatted(PrimeFactorization.GCD_AND_LCM_INFO);
     
     // This section uses prime factorizations so the input constraints for those will be used.
     
@@ -208,7 +207,7 @@ iterations until we get a remainder of 0.
         public Section() {
             super(
                 "GCD and LCM",
-                INFO_PARAGRAPHS,
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 "GCD and LCM info for those numbers",

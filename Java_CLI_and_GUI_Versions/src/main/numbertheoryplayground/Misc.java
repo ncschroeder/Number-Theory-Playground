@@ -15,20 +15,6 @@ public class Misc {
 """
         .transform(Misc::getParagraphStream);
     
-    public static String replaceNewLineCharsWithSpaces(String s) {
-        return s.replace('\n', ' ');
-    }
-    
-    public static Stream<String> getParagraphStream(String info) {
-        return
-            Arrays.stream(info.split("\n\n"))
-            .map(Misc::replaceNewLineCharsWithSpaces);
-    }
-    
-    public static List<String> getParagraphList(String info) {
-        return getParagraphStream(info).toList();
-    }
-    
     // Max input constants
     public static final long FIVE_HUNDRED_BILLION = 500_000_000_000L;
     public static final long TEN_TRILLION = 10_000_000_000_000L;
@@ -36,6 +22,12 @@ public class Misc {
     public static final long FIVE_QUADRILLION = ONE_QUADRILLION * 5;
     public static final long TEN_QUADRILLION = ONE_QUADRILLION * 10;
     public static final long NINE_QUINTILLION = 9_000_000_000_000_000_000L;
+    
+    public static Stream<String> getParagraphs(String info) {
+        return
+            Arrays.stream(info.split("\n\n"))
+            .map(s -> s.replace('\n', ' '));
+    }
     
     private static final DecimalFormat commaAdder = new DecimalFormat("#,###");
     

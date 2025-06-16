@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
 import numbertheoryplayground.gui.NtpTextArea;
@@ -20,7 +19,7 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.isDivisib
  * Utility class related to Pythagorean triples and the section for it.
  */
 public class PythagoreanTriples {
-    private static final List<String> INFO_PARAGRAPHS = """
+    private static final String INFO = """
 The Pythagorean Theorem says that for a right triangle, the sum of the squares of the lengths
 of the 2 short sides equals the square of the long side (hypotenuse) length, or a^2 + b^2 = c^2.
 This theorem was named after the ancient Greek mathematician Pythagoras. A Pythagorean triple is
@@ -28,7 +27,6 @@ a triple of whole numbers that a, b, and c can be. For example; 3, 4, and 5 is a
 triple since 3^2 (9) + 4^2 (16) = 5^2 (25) and 11, 60, and 61 is another one since
 11^2 (121) + 60^2 (3,600) = 61^2 (3,721).
 
-        .transform(Misc::getParagraphList);
 Once we know a Pythagorean triple, we can form another one by multiplying a, b, and c by the
 same whole number > 1. Because of this, there are an infinite amount of Pythagorean triples.
 A Pythagorean triple is considered to be primitive if the GCD of a, b, and c is 1. Therefore,
@@ -36,7 +34,7 @@ a primitive triple can't be formed by taking another triple and multiplying a, b
 same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive.
 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is another triple. 6^2 (36) + 8^2 (64) = 10^2 (100).
 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
-55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025)."""
+55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025).""";
     
     private static final long MIN_INPUT = 0;
     private static final long MAX_INPUT = 10_000;
@@ -142,7 +140,7 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
         public Section() {
             super(
                 "Pythagorean Triples",
-                INFO_PARAGRAPHS,
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 String.format("the first %d Pythagorean triples ≥ that number", NUM_TRIPLES_TO_FIND),

@@ -16,7 +16,7 @@ import static numbertheoryplayground.gui.NtpGui.*;
  * Utility class related to divisibility and the section for it.
  */
 public class Divisibility {
-    private static final List<String> INFO_PARAGRAPHS = """
+    private static final String INFO = """
 Say we have 2 whole numbers that we'll represent with the variables a and b. If we divide a by
 b and get no remainder, then a is said to be divisible by b and b is said to be a factor or
 divisor of a. If you want to find some whole number factors of a whole number, you could
@@ -50,8 +50,7 @@ n is even and divisible by 3, it's also divisible by 6. Since n is divisible by 
 it's also divisible by 12. The alternating sum of blocks of 3 from right to left is
 768 - 695 + 4 = 77, which is divisible by 7. The alternating sum of digits from left to right
 is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
-        .formatted(PrimeFactorization.factorsInfoParagraphSupplier.get())
-        .transform(getParagraphList);
+        .formatted(PrimeFactorization.FACTORS_INFO);
     
     static boolean isDivisible(long a, long b) {
         return a % b == 0;
@@ -277,7 +276,7 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
         public Section() {
             super(
                 "Divisibility",
-                INFO_PARAGRAPHS,
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 "divisibility info for that number",

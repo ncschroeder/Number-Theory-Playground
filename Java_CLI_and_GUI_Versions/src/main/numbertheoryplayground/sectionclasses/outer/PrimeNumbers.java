@@ -17,14 +17,13 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
  * Utility class related to prime numbers and the section for it.
  */
 public class PrimeNumbers {
-    private static final List<String> INFO_PARAGRAPHS = """
+    private static final String INFO = """
 A prime number, or a prime, is a whole number > 1 that isn't divisible by any whole numbers
 other than 1 and itself. A composite number is a whole number > 1 that is divisible by a whole
 number other than 1 and itself. The first 10 primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, and 29.
 There are an infinite amount of primes. The largest known prime is (2^136,279,841) − 1. It has
 41,024,320 digits! Primes are used in 7 of the 10 sections in this application.
 
-        .transform(Misc::getParagraphList);
 With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To
 show why this is the case, let's have a variable i and let it represent any whole number ≥ 6
 that's a multiple of 6. We know that i is divisible by 2 and 3 so i + 2 and i + 4 are divisible
@@ -35,7 +34,7 @@ A whole number can be determined to be prime if it's not divisible by any primes
 root of that number. This is called trial division. Let's determine if 29 and 33 are prime.
 5^2 = 25 and 6^2 = 36 so the square roots of 29 and 33 are between 5 and 6. We check if 29 and
 33 are divisible by 2, 3, or 5; which are the primes ≤ 5. 29 isn't divisible by any of those
-and 33 is divisible by 3 so 29 is prime and 33 isn't."""
+and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
 
     
     private static final long MIN_INPUT = 0;
@@ -98,7 +97,7 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't."""
         public Section() {
             super(
                 "Prime Numbers",
-                INFO_PARAGRAPHS,
+                INFO,
                 MIN_INPUT,
                 MAX_INPUT,
                 String.format("the first %d prime numbers ≥ that number", NUM_PRIMES_TO_FIND),

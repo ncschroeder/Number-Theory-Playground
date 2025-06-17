@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import numbertheoryplayground.sectionclasses.abstract_.*;
+import numbertheoryplayground.sectionclasses.outer.GoldbachConjecture;
 
 import static numbertheoryplayground.Misc.*;
 
@@ -37,6 +38,7 @@ public class NtpCli {
     
     public static void main(String[] args) {
         inputReader = new Scanner(System.in);
+        GoldbachConjecture.setMaxInputForCli();
         String ntpInfo =
             buildStringWithHeadingAndInfoParagraphs(
                 "Number Theory Playground", ntpInfoParagraphStreamSupplier.get()

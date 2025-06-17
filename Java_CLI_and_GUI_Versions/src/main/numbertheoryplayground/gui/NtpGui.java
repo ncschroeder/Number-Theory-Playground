@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import numbertheoryplayground.sectionclasses.outer.GoldbachConjecture;
 
 /**
  * Utility class with a little code related to the Number Theory Playground Graphical User Interface,
@@ -19,6 +20,8 @@ import java.awt.Font;
 public class NtpGui {
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(() -> {
+            GoldbachConjecture.setMaxInputForGui();
+            
             var frame = new JFrame("Number Theory Playground");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1400, 900);

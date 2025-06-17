@@ -1,6 +1,7 @@
 package numbertheoryplayground.sectionclasses.outer;
 
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
@@ -16,6 +17,11 @@ import static numbertheoryplayground.sectionclasses.outer.GoldbachConjecture.get
  * Has tests for code in the GoldbachConjecture class.
  */
 class GoldbachConjectureTests {
+    @BeforeAll
+    static void setMaxInput() {
+        GoldbachConjecture.setMaxInputForCli();
+    }
+    
     @ParameterizedTest
     @FieldSource("args")
     void testGetPrimePairStarts(long input, int[] expectedPairStarts) {

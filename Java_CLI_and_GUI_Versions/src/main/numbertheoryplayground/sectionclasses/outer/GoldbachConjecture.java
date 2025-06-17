@@ -25,7 +25,29 @@ believed to be true but has not been proven to be true. The Goldbach Conjecture 
 true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
     
     private static final long MIN_INPUT = 4;
-    private static final long MAX_INPUT = 1_500_000;
+    
+    private static long MAX_INPUT;
+    
+    public static void setMaxInputForCli() {
+        MAX_INPUT = 1_500_000;
+    }
+    
+    public static void setMaxInputForGui() {
+        MAX_INPUT = 250_000;
+    }
+    
+    /*
+    Why does this section have separate max inputs for the CLI and GUI? Well, this section can
+    find the pairs of prime numbers that sum to an input long. After finding them, a string gets
+    built that contains them. This string can be pretty long. There doesn't seem to be any
+    problem displaying long strings in the CLI, but it can take a long time to do that in the GUI.
+    See the documentation comment for NtpTextArea.StringTooLongException for more info.
+    
+    The max input is set to 250,000 for the GUI since the resulting string from that input isn't
+    deemed too long but the string for 300,000 is. There are still some inputs below 250,000 that
+    result in a string that's deemed too long. 228,342 is one of them and it has 2,498 pairs of
+    prime numbers that sum to it.
+     */
     
     /**
      * Find the pairs of primes that sum to the input and returns an array that contains the lower numbers

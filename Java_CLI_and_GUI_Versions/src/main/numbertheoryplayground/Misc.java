@@ -3,8 +3,6 @@ package numbertheoryplayground;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -77,4 +75,7 @@ public class Misc {
     public static void printError(String error) {
         System.out.println("=\n".repeat(10) + error + "\n=".repeat(10));
     }
+    
+    public static final String CONJECTURE_DEFINITION =
+        "A conjecture is a statement that's believed to be true but hasn't been proven to be";
 }

@@ -221,7 +221,7 @@ final class MainPanel extends NtpPanel {
          * If parsing is unsuccessful, a NumberFormatException gets thrown.
          */
         private long getInputAsLong() {
-            return stripCommasAndParse(textField.getText().trim());
+            return stripCommasAndParse(textField.getText().strip());
         }
         
         /**

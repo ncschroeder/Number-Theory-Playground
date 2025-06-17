@@ -4,7 +4,8 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpPanel;
 import numbertheoryplayground.gui.NtpTextArea;
@@ -48,7 +49,8 @@ iterations until we get a remainder of 0.
     
     
     static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
-    static final long MAX_INPUT = PrimeFactorization.MAX_INPUT / 2;
+    static final long MAX_INPUT = FIVE_QUADRILLION;
+    
     /**
      * Record with data for an iteration of the Euclidean algorithm.
      */
@@ -125,8 +127,8 @@ iterations until we get a remainder of 0.
         List<EuclideanIteration> iterations = getEuclideanIterations(input1Long, input2Long);
         
         // The gap between the end of the longest item in a column and the item in the next column.
-        var columnGap = 4;
-    
+        final int columnGap = 4;
+        
         /*
         Make column widths equal to the length of the longest element in the column + the column gap.
         The first iteration will have the longest elements of all iterations.
@@ -163,7 +165,7 @@ iterations until we get a remainder of 0.
     }
     
     /**
-     * Returns an NTPPanel with a heading label, table, and label with a message about what the GCD of
+     * Returns an NtpPanel with a heading label, table, and label with a message about what the GCD of
      * input1Long and input2Long is. The table has columns for the max number, min number, and remainder for each
      * iteration of the Euclidean algorithm performed on input1Long and input2Long.
      */
@@ -174,9 +176,7 @@ iterations until we get a remainder of 0.
         List<EuclideanIteration> iterations = getEuclideanIterations(input1Long, input2Long);
         
         Function<EuclideanIteration, Stream<String>> getIterationRowStrings =
-            ei ->
-                LongStream.of(ei.max, ei.min, ei.remainder)
-                .mapToObj(Misc::createStringWithCommas);
+            ei -> Stream.of(ei.maxString(), ei.minString(), ei.remainderString());
         
         NtpPanel iterationsTable =
             NtpPanel.createTablePanel(
@@ -199,9 +199,9 @@ iterations until we get a remainder of 0.
     private static String getAnswerMainHeading(String input1String, String input2String) {
         return String.format("GCD and LCM Info for %s and %s", input1String, input2String);
     }
-
+    
     private static final String PF_INFO_HEADING = "Prime Factorization Info";
-
+    
     
     public static final class Section extends DoubleInputSection {
         public Section() {
@@ -241,6 +241,7 @@ iterations until we get a remainder of 0.
             long input1Long, long input2Long,
             String input1String, String input2String
         ) {
+            // Call getEuclideanPanel first to see if it throws.
             NtpPanel euclideanPanel =
                 getEuclideanPanel(input1Long, input2Long, input1String, input2String);
             Stream<String> pfInfoSentences =

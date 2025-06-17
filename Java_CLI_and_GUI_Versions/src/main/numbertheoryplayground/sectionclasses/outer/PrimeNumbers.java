@@ -36,15 +36,8 @@ root of that number. This is called trial division. Let's determine if 29 and 33
 33 are divisible by 2, 3, or 5; which are the primes ≤ 5. 29 isn't divisible by any of those
 and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
 
-    
-    private static final long MIN_INPUT = 0;
-    private static final long MAX_INPUT = TEN_TRILLION;
-    private static final int NUM_PRIMES_TO_FIND = 30;
-    
     static boolean isPrime(long input) {
         if (input < 2) return false;
-        if (input <= 3) return true;
-        if (isEven(input)) return false;
 
         /*
         We only need to check if the input is divisible by any primes <= the floor of the square root
@@ -52,9 +45,13 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
         besides 2 are odd.
          */
         
-        var highestLongToCheck = (long) Math.sqrt(input);
+        var maxPossibleFactor = (long) Math.sqrt(input);
         return
-            LongStream.iterate(3, l -> l <= highestLongToCheck, l -> l + 2)
+            LongStream.concat(
+                LongStream.of(2),
+                LongStream.iterate(3, l -> l + 2)
+            )
+            .takeWhile(l -> l <= maxPossibleFactor)
             .noneMatch(l -> isDivisible(input, l));
     }
     
@@ -62,8 +59,12 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
         return isPrime(a) && isPrime(b);
     }
     
+    private static final long MIN_INPUT = 0;
+    private static final long MAX_INPUT = TEN_TRILLION;
+    private static final int NUM_PRIMES_TO_FIND = 30;
+
     /**
-     * Returns a stream of the first 30 primes >= the input.
+     * Returns a stream of the first 30 primes ≥ the input.
      */
     static LongStream getPrimes(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
@@ -92,6 +93,7 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
             NUM_PRIMES_TO_FIND, inputString
         );
     }
+    
     
     public static final class Section extends SingleInputSection {
         public Section() {

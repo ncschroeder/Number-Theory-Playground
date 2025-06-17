@@ -147,7 +147,7 @@ class NtpCliTests {
 
 
     @Test
-    void testGetRowForTable() {
+    void testGetRowFor3ColumnTable() {
         assertEquals("1 2  3", getRowFor3ColumnTable("1", 2, "2", 3, "3"));
     }
 }

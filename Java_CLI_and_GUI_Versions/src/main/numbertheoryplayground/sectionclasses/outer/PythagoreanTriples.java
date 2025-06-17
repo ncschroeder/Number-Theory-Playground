@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
@@ -36,10 +35,6 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
 55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025).""";
     
-    private static final long MIN_INPUT = 0;
-    private static final long MAX_INPUT = 10_000;
-    private static final int NUM_TRIPLES_TO_FIND = 10;
-    
     /**
      * Record for the 3 integers of a Pythagorean triple.
      */
@@ -63,18 +58,24 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
             be 1. There's no Pythagorean Triple with 1. The first one is 3, 4, and 5. Because of that, half of
             the min also can't be a common factor. The next lowest possible common factor is a third of the min.
              */
-            int maxI = Math.min(a, Math.min(b, c)) / 3;
-            return IntStream.concat(
-                IntStream.of(2),
-                IntStream.iterate(3, i -> i <= maxI, i -> i + 2)
-            )
-            .noneMatch(i -> isDivisible(a, i) && isDivisible(b, i) && isDivisible(c, i));
+            int maxPossibleCommonFactor = Math.min(a, Math.min(b, c)) / 3;
+            return
+                IntStream.concat(
+                    IntStream.of(2),
+                    IntStream.iterate(3, i -> i + 2)
+                )
+                .takeWhile(i -> i <= maxPossibleCommonFactor)
+                .noneMatch(i -> isDivisible(a, i) && isDivisible(b, i) && isDivisible(c, i));
         }
     }
     
+    private static final long MIN_INPUT = 0;
+    private static final long MAX_INPUT = 10_000;
+    private static final int NUM_TRIPLES_TO_FIND = 10;
+    
     /**
      * Returns a list of triple objects for the first 10 Pythagorean triples where the lowest integer in the
-     * triple is >= the input. For example, if the input is 3 then an object for the triple 3, 4, and 5 will
+     * triple is ≥ the input. For example, if the input is 3 then an object for the triple 3, 4, and 5 will
      * be the first one since the lowest number in that triple is 3. If the input number is 4, then an object
      * for the triple 5, 12, and 13 will be the first one.
      */
@@ -87,32 +88,31 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
         
         while (true) {
             var cDouble = Math.hypot(a, b);
-            
             if (cDouble < b + 1) {
                 /*
-                b + 1 is the minimum possible integer value for c, so if c is less than that then
-                the max value for b for the current value of a has been exceeded.
+                b + 1 is the minimum possible integer value for c, so if c is less than that,
+                then the max value for b for the current value of a has been exceeded.
                  */
                 b = ++a + 1;
-            } else {
-                var cInt = (int) cDouble;
-                
-                if (cDouble == cInt) {
-                    triples.add(new Triple(a, b, cInt));
-                    if (triples.size() == NUM_TRIPLES_TO_FIND) {
-                        return triples;
-                    }
-                }
-                
-                b++;
+                continue;
             }
+            
+            var cInt = (int) cDouble;
+            if (cDouble == cInt) {
+                triples.add(new Triple(a, b, cInt));
+                if (triples.size() == NUM_TRIPLES_TO_FIND) {
+                    return triples;
+                }
+            }
+            
+            b++;
         }
     }
     
     /**
      * Returns a stream of strings that say the first 10 Pythagorean triples where the lowest integer in
-     * the triple is >= the input. Each string contains the 1-based position of that triple followed by ") "
-     * followed by the the string representation of that triple. Currently, NUM_TRIPLES_TO_FIND is 10 so
+     * the triple is ≥ the input. Each string contains the 1-based position of that triple followed by ") "
+     * followed by the string representation of that triple. Currently, NUM_TRIPLES_TO_FIND is 10 so
      * there'll be a 1-space indent for the strings that start with a single digit.
      */
     private static Stream<String> getNumberedTripleStrings(long input, int indentLength) {
@@ -136,6 +136,7 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
         );
     }
     
+    
     public static final class Section extends SingleInputSection {
         public Section() {
             super(
@@ -148,6 +149,8 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
             );
         }
         
+        // For the methods below, call getNumberedTripleStrings first to see if it throws.
+
         /**
          * Returns a string that contains a heading and triple strings, each on their own line.
          */
@@ -161,7 +164,7 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
         }
         
         /**
-         * Returns a list with a heading label and an NTPTextArea with triple strings, each on their own line.
+         * Returns a list with a heading label and an NtpTextArea with triple strings, each on their own line.
          */
         @Override
         public List<Component> getGuiComponents(long inputLong, String inputString) {

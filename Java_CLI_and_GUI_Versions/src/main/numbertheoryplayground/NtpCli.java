@@ -17,7 +17,7 @@ public class NtpCli {
     private static Scanner inputReader;
 
     private static String getFormattedInput() {
-        return inputReader.nextLine().trim().toLowerCase();
+        return inputReader.nextLine().strip().toLowerCase();
     }
     
     private static void print(String s) {
@@ -129,7 +129,7 @@ public class NtpCli {
         println();
         
         while (true) {
-            println(section.getHeading());
+            println(sectionHeading);
             println();
             println(sectionChoicesString);
             String input = getFormattedInput();
@@ -154,7 +154,7 @@ public class NtpCli {
                             var inputString = createStringWithCommas(inputLong);
                             println(sis.getCliAnswer(inputLong, inputString));
                         } else if (section instanceof DoubleInputSection dis) {
-                            String[] inputContents = input.split(" +");
+                            String[] inputContents = input.split("\\s+");
                             if (inputContents.length != 2) {
                                 printInvalidInput();
                             } else {
@@ -181,8 +181,8 @@ public class NtpCli {
         String actionSentence =
             String.format(
                 "%s to %s",
-                section.getActionSentenceEnding()
                 section.isSingleInputSection() ? "A number" : "2 space-separated numbers",
+                section.getActionSentencesEnding()
             );
         String intChoice = actionSentence + ' ' + section.getInputInfoSentences();
         
@@ -190,8 +190,8 @@ public class NtpCli {
             String.format(
                 "(%s) to generate %s and %s",
                 randomValue,
-                section.getActionSentenceEnding()
                 section.isSingleInputSection() ? "a random number" : "2 random numbers",
+                section.getActionSentencesEnding()
             );
         
         String infoChoice =
@@ -231,9 +231,9 @@ public class NtpCli {
      * will be thrown when calling `lines.add(s.subSequence(lineStartIndex, spaceIndex));`.
      */
     public static String putNewLineChars(String s, boolean indent) {
-        var maxLineLength = 90;
+        final int maxLineLength = 90;
         if (s.length() <= maxLineLength) return s;
-        var indentLength = 4;
+        final int indentLength = 4;
         var lines = new ArrayList<CharSequence>();
         var lineStartIndex = 0;
         

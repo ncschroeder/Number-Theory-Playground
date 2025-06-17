@@ -16,13 +16,16 @@ import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePr
 
 /**
  * Utility class related to the Goldbach Conjecture and the section for it.
+ *
+ * The Goldbach Conjecture section needs even input so that's why getPrimePairStarts throws an
+ * exception for odd inputs and the getRandomInput method is overridden.
  */
 public class GoldbachConjecture {
     private static final String INFO = """
-The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers.
-This was named after 1700s Prussian mathematician Christian Goldbach. A conjecture is a statement that is
-believed to be true but has not been proven to be true. The Goldbach Conjecture has been verified to be
-true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
+The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime
+numbers. This was named after 1700s Prussian mathematician Christian Goldbach. %s. The Goldbach
+Conjecture has been verified to be true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
+        .formatted(CONJECTURE_DEFINITION);
     
     private static final long MIN_INPUT = 4;
     
@@ -60,25 +63,27 @@ true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
         }
         
         /*
-        Check if the input is 4 since 4 is the only even number >= 4 that has 2 in a pair of primes that
-        sum to it. If the input isn't 4, check pairs of odd ints that sum to the input for primality.
-        The iterating only needs to go up to the floor of half of the input. After that point, checks
-        for primality will be done on pairs of ints that have already been checked for primality.
+        Check if the input is 4 since 4 is the only even number ≥ 4 that has 2 in a pair of
+        primes that sum to it. If the input isn't 4, then check pairs of odd numbers that sum to
+        the input for primality. The iterating only needs to go up to the floor of half of the
+        input. After that point, checks for primality will be done on pairs of numbers that have
+        already been checked for primality.
          */
         
         if (input == 4) {
             return new int[] { 2 };
         }
         
-        var maxI = (int) input / 2;
+        var maxPossiblePairStart = (int) input / 2;
         return
-            IntStream.iterate(3, i -> i <= maxI, i -> i + 2)
+            IntStream.iterate(3, i -> i <= maxPossiblePairStart, i -> i + 2)
             .filter(i -> bothArePrime(i, input - i))
             .toArray();
     }
     
     /**
      * Returns a stream of the string representations of the pairs of primes that sum to the input.
+     * pairStarts should be an int array returned from calling getPrimePairStarts using the input.
      */
     private static Stream<String> getPrimePairStrings(int[] pairStarts, long input) {
         return Arrays.stream(pairStarts).mapToObj(i -> longPairToString(i, input - i));

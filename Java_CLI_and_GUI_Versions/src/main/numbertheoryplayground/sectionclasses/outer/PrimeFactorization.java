@@ -33,37 +33,42 @@ unique prime factors is 304,250,263,527,210. This number is the product of the f
 numbers so it has 13 unique prime factors and its PF is
 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41. You could also multiply that number
 by 2 or 3 and those numbers are ≤ the max input and have the same amount of unique prime factors.""";
+
     static final long MIN_INPUT = 2;
     static final long MAX_INPUT = TEN_QUADRILLION;
     
-    
     record FactorAndPower(long factor, int power) {}
+    /**
+     * An immutable list that's sorted by factors, which is appropriate for the string
+     * representation of this.
+     */
+    private final List<FactorAndPower> factorsAndPowers;
 
     /**
      * The BigInteger that this prime factorization is for.
-     *
-     * Why use a BigInteger? Well, there are 2 constructors, 1 of which has a map for a param. 1 place
-     * where that one is used is in constructor for the GcdAndLcmAnswer class at the bottom of this
-     * class. The GcdAndLcmAnswer constructor creates a map for the prime factors and powers of the
-     * LCM of 2 input longs, and then creates a PrimeFactorization using that map. That PrimeFactorization
-     * constructor will then set this field to the product of all the factors raised to their powers.
-     * The LCM of 2 longs is at most the product of them. The GCD and LCM class creates GcdAndLcmAnswer
-     * objects and the GCD and LCM section has a max input of 5 quadrillion. The highest possible LCM
-     * is described in the string returned by gcdAndLcmInfoSupplier below and is 5 quadrillion times
-     * (5 quadrillion - 1), which is almost 25 nonillion, which is a number with 32 digits. The max
-     * value for a long is 9 quintillion something, which is a relatively small number with 19 digits.
      */
     private final BigInteger correspondingBigInt;
     
+    /*
+    Why use a BigInteger? Well, this class has 2 constructors, 1 of which has a list for a param.
+    1 place where that one is used is in the constructor for the GcdAndLcmAnswer class at the
+    bottom of this class. The GcdAndLcmAnswer constructor creates a list of the prime factors
+    and powers of the LCM of 2 input longs, and then creates a PrimeFactorization using that
+    list. That PrimeFactorization constructor will then set this field to the product of all the
+    factors raised to their powers. The LCM of 2 longs is at most the product of them. The
+    GcdAndLcm class creates GcdAndLcmAnswer objects and the GCD and LCM section has a max input of
+    5 quadrillion. The highest possible LCM is described in the GCD_AND_LCM_INFO string above the
+    GcdAndLcmAnswer class at the bottom of this class. That LCM is
+    5 quadrillion × (5 quadrillion − 1), which is almost 25 nonillion, which is a number with 32
+    digits. The max value for a long is 9 quintillion something, which is a relatively small
+    number with 19 digits.
+     */
+    
     private final String correspondingBigIntString;
     
-    /**
-     * This list is sorted by factors and immutable.
-     */
-    private final List<FactorAndPower> factorsAndPowers;
     
     /**
-     * Constructs a new object to represent the prime factorization of the input.
+     * Constructs a PrimeFactorization for the prime factorization of the input long.
      */
     PrimeFactorization(long inputLong, String inputString) {
         assertIsInRange(inputLong, MIN_INPUT, MAX_INPUT);
@@ -142,9 +147,9 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
     }
 
     /**
-     * Returns a string that represents this object the same way that the first info paragraph at the
-     * top represents PFs. That paragraph says "the PF of 5 is just 5, the PF of 25 is 5^2, and the PF
-     * of 12,250 is 2 x 5^3 x 7^2".
+     * Returns a string that represents this PF the same way that the first info paragraph at the
+     * top represents PFs. That paragraph says "the PF of 5 is just 5, the PF of 25 is 5^2, and
+     * the PF of 12,250 is 2 × 5^3 × 7^2".
      */
     @Override
     public String toString() {
@@ -162,13 +167,6 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
      * Prime numbers have a prime factorization that consists of a single factor with 1 as its power.
      */
     boolean isForAPrimeNumber() {
-    }
-    
-    String toStringWithCorrespondingBigInt() {
-        return
-            isForAPrimeNumber()
-            ? getCorrespondingBigIntString()
-            : String.format("%s (%s)", this, getCorrespondingBigIntString());
         return factorsAndPowers.size() == 1 && factorsAndPowers.getFirst().power == 1;
     }
     
@@ -176,6 +174,9 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
         return String.format("The PF of %s is %s.", correspondingBigIntString, this);
     }
     
+    /**
+     * This is the 3rd paragraph displayed in the Divisibility section.
+     */
     static final String FACTORS_INFO = """
 The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's
 have a variable n and let it represent a whole number > 1. First, you can find how many factors
@@ -191,9 +192,9 @@ as I like to call them. For 2^2 × 3^2, the sub-factorizations are
      * This method calculates the number of factors and returns a string that says the number
      * of factors and how it was calculated.
      */
-    var powerStrings = new ArrayList<String>(factorsAndPowers.size());
     String getNumFactorsInfo() {
         var numFactors = 1;
+        var powerStrings = new ArrayList<String>(factorsAndPowers.size());
         
         for (FactorAndPower fp : factorsAndPowers) {
             numFactors *= fp.power + 1;
@@ -241,9 +242,6 @@ as I like to call them. For 2^2 × 3^2, the sub-factorizations are
                     List<FactorAndPower> factorPfFactorsAndPowers =
                         new ArrayList<>(factorPfs.get(i).factorsAndPowers);
 
-                    IntStream.range(0, factorPfFactorsAndPowers.size())
-                    .filter(j -> factorPfFactorsAndPowers.get(j).factor == factor)
-                    .findFirst()
                     .ifPresentOrElse(
                         indexToUpdate -> factorPfFactorsAndPowers.set(indexToUpdate, newFactorAndPower),
                         () -> factorPfFactorsAndPowers.add(newFactorAndPower)
@@ -263,8 +261,23 @@ as I like to call them. For 2^2 × 3^2, the sub-factorizations are
         return factorPfs;
     }
     
+    private static OptionalInt findIndexOfFactor(List<FactorAndPower> fps, long factor) {
+        return
+            IntStream.range(0, fps.size())
+            .filter(i -> fps.get(i).factor == factor)
+            .findFirst();
+    }
+    
     Stream<String> getFactorPfStrings() {
-        return getFactorPfs().stream().map(PrimeFactorization::toStringWithCorrespondingBigInt);
+        return
+            getFactorPfs()
+            .stream()
+            .map(pf ->
+                pf.isForAPrimeNumber()
+                ? pf.correspondingBigIntString
+                : String.format("%s (%s)", pf, pf.correspondingBigIntString)
+            );
+    }
     private OptionalInt getPowerOf(long factor) {
         return
             factorsAndPowers
@@ -273,6 +286,14 @@ as I like to call them. For 2^2 × 3^2, the sub-factorizations are
             .mapToInt(FactorAndPower::power)
             .findFirst();
     }
+    
+    private boolean containsFactor(long l) {
+        return
+            factorsAndPowers
+            .stream()
+            .anyMatch(fp -> fp.factor == l);
+    }
+
     
     public static class Section extends SingleInputSection {
         public Section() {
@@ -332,14 +353,19 @@ the second input number multiplied by 2.""";
     /**
      * This class uses prime factorizations to find the greatest common divisor (GCD) and least common
      * multiple (LCM) of 2 integers. An advantage to having this class be a nested class within the
-     * PrimeFactorization class is that we can access the private factorsAndPowers map of the
+     * PrimeFactorization class is that we can access the private factorsAndPowers list of the
      * PrimeFactorizations we create in the constructor for this class.
      */
     static class GcdAndLcmAnswer {
+        private final PrimeFactorization input1Pf;
+        
+        private final PrimeFactorization input2Pf;
+        
         /**
-         * If the GCD of the inputs is 1, this is null since only integers >= 2 have a prime factorization.
+         * If the GCD of the inputs is 1, this is null since only integers ≥ 2 have a prime factorization.
          */
         private final PrimeFactorization gcdPf;
+        
         private final PrimeFactorization lcmPf;
         GcdAndLcmAnswer(long input1Long, long input2Long, String input1String, String input2String) {
             input1Pf = new PrimeFactorization(input1Long, input1String);
@@ -364,7 +390,7 @@ the second input number multiplied by 2.""";
             
             // Find the unique prime factors of input2Pf.
             for (FactorAndPower fp : input2Pf.factorsAndPowers) {
-                if (input1Pf.getPowerOf(fp.factor).isEmpty()) {
+                if (!input1Pf.containsFactor(fp.factor)) {
                     lcmPfFactorsAndPowers.add(new FactorAndPower(fp.factor, fp.power));
                 }
             }
@@ -386,7 +412,18 @@ the second input number multiplied by 2.""";
             String lcmSentence = getGcdOrLcmPfSentence("LCM", lcmPf);
             
             return Stream.of(
-                input1Pf.getInfoSentence(), input2Pf.getInfoSentence(), gcdSentence, lcmSentence
+                input1Pf.getInfoSentence(),
+                input2Pf.getInfoSentence(),
+                gcdSentence,
+                lcmSentence
+            );
+        }
+        
+        private static String getGcdOrLcmPfSentence(String gcdOrLcmText, PrimeFactorization pf) {
+            var textAfterIs = pf.isForAPrimeNumber() ? "" : pf + ", which is ";
+            return String.format(
+                "The PF of the %s is %s%s.",
+                gcdOrLcmText, textAfterIs, pf.correspondingBigIntString
             );
         }
         

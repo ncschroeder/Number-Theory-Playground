@@ -3,10 +3,10 @@ package numbertheoryplayground.sectionclasses.outer;
 import java.awt.Component;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import numbertheoryplayground.Misc;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpPanel;
 import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
@@ -69,21 +69,27 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
         private final String mainHeading;
         
         /**
-         * Contains rows for all the powers of 2 <= input1 and the corresponding multiples of input2.
+         * Contains rows for all the powers of 2 ≤ input1 and the corresponding multiples of input2.
          */
-        
         private final Stream<TableRow> table1Rows;
+        
         /**
          * Contains rows for all the powers of 2 that sum to input1 and the corresponding multiples
          * of input2, which sum to the product of input1 and input2.
          */
-        
         private final Stream<TableRow> table2Rows;
-        private final String allPowersOf2ColumnHeading;
-        private final String input2MultiplesColumnHeading;
-        private final String powersOf2ThatSumToInput1ColumnHeading;
-        private final String productSentence;
         
+        private final String allPowersOf2ColumnHeading;
+        
+        /**
+         * Heading for the 2nd column in both tables.
+         */
+        private final String input2MultiplesColumnHeading;
+        
+        private final String powersOf2ThatSumToInput1ColumnHeading;
+        
+        private final String productSentence;
+
         Answer(long input1Long, long input2Long, String input1String, String input2String) {
             assertIsInRange(input1Long, MIN_INPUT, MAX_INPUT);
             assertIsInRange(input2Long, MIN_INPUT, MAX_INPUT);
@@ -104,8 +110,8 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
             Stream.Builder<TableRow> table2RowsBuilder = Stream.builder();
             
             /*
-            Iterate backwards through the binary string of input1 to find the powers of 2 that are <= input1
-            and the powers of 2 that sum to input1.
+            Iterate backwards through the binary string of input1 to find the powers of 2 that
+            are ≤ input1 and the powers of 2 that sum to input1.
              */
             var input1BinaryString = Long.toBinaryString(input1Long);
             var powerOf2 = 1L;
@@ -202,11 +208,7 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
             var answer = new Answer(input1Long, input2Long, input1String, input2String);
             
             Function<TableRow, Stream<String>> getRowStrings =
-                tr ->
-                    Stream.of(
-                        createStringWithCommas(tr.powerOf2),
-                        createStringWithCommas(tr.correspondingMultiple)
-                    );
+                tr -> Stream.of(tr.powerOf2String(), tr.correspondingMultipleString());
             
             NtpPanel table1 =
                 NtpPanel.createTablePanel(

@@ -43,19 +43,19 @@ public abstract sealed class Section
     
     /**
      * There are a few "action" sentences used that say what the user is to do and what will happen
-     * in response. For the GUI, there's 1 action sentence that starts with "Enter or generate an
-     * integer and click the Calculate button to ". For the CLI, there's 1 action sentence for the
+     * in response. For the GUI, there's 1 action sentence that starts with "Enter or generate a
+     * number and click the 'Calculate' button to ". For the CLI, there's 1 action sentence for the
      * custom input option and 1 for the random input option. The custom input option starts with
-     * "An integer to ". The random input option starts with "(r) to generate a random integer
+     * "A number to ". The random input option starts with "(r) to generate a random number
      * and ". This field is for the ending of those sentences. For example, for PrimeNumbers.Section,
-     * this field is "get the first 30 prime numbers ≥ that integer."
+     * this field is "get the first 30 prime numbers ≥ that number."
      */
     private final String actionSentencesEnding;
     
     /**
-     * The 1st input info sentence mentions that the input integer(s) should be ≥ what the min
-     * input is and ≤ what the max input is. For the Goldbach Conjecture section, it's also
-     * mentioned that the input should be even. The 2nd input info sentence is "Commas are optional."
+     * The 1st input info sentence mentions that the input number(s) should be ≥ the min input
+     * and ≤ the max input. For the Goldbach Conjecture section, it's also mentioned that the
+     * input should be even. The 2nd input info sentence is "Commas are optional."
      */
     private final String inputInfoSentences;
     
@@ -92,8 +92,9 @@ public abstract sealed class Section
         1.5 million, the max inputs for the Pythagorean triples and Goldbach Conjecture sections,
         respectively.
         
-        Longs can't be used as the selector for switch statements and expressions, which seems
-        pathetic. Using a map seems to be the next best option.
+        As of Java 21, the version I'm using right now, longs can't be used as the selector for
+        switch statements and expressions, which seems pathetic. Using a map seems to be the next
+        best option.
          */
         
         Map<Long, String> maxInputsAndStringsWithWords =

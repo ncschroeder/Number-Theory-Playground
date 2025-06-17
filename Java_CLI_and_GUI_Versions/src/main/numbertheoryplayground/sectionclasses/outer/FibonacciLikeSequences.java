@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.math.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.Misc;
@@ -21,9 +20,8 @@ import static numbertheoryplayground.gui.NtpGui.*;
 public class FibonacciLikeSequences {
     /*
     BigIntegers are used to create sequences and BigDecimals must be used to find the ratio
-    between BigIntegers. The MathContexts below are used as part of the division between
-    BigDecimals. For consistency, MATH_CONTEXT_WITH_ROUNDING will also be used to calculate Phi
-    and 21 / 13.
+    between BigIntegers. The MathContexts below are used as part of the division of BigDecimals.
+    For consistency, MATH_CONTEXT_WITH_ROUNDING will also be used to calculate Phi and 21 / 13.
      */
     
     private static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
@@ -42,6 +40,10 @@ public class FibonacciLikeSequences {
     
     /**
      * Approximately 1.618.
+     */
+    /*
+    I would use the Unicode char 𝚽 for Phi in the info paragraph and ratioAndPhiExpressions
+    field in the Answer class, but Swing doesn't recognize that char.
      */
     
     private static final String INFO = """
@@ -129,10 +131,10 @@ closer to Phi. For example, recall that the first 8 numbers of the Fibonacci seq
         char equalityChar;
         
         try {
-            ratio = bigDecimal2.divide(bigDecimal1, noRoundingMathContext);
+            ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITHOUT_ROUNDING);
             equalityChar = '=';
         } catch (ArithmeticException ex) {
-            ratio = bigDecimal2.divide(bigDecimal1, MathContext.DECIMAL64);
+            ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITH_ROUNDING);
             equalityChar = '≈';
         }
         
@@ -144,7 +146,7 @@ closer to Phi. For example, recall that the first 8 numbers of the Fibonacci seq
             ratio
         );
     }
-
+    
     
     public static final class Section extends DoubleInputSection {
         public Section() {

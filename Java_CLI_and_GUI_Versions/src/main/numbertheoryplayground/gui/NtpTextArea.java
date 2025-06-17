@@ -22,9 +22,7 @@ public final class NtpTextArea extends JTextArea {
     
     public NtpTextArea(String text, int width) {
         this(width);
-        if (text.length() > 50_000) {
-            throw StringTooLongException.instance;
-        }
+        StringTooLongException.throwIfTooLong(text);
         setText(text);
     }
     
@@ -57,10 +55,25 @@ public final class NtpTextArea extends JTextArea {
         setText("");
     }
     
+    /**
+     * It can take a long time to display a long string in a JTextArea, the parent class of NtpTextArea.
+     * NtpTextAreas are mostly used to display short strings that are less than a thousand chars long.
+     * The Divisibility class uses this class to display PFs of factors of an input number. The
+     * GoldbachConjecture class uses this class to display prime number pairs. The strings that get
+     * built that contain those can be pretty long, like over 50,000 chars. This exception will be
+     * thrown if they exceed that length. Then, instead of displaying that long string, the error
+     * message below, which is appropriate for both situations, will be displayed.
+     */
     public static final class StringTooLongException extends IllegalArgumentException {
         private StringTooLongException() {}
         
         private static final StringTooLongException instance = new StringTooLongException();
+        
+        private static void throwIfTooLong(String s) {
+            if (s.length() > 50_000) {
+                throw instance;
+            }
+        }
         
         public static final String ERROR_MESSAGE =
             "They take up too much text so they won't be displayed.";

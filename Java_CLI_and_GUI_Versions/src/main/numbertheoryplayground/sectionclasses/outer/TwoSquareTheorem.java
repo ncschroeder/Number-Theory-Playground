@@ -2,7 +2,6 @@ package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.List;
-import java.util.function.Supplier;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
@@ -27,15 +26,16 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
     
     static final class Answer {
         /**
-         * The first prime number >= the input that is 1 above a multiple of 4.
+         * The first prime number ≥ the input that's 1 above a multiple of 4.
          */
         private long primeNum;
         
-        /**
-         * a and b are the longs whose squares sum to primeNum.
-         */
+        // a and b are the longs whose squares sum to primeNum.
+        
         private long a;
+        
         private long b;
+        
         private final String infoSentence;
         
         Answer(long inputLong, String inputString) {

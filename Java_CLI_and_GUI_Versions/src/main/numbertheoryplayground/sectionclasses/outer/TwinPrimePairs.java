@@ -19,14 +19,14 @@ public class TwinPrimePairs {
     private static final String INFO = """
 A twin prime pair is a pair of prime numbers that differ by 2. The first 5 twin prime pairs are
 3 & 5, 5 & 7, 11 & 13, 17 & 19, and 29 & 31. The largest known twin prime pair is
-infinite amount of twin prime pairs. A conjecture is a statement that is believed to be true but has
-not been proven to be.
 (2,996,863,034,895 × 2^1,290,000) ± 1. They have 388,342 digits! It's conjectured that there are
+an infinite amount of twin prime pairs. %s.
 
 All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this means
-that all twin prime pairs besides 3 and 5 consist of 1 number that is 1 below a multiple of 6
-and another number that is 1 above that same multiple of 6. 5 is the only number to be in 2
+that all twin prime pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6
+and another number that's 1 above that same multiple of 6. 5 is the only number to be in 2
 twin prime pairs, the first 2 mentioned above."""
+        .formatted(CONJECTURE_DEFINITION);
     
     private static final long MIN_INPUT = 0;
     private static final long MAX_INPUT = FIVE_HUNDRED_BILLION;
@@ -34,7 +34,7 @@ twin prime pairs, the first 2 mentioned above."""
     
     /**
      * Returns a stream that can find the first 20 twin prime pairs where the lower of the 2 numbers in
-     * the pair is >= the input. For example, if the input is 3, then the pair 3 and 5 will be the first
+     * the pair is ≥ the input. For example, if the input is 3, then the pair 3 and 5 will be the first
      * one found since the lower number in that pair is 3. If the input is 4, then the pair 5 and 7 will
      * be the first one found. The elements of this stream are the lower numbers in each pair.
      */
@@ -42,8 +42,8 @@ twin prime pairs, the first 2 mentioned above."""
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         /*
-        Set iterationStart to the first int >= the input that is 1 below a multiple of 6 so that we'll be
-        able to iterate through ints that are 1 below a multiple of 6.
+        Set iterationStart to the first int ≥ the input that's 1 below a multiple of 6 so that
+        we'll be able to iterate through ints that are 1 below a multiple of 6.
          */
         long iterationStart = input;
         while (iterationStart % 6 != 5) iterationStart++;
@@ -71,6 +71,7 @@ twin prime pairs, the first 2 mentioned above."""
             NUM_PAIRS_TO_FIND, inputString
         );
     }
+    
     
     public static final class Section extends SingleInputSection {
         public Section() {

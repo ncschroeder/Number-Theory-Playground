@@ -178,20 +178,20 @@ class PrimeFactorizationTests {
         return Stream.of(
             arguments(10, 10, factorsAndPowersFor10, 10, factorsAndPowersFor10, 10),
             arguments(
+                2 * pow(3, 3),
+                pow(3, 2) * 11,
+                List.of(fp(3, 2)),
+                9,
+                List.of(fp(2, 1), fp(3, 3), fp(11, 1)),
+                594
+            ),
+            arguments(
                 pow(2, 2) * 3 * pow(5, 2) * 7,
                 2 * pow(3, 2) * 5 * pow(7, 2),
                 List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1)),
                 2 * 3 * 5 * 7,
                 List.of(fp(2, 2), fp(3, 2), fp(5, 2), fp(7, 2)),
                 pow(2, 2) * pow(3, 2) * pow(5, 2) * pow(7, 2)
-            ),
-            arguments(
-                pow(2, 3) * 3 * 5,
-                5 * 7 * pow(11, 2),
-                List.of(fp(5, 1)),
-                5,
-                List.of(fp(2, 3), fp(3, 1), fp(5, 1), fp(7, 1), fp(11, 2)),
-                pow(2, 3) * 3 * 5 * 7 * pow(11, 2)
             )
         );
     }

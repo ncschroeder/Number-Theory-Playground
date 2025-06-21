@@ -13,7 +13,7 @@ class CalculationsTests {
     @ParameterizedTest
     @MethodSource("getArgsForGetPrimes")
     void getPrimes(int input, int[] expectedPrimes) {
-        assertArrayEquals(expectedPrimes, Calculations.getPrimes(input));
+        assertArrayEquals(expectedPrimes, Calculations.getPrimes(input).toArray());
     }
     
     static Stream<Arguments> getArgsForGetPrimes() {
@@ -46,8 +46,8 @@ class CalculationsTests {
     static Stream<Arguments> getArgsForGetTwinPrimePairStarts() {
         var first20PairStarts =
             new int[] {
-                3, 5, 11, 17, 29, 41, 59, 71, 101, 107, 137, 149, 179, 191, 197, 227, 239,
-                269, 281, 311
+                3, 5, 11, 17, 29, 41, 59, 71, 101, 107, 137,
+                149, 179, 191, 197, 227, 239, 269, 281, 311
             };
         
         var first20PairStartsAfter1000 =
@@ -84,12 +84,12 @@ class CalculationsTests {
     }
     
     @ParameterizedTest
-    @MethodSource("getArgsForGetPythagoreanTriples")
-    void getPythagoreanTriples(int input, List<PythagoreanTriple> expectedTriples) {
-        assertEquals(expectedTriples, Calculations.getPythagoreanTriples(input));
+    @MethodSource("getArgsForGetPythagTriples")
+    void getPythagTriples(int input, List<PythagoreanTriple> expectedTriples) {
+        assertEquals(expectedTriples, Calculations.getPythagTriples(input));
     }
     
-    static Stream<Arguments> getArgsForGetPythagoreanTriples() {
+    static Stream<Arguments> getArgsForGetPythagTriples() {
         /*
         Primitive Pythagorean triples are ones where the 3 numbers have a GCD of 1.
         Each non-primitive triple in the lists is followed by a comment of the primitive

@@ -25,8 +25,8 @@ public class Calculations {
         if (input < 2) return false;
         
         /*
-        We only need to check if the input is divisible by any primes <= the floor of the
-        square root of the input. If it is, then the input is not prime. First, 2 will be
+        We only need to check if the input is divisible by any primes ≤ the floor of the
+        square root of the input. If it is, then the input isn't prime. First, 2 will be
         checked and then odd numbers will be checked since all primes besides 2 are odd.
          */
         
@@ -43,9 +43,11 @@ public class Calculations {
     private static boolean bothArePrime(int a, int b) {
         return isPrime(a) && isPrime(b);
     }
-    }
     
-    public static int[] getPrimes(int input) {
+    /**
+     * Returns a stream of the first 30 primes ≥ the input.
+     */
+    public static IntStream getPrimes(int input) {
         assertIsInRange(input, 0, 100_000_000);
         
         int iterationStart = isOdd(input) ? input : input + 1;
@@ -56,15 +58,21 @@ public class Calculations {
         // 2 is the only even prime number.
         return
             (input <= 2 ? IntStream.concat(IntStream.of(2), oddPrimes) : oddPrimes)
-            .limit(30)
-            .toArray();
+            .limit(30);
     }
     
+    /**
+     * Finds the first 20 twin prime pairs where the lower of the numbers in the pair is ≥
+     * the input. For example, if the input is 3, then the pair 3 and 5 will be the first
+     * one found since the lower number in that pair is 3. If the input is 4, then the pair
+     * 5 and 7 will be the first one found. An array that contains the lower ints of those
+     * pairs gets returned.
+     */
     public static int[] getTwinPrimePairStarts(int input) {
         assertIsInRange(input, 0, 1_000_000);
         
         /*
-        Set iterationStart to the first int >= the input that is 1 below a multiple of 6 so
+        Set iterationStart to the first int ≥ the input that is 1 below a multiple of 6 so
         that we'll be able to iterate through ints that are 1 below a multiple of 6.
          */
         int iterationStart = input;
@@ -84,6 +92,10 @@ public class Calculations {
             .toArray();
     }
     
+    /**
+     * Find the pairs of primes that sum to the input and returns an array that contains the
+     * lower ints of those pairs.
+     */
     public static int[] getGoldbachPrimePairStarts(int input) {
         assertIsInRange(input, 4, 100_000);
         if (isOdd(input)) {
@@ -91,7 +103,7 @@ public class Calculations {
         }
         
         /*
-        Check if the input is 4 since 4 is the only even number >= 4 that has 2 in a pair of
+        Check if the input is 4 since 4 is the only even number ≥ 4 that has 2 in a pair of
         primes that sum to it.
          */
         if (input == 4) {
@@ -134,11 +146,17 @@ public class Calculations {
         }
     }
     
-    public static List<PythagoreanTriple> getPythagoreanTriples(int input) {
+    /**
+     * Returns a list of triple objects for the first 10 Pythagorean triples where the lowest
+     * number in the triple is ≥ the input. For example, if the input is 3, then an object for
+     * the triple 3, 4, and 5 will be the first one since the lowest int in that triple is 3.
+     * If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
+     */
+    public static List<PythagoreanTriple> getPythagTriples(int input) {
         assertIsInRange(input, 0, 500);
         
-        final int NUM_TRIPLES_TO_FIND = 10;
-        var triples = new ArrayList<PythagoreanTriple>(NUM_TRIPLES_TO_FIND);
+        final int numTriplesToFind = 10;
+        var triples = new ArrayList<PythagoreanTriple>(numTriplesToFind);
         int a = input;
         int b = a + 1;
         
@@ -156,7 +174,7 @@ public class Calculations {
             var cInt = (int) cDouble;
             if (cDouble == cInt) {
                 triples.add(new PythagoreanTriple(a, b, cInt));
-                if (triples.size() == NUM_TRIPLES_TO_FIND) {
+                if (triples.size() == numTriplesToFind) {
                     return triples;
                 }
             }

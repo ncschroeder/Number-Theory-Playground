@@ -44,7 +44,7 @@ INPUT,      LAST_2_DIGITS, LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_OF_3_ALT_SUM_E
     @ParameterizedTest
     @FieldSource("argsForPfAnswerNumFactorsFields")
     void pfAnswerNumFactorsFields(int input, String expectedNumFactorsExpression, int expectedNumFactors) {
-        var answer = new PfAnswer(new PrimeFactorization(input));
+        var answer = new PrimeFactorizationAnswer(new PrimeFactorization(input));
         assertAll(
             () -> assertEquals(expectedNumFactorsExpression, answer.getNumFactorsExpression()),
             () -> assertEquals(expectedNumFactors, answer.getNumFactors())

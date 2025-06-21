@@ -24,10 +24,7 @@ class GcdAndLcmAnswerTests {
             arguments(10, 10, List.of(ei(10, 10, 0))),
             arguments(10, 5, List.of(ei(10, 5, 0))),
             arguments(6, 35, List.of(ei(35, 6, 5), ei(6, 5, 1), ei(5, 1, 0))),
-            arguments(4_410, 2_100, List.of(ei(4_410, 2_100, 210), ei(2_100, 210, 0))),
-            arguments(
-                120, 4_235,
-                List.of(ei(4_235, 120, 35), ei(120, 35, 15), ei(35, 15, 5), ei(15, 5, 0))
-            )
+            arguments(99, 54, List.of(ei(99, 54, 45), ei(54, 45, 9), ei(45, 9, 0))),
+            arguments(4_410, 2_100, List.of(ei(4_410, 2_100, 210), ei(2_100, 210, 0)))
         );
 }

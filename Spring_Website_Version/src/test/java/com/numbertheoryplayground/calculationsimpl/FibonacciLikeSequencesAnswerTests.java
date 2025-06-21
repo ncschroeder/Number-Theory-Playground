@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,36 +13,37 @@ import static com.numbertheoryplayground.calculationsimpl.FibonacciLikeSequences
 
 class FibonacciLikeSequencesAnswerTests {
     @ParameterizedTest
-    @MethodSource("getSequenceStreams")
-    void getBigIntSequence(IntStream expectedSequenceStream) {
-        List<BigInteger> expectedSequence =
-            expectedSequenceStream
-            .mapToObj(BigInteger::valueOf)
+    @MethodSource("getIntFiboLikeSequences")
+    void getBigIntFiboLikeSequence(List<Integer> expectedIntSequence) {
+        List<BigInteger> expectedBigIntSequence =
+            expectedIntSequence
+            .stream()
+            .map(BigInteger::valueOf)
             .toList();
         
-        List<BigInteger> actualSequence =
-            FibonacciLikeSequencesAnswer.getBigIntSequence(
-                expectedSequence.get(0).longValueExact(),
-                expectedSequence.get(1).longValueExact()
+        List<BigInteger> actualBigIntSequence =
+            FibonacciLikeSequencesAnswer.getBigIntFiboLikeSequence(
+                expectedBigIntSequence.get(0).longValueExact(),
+                expectedBigIntSequence.get(1).longValueExact()
             );
         
-        assertEquals(expectedSequence, actualSequence);
+        assertEquals(expectedBigIntSequence, actualBigIntSequence);
     }
     
-    static Stream<IntStream> getSequenceStreams() {
-        var fibonacciSequenceStart =
-            IntStream.of(
+    static Stream<List<Integer>> getIntFiboLikeSequences() {
+        var fiboSequenceStart =
+            List.of(
                 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233,
                 377, 610,987, 1_597, 2_584, 4_181, 6_765
             );
         
         var anotherSequence =
-            IntStream.of(
+            List.of(
                 304, 5, 309, 314, 623, 937, 1_560, 2_497, 4_057, 6_554, 10_611, 17_165,
                 27_776, 44_941, 72_717, 117_658, 190_375, 308_033, 498_408, 806_441
             );
         
-        return Stream.of(fibonacciSequenceStart, anotherSequence);
+        return Stream.of(fiboSequenceStart, anotherSequence);
     }
     
     

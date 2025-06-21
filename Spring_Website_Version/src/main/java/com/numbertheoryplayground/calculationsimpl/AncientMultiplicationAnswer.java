@@ -6,11 +6,11 @@ import java.util.List;
 
 import static com.numbertheoryplayground.InputValidation.*;
 
-public class AncientMultiplicationAnswer {
+public final class AncientMultiplicationAnswer {
     private static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = NINE_QUADRILLION;
     
-    public record TableRow(long powerOf2, String correspondingMultipleString) {}
+    public record TableRow(String powerOf2String, String correspondingMultipleString) {}
     
     private final List<TableRow> table1Rows;
     private final List<TableRow> table2Rows;
@@ -22,7 +22,7 @@ public class AncientMultiplicationAnswer {
         
         /*
         Iterate backwards through the binary string of input1 to find the powers of 2 that are
-        <= input1 and the powers of 2 that sum to input1.
+        ≤ input1 and the powers of 2 that sum to input1.
          */
         var input1BinaryString = Long.toBinaryString(input1);
         table1Rows = new ArrayList<>(input1BinaryString.length());

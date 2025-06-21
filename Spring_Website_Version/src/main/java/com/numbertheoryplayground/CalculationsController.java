@@ -1,24 +1,29 @@
 package com.numbertheoryplayground;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.numbertheoryplayground.calculationsimpl.*;
 
 @RestController
 @RequestMapping("/calculate")
 public class CalculationsController {
-    public static final String PRIMES_ENDPOINT = "/primes";
+    /*
+    There are constants for the endpoints so that they can be accessed from the
+    CalculationsControllerTests class.
+     */
+    
+    static final String PRIMES_ENDPOINT = "/primes";
     
     @GetMapping(PRIMES_ENDPOINT)
-    public int[] getPrimes(@RequestParam int input) {
-        return Calculations.getPrimes(input);
+    public List<String> getPrimesStrings(@RequestParam int input) {
+        return
+            Calculations.getPrimes(input)
+            .mapToObj(Integer::toString)
+            .toList();
     }
     
     
-    public static final String TWIN_PRIME_PAIR_STARTS_ENDPOINT = "/twinPrimePairStarts";
+    static final String TWIN_PRIME_PAIR_STARTS_ENDPOINT = "/twinPrimePairStarts";
     
     @GetMapping(TWIN_PRIME_PAIR_STARTS_ENDPOINT)
     public int[] getTwinPrimePairStarts(@RequestParam int input) {
@@ -26,23 +31,23 @@ public class CalculationsController {
     }
     
     
-    public static final String PRIME_FACTORIZATION_ENDPOINT = "/primeFactorization";
+    static final String PF_ENDPOINT = "/primeFactorization";
     
-    @GetMapping(PRIME_FACTORIZATION_ENDPOINT)
-    public List<PrimeFactorization.FactorAndPower> getPrimeFactorization(@RequestParam int input) {
-        return new PrimeFactorization(input).toList();
+    @GetMapping(PF_ENDPOINT)
+    public List<PrimeFactorization.FactorAndPower> getPfFactorsAndPowers(@RequestParam int input) {
+        return new PrimeFactorization(input).getFactorsAndPowers();
     }
     
     
-    public static final String DIVISIBILITY_ANSWER_ENDPOINT = "/divisibilityAnswer";
+    static final String DIVIS_ANSWER_ENDPOINT = "/divisibilityAnswer";
     
-    @GetMapping(DIVISIBILITY_ANSWER_ENDPOINT)
-    public DivisibilityAnswer getDivisibilityAnswer(@RequestParam int input) {
+    @GetMapping(DIVIS_ANSWER_ENDPOINT)
+    public DivisibilityAnswer getDivisAnswer(@RequestParam int input) {
         return new DivisibilityAnswer(input);
     }
     
     
-    public static final String GCD_AND_LCM_ANSWER_ENDPOINT = "/gcdAndLcmAnswer";
+    static final String GCD_AND_LCM_ANSWER_ENDPOINT = "/gcdAndLcmAnswer";
     
     @GetMapping(GCD_AND_LCM_ANSWER_ENDPOINT)
     public GcdAndLcmAnswer getGcdAndLcmAnswer(@RequestParam int input1, @RequestParam int input2) {
@@ -50,7 +55,7 @@ public class CalculationsController {
     }
     
     
-    public static final String GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT = "/goldbachPrimePairStarts";
+    static final String GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT = "/goldbachPrimePairStarts";
     
     @GetMapping(GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT)
     public int[] getGoldbachPrimePairStarts(@RequestParam int input) {
@@ -58,15 +63,15 @@ public class CalculationsController {
     }
     
     
-    public static final String PYTHAGOREAN_TRIPLES_ENDPOINT = "/pythagoreanTriples";
+    static final String PYTHAG_TRIPLES_ENDPOINT = "/pythagoreanTriples";
     
-    @GetMapping(PYTHAGOREAN_TRIPLES_ENDPOINT)
-    public List<Calculations.PythagoreanTriple> getPythagoreanTriples(@RequestParam int input) {
-        return Calculations.getPythagoreanTriples(input);
+    @GetMapping(PYTHAG_TRIPLES_ENDPOINT)
+    public List<Calculations.PythagoreanTriple> getPythagTriples(@RequestParam int input) {
+        return Calculations.getPythagTriples(input);
     }
     
     
-    public static final String TWO_SQUARE_THEOREM_ANSWER_ENDPOINT = "/twoSquareTheoremAnswer";
+    static final String TWO_SQUARE_THEOREM_ANSWER_ENDPOINT = "/twoSquareTheoremAnswer";
     
     @GetMapping(TWO_SQUARE_THEOREM_ANSWER_ENDPOINT)
     public TwoSquareTheoremAnswer getTwoSquareTheoremAnswer(@RequestParam int input) {
@@ -74,18 +79,22 @@ public class CalculationsController {
     }
     
     
-    public static final String FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT = "/fibonacciLikeSequencesAnswer";
+    static final String FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT = "/fibonacciLikeSequencesAnswer";
     
     @GetMapping(FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT)
-    public FibonacciLikeSequencesAnswer getFibonacciLikeSequencesAnswer(@RequestParam long input1, @RequestParam long input2) {
+    public FibonacciLikeSequencesAnswer getFiboLikeSequencesAnswer(
+        @RequestParam long input1, @RequestParam long input2
+    ) {
         return new FibonacciLikeSequencesAnswer(input1, input2);
     }
     
     
-    public static final String ANCIENT_MULT_ANSWER_ENDPOINT = "/ancientMultiplicationAnswer";
+    static final String ANCIENT_MULT_ANSWER_ENDPOINT = "/ancientMultiplicationAnswer";
     
     @GetMapping(ANCIENT_MULT_ANSWER_ENDPOINT)
-    public AncientMultiplicationAnswer getAncientMultiplicationAnswer(@RequestParam long input1, @RequestParam long input2) {
+    public AncientMultiplicationAnswer getAncientMultAnswer(
+        @RequestParam long input1, @RequestParam long input2
+    ) {
         return new AncientMultiplicationAnswer(input1, input2);
     }
 }

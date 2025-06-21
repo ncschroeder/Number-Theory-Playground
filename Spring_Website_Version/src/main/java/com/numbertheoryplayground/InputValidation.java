@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 public class InputValidation {
-    // Max input constants.
+    // Max input constants
     public static final long ONE_BILLION = 1_000_000_000L;
     public static final long NINE_QUADRILLION = 9_000_000_000_000_000L;
     

@@ -8,33 +8,37 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
 
-public class FibonacciLikeSequencesAnswer {
+public final class FibonacciLikeSequencesAnswer {
     private static final long MIN_INPUT = 1;
     private static final long MAX_INPUT = NINE_QUADRILLION;
     
-    private static final int SEQUENCE_LENGTH = 20;
+    private final List<String> stringFiboLikeSequence;
     
-    private final List<String> stringSequence;
+    /**
+     * Contains RatioDatas for the 4th and 5th, 9th and 10th, 14th and 15th, and
+     * 19th and 20th numbers in the Fibonacci-like sequence that gets created.
+     */
     private final List<RatioData> ratioDataList;
     
     public FibonacciLikeSequencesAnswer(long input1, long input2) {
-        List<BigInteger> bigIntSequence = getBigIntSequence(input1, input2);
+        List<BigInteger> bigIntFiboLikeSequence = getBigIntFiboLikeSequence(input1, input2);
         
-        stringSequence =
-            bigIntSequence
+        stringFiboLikeSequence =
+            bigIntFiboLikeSequence
             .stream()
             .map(BigInteger::toString)
             .toList();
         
         ratioDataList =
             IntStream.of(3, 8, 13, 18)
-            .mapToObj(i -> new RatioData(bigIntSequence.get(i), bigIntSequence.get(i + 1)))
+            .mapToObj(i ->
+                new RatioData(bigIntFiboLikeSequence.get(i), bigIntFiboLikeSequence.get(i + 1))
+            )
             .toList();
     }
     
-    @JsonProperty("sequence")
-    public List<String> getStringSequence() {
-        return stringSequence;
+    public List<String> getStringFiboLikeSequence() {
+        return stringFiboLikeSequence;
     }
     
     @JsonProperty("ratioDataArray")
@@ -43,17 +47,18 @@ public class FibonacciLikeSequencesAnswer {
     }
     
     
-    static List<BigInteger> getBigIntSequence(long input1, long input2) {
+    static List<BigInteger> getBigIntFiboLikeSequence(long input1, long input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
         assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
         
-        var sequence = new ArrayList<BigInteger>(SEQUENCE_LENGTH);
+        final int sequenceLength = 20;
+        var sequence = new ArrayList<BigInteger>(sequenceLength);
         var bigInt1 = BigInteger.valueOf(input1);
         var bigInt2 = BigInteger.valueOf(input2);
         sequence.add(bigInt1);
         sequence.add(bigInt2);
         
-        while (sequence.size() < SEQUENCE_LENGTH) {
+        while (sequence.size() < sequenceLength) {
             var nextBigInt = bigInt1.add(bigInt2);
             sequence.add(nextBigInt);
             bigInt1 = bigInt2;
@@ -64,8 +69,9 @@ public class FibonacciLikeSequencesAnswer {
     }
     
     public static final class RatioData {
-        private static final MathContext noRoundingMathContext =
-            new MathContext(MathContext.DECIMAL64.getPrecision(), RoundingMode.UNNECESSARY);
+        private static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
+        private static final MathContext MATH_CONTEXT_WITHOUT_ROUNDING =
+            new MathContext(MATH_CONTEXT_WITH_ROUNDING.getPrecision(), RoundingMode.UNNECESSARY);
         
         private final String bigInt1String;
         private final String bigInt2String;
@@ -79,10 +85,10 @@ public class FibonacciLikeSequencesAnswer {
             var bigDecimal2 = new BigDecimal(bigInt2);
             
             try {
-                ratio = bigDecimal2.divide(bigDecimal1, noRoundingMathContext);
+                ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITHOUT_ROUNDING);
                 isRounded = false;
             } catch (ArithmeticException ex) {
-                ratio = bigDecimal2.divide(bigDecimal1, MathContext.DECIMAL64);
+                ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITH_ROUNDING);
                 isRounded = true;
             }
         }

@@ -9,7 +9,7 @@ import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.*;
 
 public final class DivisibilityAnswer {
     private final RulesData rulesData;
-    private final PfAnswer pfAnswer;
+    private final PrimeFactorizationAnswer pfAnswer;
     
     public DivisibilityAnswer(int input) {
         assertIsInRange(input, PrimeFactorization.MIN_INPUT, ONE_BILLION);
@@ -17,31 +17,31 @@ public final class DivisibilityAnswer {
         rulesData = input >= 10 ? new RulesData(input) : null;
         
         var pf = new PrimeFactorization(input);
-        pfAnswer = pf.isForAPrimeNumber() ? null : new PfAnswer(pf);
+        pfAnswer = pf.isForAPrimeNumber() ? null : new PrimeFactorizationAnswer(pf);
     }
     
     public RulesData getRulesData() {
         return rulesData;
     }
     
-    public PfAnswer getPfAnswer() {
+    public PrimeFactorizationAnswer getPfAnswer() {
         return pfAnswer;
     }
     
     
-    public static final class PfAnswer {
+    public static final class PrimeFactorizationAnswer {
         private final List<FactorAndPower> inputFpList;
         private int numFactors;
         private final String numFactorsExpression;
         private final List<FactorAndPowerListAndLongString> factorFpListsAndLongStrings;
         
-        PfAnswer(PrimeFactorization inputPf) {
+        PrimeFactorizationAnswer(PrimeFactorization inputPf) {
             inputFpList = inputPf.getFactorsAndPowers();
             
             numFactors = 1;
             var numFactorsExpressionParts = new ArrayList<String>(inputFpList.size());
-            for (var factorAndPower : inputFpList) {
-                int power = factorAndPower.power();
+            for (FactorAndPower fp : inputFpList) {
+                int power = fp.power();
                 numFactors *= power + 1;
                 numFactorsExpressionParts.add(String.format("(%d + 1)", power));
             }
@@ -69,7 +69,8 @@ public final class DivisibilityAnswer {
         }
     }
     
-    public static class RulesData {
+    
+    public static final class RulesData {
         private final int last2Digits;
         private final int last3Digits;
         private final int sumOfDigits;
@@ -79,7 +80,6 @@ public final class DivisibilityAnswer {
         RulesData(int input) {
             last2Digits = input % 100;
             last3Digits = input % 1_000;
-            
             var inputString = Integer.toString(input);
             
             sumOfDigits =
@@ -115,7 +115,8 @@ public final class DivisibilityAnswer {
         }
     }
     
-    public static sealed class AlternatingSumAndExpression {
+    
+    public static abstract sealed class AlternatingSumAndExpression {
         protected int sum;
         protected String expression;
         

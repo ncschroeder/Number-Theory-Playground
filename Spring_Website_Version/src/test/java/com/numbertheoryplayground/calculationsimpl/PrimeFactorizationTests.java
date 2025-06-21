@@ -3,7 +3,8 @@ package com.numbertheoryplayground.calculationsimpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -141,9 +142,12 @@ class PrimeFactorizationTests {
     @ParameterizedTest
     @MethodSource("getArgsForGcdAndLcmAnswerForNonCoprimeInputs")
     void gcdAndLcmAnswerForNonCoprimeInputs(
-        int input1, int input2,
-        List<FactorAndPower> expectedGcdPfList, int expectedGcd,
-        List<FactorAndPower> expectedLcmPfList, int expectedLcm
+        int input1,
+        int input2,
+        List<FactorAndPower> expectedGcdFpList,
+        int expectedGcd,
+        List<FactorAndPower> expectedLcmFpList,
+        int expectedLcm
     ) {
         var answer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
         
@@ -163,20 +167,20 @@ class PrimeFactorizationTests {
         return Stream.of(
             arguments(10, 10, factorsAndPowersFor10, 10, factorsAndPowersFor10, 10),
             arguments(
+                2 * pow(3, 3),
+                pow(3, 2) * 11,
+                List.of(fp(3, 2)),
+                9,
+                List.of(fp(2, 1), fp(3, 3), fp(11, 1)),
+                594
+            ),
+            arguments(
                 pow(2, 2) * 3 * pow(5, 2) * 7,
                 2 * pow(3, 2) * 5 * pow(7, 2),
                 List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1)),
                 2 * 3 * 5 * 7,
                 List.of(fp(2, 2), fp(3, 2), fp(5, 2), fp(7, 2)),
                 pow(2, 2) * pow(3, 2) * pow(5, 2) * pow(7, 2)
-            ),
-            arguments(
-                pow(2, 3) * 3 * 5,
-                5 * 7 * pow(11, 2),
-                null,
-                5,
-                List.of(fp(2, 3), fp(3, 1), fp(5, 1), fp(7, 1), fp(11, 2)),
-                pow(2, 3) * 3 * 5 * 7 * pow(11, 2)
             )
         );
     }

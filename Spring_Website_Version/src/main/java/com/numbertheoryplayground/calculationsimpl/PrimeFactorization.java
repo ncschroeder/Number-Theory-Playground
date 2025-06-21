@@ -1,14 +1,13 @@
 package com.numbertheoryplayground.calculationsimpl;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isDivisible;
 
-public class PrimeFactorization {
+public final class PrimeFactorization {
     static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = ONE_BILLION;
     
@@ -21,27 +20,34 @@ public class PrimeFactorization {
     
     /**
      * The long that this prime factorization is for.
-     *
-     * Why use a long? Well, there are 2 constructors, 1 of which has a map for a param.
-     * 1 place where that one is used is in the constructor for the
-     * PrimeFactorization.GcdAndLcmAnswer class at the bottom of this class. The constructor
-     * for that class creates a map for the prime factors and powers of the LCM of 2 input
-     * longs, and then creates a PrimeFactorization using that map. That PrimeFactorization
-     * constructor will then set this field to the product of all the factors raised to their
-     * powers. The LCM of 2 longs is at most the product of them. The
-     * calculationsimpl.GcdAndLcmAnswer class creates PrimeFactorization.GcdAndLcmAnswer
-     * objects and the GCD and LCM section has a max input of 1 billion. The highest possible
-     * LCM is 1 billion × (1 billion - 1), which is almost 1 quintillion, which is a number
-     * with 19 digits. The max value for an int is 2 billion something and the max value for
-     * a long is 9 quintillion something.
      */
     private final long correspondingLong;
     
+    /*
+    Why use a long? Well, this class has 2 constructors, 1 of which has a list for a param.
+    1 place where that one is used is in the constructor for the
+    PrimeFactorization.GcdAndLcmAnswer class at the bottom of this class. The constructor
+    for that class creates a list of the prime factors and powers of the LCM of 2 input
+    ints, and then creates a PrimeFactorization using that list. That PrimeFactorization
+    constructor will then set this field to the product of all the factors raised to their
+    powers. The LCM of 2 ints is at most the product of them. The
+    calculationsimpl.GcdAndLcmAnswer class creates PrimeFactorization.GcdAndLcmAnswer
+    objects and the GCD and LCM section has a max input of 1 billion. The highest possible
+    LCM is 1 billion × (1 billion − 1), which is almost 1 quintillion, which is a number
+    with 19 digits. The max value for an int is 2 billion something and the max value for
+    a long is 9 quintillion something.
+     */
+    
     /**
-     * This list is sorted by factors and immutable.
+     * An immutable list that's sorted by factors, which is appropriate when marshaling this
+     * list to JSON and then sending that to the web page and then displaying the contents
+     * of this list.
      */
     private final List<FactorAndPower> factorsAndPowers;
     
+    /**
+     * Constructs a PrimeFactorization for the prime factorization of the input.
+     */
     public PrimeFactorization(int input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
@@ -105,9 +111,6 @@ public class PrimeFactorization {
         return factorsAndPowers;
     }
     
-    /**
-     * Prime numbers have a prime factorization that consists of a single factor with 1 as its power.
-     */
     boolean isForAPrimeNumber() {
         return factorsAndPowers.size() == 1 && factorsAndPowers.getFirst().power == 1;
     }
@@ -127,9 +130,8 @@ public class PrimeFactorization {
             int thisPfPower = fp.power;
             
             /*
-            In the 2nd for loop below, we want to iterate through all the PFs that are in
-            factorPfs at this point, and not the ones that get added below. Use this variable
-            for that.
+            In the 2nd for loop below, we want to iterate through all the PFs that are in factorPfs
+            at this point, and not the ones that get added below. Use this variable for that.
              */
             int lastPfIndexToUse = factorPfs.size() - 1;
             
@@ -142,9 +144,7 @@ public class PrimeFactorization {
                     List<FactorAndPower> factorPfFactorsAndPowers =
                         new ArrayList<>(factorPfs.get(i).factorsAndPowers);
                     
-                    IntStream.range(0, factorPfFactorsAndPowersList.size())
-                        .filter(j -> factorPfFactorsAndPowersList.get(j).factor == factor)
-                        .findFirst()
+                    findIndexOfFactor(factorPfFactorsAndPowers, factor)
                     .ifPresentOrElse(
                         indexToUpdate -> factorPfFactorsAndPowers.set(indexToUpdate, newFactorAndPower),
                         () -> factorPfFactorsAndPowers.add(newFactorAndPower)
@@ -153,16 +153,22 @@ public class PrimeFactorization {
                     factorPfs.add(new PrimeFactorization(factorPfFactorsAndPowers));
                 }
             }
-
         }
+        
         /*
-        The last PF has all the factors that this PF has and each power is the same as the
-        powers in this PF, so it's the same as this PF. We don't want to include that as part
-        of the factors.
+        The last PF has all the factors that this PF has and each power is the same as the powers in
+        this PF, so it's the same as this PF. We don't want to include that as part of the factors.
          */
         factorPfs.removeLast();
         factorPfs.sort(Comparator.comparingLong(pf -> pf.correspondingLong));
         return factorPfs;
+    }
+    
+    private static OptionalInt findIndexOfFactor(List<FactorAndPower> fps, int factor) {
+        return
+            IntStream.range(0, fps.size())
+            .filter(i -> fps.get(i).factor == factor)
+            .findFirst();
     }
     
     List<FactorAndPowerListAndLongString> getFactorFpListsAndLongStrings() {
@@ -173,7 +179,7 @@ public class PrimeFactorization {
             .toList();
     }
     
-    private OptionalInt getPowerOf(int factor) {
+    private OptionalInt findPowerOf(int factor) {
         return
             factorsAndPowers
             .stream()
@@ -182,20 +188,26 @@ public class PrimeFactorization {
             .findFirst();
     }
     
+    private boolean containsFactor(int i) {
+        return
+            factorsAndPowers
+            .stream()
+            .anyMatch(fp -> fp.factor == i);
+    }
+    
+    
     /**
      * This class uses prime factorizations to find the greatest common divisor (GCD) and
      * least common multiple (LCM) of 2 integers. An advantage to having this class be a
      * nested class within the PrimeFactorization class is that we can access the private
-     * factorsAndPowers map of the PrimeFactorizations we create in the constructor for
+     * factorsAndPowers list of the PrimeFactorizations we create in the constructor for
      * this class.
      */
     public static class GcdAndLcmAnswer {
-
-        
         private final List<FactorAndPower> input1FpList;
         private final List<FactorAndPower> input2FpList;
         /**
-         * If the GCD of the inputs is 1, this is null since only integers >= 2 have a prime factorization.
+         * If the GCD of the inputs is 1, this is null since only integers > 1 have a prime factorization.
          */
         private final FactorAndPowerListAndLongString gcdFpListAndLongString;
         private final FactorAndPowerListAndLongString lcmFpListAndLongString;
@@ -206,7 +218,6 @@ public class PrimeFactorization {
             
             var input1Pf = new PrimeFactorization(input1);
             var input2Pf = new PrimeFactorization(input2);
-            
             input1FpList = input1Pf.getFactorsAndPowers();
             input2FpList = input2Pf.getFactorsAndPowers();
             var gcdPfFactorsAndPowers = new ArrayList<FactorAndPower>();
@@ -217,7 +228,7 @@ public class PrimeFactorization {
                 int power1 = fp.power;
                 
                 input2Pf
-                .getPowerOf(factor)
+                .findPowerOf(factor)
                 .ifPresentOrElse(
                     power2 -> {
                         gcdPfFactorsAndPowers.add(new FactorAndPower(factor, Math.min(power1, power2)));
@@ -227,9 +238,8 @@ public class PrimeFactorization {
                 );
             }
             
-            // Find the unique prime factors of input2Pf.
             for (FactorAndPower fp : input2Pf.factorsAndPowers) {
-                if (input1Pf.getPowerOf(fp.factor).isEmpty()) {
+                if (!input1Pf.containsFactor(fp.factor)) {
                     lcmPfFactorsAndPowers.add(new FactorAndPower(fp.factor, fp.power));
                 }
             }

@@ -42,7 +42,7 @@ class AncientMultiplicationAnswerTests {
     }
     
     static TableRow tr(int powerOf2, int correspondingMultiple) {
-        return new TableRow(powerOf2, Integer.toString(correspondingMultiple));
+        return new TableRow(Integer.toString(powerOf2), Integer.toString(correspondingMultiple));
     }
     
     static Stream<Arguments> getArgs() {

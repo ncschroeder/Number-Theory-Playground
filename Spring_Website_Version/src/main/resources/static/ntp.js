@@ -7,36 +7,44 @@
 const getElementById = (id) => document.getElementById(id);
 
 /**
+ * @typedef {string | Node} Appendable
+ * These 2 types can be passed as args to the append, prepend, and replaceChildren methods on the Element class.
+ */
+
+/**
  * @param {string} elementType 
- * @param {string} [textContent]
+ * @param {...Appendable} objectsToAppend 
  * @returns {HTMLElement}
  */
-function createElement(elementType, textContent) {
+function createElement(elementType, ...objectsToAppend) {
     const element = document.createElement(elementType);
-    if (textContent) {
-        element.textContent = textContent;
-    }
+    element.append(...objectsToAppend);
     return element;
 }
 
 /**
- * @param {string} [textContent]
+ * @param {string} text
  * @returns {HTMLHeadingElement}
  */
-const createH3 = (textContent) => createElement('h3', textContent);
+const createH3 = (text) => createElement('h3', text);
 
 /**
- * @param {string} [textContent]
- * @returns {HTMLButtonElement}
+ * @param {string} text
  * @returns {HTMLHeadingElement}
  */
-const createH4 = (textContent) => createElement('h4', textContent);
+const createH4 = (text) => createElement('h4', text);
 
 /**
- * @param {string} [textContent]
+ * @param {...Appendable} objectsToAppend
+ * @returns {HTMLDivElement}
+ */
+const createDiv = (...objectsToAppend) => createElement('div', ...objectsToAppend);
+
+/**
+ * @param {...Appendable} objectsToAppend
  * @returns {HTMLParagraphElement}
  */
-const createP = (textContent) => createElement('p', textContent);
+const createP = (...objectsToAppend) => createElement('p', ...objectsToAppend);
 
 /**
  * @param {string} innerHtml 
@@ -68,20 +76,22 @@ function createBtn(text) {
 }
 
 /**
- * @param  {...Appendable} children 
- * @returns {HTMLLIElement}
+ * @param  {...HTMLLIElement} lis 
+ * @returns {HTMLOListElement}
  */
-const createLi = (...children) => createElement('li', ...children);
-
- * @returns {HTMLDivElement}
- */
-const createDiv = () => createElement('div');
+const createOl = (...lis) => createElement('ol', ...lis);
 
 /**
- * @param {string} [textContent]
+ * @param  {...Appendable} objectsToAppend 
+ * @returns {HTMLLIElement}
+ */
+const createLi = (...objectsToAppend) => createElement('li', ...objectsToAppend);
+
+/**
+ * @param {string} text
  * @returns {HTMLElement}
  */
-const createSuperscript = (textContent) => createElement('sup', textContent);
+const createSuperscript = (text) => createElement('sup', text);
 
 /**
  * @returns {HTMLElement}
@@ -89,34 +99,32 @@ const createSuperscript = (textContent) => createElement('sup', textContent);
 const createSuperscriptWith2 = () => createSuperscript('2');
 
 /**
+ * @param {...Appendable} objectsToAppend
  * @returns {HTMLSpanElement}
  */
-const createSpan = () => createElement('span');
+const createSpan = (...objectsToAppend) => createElement('span', ...objectsToAppend);
 
 /**
- * @param {number} number
+ * @param {number} num
  * @returns {HTMLSpanElement}
  */
-function getNumberAndSquareSpan(number) {
-    const span = createSpan();
-    span.append(getNumberStringWithCommas(number), createSuperscriptWith2(), ` (${getNumberStringWithCommas(number * number)})`);
-    return span;
-}
+const createNumAndSquareSpan = (num) =>
+    createSpan(createNumStringWithCommas(num), createSuperscriptWith2(), ` (${createNumStringWithCommas(num * num)})`);
 
 /**
- * @param {any[]} array
- * @param {(obj: any) => HTMLElement | string} transform
- * @param {boolean} useAnswerListClass
+ * @param {any[]} arr
+ * @param {(obj: any) => Appendable | HTMLLIElement} arrElementTransform
+ * @param {boolean} useFlexAnswerListClass
  * @returns {HTMLOListElement}
     */
-function arrayToOl(array, transform, useAnswerListClass = true) {
-    const ol = createElement('ol');
-    if (useAnswerListClass) {
-        ol.className = 'answerList';
+function arrToOl(arr, arrElementTransform, useFlexAnswerListClass = true) {
+    const ol = createOl();
+    if (useFlexAnswerListClass) {
+        ol.className = 'flexAnswerList';
     }
 
-    for (const element of array) {
-        const transformObj = transform(element);
+    for (const element of arr) {
+        const transformObj = arrElementTransform(element);
         const li = transformObj instanceof HTMLLIElement ? transformObj : createLi(transformObj);
         ol.appendChild(li);
     }
@@ -125,38 +133,34 @@ function arrayToOl(array, transform, useAnswerListClass = true) {
 }
 
 /**
- * @param {string[]} headings 
- * @param {any[]} bodyDataSource 
- * @param {(obj: any) => (number | string)[]} bodyTransform
+ * @param {string[]} colHeadings 
+ * @param {any[]} rowsDataSourceArr 
+ * @param {(obj: any) => (number | string)[]} rowsDataSourceTransform
+ * Return type is an array of numbers and/or unformatted number strings.
  * @returns {HTMLTableElement}
  */
-function createTable(headings, bodyDataSource, bodyTransform, caption) {
+function createTable(colHeadings, rowsDataSourceArr, rowsDataSourceTransform) {
     const table = createElement('table');
-    const thead = createElement('thead');
-
-    /**
-     * @returns {HTMLTableRowElement}
-     */
+    const tHead = createElement('thead');
     const createTr = () => createElement('tr');
 
     let tr = createTr();
-    for (const heading of headings) {
+    for (const heading of colHeadings) {
         tr.appendChild(createElement('th', heading));
     }
-    thead.appendChild(tr);
-    table.append(thead);
+    tHead.appendChild(tr);
+    table.append(tHead);
 
-    const tableBody = createElement('tbody');
-
-    for (const obj of bodyDataSource) {
+    const tBody = createElement('tbody');
+    for (const element of rowsDataSourceArr) {
         tr = createTr();
-        for (const num of bodyTransform(obj)) {
-            tr.appendChild(createElement('td', getNumberStringWithCommas(num)));
+        for (const numOrNumString of rowsDataSourceTransform(element)) {
+            tr.appendChild(createElement('td', createNumStringWithCommas(numOrNumString)));
         }
-        tableBody.appendChild(tr);
+        tBody.appendChild(tr);
     }
+    table.appendChild(tBody);
 
-    table.appendChild(tableBody);
     return table;
 }
 
@@ -168,15 +172,31 @@ function createTable(headings, bodyDataSource, bodyTransform, caption) {
 const isDivisible = (a, b) => a % b === 0;
 
 /**
- * @param {number} n 
+ * @param {number} num 
  * @returns {boolean}
  */
+const isEven = (num) => isDivisible(num, 2);
 
 /**
  * @param {number} num 
  * @returns {boolean}
  */
 const isOdd = (num) => !isEven(num);
+
+const commaAdder = new Intl.NumberFormat();
+
+/**
+ * @param {number | string} value A number or an unformatted number string.
+ * @returns {string}
+ */
+const createNumStringWithCommas = (value) => commaAdder.format(value);
+
+/**
+ * @param {number} a
+ * @param {number} b
+ * @returns {string}
+ */
+const numPairToString = (a, b) => `${createNumStringWithCommas(a)} & ${createNumStringWithCommas(b)}`;
 
 /**
  * @type {Section}
@@ -188,23 +208,19 @@ let curSection;
  * @returns {?number}
  */
 function getNum(inputField) {
-    const trimmedValue = inputField.value.trim().replaceAll(',', '');
-    if (trimmedValue.length === 0) return null;
-    const containsNonDigit = /\D/.test(trimmedValue);
+    const modifiedValue = inputField.value.trim().replaceAll(',', '');
+    if (modifiedValue.length === 0) return null;
+    const containsNonDigit = /\D/.test(modifiedValue);
     if (containsNonDigit) return null;
-    const num = Number(trimmedValue);
+    const num = Number(modifiedValue);
     return Number.isSafeInteger(num) ? num : null;
 }
-const isEven = (n) => isDivisible(n, 2);
 
 /**
  * @param {string} id 
  * @returns {{ inputDiv: HTMLDivElement, inputField: HTMLInputElement }}
  */
 function createInputDiv(id) {
-    /**
-     * @type {HTMLInputElement}
-     */
     const inputField = createElement('input');
     inputField.setAttribute('type', 'number');
     inputField.className = 'inputField';
@@ -260,9 +276,6 @@ function createInputDiv(id) {
     return { inputDiv, inputField };
 }
 
-
-const commaAdder = new Intl.NumberFormat();
-const getNumberStringWithCommas = commaAdder.format;
 const sectionHeading = getElementById('sectionHeading');
 const homeHeadingText = sectionHeading.textContent;
 const homeContentDiv = getElementById('homeContentDiv');
@@ -272,16 +285,12 @@ const sectionInfoDiv = createDiv();
 sectionInfoDiv.id = 'sectionInfoDiv';
 sectionInfoDiv.className = 'nonAnswerInfoDiv';
 /**
- * @param {number} a
- * @param {number} b
- * @returns 
  * @type {HTMLDetailsElement}
  */
-const numPairToString = (a, b) => `${getNumberStringWithCommas(a)} & ${getNumberStringWithCommas(b)}`;
 const sectionInfoDetails = createElement('details', sectionInfoDetailsSummary, sectionInfoDiv);
 
-const LEFT_INPUT_DIV_ID = 'leftInputDiv';
-const { inputDiv: inputDiv1, inputField: inputField1 } = createInputDiv(LEFT_INPUT_DIV_ID);
+const leftInputDivId = 'leftInputDiv';
+const { inputDiv: inputDiv1, inputField: inputField1 } = createInputDiv(leftInputDivId);
 const { inputDiv: inputDiv2, inputField: inputField2 } = createInputDiv('rightInputDiv');
 const inputDivDiv = createDiv(inputDiv1, inputDiv2);
 inputDivDiv.id = 'inputDivDiv';
@@ -304,16 +313,11 @@ getElementById('homeBtn').onclick = () => {
 };
 
 
-
-
-
-
-
-// Max input constants.
-const ONE_MILLION = 1_000_000;
-const ONE_HUNDRED_MILLION = ONE_MILLION * 100;
-const ONE_BILLION = 1_000_000_000;
-const NINE_QUADRILLION = 9_000_000_000_000_000;
+// Max input constants
+const oneMillion = 1_000_000;
+const oneHundredMillion = oneMillion * 100;
+const oneBillion = 1_000_000_000;
+const nineQuadrillion = 9_000_000_000_000_000;
 
 
 class Section {
@@ -330,25 +334,26 @@ class Section {
      * 
      * @typedef {Object} SectionParams
      * @property {string} btnIdStart
-     * @property {string | HTMLElement[]} infoHtml
-     * @property {boolean} [isSingleInputSection=true]
+     * @property {string | HTMLElement[]} infoHtmlStringOrArr
+     * If this is a string, it'll contain paragraphs of info with each one separated by a blank line.
      * @property {string} actionSentenceEnding
      * @property {number} minInput
      * @property {number} maxInput
      * @property {string} apiEndpoint
-     * 
+     */
+
+    /**
      * @param {SectionParams} params 
      */
     constructor(params) {
         const { 
-            btnIdStart, infoHtml, actionSentenceEnding, minInput, maxInput, apiEndpoint
+            btnIdStart, infoHtmlStringOrArr, actionSentenceEnding, minInput, maxInput, apiEndpoint
         } = params;
 
         this.#minInput = minInput;
         this.#maxInput = maxInput;
         this.#apiEndpoint = apiEndpoint;
         
-        const isSingleInputSection = this instanceof SingleInputSection;
         const sectionBtn = getElementById(btnIdStart + 'Btn');
         const heading = sectionBtn.textContent;
 
@@ -356,11 +361,11 @@ class Section {
          * @type {HTMLElement[]}
          */
         const infoHtmlElements =
-            Array.isArray(infoHtml)
-            ? infoHtml
+            Array.isArray(infoHtmlStringOrArr)
+            ? Array.from(infoHtmlStringOrArr)
             : createPsWithParagraphs(infoHtmlStringOrArr);
 
-        const maxInputString = getNumberStringWithCommas(maxInput);
+        const maxInputString = createNumStringWithCommas(maxInput);
 
         /*
         If the max input is one of the nums that's a key in the map below, then have the 2nd directions sentence
@@ -373,10 +378,10 @@ class Section {
          */
         const maxInputsAndStringsWithWords =
             new Map([
-                [ONE_MILLION, '1 million'],
-                [ONE_HUNDRED_MILLION, '100 million'],
-                [ONE_BILLION, '1 billion'],
-                [NINE_QUADRILLION, '9 quadrillion']
+                [oneMillion, '1 million'],
+                [oneHundredMillion, '100 million'],
+                [oneBillion, '1 billion'],
+                [nineQuadrillion, '9 quadrillion']
             ]);
 
         /**
@@ -413,14 +418,14 @@ class Section {
             inputField2.value = '';
             answerDiv.innerHTML = '';
 
-            if (isSingleInputSection) {
+            if (this.isSingleInputSection) {
                 if (Object.is(inputDivDiv.lastElementChild, inputDiv2)) {
                     inputDivDiv.removeChild(inputDiv2);
                     inputDiv1.id = 'onlyInputDiv';
                 }
             } else if (Object.is(inputDivDiv.lastElementChild, inputDiv1)) {
                 inputDivDiv.appendChild(inputDiv2);
-                inputDiv1.id = LEFT_INPUT_DIV_ID;
+                inputDiv1.id = leftInputDivId;
             }
 
             if (Object.is(document.body.lastElementChild, homeContentDiv)) {
@@ -444,6 +449,16 @@ class Section {
         return this.#apiEndpoint;
     }
 
+    /**
+     * @returns {boolean}
+     */
+    get isSingleInputSection() {
+        return this instanceof SingleInputSection;
+    }
+
+    /**
+     * @returns {boolean}
+     */
     get needsEvenInput() {
         return this instanceof GoldbachConjectureSection;
     }
@@ -491,35 +506,34 @@ class Section {
     }
 }
 
-getElementById('calculateBtn').onclick = () => {
 class SingleInputSection extends Section {
-    #getElements;
+    #createElements;
 
     /**
-     * @typedef {(responseObj: any, inputString: string, inputNum: number) => HTMLElement[]} SingleInputGetElementsFunction
+     * @typedef {(responseObj: any, inputString: string, inputNum: number) => HTMLElement[]} SingleInputElementsCreator
      */
 
     /**
      * @param {SectionParams} sectionParams 
-     * @param {SingleInputGetElementsFunction} getElements 
+     * @param {SingleInputElementsCreator} createElements 
      */
-    constructor(sectionParams, getElements) {
+    constructor(sectionParams, createElements) {
         super(sectionParams);
-        this.#getElements = getElements;
+        this.#createElements = createElements;
     }
 
-    get getElements() {
-        return this.#getElements;
+    get createElements() {
+        return this.#createElements;
     }
 }
 
 class GoldbachConjectureSection extends SingleInputSection {
     /**
      * @param {SectionParams} sectionParams 
-     * @param {SingleInputGetElementsFunction} getElements 
+     * @param {SingleInputElementsCreator} createElements 
      */
-    constructor(sectionParams, getElements) {
-        super(sectionParams, getElements);
+    constructor(sectionParams, createElements) {
+        super(sectionParams, createElements);
     }
 
     /**
@@ -543,68 +557,69 @@ class GoldbachConjectureSection extends SingleInputSection {
 }
 
 class DoubleInputSection extends Section {
-    #getElements;
+    #createElements;
 
     /**
      * @param {SectionParams} sectionParams 
-     * @param {(responseObj: any, inputString1: string, inputString2: string) => HTMLElement[]} getElements 
+     * @param {(responseObj: any, inputString1: string, inputString2: string) => HTMLElement[]} createElements 
      */
-    constructor(sectionParams, getElements) {
+    constructor(sectionParams, createElements) {
         super(sectionParams);
-        this.#getElements = getElements;
+        this.#createElements = createElements;
     }
 
-    get getElements() {
-        return this.#getElements;
+    get createElements() {
+        return this.#createElements;
     }
 }
 
 
+calculateBtn.onclick = () => {
     const inputNum1 = getNum(inputField1);
     if (inputNum1 === null || curSection.isInvalidInput(inputNum1)) return;
+    const inputString1 = createNumStringWithCommas(inputNum1);
+    const urlParams = new URLSearchParams();
     /**
      * @type {(responseObj: any) => HTMLElement[]}
      */
-    let getElements;
-    const inputString1 = getNumberStringWithCommas(inputNum1);
-    const urlParams = new URLSearchParams();
+    let createElements;
 
-    if (curSection instanceof SingleInputSection) {
+    if (curSection.isSingleInputSection) {
         urlParams.append('input', inputNum1);
-        getElements = (responseObj) => curSection.getElements(responseObj, inputString1, inputNum1);
-    } else if (curSection instanceof DoubleInputSection) {
+        createElements = (responseObj) => curSection.createElements(responseObj, inputString1, inputNum1);
+    } else {
         const inputNum2 = getNum(inputField2);
         if (inputNum2 === null || curSection.isInvalidInput(inputNum2)) return;
         urlParams.append('input1', inputNum1);
         urlParams.append('input2', inputNum2);
-        const inputString2 = getNumberStringWithCommas(inputNum2);
-        getElements = (responseObj) => curSection.getElements(responseObj, inputString1, inputString2);
+        const inputString2 = createNumStringWithCommas(inputNum2);
+        createElements = (responseObj) => curSection.createElements(responseObj, inputString1, inputString2);
     }
     
     const errorMessage = 'Error with request.';
 
     fetch(`calculate/${curSection.apiEndpoint}?${urlParams}`)
-    .then(response => response.ok ? response.json().then(getElements) : [errorMessage])
-    .then(elementsOrErrorMessage => answerDiv.replaceChildren(...elementsOrErrorMessage))
+    .then(response => response.ok ? response.json().then(createElements) : [errorMessage])
+    .then(elementsOrErrorMessageArr => answerDiv.replaceChildren(...elementsOrErrorMessageArr))
     .catch(reason => {
         answerDiv.replaceChildren(errorMessage);
         console.error(errorMessage, reason);
     });
-}
+};
 
 
 const primesInfoHtml =
     `A <i>prime number</i>, or a <i>prime</i>, is a whole number > 1 that isn't divisible by any whole numbers
     other than 1 and itself. A <i>composite number</i> is a whole number > 1 that is divisible by a whole number
     other than 1 and itself. The first 10 primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, and 29. There are an
-    infinite amount of primes. The largest known prime is 2<sup>136,279,841</sup> − 1. It has 41,024,320 digits!
-    Primes are used in 7 of the 10 sections in this application.
+    infinite amount of primes. The largest known one is 2<sup>136,279,841</sup> − 1. It has 41,024,320 digits!
+    Primes are used in 7 of the 10 sections in the Number Theory Playground.
     
     With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To show why this
-    is the case, let's have a variable <var>i</var> and let it represent any whole number ≥ 6 that's a multiple
-    of 6. We know that <var>i</var> is divisible by 2 and 3 so <var>i</var> + 2 and <var>i</var> + 4 are divisible
-    by 2 and <var>i</var> + 3 is divisible by 3 but we don't have any guarantees about what <var>i</var> + 1 and
-    <var>i</var> + 5 are divisible by. Therefore, that's where primes can be.
+    is the case, let's have a variable <var>n</var> and let it represent a whole number ≥ 6 that's a multiple of
+    6. We know that <var>n</var> is divisible by 2 and 3 so <var>n</var> + 2 and <var>n</var> + 4 are divisible
+    by 2 and <var>n</var> + 3 is divisible by 3 but we don't have any guarantees about what <var>n</var> + 1 and
+    <var>n</var> + 5 are divisible by. Therefore, that's where primes can be.
     
     A whole number can be determined to be prime if it's not divisible by any primes ≤ the square root of that
     number. This is called <i>trial division</i>. Let's determine if 29 and 33 are prime. 5<sup>2</sup> = 25
@@ -613,62 +628,62 @@ const primesInfoHtml =
     of those and 33 is divisible by 3 so 29 is prime and 33 isn't.`;
 
 /**
- * @param {number[]} primes
+ * @param {string[]} primesStrings
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function getPrimesElements(primes, inputString) {
-    const heading = createH3(`The first ${primes.length} primes >= ${inputString} are:`);
-    const primesOl = arrayToOl(primes, getNumberStringWithCommas);
-    return [heading, primesOl];
+function createPrimesElements(primesStrings, inputString) {
+    const headingText = `The first ${primesStrings.length} primes ≥ ${inputString} are:`;
+    const primesOl = arrToOl(primesStrings, createNumStringWithCommas);
 }
 
 new SingleInputSection(
     {
         btnIdStart: 'primeNums',
-        infoHtml: primesInfoHtml,
+        infoHtmlStringOrArr: primesInfoHtml,
         actionSentenceEnding: 'the first 30 prime numbers ≥ that number',
         minInput: 0,
-        maxInput: ONE_HUNDRED_MILLION,
+        maxInput: oneHundredMillion,
         apiEndpoint: 'primes'
     },
-    getPrimesElements
+    createPrimesElements
 );
+
+
+const conjectureDefinitionHtml =
+    `A <i>conjecture</i> is a statement that's believed to be true but hasn't been proven to be`;
 
 
 const twinPrimePairsInfoHtml =
     `A <i>twin prime pair</i> is a pair of prime numbers that differ by 2. The first 5 twin prime pairs are
     3 & 5, 5 & 7, 11 & 13, 17 & 19, and 27 & 29. The largest known twin prime pair is
-    an infinite amount of twin prime pairs. A <i>conjecture</i> is a statement that is believed to be true but
-    has not been proven to be.
     (2,996,863,034,895 × 2<sup>1,290,000</sup>) ± 1. They have 388,342 digits! It's conjectured that there are
+    an infinite amount of twin prime pairs. ${conjectureDefinitionHtml}.
     
     All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this means that all twin
-    prime pairs besides 3 and 5 consist of 1 number that is 1 below a multiple of 6 and another number that is
-    1 above that same multiple of 6. 5 is the only number to be in 2 twin prime pairs, the first 2 mentioned
-    above.`;
+    prime pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6 and another number that's 1
+    above that same multiple of 6. 5 is the only number to be in 2 twin prime pairs, the first 2 mentioned above.`;
 
 /**
  * @param {number[]} pairStarts
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function getTwinPrimePairsElements(pairStarts, inputString) {
-    const heading = createH3(`The first ${pairStarts.length} twin prime pairs >= ${inputString} are:`);
-    const twinPrimesOl = arrayToOl(pairStarts, n => numPairToString(n, n + 2));
-    return [heading, twinPrimesOl];
+function createTwinPrimePairsElements(pairStarts, inputString) {
+    const headingText = `The first ${pairStarts.length} twin prime pairs ≥ ${inputString} are:`;
+    const pairsOl = arrToOl(pairStarts, (start) => numPairToString(start, start + 2));
 }
 
 new SingleInputSection(
     {
         btnIdStart: 'twinPrimePairs',
-        infoHtml: twinPrimePairsInfoHtml,
+        infoHtmlStringOrArr: twinPrimePairsInfoHtml,
         actionSentenceEnding: 'the first 20 twin prime pairs ≥ that number',
         minInput: 0,
-        maxInput: ONE_MILLION,
+        maxInput: oneMillion,
         apiEndpoint: 'twinPrimePairStarts'
     },
-    getTwinPrimePairsElements
+    createTwinPrimePairsElements
 );
 
 
@@ -690,31 +705,25 @@ const pfInfoHtml =
     are ≤ the max input and have the same amount of unique prime factors.`;
 
 /**
- * @typedef FactorAndPower
- * @type {object}
- * @property {number} factor
- * @property {number} power
- * @typedef {{pfArr: ?PfArray, correspondingNumString: string}} PfArrayAndNumberString
  * @typedef {{ factor: number, power: number }} FactorAndPower
  * @typedef {{ fpArr: ?FactorAndPower[], correspondingNumString: string }} FactorAndPowerArrayAndNumberString
  * @param {FactorAndPower[]} fpArr
  * @returns {HTMLSpanElement}
  */
-function getPfSpan(fpArr) {
+function createPfSpan(fpArr) {
     const span = createSpan();
     for (let i = 0; i < fpArr.length; i++) {
+        if (i !== 0) {
+            span.append(' × ');
+        }
 
         const { factor, power } = fpArr[i];
-        span.append(getNumberStringWithCommas(factor));
+        span.append(createNumStringWithCommas(factor));
 
         if (power !== 1) {
             span.appendChild(createSuperscript(power));
         }
 
-        // Add ' x ' between each factor and its power.
-        if (i !== pfArray.length - 1) {
-            span.append(' x ');
-        }
     }
 
     return span;
@@ -723,29 +732,25 @@ function getPfSpan(fpArr) {
 /**
  * @param {FactorAndPower[]} fpArr
  * @param {string} inputString
- * Array that represents the prime factorization of inputNumber.
  * @returns {HTMLElement[]}
- * An array with a heading and a span that displays the prime factorization from pfArray.
  */
-    const heading = createH3(`The prime factorization of ${inputString} is:`);
-function getPfElements(fpArr, inputString) {
-    return [heading, getPfSpan(fpArr)];
+function createPfElements(fpArr, inputString) {
+    const headingText = `The prime factorization of ${inputString} is:`;
 }
 
-const PF_MIN_INPUT = 2;
+const pfMinInput = 2;
 
 new SingleInputSection(
     {
         btnIdStart: 'pf',
-        infoHtml: pfInfoHtml,
-        minInput: PF_MIN_INPUT,
-        maxInput: ONE_BILLION,
+        infoHtmlStringOrArr: pfInfoHtml,
         actionSentenceEnding: 'the prime factorization of that number',
+        minInput: pfMinInput,
+        maxInput: oneBillion,
         apiEndpoint: 'primeFactorization'
     },
-    getPfElements
+    createPfElements
 );
-
 
 
 const divisInfoStartHtml =
@@ -758,6 +763,7 @@ const divisInfoStartHtml =
 const divisPfInfoHtml = 
     `The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a
     variable <var>n</var> and let it represent a whole number > 1. First, you can find how many factors
+    <var>n</var> has by looking at <var>n</var>'s PF, taking all the powers of the factors, adding 1 to each,
     and then multiplying all these together. For example, the PF of 36 is 2<sup>2</sup> × 3<sup>2</sup>. The
     powers are 2 and 2, so there are 3 × 3 = 9 factors. However, that count includes 1 and the number that the
     PF is for (36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors.
@@ -769,6 +775,7 @@ const divisPfInfoDiv =
     createDiv(createH3('Prime Factorization'), ...createPsWithParagraphs(divisPfInfoHtml));
     
 const divisRulesInfoHtml =
+    `Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1
     rule for each whole number in the range of 3 to 12, excluding 5 and 10, though there are rules for more
     whole numbers and many whole numbers have multiple rules. I'll go over an example of using these rules to
     find the factors of a whole number in the next paragraph. Let's have a variable <var>n</var> and let it
@@ -812,7 +819,7 @@ const divisInfoElements =
  * @property {?AlternatingSumAndExpression} blocksOf3AltSumAndExpression
  * @property {AlternatingSumAndExpression} digitsAltSumAndExpression
  * 
- * @typedef {Object} DivisibilityPfAnswer
+ * @typedef {Object} DivisibilityPrimeFactorizationAnswer
  * @property {FactorAndPower[]} inputFpArr
  * @property {string} numFactorsExpression
  * @property {number} numFactors
@@ -820,18 +827,18 @@ const divisInfoElements =
  */
 
 /** 
- * @param {{ rulesData: ?DivisibilityRulesData, pfAnswer: ?DivisibilityPfAnswer }}
+ * @param {{ rulesData: ?DivisibilityRulesData, pfAnswer: ?DivisibilityPrimeFactorizationAnswer }}
  * @param {string} inputString
  * @param {number} inputNum 
  * @returns {HTMLElement[]}
  * An array that contains elements with divisibility info about the argument number based on the info in infoObject.
  */
-function getDivisibilityInfoElements({ rulesData, pfAnswer }, inputString, inputNum) {
+function createDivisAnswerElements({ rulesData, pfAnswer }, inputString, inputNum) {
     const elements = [createH3(`Divisibility Info for ${inputString}`)];
     if (rulesData) {
-        elements.push(getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum));
+        elements.push(createDivisRulesAnswerDiv(rulesData, inputString, inputNum));
     }
-    elements.push(getDivisibiltyPfInfoDiv(pfAnswer, inputString));
+    elements.push(createDivisPfAnswerDiv(pfAnswer, inputString));
     return elements;
 }
 
@@ -841,18 +848,22 @@ function getDivisibilityInfoElements({ rulesData, pfAnswer }, inputString, input
  * @param {number} inputNum 
  * @returns {HTMLDivElement}
  */
-function getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum) {
-    const { last2Digits, last3Digits, sumOfDigits, blocksOf3AltSumAndExpression, digitsAltSumAndExpression } = rulesData;
+function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
+    const {
+        last2Digits, last3Digits, sumOfDigits, blocksOf3AltSumAndExpression, digitsAltSumAndExpression
+    } = rulesData;
     const heading = createH4('Rules Info');
 
     /**
+     * For all the rules besides the ones for 6 and 12, we do a calculation with the input num and if the result
+     * of that calculation is divisible by a certain num, then the input num is also divisible by that num.
      * @param {number} possibleFactor 
      * @param {number} numFromCalculation 
      * @param {boolean} isDivisible 
      */
-    function getDivisibilitySentence(possibleFactor, numFromCalculation, isDivisible) {
-        const isOrIsnt = isDivisible ? 'is' : 'isn\'t';
-        return `${getNumberStringWithCommas(numFromCalculation)} ${isOrIsnt} divisible by ${possibleFactor} \
+    function getDivisSentence(possibleFactor, numFromCalculation, isDivisible) {
+        const isOrIsnt = isDivisible ? 'is' : `isn't`;
+        return `${createNumStringWithCommas(numFromCalculation)} ${isOrIsnt} divisible by ${possibleFactor} \
             so ${inputString} ${isOrIsnt} divisible by ${possibleFactor}.`;
     }
 
@@ -867,16 +878,16 @@ function getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum) {
         sentences.push(`${inputString} isn't even so it isn't divisible by any even numbers.`);
     } else if (inputNum >= 100) {
         sentences.push(
-            getDivisibilitySentence(4, last2Digits, isDivisibleBy4)
             `The last 2 digits form the number ${last2Digits}.`,
+            getDivisSentence(4, last2Digits, isDivisibleBy4)
         );
 
         if (isDivisibleBy4) {
             if (inputNum >= 1_000) {
                 const isDivisibleBy8 = isDivisible(last3Digits, 8);
                 sentences.push(
-                    getDivisibilitySentence(8, last3Digits, isDivisibleBy8)
                     `The last 3 digits form the number ${last3Digits}`,
+                    getDivisSentence(8, last3Digits, isDivisibleBy8)
                 );
             }
         } else {
@@ -890,7 +901,7 @@ function getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum) {
     const isDivisibleBy3 = isDivisible(sumOfDigits, 3);
     sentences.push(
         `The sum of the digits is ${sumOfDigits}.`,
-        getDivisibilitySentence(3, sumOfDigits, isDivisibleBy3)
+        getDivisSentence(3, sumOfDigits, isDivisibleBy3)
     );
 
     if (isDivisibleBy3) {
@@ -918,7 +929,7 @@ function getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum) {
         const isDivisibleBy7 = isDivisible(blocksOf3AltSum, 7);
         sentences.push(
             `The alternating sum of blocks of 3 from right to left is ${blocksOf3Expression} = ${blocksOf3AltSum}.`,
-            getDivisibilitySentence(7, blocksOf3AltSum, isDivisibleBy7)
+            getDivisSentence(7, blocksOf3AltSum, isDivisibleBy7)
         );
     }
 
@@ -926,18 +937,18 @@ function getDivisibiityRulesInfoDiv(rulesData, inputString, inputNum) {
     const isDivisibleBy11 = isDivisible(digitsAltSum, 11);
     sentences.push(
         `The alternating sum of digits from left to right is ${digitsExpression} = ${digitsAltSum}.`,
-        getDivisibilitySentence(11, digitsAltSum, isDivisibleBy11)
+        getDivisSentence(11, digitsAltSum, isDivisibleBy11)
     );
 
     return createDiv(heading, createP(sentences.join(' ')));
 }
 
 /**
- * @param {?DivisibilityPfAnswer} pfAnswer 
+ * @param {?DivisibilityPrimeFactorizationAnswer} pfAnswer 
  * @param {string} inputString 
  * @returns {HTMLDivElement}
  */
-function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
+function createDivisPfAnswerDiv(pfAnswer, inputString) {
     const heading = createH4('Prime Factorization Info');
     const pfInfoParagraph = createP(`The prime factorization of ${inputString} is `);
     const pfDiv = createDiv(heading, pfInfoParagraph);
@@ -950,7 +961,7 @@ function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
     }
 
     const { inputFpArr, numFactorsExpression, numFactors, factorFpArrsAndNumStrings } = pfAnswer;
-    pfInfoParagraph.append(getPfSpan(inputFpArr), '. ');
+    pfInfoParagraph.append(createPfSpan(inputFpArr), '. ');
 
     const numFactorsInfoEnd =
         numFactors === 3
@@ -968,24 +979,24 @@ function getDivisibiltyPfInfoDiv(pfAnswer, inputString) {
      * @returns {HTMLLIElement}
      */
     function fpArrAndNumStringToLi({ fpArr, correspondingNumString }) {
-        const numStringWithCommas = getNumberStringWithCommas(correspondingNumString);
-        return fpArr ? createLi(getPfSpan(fpArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
+        const numStringWithCommas = createNumStringWithCommas(correspondingNumString);
+        return fpArr ? createLi(createPfSpan(fpArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
     }
 
-    pfDiv.appendChild(arrayToOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi));
+    pfDiv.appendChild(arrToOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi));
     return pfDiv;
 }
 
 new SingleInputSection(
     {
-        btnIdStart: 'divisibility',
-        infoHtml: divisbilityInfoHtml,
-        minInput: PF_MIN_INPUT,
-        maxInput: ONE_BILLION,
+        btnIdStart: 'divis',
+        infoHtmlStringOrArr: divisInfoElements,
         actionSentenceEnding: 'divisbility info for that number',
+        minInput: pfMinInput,
+        maxInput: oneBillion,
         apiEndpoint: 'divisibilityAnswer'
     },
-    getDivisibilityInfoElements
+    createDivisAnswerElements
 );
 
 
@@ -1018,16 +1029,16 @@ const euclideanInfoStartHtml =
 
 /**
  * @param {EuclideanIteration[]} iterations 
- * @returns {HTMLTableElement}
+ * @returns {HTMLTableElement} A table that shows the max, min, and remainder of all iterations.
  */
 function createEuclideanTable(iterations) {
-    const tableHeadings = ['Max', 'Min', 'Remainder'];
+    const tableColHeadings = ['Max', 'Min', 'Remainder'];
     /**
      * @param {EuclideanIteration} ei 
      * @returns {number[]}
      */
     const getTableRowNums = (ei) => [ei.max, ei.min, ei.remainder];
-    return createTable(tableHeadings, iterations, getTableRowNums);
+    return createTable(tableColHeadings, iterations, getTableRowNums);
 }
 
 /**
@@ -1112,14 +1123,16 @@ const gcdAndLcmInfoElements =
     [createP(gcdAndLcmInfoStart), euclideanInfoDiv, gcdAndLcmPfInfoDiv, gcdAndLcmInfoEndDiv];
 
 /**
- * @typedef GcdAndLcmPfAnswer
- * @type {object}
- * 
- * @param {{euclideanIterations: EuclideanIteration[], gcdAndLcmPfAnswer: GcdAndLcmPfAnswer}} infoObject 
+ * @typedef GcdAndLcmPrimeFactorizationAnswer
+ * @type {Object}
  * @property {FactorAndPower[]} input1FpArr
  * @property {FactorAndPower[]} input2FpArr
  * @property {?FactorAndPowerArrayAndNumberString} gcdFpArrAndNumString
  * @property {FactorAndPowerArrayAndNumberString} lcmFpArrAndNumString
+ */
+
+/**
+ * @param {{ euclideanIterations: EuclideanIteration[], pfAnswer: GcdAndLcmPrimeFactorizationAnswer }}
  * @param {string} inputString1
  * @param {string} inputString2
  * @returns {HTMLElement[]}
@@ -1148,35 +1161,34 @@ function createEuclideanAnswerDiv(iterations, inputString1, inputString2) {
 }
 
 /**
- * @param {GcdAndLcmPfAnswer} answer 
+ * @param {GcdAndLcmPrimeFactorizationAnswer} answer 
  * @param {string} inputString1 
  * @param {string} inputString2 
  * @returns {HTMLDivElement}
  */
 function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
+    const heading = createH4('Prime Factorization Info');
 
     /**
      * @param {string} inputString 
-     * @param {FactorAndPower[]} pf 
+     * @param {FactorAndPower[]} fpArr
+     * @returns {HTMLLIElement}
      */
-    function createInnerDiv1(inputString, pf) {
-        const div = createDiv();
-        div.append(`The PF of ${inputString} is `, getPfSpan(pf));
-        return div;
-    }
+    const createInputPfLi = (inputString, fpArr) =>
+        createLi(`The PF of ${inputString} is `, createPfSpan(fpArr), '.');
 
     /**
      * @param {string} gcdOrLcmText 
      * @param {FactorAndPowerArrayAndNumberString}
+     * @returns {HTMLLIElement}
      */
-        const div = createDiv();
-        div.append(`The PF of the ${gcdOrLcmText} is `);
-        if (factorsAndPowers) {
-            div.append(getPfSpan(factorsAndPowers), `, which is `);
-    function createInnerDiv2(gcdOrLcmText, { pfArr, correspondingNumString }) {
+    function createGcdOrLcmPfLi(gcdOrLcmText, { fpArr, correspondingNumString }) {
+        const li = createLi(`The PF of the ${gcdOrLcmText} is `);
+        if (fpArr) {
+            li.append(createPfSpan(fpArr), ', which is ');
         }
-        div.append(getNumberStringWithCommas(correspondingNumString));
-        return div;
+        li.append(createNumStringWithCommas(correspondingNumString), '.');
+        return li;
     }
 
     const { input1FpArr, input2FpArr, gcdFpArrAndNumString, lcmFpArrAndNumString } = answer;
@@ -1185,36 +1197,38 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
      * @type {Appendable}
      */
     const gcdInfoAppendable =
-        ? createInnerDiv2('GCD', gcdPfArrAndNumString)
         gcdFpArrAndNumString
+        ? createGcdOrLcmPfLi('GCD', gcdFpArrAndNumString)
         : 'There are no common prime factors so the GCD is 1.';
 
-    return createDiv(
-        createInnerDiv1(inputString1, input1PfArr),
-        createInnerDiv1(inputString2, input2PfArr),
-        gcdInfoAppendable,
-        createInnerDiv2('LCM', lcmPfArrAndNumString)
-    );
+    const ol =
+        createOl(
+            createInputPfLi(inputString1, input1FpArr),
+            createInputPfLi(inputString2, input2FpArr),
+            gcdInfoAppendable,
+            createGcdOrLcmPfLi('LCM', lcmFpArrAndNumString)
+        );
+
+    return createDiv(heading, ol);
 }
 
 new DoubleInputSection(
     {
         btnIdStart: 'gcdAndLcm',
-        infoHtml: gcdAndLcmInfoHtml,
-        minInput: PF_MIN_INPUT,
-        maxInput: ONE_BILLION,
+        infoHtmlStringOrArr: gcdAndLcmInfoElements,
         actionSentenceEnding: 'GCD and LCM info for those numbers',
+        minInput: pfMinInput,
+        maxInput: oneBillion,
         apiEndpoint: 'gcdAndLcmAnswer'
     },
-    getGcdAndLcmInfoElements
+    createGcdAndLcmAnswerElements
 );
 
 
 const goldbachConjectureInfoHtml =
     `The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers.
-    This was named after 1700s Prussian mathematician Christian Goldbach. A <i>conjecture</i> is a statement
-    that is believed to be true but has not been proven to be true. The Goldbach Conjecture has been verified
-    to be true for all even numbers ≥ 4 && ≤ 4 × 10<sup>18</sup>.`;
+    This was named after 1700s Prussian mathematician Christian Goldbach. ${conjectureDefinitionHtml}.
+    The Goldbach Conjecture has been verified to be true for all even numbers ≥ 4 & ≤ 4 × 10<sup>18</sup>.`;
 
 /**
  * @param {number[]} primePairStarts
@@ -1227,24 +1241,24 @@ function createGoldbachConjectureElements(primePairStarts, inputString, inputNum
     const headingText =
         `There${thereIs1Pair ? `'s 1 pair` : ` are ${createNumStringWithCommas(primePairStarts.length)} pairs`} \
         of prime numbers that sum to ${inputString}. ${thereIs1Pair ? 'It is' :  'They are'}:`;
-    const pairsOl = arrayToOl(primePairStarts, (start) => numPairToString(start, inputNum - start));
+    const pairsOl = arrToOl(primePairStarts, (start) => numPairToString(start, inputNum - start));
     return [createNonBoldAnswerHeading(headingText), pairsOl];
 }
 
 new GoldbachConjectureSection(
     {
         btnIdStart: 'goldbachConjecture',
-        infoHtml: goldbachConjectureInfoHtml,
+        infoHtmlStringOrArr: goldbachConjectureInfoHtml,
         actionSentenceEnding: 'the pairs of prime numbers that sum to that number',
         minInput: 4,
         maxInput: 100_000,
         apiEndpoint: 'goldbachPrimePairStarts'
     },
-    getGoldbachConjectureElements
+    createGoldbachConjectureElements
 );
 
 
-const pythagoreanTriplesInfoHtml =
+const pythagTriplesInfoHtml =
     `The Pythagorean Theorem says that for a right triangle, the sum of the squares of the lengths of the 2
     short sides equals the square of the long side (hypotenuse) length, or
     <var>a</var><sup>2</sup> + <var>b</var><sup>2</sup> = <var>c</var><sup>2</sup>. This theorem was named after
@@ -1263,43 +1277,40 @@ const pythagoreanTriplesInfoHtml =
     is another one. 55<sup>2</sup> (3,025) + 300<sup>2</sup> (90,000) = 305<sup>2</sup> (93,025).`;
 
 /**
- * @typedef {{a: number, b: number, c: number, isPrimitive: boolean}} PythagoreanTriple
- * 
+ * @typedef {{ a: number, b: number, c: number, isPrimitive: boolean }} PythagoreanTriple
+ */
+
+/**
  * @param {PythagoreanTriple[]} triples
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function getPythagoreanTriplesElements(triples, inputString) {
-    const heading =
-        createH3(`The first ${triples.length} Pythagorean triples >= ${inputString} are:`);
+function createPythagTriplesElements(triples, inputString) {
+    const headingText = `The first ${triples.length} Pythagorean triples ≥ ${inputString} are:`;
 
     /**
-     * @param {PythagoreanTriple} triple 
-     * @returns {HTMLSpanElement}
+     * @param {PythagoreanTriple}
+     * @returns {HTMLLIElement}
      */
-    function tripleToSpan(triple) {
-        const { a, b, c, isPrimitive } = triple;
-        const span = createSpan();
+    function tripleToLi({ a, b, c, isPrimitive }) {
         const maybePrimitiveString = isPrimitive ? ' (primitive)' : '';
-        span.append(getNumberAndSquareSpan(a), ' + ', getNumberAndSquareSpan(b), ' = ', getNumberAndSquareSpan(c), maybePrimitiveString);
-        return span;
+        return createLi(createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b), ' = ', createNumAndSquareSpan(c), maybePrimitiveString);
     }
 
-    const ol = arrayToOl(triples, tripleToSpan, false);
+    const triplesOl = arrToOl(triples, tripleToLi, false);
 
-    return [heading, ol];
 }
 
 new SingleInputSection(
     {
-        btnIdStart: 'pythagoreanTriples',
-        infoHtml: pythagoreanTriplesInfoHtml,
+        btnIdStart: 'pythagTriples',
+        infoHtmlStringOrArr: pythagTriplesInfoHtml,
         actionSentenceEnding: 'the first 10 Pythagorean triples ≥ that number',
         minInput: 0,
         maxInput: 500,
         apiEndpoint: 'pythagoreanTriples'
     },
-    getPythagoreanTriplesElements
+    createPythagTriplesElements
 );
 
 
@@ -1316,33 +1327,31 @@ const twoSquareTheoremActionSentenceEnding =
     as well as the whole numbers whose squares sum to that prime number`;
 
 /**
- * @param {{primeNumber: number, a: number, b: number}} infoObject
- * @param {number} inputString
+ * @param {{ primeNum: number, a: number, b: number }}
+ * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function getTwoSquareInfoElements(infoObject, inputString) {
-    const { primeNumber, a, b } = infoObject;
-    const sentenceP = createP();
-    const sentenceStart =
-        `The first integer >= ${inputString} that's prime and is 1 above a \
-        multiple of 4 is ${getNumberStringWithCommas(primeNumber)}, which is `;
-    sentenceP.append(sentenceStart, getNumberAndSquareSpan(a), ' + ', getNumberAndSquareSpan(b), '.');
-    return [sentenceP];
+function createTwoSquareTheoremElements({ primeNum, a, b }, inputString) {
+    const headingText =
+        `The first number ≥ ${inputString} that's prime and is 1 above a multiple of 4 is:`;
+    const answerP =
+        createP(createNumStringWithCommas(primeNum), ', which is ', createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b), '.');
 }
 
 new SingleInputSection(
     {
         btnIdStart: 'twoSquareTheorem',
-        infoHtml: twoSquareTheoremInfoHtml,
+        infoHtmlStringOrArr: twoSquareTheoremInfoHtml,
         actionSentenceEnding: twoSquareTheoremActionSentenceEnding,
         minInput: 0,
-        maxInput: ONE_BILLION,
+        maxInput: oneBillion,
         apiEndpoint: 'twoSquareTheoremAnswer'
     },
-    getTwoSquareTheoremInfoElements
+    createTwoSquareTheoremElements
 );
 
 
+// There are many Unicode chars for Phi. I'll pick this one and use this constant for it.
 const phiLetter = '𝚽';
 /**
  * Phi is approximately this number.
@@ -1365,38 +1374,39 @@ const fiboLikeSequencesInfoHtml =
     and closer to ${phiLetter}. For example, recall that the first 8 numbers of the Fibonacci sequence are
     1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ 1.615384615384615.`;
 
-const fibonacciLikeSequencesActionSentenceEnding =
+const fiboLikeSequencesActionSentenceEnding =
     'the first 20 numbers in the Fibonacci-like sequence that starts with those numbers, \
     as well as the ratios between some consecutive numbers in that sequence';
 
 /**
  * @typedef {{ num1String: string, num2String: string, ratio: number, isRounded: boolean }} RatioData
- * 
- * @param {{ sequence: string[], ratioDataArray: RatioData[] }} infoObject
+ */
+
+/**
+ * @param {{ stringFiboLikeSequence: string[], ratioDataArray: RatioData[] }}
  * @param {string} inputString1
  * @param {string} inputString2
  * @returns {HTMLElement[]}
  */
-function getFibonacciLikeSequencesInfoElements(infoObject, inputString1, inputString2) {
-    const { sequence, ratioDataArray } = infoObject;
+function createFiboLikeSequencesElements({ stringFiboLikeSequence, ratioDataArray }, inputString1, inputString2) {
 
     const headingText =
-        `The first ${sequence.length} numbers in the Fibonacci-like sequence that starts with \
+        `The first ${stringFiboLikeSequence.length} numbers in the Fibonacci-like sequence that starts with \
         ${inputString1} and ${inputString2} are:`;
 
-    const sequenceOl = arrayToOl(sequence, getNumberStringWithCommas);
+    const sequenceOl = arrToOl(stringFiboLikeSequence, createNumStringWithCommas);
 
     /**
      * @param {RatioData}
      * @returns {string}
      */
     function ratioDataToString({ num1String, num2String, ratio, isRounded }) {
-        const num1StringWithCommas = getNumberStringWithCommas(num1String);
-        const num2StringWithCommas = getNumberStringWithCommas(num2String);
+        const num1StringWithCommas = createNumStringWithCommas(num1String);
+        const num2StringWithCommas = createNumStringWithCommas(num2String);
         return `${num2StringWithCommas} / ${num1StringWithCommas} ${isRounded ? '≈' : '='} ${ratio}`;
     }
 
-    const ratioDataOl = arrayToOl(ratioDataArray, ratioDataToString, false);
+    const ratioDataOl = arrToOl(ratioDataArray, ratioDataToString, false);
     ratioDataOl.append(createLi(`${phiLetter} ≈ ${phiNumString}`));
 
     return [createNonBoldAnswerHeading(headingText), sequenceOl, ratioDataOl];
@@ -1405,13 +1415,13 @@ function getFibonacciLikeSequencesInfoElements(infoObject, inputString1, inputSt
 new DoubleInputSection(
     {
         btnIdStart: 'fiboLikeSequences',
-        infoHtml: fiboLikeSequencesInfoHtml,
+        infoHtmlStringOrArr: fiboLikeSequencesInfoHtml,
         actionSentenceEnding: fiboLikeSequencesActionSentenceEnding,
         minInput: 1,
-        maxInput: NINE_QUADRILLION,
+        maxInput: nineQuadrillion,
         apiEndpoint: 'fibonacciLikeSequencesAnswer'
     },
-    getFiboLikeSequencesInfoElements
+    createFiboLikeSequencesElements
 );
 
 
@@ -1448,8 +1458,7 @@ function createLiWithInnerHtml(innerHtml) {
     return li;
 }
 
-const ancientMultStepsOl = arrayToOl(ancientMultStepsArr, createLiWithInnerHtml, false);
-ancientMultStepsOl.style.listStyleType = 'decimal';
+const ancientMultStepsOl = arrToOl(ancientMultStepsArr, createLiWithInnerHtml, false);
 
 const ancientMultResultSentence = 'This gives us the product of the 2 numbers.';
 
@@ -1471,46 +1480,44 @@ const ancientMultInfoElements =
         ...createPsWithParagraphs(ancientMultExampleParagraphs)
     ];
 
+/**
+ * @typedef {{ powerOf2String: string, correspondingMultipleString: string }} AncientMultiplicationTableRow
+ */
 
 /**
- * @typedef {{powerOf2: string, correspondingMultiple: string}} TableRow
- * 
- * @param {{table1Rows: TableRow[], table2Rows: TableRow[], product: string}} infoObject
+ * @param {{ table1Rows: AncientMultiplicationTableRow[], table2Rows: AncientMultiplicationTableRow[], productString: string }}
  * @param {string} inputString1
  * @param {string} inputString2
  * @returns {HTMLElement[]}
  */
-function getAncientMultiplicationInfoElements(infoObject, inputString1, inputString2) {
-    const { table1Rows, table2Rows, product } = infoObject;
-    const correspondingMultiplesHeading = `Corresponding Multiples of ${inputString2}`;
-    const table1Headings = [`Powers of 2 ≤ ${inputString1}`, correspondingMultiplesHeading];
-    const table2Headings = [`Powers of 2 That Sum to ${inputString1}`, correspondingMultiplesHeading];
+function createAncientMultAnswerElements({ table1Rows, table2Rows, productString }, inputString1, inputString2) {
+    const mainHeadingText = `Ancient Egyptian Multiplication Info for ${inputString1} and ${inputString2}`;
+    const correspondingMultiplesColHeading = `Corresponding Multiples of ${inputString2}`;
+    const table1ColHeadings = [`Powers of 2 ≤ ${inputString1}`, correspondingMultiplesColHeading];
+    const table2ColHeadings = [`Powers of 2 That Sum to ${inputString1}`, correspondingMultiplesColHeading];
 
     /**
-     * @param {TableRow} row 
+     * @param {AncientMultiplicationTableRow} row 
      * @returns {string[]}
      */
-    const rowToArray = (row) => [row.powerOf2, row.correspondingMultiple];
+    const getTableRowStrings = (row) => [row.powerOf2String, row.correspondingMultipleString];
 
-    const heading =
-        createH3(`Ancient Egyptian Multiplication Info for ${inputString1} and ${inputString2}`);
-    const table1 = createTable(table1Headings, table1Rows, rowToArray);
-    const table2 = createTable(table2Headings, table2Rows, rowToArray);
-    const productP =
-        createP(`The sum of the bottom right column is ${getNumberStringWithCommas(product)}, which is the product.`);
+    const table1 = createTable(table1ColHeadings, table1Rows, getTableRowStrings);
+    const table2 = createTable(table2ColHeadings, table2Rows, getTableRowStrings);
+    const productSentence =
+        `The sum of the bottom right column is ${createNumStringWithCommas(productString)}, which is the product.`;
 
-    return [heading, table1, table2, productP];
+    return [createH3(mainHeadingText), table1, table2, createP(productSentence)];
 }
 
 new DoubleInputSection(
     {
         btnIdStart: 'ancientMult',
-        infoHtml: ancientMultInfoHtmlElements,
-        isSingleInputSection: false,
+        infoHtmlStringOrArr: ancientMultInfoElements,
         actionSentenceEnding: 'ancient Egyptian multiplication info for those numbers',
         minInput: 2,
-        maxInput: NINE_QUADRILLION,
+        maxInput: nineQuadrillion,
         apiEndpoint: 'ancientMultiplicationAnswer'
     },
-    getAncientMultInfoElements
+    createAncientMultAnswerElements
 );

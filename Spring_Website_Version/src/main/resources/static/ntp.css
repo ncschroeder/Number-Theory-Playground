@@ -1,0 +1,222 @@
+body {
+    width: 90%;
+    margin: 1rem auto;
+    background-color: rgb(0, 82, 78);
+    --default-color: gainsboro;
+    color: var(--default-color);
+    --default-font: Verdana;
+    font-family: var(--default-font);
+}
+
+h1, h2 {
+    font-family: Georgia;
+}
+
+h1, h2, h3, h4, summary, .gcdMessageDiv {
+    text-align: center;
+}
+
+h1 {
+    color: rgb(239, 193, 67);
+    font-size: 3rem;
+    /* Remove default margins. */
+    margin: 0;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+#sectionBtnsDiv {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+#sectionBtnsDiv > button {
+    background-color: rgb(16, 0, 105);
+    outline-style: none;
+    color: white;
+    min-width: 5rem;
+    min-height: 3rem;
+}
+
+#sectionBtnsDiv > button:hover {
+    color: greenyellow;
+    cursor: pointer;
+}
+
+button {
+    font: 1rem var(--default-font);
+}
+
+summary {
+    font-size: 1.2rem;
+}
+
+h3, h4, p, .narrowTextDiv, #ancientMultStepsOl, .answerFlexOl {
+    max-width: 40rem;
+    margin: 0 auto;
+}
+
+ol {
+    list-style-type: none;
+    padding: 0rem;
+}
+
+#sectionContentDiv > :not(:first-child), #sectionInfoDiv {
+    margin-top: 1rem;
+}
+
+.nonAnswerInfoDiv > :not(:first-child) {
+    margin-top: 1rem;
+}
+
+.nonAnswerInfoDiv > div > :nth-child(n + 3) {
+    margin-top: 0.8rem;
+}
+
+#ancientMultStepsOl {
+    list-style-type: decimal;
+    padding: revert;
+}
+
+table {
+    margin: 0 auto;
+    text-align: center;
+    --border-style: 0.15rem solid var(--default-color);
+    border: var(--border-style);
+    border-collapse: collapse;
+}
+
+th {    
+    border: var(--border-style);
+}
+
+td {
+    border: var(--border-style);
+}
+
+.euclideanExampleTable, .gcdMessageDiv {
+    margin-top: 0.5rem;
+}
+
+/* Spacing between section info and directions. */
+#sectionInfoDiv > :last-child {
+    margin-bottom: 3rem;
+}
+
+#inputDivDiv {
+    display: flex;
+}
+
+.inputDiv {
+    display: grid;
+    gap: 0.1rem;
+}
+
+.inputDiv > .inputField {
+    margin: auto;
+    width: 9rem;
+    grid-column: 1 / 3;
+    grid-row: 1;
+    text-align: center;
+}
+
+.inputDiv > .randomizeBtn {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    margin: auto;
+}
+
+.inputDiv > .plusBtn {
+    grid-column: 1;
+    grid-row: 3;
+    margin-left: auto;
+}
+
+.inputDiv > .minusBtn {
+    grid-column: 2;
+    grid-row: 3;
+    margin-right: auto;
+}
+
+#onlyInputDiv {
+    margin: auto;
+}
+
+#leftInputDiv {
+    margin-right: 1%;
+    margin-left: auto;
+}
+
+#rightInputDiv {
+    margin-left: 1%;
+    margin-right: auto;
+}
+
+#calculateBtn {
+    display: block;
+    margin: auto;
+}
+
+/*
+The answer div is a direct child of the section content div but we must put both IDs in this selector to give it
+higher specificity than the "#sectionContentDiv > :not(:first-child)" selector.
+*/
+#sectionContentDiv > #answerDiv {
+    margin-top: 2rem;
+}
+
+#answerDiv > div {
+    margin-top: 1rem;
+}
+
+h3 {
+    font-size: 1.3rem;
+}
+
+.nonBoldAnswerH3 {
+    margin-bottom: 1rem;
+    font-weight: normal;
+}
+
+h4 {
+    margin-bottom: 0.7rem;
+}
+
+.answerNormalOl {
+    margin: 0 auto;
+    width: max-content;
+}
+
+.answerFlexOl {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+.centeredPfSpan {
+    display: block;
+    text-align: center;
+}
+
+/*
+Fibonacci-like sequence ratios divs will always be a direct child of the answer div but we must include both IDs
+in this selector to give it higher specificity than the "#answerDiv > div" selector.
+*/
+#answerDiv > #fiboLikeSequenceRatiosDiv {
+    margin-top: 1.5rem;
+}
+
+/* The ratio is the last part of the text in each li in this ol. Align them. */
+#fiboLikeSequenceRatiosDiv > ol {
+    text-align: right;
+}

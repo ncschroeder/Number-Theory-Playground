@@ -23,10 +23,20 @@ function createElement(elementType, ...objectsToAppend) {
 }
 
 /**
- * @param {string} text
+ * @param {string} [text]
  * @returns {HTMLHeadingElement}
  */
 const createH3 = (text) => createElement('h3', text);
+
+/**
+ * @param {string} [text] 
+ * @returns {HTMLHeadingElement}
+ */
+function createNonBoldAnswerH3(text) {
+    const h3 = createH3(text);
+    h3.className = 'nonBoldAnswerH3';
+    return h3;
+}
 
 /**
  * @param {string} text
@@ -122,15 +132,19 @@ const createNumAndSquareSpan = (num) =>
     createSpan(createNumStringWithCommas(num), createSuperscriptWith2(), ` (${createNumStringWithCommas(num * num)})`);
 
 /**
+ * @typedef {(obj: any) => Appendable | HTMLLIElement} ArrayElementToListItem
+ */
+
+/**
  * @param {any[]} arr
- * @param {(obj: any) => Appendable | HTMLLIElement} arrElementTransform
- * @param {boolean} useFlexAnswerListClass
+ * @param {ArrayElementToListItem} arrElementTransform 
+ * @param {string} [olClassName]
  * @returns {HTMLOListElement}
     */
-function arrToOl(arr, arrElementTransform, useFlexAnswerListClass = true) {
+function arrToOl(arr, arrElementTransform, olClassName) {
     const ol = createOl();
-    if (useFlexAnswerListClass) {
-        ol.className = 'flexAnswerList';
+    if (olClassName) {
+        ol.className = olClassName;
     }
 
     for (const element of arr) {
@@ -141,6 +155,24 @@ function arrToOl(arr, arrElementTransform, useFlexAnswerListClass = true) {
 
     return ol;
 }
+
+const answerNormalOlClassName = 'answerNormalOl';
+
+/**
+ * @param {any[]} arr 
+ * @param {ArrayElementToListItem} arrElementTransform 
+ * @returns {HTMLOListElement}
+ */
+const arrToAnswerNormalOl =
+    (arr, arrElementTransform) => arrToOl(arr, arrElementTransform, answerNormalOlClassName);
+
+/**
+ * @param {any[]} arr 
+ * @param {ArrayElementToListItem} arrElementTransform 
+ * @returns {HTMLOListElement}
+ */
+const arrToAnswerFlexOl =
+    (arr, arrElementTransform) => arrToOl(arr, arrElementTransform, 'answerFlexOl');
 
 /**
  * @param {string[]} colHeadings 
@@ -643,7 +675,7 @@ const primesInfoHtml =
  */
 function createPrimesElements(primesStrings, inputString) {
     const headingText = `The first ${primesStrings.length} primes ≥ ${inputString} are:`;
-    const primesOl = arrToOl(primesStrings, createNumStringWithCommas);
+    const primesOl = arrToAnswerFlexOl(primesStrings, createNumStringWithCommas);
     return [createNonBoldAnswerH3(headingText), primesOl];
 }
 
@@ -681,7 +713,7 @@ const twinPrimePairsInfoHtml =
  */
 function createTwinPrimePairsElements(pairStarts, inputString) {
     const headingText = `The first ${pairStarts.length} twin prime pairs ≥ ${inputString} are:`;
-    const pairsOl = arrToOl(pairStarts, (start) => numPairToString(start, start + 2));
+    const pairsOl = arrToAnswerFlexOl(pairStarts, (start) => numPairToString(start, start + 2));
     return [createNonBoldAnswerH3(headingText), pairsOl];
 }
 
@@ -748,6 +780,7 @@ function createPfSpan(fpArr) {
 function createPfElements(fpArr, inputString) {
     const headingText = `The prime factorization of ${inputString} is:`;
     const pfSpan = createPfSpan(fpArr);
+    pfSpan.className = 'centeredPfSpan';
     return [createNonBoldAnswerH3(headingText), pfSpan];
 }
 
@@ -996,7 +1029,7 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
         return fpArr ? createLi(createPfSpan(fpArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
     }
 
-    pfDiv.appendChild(arrToOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi));
+    pfDiv.appendChild(arrToAnswerFlexOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi));
     return pfDiv;
 }
 
@@ -1055,6 +1088,7 @@ function createEuclideanTableDiv(firstChild, iterations) {
     const table = createTable(tableColHeadings, iterations, getTableRowNums);
     const gcd = iterations[iterations.length - 1].min;
     const gcdMessageDiv = createDiv(`The GCD is ${createNumStringWithCommas(gcd)}.`);
+    gcdMessageDiv.className = 'gcdMessageDiv';
     return createDiv(firstChild, table, gcdMessageDiv);
 }
 
@@ -1067,6 +1101,7 @@ function createEuclideanExampleDiv(iterations) {
         `Let's find the GCD of ${iterations[0].min} and ${iterations[0].max} using the Euclidean algorithm. \
         Here are the iterations:`;
     const tableDiv = createEuclideanTableDiv(createNarrowTextDiv(startText), iterations);
+    tableDiv.className = 'euclideanExampleTable';
     return tableDiv;
 }
     
@@ -1209,6 +1244,7 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
             gcdInfoAppendable,
             createGcdOrLcmPfLi('LCM', lcmFpArrAndNumString)
         );
+    pfsOl.className = answerNormalOlClassName;
 
     return createDiv(heading, ol);
 }
@@ -1242,8 +1278,8 @@ function createGoldbachConjectureElements(primePairStarts, inputString, inputNum
     const headingText =
         `There${thereIs1Pair ? `'s 1 pair` : ` are ${createNumStringWithCommas(primePairStarts.length)} pairs`} \
         of prime numbers that sum to ${inputString}. ${thereIs1Pair ? 'It is' :  'They are'}:`;
-    const pairsOl = arrToOl(primePairStarts, (start) => numPairToString(start, inputNum - start));
-    return [createNonBoldAnswerHeading(headingText), pairsOl];
+    const pairsOl = arrToAnswerFlexOl(primePairStarts, (start) => numPairToString(start, inputNum - start));
+    return [createNonBoldAnswerH3(headingText), pairsOl];
 }
 
 new GoldbachConjectureSection(
@@ -1298,7 +1334,7 @@ function createPythagTriplesElements(triples, inputString) {
         return createLi(createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b), ' = ', createNumAndSquareSpan(c), maybePrimitiveString);
     }
 
-    const triplesOl = arrToOl(triples, tripleToLi, false);
+    const triplesOl = arrToAnswerNormalOl(triples, tripleToLi);
 
     return [createNonBoldAnswerH3(headingText), triplesOl];
 }
@@ -1396,9 +1432,9 @@ function createFiboLikeSequencesElements({ stringFiboLikeSequence, ratioDataArra
     const sequenceHeadingText =
         `The first ${stringFiboLikeSequence.length} numbers in the Fibonacci-like sequence that starts with \
         ${inputString1} and ${inputString2} are:`;
+    const sequenceOl = arrToAnswerFlexOl(stringFiboLikeSequence, createNumStringWithCommas);
     const sequenceDiv = createDiv(createNonBoldAnswerH3(sequenceHeadingText), sequenceOl);
 
-    const sequenceOl = arrToOl(stringFiboLikeSequence, createNumStringWithCommas);
     const ratiosHeading = createNonBoldAnswerH3();
     ratiosHeading.innerHTML =
         'The ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, \
@@ -1417,6 +1453,7 @@ function createFiboLikeSequencesElements({ stringFiboLikeSequence, ratioDataArra
     const ratiosOl = arrToAnswerNormalOl(ratioDataArray, ratioDataToString);
     ratiosOl.append(createLi(`${phiLetter} ≈ ${phiNumString}`));
     const ratiosDiv = createDiv(ratiosHeading, ratiosOl);
+    ratiosDiv.id = 'fiboLikeSequenceRatiosDiv';
 
     return [sequenceDiv, ratiosDiv];
 }
@@ -1467,7 +1504,8 @@ function createLiWithInnerHtml(innerHtml) {
     return li;
 }
 
-const ancientMultStepsOl = arrToOl(ancientMultStepsArr, createLiWithInnerHtml, false);
+const ancientMultStepsOl = arrToOl(ancientMultStepsArr, createLiWithInnerHtml);
+ancientMultStepsOl.id = 'ancientMultStepsOl';
 
 const ancientMultResultSentence = 'This gives us the product of the 2 numbers.';
 

@@ -41,6 +41,16 @@ const createH4 = (text) => createElement('h4', text);
 const createDiv = (...objectsToAppend) => createElement('div', ...objectsToAppend);
 
 /**
+ * @param {string} text 
+ * @returns {HTMLDivElement}
+ */
+function createNarrowTextDiv(text) {
+    const div = createDiv(text);
+    div.className = 'narrowTextDiv';
+    return div;
+}
+
+/**
  * @param {...Appendable} objectsToAppend
  * @returns {HTMLParagraphElement}
  */
@@ -222,7 +232,6 @@ function getNum(inputField) {
  */
 function createInputDiv(id) {
     const inputField = createElement('input');
-    inputField.setAttribute('type', 'number');
     inputField.className = 'inputField';
 
     const randomizeBtn = createBtn('Randomize');
@@ -635,6 +644,7 @@ const primesInfoHtml =
 function createPrimesElements(primesStrings, inputString) {
     const headingText = `The first ${primesStrings.length} primes ≥ ${inputString} are:`;
     const primesOl = arrToOl(primesStrings, createNumStringWithCommas);
+    return [createNonBoldAnswerH3(headingText), primesOl];
 }
 
 new SingleInputSection(
@@ -672,6 +682,7 @@ const twinPrimePairsInfoHtml =
 function createTwinPrimePairsElements(pairStarts, inputString) {
     const headingText = `The first ${pairStarts.length} twin prime pairs ≥ ${inputString} are:`;
     const pairsOl = arrToOl(pairStarts, (start) => numPairToString(start, start + 2));
+    return [createNonBoldAnswerH3(headingText), pairsOl];
 }
 
 new SingleInputSection(
@@ -736,6 +747,8 @@ function createPfSpan(fpArr) {
  */
 function createPfElements(fpArr, inputString) {
     const headingText = `The prime factorization of ${inputString} is:`;
+    const pfSpan = createPfSpan(fpArr);
+    return [createNonBoldAnswerH3(headingText), pfSpan];
 }
 
 const pfMinInput = 2;
@@ -950,18 +963,18 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
  */
 function createDivisPfAnswerDiv(pfAnswer, inputString) {
     const heading = createH4('Prime Factorization Info');
-    const pfInfoParagraph = createP(`The prime factorization of ${inputString} is `);
-    const pfDiv = createDiv(heading, pfInfoParagraph);
+    const pfInfoTextDiv = createNarrowTextDiv(`The prime factorization of ${inputString} is `);
+    const pfDiv = createDiv(heading, pfInfoTextDiv);
 
     if (!pfAnswer) {
-        pfInfoParagraph.append(
+        pfInfoTextDiv.append(
             `${inputString}. ${inputString} is prime and doesn't have any factors other than itself and 1.`
         );
         return pfDiv;
     }
 
     const { inputFpArr, numFactorsExpression, numFactors, factorFpArrsAndNumStrings } = pfAnswer;
-    pfInfoParagraph.append(createPfSpan(inputFpArr), '. ');
+    pfInfoTextDiv.append(createPfSpan(inputFpArr), '. ');
 
     const numFactorsInfoEnd =
         numFactors === 3
@@ -972,7 +985,7 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
         `By looking at the powers, we can see that there are ${numFactorsExpression} = \
         ${createNumStringWithCommas(numFactors)} factors. If 1 and ${inputString} are excluded then there${numFactorsInfoEnd}.`;
 
-    pfInfoParagraph.append(numFactorsInfo, ' The factors and their PFs are:');
+    pfInfoTextDiv.append(numFactorsInfo, ' The factors and their PFs are:');
 
     /**
      * @param {FactorAndPowerArrayAndNumberString} 
@@ -1028,24 +1041,22 @@ const euclideanInfoStartHtml =
  */
 
 /**
+ * @param {HTMLDivElement | HTMLHeadingElement} firstChild
  * @param {EuclideanIteration[]} iterations 
- * @returns {HTMLTableElement} A table that shows the max, min, and remainder of all iterations.
+ * @returns {HTMLDivElement}
  */
-function createEuclideanTable(iterations) {
+function createEuclideanTableDiv(firstChild, iterations) {
     const tableColHeadings = ['Max', 'Min', 'Remainder'];
     /**
      * @param {EuclideanIteration} ei 
      * @returns {number[]}
      */
     const getTableRowNums = (ei) => [ei.max, ei.min, ei.remainder];
-    return createTable(tableColHeadings, iterations, getTableRowNums);
+    const table = createTable(tableColHeadings, iterations, getTableRowNums);
+    const gcd = iterations[iterations.length - 1].min;
+    const gcdMessageDiv = createDiv(`The GCD is ${createNumStringWithCommas(gcd)}.`);
+    return createDiv(firstChild, table, gcdMessageDiv);
 }
-
-/**
- * @param {EuclideanIteration[]} iterations 
- * @returns {number}
- */
-const getGcd = (iterations) => iterations[iterations.length - 1].min;
 
 /**
  * @param {EuclideanIteration[]} iterations 
@@ -1055,8 +1066,8 @@ function createEuclideanExampleDiv(iterations) {
     const startText =
         `Let's find the GCD of ${iterations[0].min} and ${iterations[0].max} using the Euclidean algorithm. \
         Here are the iterations:`;
-    const endText = `The GCD is ${getGcd(iterations)}.`;
-    return createDiv(createP(startText), createEuclideanTable(iterations), createP(endText));
+    const tableDiv = createEuclideanTableDiv(createNarrowTextDiv(startText), iterations);
+    return tableDiv;
 }
     
 /**
@@ -1139,26 +1150,16 @@ const gcdAndLcmInfoElements =
  */
 function createGcdAndLcmAnswerElements({ euclideanIterations, pfAnswer }, inputString1, inputString2) {
     const mainHeading = createH3(`GCD and LCM Info for ${inputString1} and ${inputString2}`);
-    const euclideanDiv = createEuclideanAnswerDiv(euclideanIterations, inputString1, inputString2);
+    const euclideanDiv =
+        createEuclideanTableDiv(
+            'euclideanAnswerTable',
+            createH4('Euclidean Algorithm Iterations'),
+            euclideanIterations
+        );
     const pfDiv = createGcdAndLcmPfAnswerDiv(pfAnswer, inputString1, inputString2);
     return [mainHeading, euclideanDiv, pfDiv];
 }
 
-/**
- * @param {EuclideanIteration[]} iterations
- * @param {string} inputString1 
- * @param {string} inputString2 
- * @returns {HTMLDivElement}
- */
-function createEuclideanAnswerDiv(iterations, inputString1, inputString2) {
-    const heading = createH4('Euclidean Algorithm Iterations');
-    const table = createEuclideanTable(iterations);
-    const gcdString = createNumStringWithCommas(getGcd(iterations));
-    const gcdMessageP =
-        createP(`The GCD of ${inputString1} and ${inputString2} is ${gcdString}.`);
-
-    return createDiv(heading, table, gcdMessageP);
-}
 
 /**
  * @param {GcdAndLcmPrimeFactorizationAnswer} answer 
@@ -1167,7 +1168,7 @@ function createEuclideanAnswerDiv(iterations, inputString1, inputString2) {
  * @returns {HTMLDivElement}
  */
 function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
-    const heading = createH4('Prime Factorization Info');
+    const heading = createH4('Prime Factorizations Info');
 
     /**
      * @param {string} inputString 
@@ -1299,6 +1300,7 @@ function createPythagTriplesElements(triples, inputString) {
 
     const triplesOl = arrToOl(triples, tripleToLi, false);
 
+    return [createNonBoldAnswerH3(headingText), triplesOl];
 }
 
 new SingleInputSection(
@@ -1334,8 +1336,9 @@ const twoSquareTheoremActionSentenceEnding =
 function createTwoSquareTheoremElements({ primeNum, a, b }, inputString) {
     const headingText =
         `The first number ≥ ${inputString} that's prime and is 1 above a multiple of 4 is:`;
-    const answerP =
-        createP(createNumStringWithCommas(primeNum), ', which is ', createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b), '.');
+    const answerDiv =
+        createDiv(createNumStringWithCommas(primeNum), ', which is ', createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b));
+    return [createNonBoldAnswerH3(headingText), answerDiv];
 }
 
 new SingleInputSection(
@@ -1390,11 +1393,16 @@ const fiboLikeSequencesActionSentenceEnding =
  */
 function createFiboLikeSequencesElements({ stringFiboLikeSequence, ratioDataArray }, inputString1, inputString2) {
 
-    const headingText =
+    const sequenceHeadingText =
         `The first ${stringFiboLikeSequence.length} numbers in the Fibonacci-like sequence that starts with \
         ${inputString1} and ${inputString2} are:`;
+    const sequenceDiv = createDiv(createNonBoldAnswerH3(sequenceHeadingText), sequenceOl);
 
     const sequenceOl = arrToOl(stringFiboLikeSequence, createNumStringWithCommas);
+    const ratiosHeading = createNonBoldAnswerH3();
+    ratiosHeading.innerHTML =
+        'The ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, \
+        15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers are:';
 
     /**
      * @param {RatioData}
@@ -1406,10 +1414,11 @@ function createFiboLikeSequencesElements({ stringFiboLikeSequence, ratioDataArra
         return `${num2StringWithCommas} / ${num1StringWithCommas} ${isRounded ? '≈' : '='} ${ratio}`;
     }
 
-    const ratioDataOl = arrToOl(ratioDataArray, ratioDataToString, false);
-    ratioDataOl.append(createLi(`${phiLetter} ≈ ${phiNumString}`));
+    const ratiosOl = arrToAnswerNormalOl(ratioDataArray, ratioDataToString);
+    ratiosOl.append(createLi(`${phiLetter} ≈ ${phiNumString}`));
+    const ratiosDiv = createDiv(ratiosHeading, ratiosOl);
 
-    return [createNonBoldAnswerHeading(headingText), sequenceOl, ratioDataOl];
+    return [sequenceDiv, ratiosDiv];
 }
 
 new DoubleInputSection(
@@ -1476,7 +1485,7 @@ const ancientMultInfoElements =
     [
         createP(ancientMultInfoStart),
         ancientMultStepsOl,
-        createP(ancientMultResultSentence),
+        createNarrowTextDiv(ancientMultResultSentence),
         ...createPsWithParagraphs(ancientMultExampleParagraphs)
     ];
 
@@ -1507,7 +1516,7 @@ function createAncientMultAnswerElements({ table1Rows, table2Rows, productString
     const productSentence =
         `The sum of the bottom right column is ${createNumStringWithCommas(productString)}, which is the product.`;
 
-    return [createH3(mainHeadingText), table1, table2, createP(productSentence)];
+    return [createH3(mainHeadingText), table1, table2, createNarrowTextDiv(productSentence)];
 }
 
 new DoubleInputSection(

@@ -259,10 +259,9 @@ function getNum(inputField) {
 }
 
 /**
- * @param {string} id 
  * @returns {{ inputDiv: HTMLDivElement, inputField: HTMLInputElement }}
  */
-function createInputDiv(id) {
+function createInputDiv() {
     const inputField = createElement('input');
     inputField.className = 'inputField';
 
@@ -311,7 +310,6 @@ function createInputDiv(id) {
     };
 
     const inputDiv = createDiv(inputField, randomizeBtn, plusBtn, minusBtn);
-    inputDiv.id = id;
     inputDiv.className = 'inputDiv';
 
     return { inputDiv, inputField };
@@ -330,9 +328,8 @@ sectionInfoDiv.className = 'nonAnswerInfoDiv';
  */
 const sectionInfoDetails = createElement('details', sectionInfoDetailsSummary, sectionInfoDiv);
 
-const leftInputDivId = 'leftInputDiv';
-const { inputDiv: inputDiv1, inputField: inputField1 } = createInputDiv(leftInputDivId);
-const { inputDiv: inputDiv2, inputField: inputField2 } = createInputDiv('rightInputDiv');
+const { inputDiv: inputDiv1, inputField: inputField1 } = createInputDiv();
+const { inputDiv: inputDiv2, inputField: inputField2 } = createInputDiv();
 const inputDivDiv = createDiv(inputDiv1, inputDiv2);
 inputDivDiv.id = 'inputDivDiv';
 
@@ -462,11 +459,9 @@ class Section {
             if (this.isSingleInputSection) {
                 if (Object.is(inputDivDiv.lastElementChild, inputDiv2)) {
                     inputDivDiv.removeChild(inputDiv2);
-                    inputDiv1.id = 'onlyInputDiv';
                 }
             } else if (Object.is(inputDivDiv.lastElementChild, inputDiv1)) {
                 inputDivDiv.appendChild(inputDiv2);
-                inputDiv1.id = leftInputDivId;
             }
 
             if (Object.is(document.body.lastElementChild, homeContentDiv)) {
@@ -1029,7 +1024,9 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
         return fpArr ? createLi(createPfSpan(fpArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
     }
 
-    pfDiv.appendChild(arrToAnswerFlexOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi));
+    const factorsOl = arrToAnswerFlexOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi);
+    factorsOl.id = 'divisAnswerFactorsOl';
+    pfDiv.appendChild(factorsOl);
     return pfDiv;
 }
 
@@ -1335,6 +1332,7 @@ function createPythagTriplesElements(triples, inputString) {
     }
 
     const triplesOl = arrToAnswerNormalOl(triples, tripleToLi);
+    triplesOl.id = 'pythagTriplesOl';
 
     return [createNonBoldAnswerH3(headingText), triplesOl];
 }
@@ -1548,13 +1546,17 @@ function createAncientMultAnswerElements({ table1Rows, table2Rows, productString
      * @returns {string[]}
      */
     const getTableRowStrings = (row) => [row.powerOf2String, row.correspondingMultipleString];
-
-    const table1 = createTable(table1ColHeadings, table1Rows, getTableRowStrings);
-    const table2 = createTable(table2ColHeadings, table2Rows, getTableRowStrings);
     const productSentence =
         `The sum of the bottom right column is ${createNumStringWithCommas(productString)}, which is the product.`;
 
-    return [createH3(mainHeadingText), table1, table2, createNarrowTextDiv(productSentence)];
+    const tableDiv =
+        createDiv(
+            createTable(table1ColHeadings, table1Rows, getTableRowStrings),
+            createTable(table2ColHeadings, table2Rows, getTableRowStrings)
+        );
+    tableDiv.id = 'ancientMultTableDiv';
+    
+    return [createH3(mainHeadingText), tableDiv, productSentenceDiv];
 }
 
 new DoubleInputSection(

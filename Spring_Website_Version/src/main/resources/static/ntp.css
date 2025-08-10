@@ -4,16 +4,14 @@ body {
     background-color: rgb(0, 82, 78);
     --default-color: gainsboro;
     color: var(--default-color);
-    --default-font: Verdana;
-    font-family: var(--default-font);
+}
+
+body, button {
+    font-family: Verdana;
 }
 
 h1, h2 {
     font-family: Georgia;
-}
-
-h1, h2, h3, h4, summary, .gcdMessageDiv {
-    text-align: center;
 }
 
 h1 {
@@ -29,6 +27,56 @@ h2 {
     margin-bottom: 1rem;
 }
 
+h3 {
+    /* margin: 1rem auto; */
+    font-size: 1.3rem;
+}
+
+h4 {
+    margin-top: 0;
+    margin-bottom: 0.3rem;
+    /* margin: 0.5rem auto; */
+}
+
+button {
+    font-size: 1rem;
+}
+
+summary {
+    font-size: 1.2rem;
+}
+
+ol {
+    list-style-type: none;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 0.15rem solid var(--default-color);
+}
+
+th, td {
+    padding: 0.5rem;
+}
+
+h1, h2, h3, h4, summary, table, .centeredPfSpan, .gcdMessageDiv {
+    text-align: center;
+}
+
+h3, p, .narrowTextDiv, #ancientMultStepsOl, .answerFlexOl {
+    max-width: 40rem;
+}
+
+/* Since h3s get a max width, they need this rule as well. */
+h3, p, ol, table, .narrowTextDiv {
+    margin: 0 auto;
+}
+
+
 #sectionBtnsDiv {
     margin-top: 1rem;
     display: flex;
@@ -39,10 +87,8 @@ h2 {
 
 #sectionBtnsDiv > button {
     background-color: rgb(16, 0, 105);
-    outline-style: none;
     color: white;
-    min-width: 5rem;
-    min-height: 3rem;
+    padding: 0.8rem;
 }
 
 #sectionBtnsDiv > button:hover {
@@ -50,68 +96,11 @@ h2 {
     cursor: pointer;
 }
 
-button {
-    font: 1rem var(--default-font);
-}
-
-summary {
-    font-size: 1.2rem;
-}
-
-h3, h4, p, .narrowTextDiv, #ancientMultStepsOl, .answerFlexOl {
-    max-width: 40rem;
-    margin: 0 auto;
-}
-
-ol {
-    list-style-type: none;
-    padding: 0rem;
-}
-
-#sectionContentDiv > :not(:first-child), #sectionInfoDiv {
-    margin-top: 1rem;
-}
-
-.nonAnswerInfoDiv > :not(:first-child) {
-    margin-top: 1rem;
-}
-
-.nonAnswerInfoDiv > div > :nth-child(n + 3) {
-    margin-top: 0.8rem;
-}
-
-#ancientMultStepsOl {
-    list-style-type: decimal;
-    padding: revert;
-}
-
-table {
-    margin: 0 auto;
-    text-align: center;
-    --border-style: 0.15rem solid var(--default-color);
-    border: var(--border-style);
-    border-collapse: collapse;
-}
-
-th {    
-    border: var(--border-style);
-}
-
-td {
-    border: var(--border-style);
-}
-
-.euclideanExampleTable, .gcdMessageDiv {
-    margin-top: 0.5rem;
-}
-
-/* Spacing between section info and directions. */
-#sectionInfoDiv > :last-child {
-    margin-bottom: 3rem;
-}
 
 #inputDivDiv {
     display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .inputDiv {
@@ -145,23 +134,35 @@ td {
     margin-right: auto;
 }
 
-#onlyInputDiv {
-    margin: auto;
-}
-
-#leftInputDiv {
-    margin-right: 1%;
-    margin-left: auto;
-}
-
-#rightInputDiv {
-    margin-left: 1%;
-    margin-right: auto;
-}
 
 #calculateBtn {
     display: block;
     margin: auto;
+}
+
+
+#sectionContentDiv > :not(:first-child), #sectionInfoDiv {
+    margin-top: 1rem;
+}
+
+#sectionInfoDiv {
+    margin-bottom: 3rem;
+}
+
+.nonAnswerInfoDiv > :not(:first-child) {
+    margin-top: 1rem;
+}
+
+/*
+For divs within a nonAnswerInfoDiv, the 1st child is a heading.
+*/
+
+.nonAnswerInfoDiv > div > :nth-child(2) {
+    margin-top: 0.3rem;
+}
+
+.nonAnswerInfoDiv > div > :nth-child(n + 3) {
+    margin-top: 0.8rem;
 }
 
 /*
@@ -172,40 +173,42 @@ higher specificity than the "#sectionContentDiv > :not(:first-child)" selector.
     margin-top: 2rem;
 }
 
-#answerDiv > div {
-    margin-top: 1rem;
-}
-
-h3 {
-    font-size: 1.3rem;
-}
 
 .nonBoldAnswerH3 {
     margin-bottom: 1rem;
     font-weight: normal;
 }
 
-h4 {
-    margin-bottom: 0.7rem;
+#answerDiv > div {
+    margin-top: 1rem;
 }
 
+/* For GCD and LCM PFs info, Pythagorean triples, and Fibonacci-like sequence ratios info. */
 .answerNormalOl {
-    margin: 0 auto;
     width: max-content;
 }
 
+/*
+For primes, twin prime pairs, divisibility info factors and PFs, Goldbach Conjecture prime pairs,
+and Fibonacci-like sequence numbers.
+*/
 .answerFlexOl {
     display: flex;
-    gap: 1.5rem;
     flex-wrap: wrap;
-    align-items: center;
     justify-content: center;
-    margin: auto;
+    gap: 1.5rem;
 }
 
 .centeredPfSpan {
     display: block;
-    text-align: center;
+}
+
+#divisAnswerFactorsOl {
+    margin-top: 0.5rem;
+}
+
+.euclideanExampleTable, .gcdMessageDiv {
+    margin-top: 0.5rem;
 }
 
 /*
@@ -219,4 +222,25 @@ in this selector to give it higher specificity than the "#answerDiv > div" selec
 /* The ratio is the last part of the text in each li in this ol. Align them. */
 #fiboLikeSequenceRatiosDiv > ol {
     text-align: right;
+}
+
+#pythagTriplesOl, #ancientMultStepsOl {
+    list-style-type: decimal;
+    padding: revert;
+}
+
+#ancientMultTableDiv {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+#ancientMultTableDiv > table {
+    margin: 0;
+    height: max-content;
+}
+
+#ancientMultTableDiv th {
+    width: 10rem;
 }

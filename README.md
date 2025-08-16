@@ -14,29 +14,29 @@ Here are some collapsible sections that show some info and screenshots for the d
 
 The `NTPCLI` class has the `main` method and some other code for running this version of the app. If you're wondering, I was using the IntelliJ IDEA terminal with the Darcula :vampire: theme when I took the screenshots below.
 
-The app will start at a menu section that looks like this:
+The app starts at a main menu:
 
-![CLI main menu](/Java%20Versions/screenshots/CLI%20menu.JPG)
+![CLI main menu](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/main_menu.JPG)
 
 A single input section:
 
-![CLI single input section](/Java%20Versions/screenshots/CLI%20single%20input%20section.JPG)
+![CLI single input section](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/single_input_section.JPG)
 
 A double input section:
 
-![CLI double input section](/Java%20Versions/screenshots/CLI%20double%20input%20section.JPG)
+![CLI double input section](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/double_input_section.JPG)
 
-Info about a section getting displayed:
+Info about a section:
 
-![CLI section info](/Java%20Versions/screenshots/CLI%20section%20info.JPG)
+![CLI section info](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/section_info.JPG)
 
-An answer being displayed:
+Some input and calculations:
 
-![CLI answer](/Java%20Versions/screenshots/CLI%20answer.JPG)
+![CLI input and calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/double_input_section_calculations.JPG)
 
-An invalid input message being displayed:
+Invalid input:
 
-![CLI invalid input](/Java%20Versions/screenshots/CLI%20invalid%20input.JPG)
+![CLI invalid input](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/invalid_input.JPG)
 
 #### Input Remarks
 
@@ -52,25 +52,23 @@ An invalid input message being displayed:
 
 The GUI and website versions of the app are similar. The screenshots below show the GUI version. The `NTPGUI` class has the `main` method to launch the GUI app and a little of the code for running it. A lot of the other code for doing this is in the `MainPanel` class.
 
-The app will start at a home section that looks like this:
 
-![GUI main menu](/Java%20Versions/screenshots/GUI%20home.JPG)
+A single input section without info:
 
-A single input section:
+![Website single input section without info](/Spring_Website_Version/screenshots/app_overview/single_input_section_without_info.JPG)
 
-![GUI single input section](/Java%20Versions/screenshots/GUI%20single%20input%20section.JPG)
+A single input section with info:
+![Website single input section with info](/Spring_Website_Version/screenshots/app_overview/single_input_section_with_info.JPG)
 
 A double input section:
 
-![GUI double input section](/Java%20Versions/screenshots/GUI%20double%20input%20section.JPG)
+![Website double input section](/Spring_Website_Version/screenshots/app_overview/double_input_section.JPG)
+Some input and a calculation:
 
-An answer being displayed:
+![Website input and calculation](/Spring_Website_Version/screenshots/app_overview/calculation.JPG)
 
-![GUI answer](/Java%20Versions/screenshots/GUI%20answer.JPG)
 
-An invalid input message being displayed:
 
-![GUI invalid input](/Java%20Versions/screenshots/GUI%20invalid%20input.JPG)
 
 The user can navigate among the sections using the buttons at the top. The user can enter input in the text boxes or can change the text of one by clicking one of the buttons below it. Clicking the "Randomize" button will generate a random number in the range of valid input numbers and set the text of the text box to that number. For the "Goldbach Conjecture" section, this number will also be even.
 
@@ -116,7 +114,12 @@ isn't divisible by any of those and 33 is divisible by 3 so 29 is prime and 33 i
 
 Find the first 30 primes that are $\geq$ an input number.
 
+#### Example Calculation Screenshots
+
+![CLI primes calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/primes_calculation.JPG)
+
 #### Input Range: 0 - 10,000,000,000,000 (10 trillion)
+![Website primes calculation](/Spring_Website_Version/screenshots/section_calculations/primes_calculation.JPG)
 
 </details>
 
@@ -141,6 +144,12 @@ Find the first 20 pairs of twin primes where the lowest number in the pair is $\
 
 #### Input Range: 0 - 500,000,000,000 (500 billion)
 
+#### Example Calculation Screenshots
+
+![CLI twin prime pairs calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
+
+![Website twin prime pairs calculation](/Spring_Website_Version/screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
+
 </details>
 
 <details>
@@ -162,6 +171,12 @@ prime numbers in ascending order. There are some interesting applications for PF
 Find the PF of an input number faster than you can say "prime factorization". :slightly_smiling_face:
 
 #### Input Range: 2 - 10,000,000,000,000,000 (10 quadrillion)
+
+#### Example Calculation Screenshots
+
+![CLI PF calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/PF_calculation.JPG)
+
+![Website PF calculation](/Spring_Website_Version/screenshots/section_calculations/PF_calculation.JPG)
 
 </details>
 
@@ -219,6 +234,12 @@ sum of digits from left to right is $4 - 6 + 9 - 5 + 7 - 6 + 8 = 11$, which, of 
 2. Find the PF of the input number. If we can determine from this PF that the input number is composite, then manually find the factors and their PFs and show that they are sub-factorizations of the PF of the input number.
 
 #### Input Range: 2 - 10,000,000,000,000,000 (10 quadrillion)
+
+#### Example Calculations Screenshots
+
+![CLI divisibility calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/divisibility_calculations.JPG)
+
+![Website divisibility calculations](/Spring_Website_Version/screenshots/section_calculations/divisibility_calculations.JPG)
 
 </details>
 
@@ -291,6 +312,12 @@ is 3 so $3^3$ is in the LCM PF. The LCM PF is $2 \times 3^3 \times 11$, which is
 
 #### Input Range: 2 - 5,000,000,000,000,000 (5 quadrillion)
 
+#### Example Calculations Screenshots
+
+![CLI GCD and LCM calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
+
+![Website GCD and LCM calculations](/Spring_Website_Version/screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
+
 </details>
 
 <details>
@@ -308,6 +335,12 @@ $\geq 4$ & $\leq 4 \times 10^{18}$.
 Find the pairs of prime numbers that sum to an even input number.
 
 #### Input Range: 4 - 1,500,000
+
+#### Example Calculation Screenshots
+
+![CLI Goldbach Conjecture calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
+
+![Website Goldbach Conjecture calculation](/Spring_Website_Version/screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
 
 </details>
 
@@ -339,6 +372,12 @@ Find the first 10 Pythagorean triples where the lowest number in the triple is $
 
 #### Input Range: 0 - 10,000
 
+#### Example Calculation Screenshots
+
+![CLI Pythagorean triples calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/pythag_triples_calculation.JPG)
+
+![Website Pythagorean triples calculation](/Spring_Website_Version/screenshots/section_calculations/pythag_triples_calculation.JPG)
+
 </details>
 
 <details>
@@ -357,7 +396,12 @@ $2^2 \text{ } (4) + 5^2 \text{ } (25)$.
 
 Find the first prime number $\geq$ an input number that is 1 above a multiple of 4, as well as the numbers whose squares sum to that number.
 
+#### Example Calculations Screenshots
+
 #### Input Range: 0 - 1,000,000,000,000,000 (1 quadrillion)
+![CLI Two Square Theorem calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/two_square_theorem_calculations.JPG)
+
+![Website Two Square Theorem calculations](/Spring_Website_Version/screenshots/section_calculations/two_square_theorem_calculations.JPG)
 
 </details>
 
@@ -382,8 +426,12 @@ $\frac{8}{5} = 1.6$, and $\frac{21}{13} \approx 1.615384615384615$.
 #### Calculations
 
 Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers, as well as the ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup> and 20<sup>th</sup> and 19<sup>th</sup> numbers.
+#### Example Calculations Screenshots
 
 #### Input Range: 1 - 9,000,000,000,000,000,000 (9 quintillion)
+![CLI Fibonacci-like sequences calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
+
+![Website Fibonacci-like sequences calculations](/Spring_Website_Version/screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
 
 </details>
 
@@ -427,6 +475,12 @@ Given 2 input numbers:
 This process will be done faster than you can say "ancient Egyptian multiplication". :slightly_smiling_face:
 
 #### Input Range: 2 - 9,000,000,000,000,000,000 (9 quintillion)
+
+#### Example Calculations Screenshots
+
+![CLI ancient Egyptian multiplication calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/ancient_mult_calculations.JPG)
+
+![Website ancient Egyptian multiplication calculations](/Spring_Website_Version/screenshots/section_calculations/ancient_mult_calculations.JPG)
 
 </details>
 

@@ -737,10 +737,10 @@ const pfInfoHtml =
     sections for some applications.
     
     The input numbers with the highest amount of prime factors are 536,870,912 (2<sup>29</sup>) and 805,306,368
-    (2<sup>28</sup> × 3). An input number with the highest amount of unique prime factors is 223,092,870. This
-    number is the product of the first 9 prime numbers so it has 9 unique prime factors and its PF is
-    2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23. You could also multiply that number by 2, 3, or 4 and those numbers
-    are ≤ the max input and have the same amount of unique prime factors.`;
+    (2<sup>28</sup> × 3). An input number with the highest amount of <em>unique</em> prime factors is
+    223,092,870. This number is the product of the first 9 prime numbers so it has 9 unique prime factors and
+    its PF is 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23. You could also multiply that number by 2, 3, or 4 and
+    those numbers are ≤ the max input and have the same amount of unique prime factors.`;
 
 /**
  * @typedef {{ factor: number, power: number }} FactorAndPower
@@ -810,7 +810,12 @@ const divisPfInfoHtml =
     PF is for (36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors.
     You can find the factors of <var>n</var> by finding all the PFs within <var>n</var>'s PF, or the
     "sub-factorizations", as I like to call them. For 2<sup>2</sup> × 3<sup>2</sup>, the sub-factorizations are
-    2, 3, 2<sup>2</sup> (4), 2 × 3 (6), 3<sup>2</sup> (9), 2<sup>2</sup> × 3 (12), and 2 × 3<sup>2</sup> (18).`;
+    2, 3, 2<sup>2</sup> (4), 2 × 3 (6), 3<sup>2</sup> (9), 2<sup>2</sup> × 3 (12), and 2 × 3<sup>2</sup> (18).
+    
+    For whole numbers that are < the max input of this section, the number of factors they have are generally
+    pretty small, like < 100. An example of an input number with a high number of factors is 892,371,480.
+    This number is the product of 2<sup>3</sup> and the next 8 prime numbers so it has 9 unique prime factors
+    and its PF is 2<sup>3</sup> × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23. It has 1,024 total factors!`;
 
 const divisPfInfoDiv =
     createDiv(createH3('Prime Factorization'), ...createPsWithParagraphs(divisPfInfoHtml));
@@ -1262,7 +1267,7 @@ new DoubleInputSection(
 const goldbachConjectureInfoHtml =
     `The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers.
     This was named after 1700s Prussian mathematician Christian Goldbach. ${conjectureDefinitionHtml}.
-    The Goldbach Conjecture has been verified to be true for all even numbers ≥ 4 & ≤ 4 × 10<sup>18</sup>.`;
+    The Goldbach Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 10<sup>18</sup>.`;
 
 /**
  * @param {number[]} primePairStarts

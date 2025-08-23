@@ -24,7 +24,7 @@ public class GoldbachConjecture {
     private static final String INFO = """
 The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime
 numbers. This was named after 1700s Prussian mathematician Christian Goldbach. %s. The Goldbach
-Conjecture has been verified to be true for all even numbers ≥ 4 & ≤ 4 × 10^18."""
+Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 10^18."""
         .formatted(CONJECTURE_DEFINITION);
     
     private static final long MIN_INPUT = 4;

@@ -166,6 +166,21 @@ previous one if you ignore the order of the prime numbers. The Number Theory Pla
 prime numbers in ascending order. There are some interesting applications for PFs. See the info for the
 "Divisibility" or "GCD and LCM" sections for some applications.
 
+For the CLI and GUI versions, the input number with the highest amount of prime factors is 2<sup>53</sup>
+(9,007,199,254,740,992), the largest power of 2 ≤ 10 quadrillion, the max input. The input number with the
+highest amount of *unique* prime factors is 304,250,263,527,210. This number is the product of the first 13
+prime numbers so it has 13 unique prime factors and its PF is
+$2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$.
+You could also multiply that number by 2 or 3 and those numbers are ≤ the max input and have the same
+amount of unique prime factors.
+
+For the website version, the input numbers with the highest amount of prime factors are 536,870,912
+(2<sup>29</sup>) and 805,306,368 (2<sup>28</sup> × 3). An input number with the highest amount of
+<em>unique</em> prime factors is 223,092,870. This number is the product of the first 9 prime numbers so it has
+9 unique prime factors and its PF is
+$2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23$. You could also multiply that
+number by 2, 3, or 4 and those numbers are ≤ the max input and have the same amount of unique prime factors.
+
 #### Calculation
 
 Find the PF of an input number faster than you can say "prime factorization". :slightly_smiling_face:
@@ -192,7 +207,7 @@ other ways to find them.
 
 ##### Prime Factorization
 
-The factors of a whole number can be found by looking at its prime factorization (PF). Let's have a variable $n$
+The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a variable $n$
 and let it represent a whole number > 1. First, you can find how many factors $n$ has by looking at $n$'s PF,
 taking all the powers of the factors, adding 1 to each, and then multiplying all these together. For example, the
 PF of 36 is $2^2 \times 3^2$. The powers are 2 and 2, so there are $3 \times 3 = 9$ factors. However, that count
@@ -201,6 +216,16 @@ That would give us 7 factors. You can find the factors of $n$ by finding all the
 "sub-factorizations", as I like to call them. For $2^2 \times 3^2$, the sub-factorizations are
 $2$, $3$, $2^2 \text{ } (4)$, $2 \times 3 \text{ } (6)$, $3^2 \text{ } (9)$, $2^2 \times 3 \text{ } (12)$, and
 $2 \times 3^2 \text{ } (18)$.
+
+For whole numbers that are < the max input of this section, the number of factors they have are generally pretty
+small, like < 100. For the CLI and GUI versions, an example of an input number with a high number of factors is
+9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2<sup>6</sup> 
+and the next 12 prime numbers so it has 13 unique prime factors and its PF is
+$2^6 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$.
+It has 28,672 total factors! For the website version, an example of an input number with a high number of
+factors is 892,371,480. This number is the product of 2<sup>3</sup> and the next 8 prime numbers so it has 9
+unique prime factors and its PF is
+$2^3 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23$. It has 1,024 total factors!
 
 ##### Divisibility Rules
 
@@ -328,7 +353,7 @@ is 3 so $3^3$ is in the LCM PF. The LCM PF is $2 \times 3^3 \times 11$, which is
 The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers. This
 was named after 1700s Prussian mathematician Christian Goldbach. A *conjecture* is a statement that's believed to
 be true but hasn't been proven to be. The Goldbach Conjecture has been verified to be true for all even numbers
-$\geq 4$ & $\leq 4 \times 10^{18}$.
+≥ 4 and ≤ 4 × 10<sup>18</sup>.
 
 #### Calculation
 

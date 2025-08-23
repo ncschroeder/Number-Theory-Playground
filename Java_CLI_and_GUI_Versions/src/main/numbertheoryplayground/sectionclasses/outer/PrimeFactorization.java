@@ -27,7 +27,7 @@ prime numbers. The Number Theory Playground displays PFs with the prime numbers 
 order. There are some interesting applications for PFs. See the info for the "Divisibility" or
 "GCD and LCM" sections for some applications.
 
-The input number with the highest amount of prime factors is 2^53, or 9,007,199,254,740,992; the
+The input number with the highest amount of prime factors is 2^53 (9,007,199,254,740,992), the
 largest power of 2 ≤ 10 quadrillion, the max input. An input number with the highest amount of
 unique prime factors is 304,250,263,527,210. This number is the product of the first 13 prime
 numbers so it has 13 unique prime factors and its PF is
@@ -186,7 +186,13 @@ so there are 3 × 3 = 9 factors. However, that count includes 1 and the number t
 (36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors.
 You can find the factors of n by finding all the PFs within n's PF, or the "sub-factorizations",
 as I like to call them. For 2^2 × 3^2, the sub-factorizations are
-2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).""";
+2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).
+
+For whole numbers that are < the max input of this section, the number of factors they have are
+generally pretty small, like < 100. An example of an input number with a high number of factors
+is 9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2^6
+and the next 12 prime numbers so it has 13 unique prime factors and its PF is
+2^6 x 3 x 5 x 7 x 11 x 13 x 17 x 19 x 23 x 29 x 31 x 37 x 41. It has 28,672 total factors!""";
     
     /**
      * This method calculates the number of factors and returns a string that says the number

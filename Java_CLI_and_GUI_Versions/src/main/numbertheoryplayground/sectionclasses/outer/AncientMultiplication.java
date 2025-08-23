@@ -29,9 +29,10 @@ starting with 1, the first power of 2 or 2^0, and finding the next power by addi
 power to itself. This process will look like: 1 + 1 = 2 (2^1), 2 + 2 = 4 (2^2), 4 + 4 = 8 (2^3),
 and so on until we find a power that's > a, which we won't use.
 
-3. Find the products of b and these powers of 2. Like with the powers of 2, this could be done by starting
-with b and finding the next product by adding the previous product to itself. If we let b be 5, this process
-will look like: 5 + 5 = 10 (5 × 2), 10 + 10 = 20 (5 × 4), 20 + 20 = 40 (5 × 8), and so on.
+3. Find the products of b and these powers of 2. Like with the powers of 2, this could be done
+by starting with b and finding the next product by adding the previous product to itself. If we
+let b be 5, this process will look like:
+5 + 5 = 10 (5 × 2), 10 + 10 = 20 (5 × 4), 20 + 20 = 40 (5 × 8), and so on.
 
 4. Find the powers of 2 that sum to a.
 

@@ -513,9 +513,309 @@ I think it was around this time (October 2020) when I decided to make a website 
 
 Refactoring was done and other changes were made throughout 2021, 2022, and 2023. Unit tests were created for the Java versions in 2022.
 
-### A Refactoring Example
+### Refactoring Examples
 
-1 problem with early versions of this project was code duplication. For example, in the `NTPCLI` class, there was a static method for each section that was used to interact with the user for that section. There's a **lot** of code that's common to each of these methods. Here's an overview of what each method looked like. The min and max input numbers were hardcoded and I replaced these with `x` and `y`, respectively. I also replaced some code with comments and some string text with `...`.
+#### Implementation of Calculations
+
+<details>
+<summary>Code</summary>
+
+[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/b0afb8fc9e406987a212e8ce54c487f3ed3a4b9c/Primes.java#L48-L110)
+
+```java
+/**
+ * @return A list of the first 30 prime numbers that appear after the argument number.
+ */
+public static List<Integer> getPrimesAfter(int number) {
+    ArrayList<Integer> primes = new ArrayList<>(30);
+    int potentialPrime;
+
+    // First, check if 2 and 3 should be added to the primes list.
+    if (number <= 5) {
+        // Make potentialPrime the first positive number that is 1 below a multiple of 6.
+        potentialPrime = 5;
+        if (number <= 2) {
+            primes.add(2);
+        }
+        if (number <= 3) {
+            primes.add(3);
+        }
+    } else {
+        switch (number % 6) {
+            case 0:
+                // For numbers that are divisible by 6, check if the next number is prime and set potentialPrime
+                // to the next number that is 1 below a multiple of 6.
+                if (isPrime(number + 1)) {
+                    primes.add(number + 1);
+                }
+                potentialPrime = number + 5;
+                break;
+
+            case 1:
+                // For numbers that are 1 above a multiple of 6, check if this number is prime and set
+                // potentialPrime to the next number that is 1 below a multiple of 6.
+                if (isPrime(number)) {
+                    primes.add(number);
+                }
+                potentialPrime = number + 4;
+                break;
+
+            default:
+                // Have potentialPrime be the next number that is 1 below a multiple of 6
+                potentialPrime = number;
+                while ((potentialPrime + 1) % 6 != 0) {
+                    potentialPrime++;
+                }
+                break;
+        }
+    }
+
+    // Iterate through potential prime numbers, which are numbers that are either 1 below or 1 above a multiple
+    // of 6, and check these numbers for primality.
+    for (;; potentialPrime += 4) {
+        for (int i = 0; i < 2; i++) {
+            if (isPrime(potentialPrime)) {
+                primes.add(potentialPrime);
+                if (primes.size() == 30) {
+                    return primes;
+                }
+            }
+            if (i == 0) {
+                potentialPrime += 2;
+            }
+        }
+    }
+}
+```
+
+</details>
+
+This is the current implementation:
+
+<details>
+<summary>Code</summary>
+
+[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/9824944ed91cf2ff0e289bd7d9bb8d6a378592bf/Java_CLI_and_GUI_Versions/src/main/numbertheoryplayground/sectionclasses/outer/PrimeNumbers.java#L66-L81)
+
+```java
+/**
+ * Returns a stream of the first 30 primes ≥ the input.
+ */
+static LongStream getPrimes(long input) {
+    assertIsInRange(input, MIN_INPUT, MAX_INPUT);
+    
+    long iterationStart = isOdd(input) ? input : input + 1;
+    LongStream oddPrimes =
+        LongStream.iterate(iterationStart, l -> l + 2)
+        .filter(PrimeNumbers::isPrime);
+    
+    // 2 is the only even prime.
+    return
+        (input <= 2 ? LongStream.concat(LongStream.of(2), oddPrimes) : oddPrimes)
+        .limit(NUM_PRIMES_TO_FIND);
+}
+```
+
+</details>
+
+A calculation that did have a significant algorithm change is for finding factors of an input number and the 
+prime factorizations (PFs) of those factors. This started out by using brute force and iterating through ints in
+the range of 2 to half of the input number. This was implemented with a for-loop in the
+[commit from August 6<sup>th</sup>, 2020](https://github.com/ncschroeder/Number-Theory-Playground/commit/b83df662d79bf702c28d857371b6613476f0e455):
+
+<details>
+<summary>Code</summary>
+
+[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/b83df662d79bf702c28d857371b6613476f0e455/Functions.java#L263-L289)
+
+```java
+public static String[] getDivisInfoViaPF(long number) {
+    TreeMap<Long, Integer> PFMap = getPrimeFactorizationMap(number);
+    if (PFMap.size() == 1 && PFMap.containsValue(1)) {
+        return new String[] {number + " doesn't have any factors, which makes it prime."};
+    }
+    int numFactors = getNumFactorsViaPF(PFMap);
+    String[] lines = new String[numFactors + 3];
+    lines[0] = "The prime factorization of " + number + " is " + getPrimeFactorizationString(PFMap);
+    lines[1] = "Excluding 1 and " + number + ", there are " + numFactors + " factors";
+    lines[2] = "The factors are:";
+
+
+    int insertionIndex = 3;
+    long lastPossibleFactor = number / 2;
+    for (long i = 2; i <= lastPossibleFactor; i++) {
+        if (number % i == 0) {
+            if (PFMap.containsKey(i)) {
+                // If the found factor is prime, then only display the number and not it's prime factorization
+                lines[insertionIndex] = String.valueOf(i);
+            } else {
+                // If the found factor is not prime, then display it's prime factorization as well
+                lines[insertionIndex] = i + ", which is " + getPrimeFactorizationString(i);
+            }
+            insertionIndex++;
+        }
+    }
+    return lines;
+}
+```
+
+</details>
+
+This was then implemented with streams in the
+[commit from November 11<sup>th</sup>, 2022](https://github.com/ncschroeder/Number-Theory-Playground/commit/9adfdda4e34afe4c31b0947776dccc20a0c5d5b1):
+
+<details>
+<summary>Code</summary>
+
+[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/9adfdda4e34afe4c31b0947776dccc20a0c5d5b1/Java%20Versions/Divisibility.java#L65-L94)
+
+```java
+/**
+ * Creates a sequential stream containing the factors of intParam besides 1 and intParam. The tests
+ * will collect this stream to a list and the applications will do some mapping on this before collecting
+ * it to a list, as seen in the getFactorPfStrings method below.
+ * @param intParam
+ */
+public static Stream<Integer> getFactorsStream(int intParam) {
+    return
+        IntStream.rangeClosed(2, intParam / 2)
+        .filter(i -> isDivisible(intParam, i))
+        .boxed();
+}
+
+
+/**
+ * PFs can be used to find the factors of an integer. This can be done by finding what I consider
+ * to be "sub-factorizations" of a PF. These are PFs within a PF. For the PF 2 x 3 x 5 x 7, some
+ * examples of sub-factorizations are 2, 2 x 3, and 2 x 3 x 5. In order to find sub-factorizations
+ * programmatically, you would have to use the factorsAndPowers map of a PF object and find all possible combinations
+ * of factors and powers. I don't know how to do that so I'll just do some iteration to find the factors
+ * and then create PF objects from those factors.
+ * @return A list of prime factorization strings for all factors of intParam.
+ * @throws IllegalArgumentException
+ */
+public static List<String> getFactorPfStrings(int intParam) {
+    assertIsInRange(intParam, minInputInt, maxInputInt);
+    return
+        getFactorsStream(intParam)
+        .map(i -> new PrimeFactorization(i).toStringWithCorrespondingLong())
+        .collect(Collectors.toList());
+}
+```
+
+</details>
+
+I learned from that brilliant.org course that the PFs within a PF are the PFs of the factors. In order to find
+these programatically, you would have to find combinations of factors and powers. I used to not know how to do
+that and I didn't bother to research it. It was in 2024 when I got some practice with combinations by doing
+LeetCode problems with them. Then, I came up with a way to find combinations of factors and powers and added
+this code to the repo in the
+[commit from December 2<sup>nd</sup>, 2024](https://github.com/ncschroeder/Number-Theory-Playground/commit/d25c5d4fd789da760b8c2d84b567e41776827297):
+
+<details>
+<summary>Code</summary>
+
+[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/d25c5d4fd789da760b8c2d84b567e41776827297/Java%20Versions/PrimeFactorization.java#L213-L249)
+
+```java
+/**
+ * This method finds the sub-factorizations by finding combinations of factors and powers.
+ */
+public List<PrimeFactorization> getFactorPfs() {
+    var factorPfs = new ArrayList<PrimeFactorization>();
+    
+    factorsAndPowers.forEach((factor, thisPfPower) -> {
+        /*
+        In the 2nd for loop below, we want to iterate through all the PFs that are in factorPfs
+        at this point, and not the ones that get added below. Use this variable for that.
+            */
+        int lastPfIndexToUse = factorPfs.size() - 1;
+        
+        for (var factorPfPower = 1; factorPfPower <= thisPfPower; factorPfPower++) {
+            factorPfs.add(new PrimeFactorization(Map.of(factor, factorPfPower)));
+            
+            for (var i = 0; i <= lastPfIndexToUse; i++) {
+                var factorPfFactorsAndPowers =
+                    new HashMap<Long, Integer>(factorPfs.get(i).factorsAndPowers);
+                factorPfFactorsAndPowers.put(factor, factorPfPower);
+                factorPfs.add(new PrimeFactorization(factorPfFactorsAndPowers));
+            }
+        }
+    });
+    
+    /*
+    The last PF has all the factors that this PF has and each power is the same as the powers in
+    this PF, so it's the same as this PF. We don't want to include that as part of the factors.
+     */
+    factorPfs.removeLast();
+    factorPfs.sort(Comparator.comparing(PrimeFactorization::getCorrespondingBigInt));
+    return factorPfs;
+}
+
+public Stream<String> getFactorPfStrings() {
+    return getFactorPfs().stream().map(PrimeFactorization::toStringWithCorrespondingBigInt);
+}
+```
+
+</details>
+
+For the first 2 implementations, the iterating through the ints has a time complexity of $O(n^2)$, where $n$ is
+the input number. Then, for every factor that gets found while iterating, the prime factorization for it gets
+calculated and this has a time complexity of $O(\sqrt{n})$. For the current implementation, the amount of work
+that needs to be done is proportional to the number of factors of the input number, which is proportional to the
+product of the powers in its prime factorization. For more info about this, see the collapsible section below.
+
+<details>
+<summary>More info about how many factors a whole number has</summary>
+
+Here's an excerpt from the Divisibility section info in the ["All Sections" section](#all-sections):
+
+> you can find how many factors $n$ has by looking at $n$'s PF, taking all the powers of the factors, adding 1
+> to each, and then multiplying all these together. For example, the PF of 36 is $2^2 \times 3^2$. The powers
+> are 2 and 2, so there are $3 \times 3 = 9$ factors.
+
+For whole numbers that are < the max input of the Divisibility section, the number of factors they have are
+generally pretty small. I ran the CLI version of the app, which has a higher max input than the website version,
+and used random input for the Divisibility section 10 times. The random numbers and the number of factors they
+have are shown in the table below.
+
+|    Input Number     | Number of Factors |
+| ------------------- | ----------------- |
+|   672,570,401,060   |        24         |
+|       452,724       |        24         |
+|          7          |        2          |
+|         30          |        8          |
+|       66,251        |        4          |
+| 562,281,183,612,351 |        24         |
+|    7,855,947,976    |        8          |
+| 82,940,375,257,302  |        64         |
+|    8,408,979,082    |        48         |
+| 56,361,505,554,770  |        32         |
+
+Here's an excerpt from the Divisibility section info about an input number that has a high amount of factors:
+
+> For the CLI and GUI versions, an example of an input number with a high number of factors is
+> 9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2<sup>6</sup> 
+> and the next 12 prime numbers so it has 13 unique prime factors and its PF is
+> $2^6 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$.
+> It has 28,672 total factors!
+
+</details>
+
+
+#### Code Duplication
+
+A problem with early versions of this project was code duplication. For example, in the `NTPCLI` class (now
+called `NtpCli`), in the
+[commit from October 16<sup>th</sup>, 2020](https://github.com/ncschroeder/Number-Theory-Playground/commit/31b9e4f05cc396f8ba05a49c4146717e2c468a23),
+there was a static method for each section that was used to interact with the user for that section. There's a
+**lot** of code that's common to each of these methods. The collapsible section below shows an overview of what
+each method looked like. The min and max input numbers were hardcoded and I replaced these with `x` and `y`,
+respectively. I also replaced some code with comments and some string text with `...`. Here's a
+[GitHub link to the whole `NTPCLI` class at the time of this commit](https://github.com/ncschroeder/Number-Theory-Playground/blob/31b9e4f05cc396f8ba05a49c4146717e2c468a23/NTPCLI.java).
+
+<details>
+<summary>Method Overview</summary>
 
 ```java
 while (true) {
@@ -561,10 +861,33 @@ while (true) {
 }
 ```
 
-This is fixed in the modern version by having the `Section` objects that have the data and functionality necessary for doing all of the things in the code above. As a result, the 1 place in the code for interacting with a user for a section is the `goToSection` method, as can be seen in this snippet:
+</details>
 
-https://github.com/ncschroeder/Number-Theory-Playground/blob/3d3a77066b737b35d9a9018e1b5deec0f7e7124b/Java%20Versions/NTPCLI.java#L101-L198
+This is fixed in the current version by having `Section` objects that have the data and functionality necessary
+for doing all of the things in the code above. As a result, the one place in the code for interacting with a
+user for a section is the `goToSection` method, as can be seen in the collapsible section below:
 
-In addition, as mentioned above, the min and max input numbers were hardcoded and used multiple times. 1,000,000,000 (1 billion) is the max input number for a few sections so the int literal `1_000_000_000` was used multiple times for those sections. The max value for an int is 2 billion something so that means that 1 billion has the max number of digits for an int. What if I typed out that int literal correctly the 1st time but then accidentally typed `1_000_00_000` the 2nd time? Subtle bugs would've happened. :bug: :lady_beetle: :ant: :cricket: This is fixed in the modern version by having int constants named `oneThousand`, `tenThousand`, `oneHundredThousand`, and `oneBillion` in the `Misc` class and having `minInputInt` and `maxInputInt` variables in the outer section classes.
+<details>
+
+
+</details>
+
+In addition, as mentioned above, the min and max input numbers were hardcoded and, as can be seen in the code,
+were used multiple times. 1 billion (1,000,000,000) was the max input number for a few sections so the int
+literal `1_000_000_000` was used multiple times for those sections. What if I typed out that int literal
+correctly the 1<sup>st</sup> time but then accidentally typed `1_000_00_000` the 2<sup>nd</sup> time? Subtle
+bugs would've happened. :bug: :lady_beetle: :ant: :cricket: This is fixed in the current version by having
+`MIN_INPUT` and `MAX_INPUT` constants in the outer section classes and by having these max input constants in
+the `Misc` class:
+
+```java
+public static final long ONE_POINT_FIVE_MILLION = 1_500_000;
+public static final long FIVE_HUNDRED_BILLION = 500_000_000_000L;
+public static final long TEN_TRILLION = 10_000_000_000_000L;
+public static final long ONE_QUADRILLION = 1_000_000_000_000_000L;
+public static final long FIVE_QUADRILLION = ONE_QUADRILLION * 5;
+public static final long TEN_QUADRILLION = ONE_QUADRILLION * 10;
+public static final long NINE_QUINTILLION = 9_000_000_000_000_000_000L;
+```
 
 Another improvement made to this code that reduces repetition is the use of `String.join` to create the options string to avoid having to type out so many `\n`s, as can seen in the snippet above.

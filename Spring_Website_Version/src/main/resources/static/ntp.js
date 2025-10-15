@@ -34,7 +34,7 @@ const createH3 = (text) => createElement('h3', text);
  */
 function createNonBoldAnswerH3(text) {
     const h3 = createH3(text);
-    h3.className = 'nonBoldAnswerH3';
+    h3.className = 'non-bold-answer-h3';
     return h3;
 }
 
@@ -56,7 +56,7 @@ const createDiv = (...objectsToAppend) => createElement('div', ...objectsToAppen
  */
 function createNarrowTextDiv(text) {
     const div = createDiv(text);
-    div.className = 'narrowTextDiv';
+    div.className = 'narrow-text-div';
     return div;
 }
 
@@ -156,7 +156,7 @@ function arrToOl(arr, arrElementTransform, olClassName) {
     return ol;
 }
 
-const answerNormalOlClassName = 'answerNormalOl';
+const answerNormalOlClassName = 'answer-normal-ol';
 
 /**
  * @param {any[]} arr 
@@ -172,7 +172,7 @@ const arrToAnswerNormalOl =
  * @returns {HTMLOListElement}
  */
 const arrToAnswerFlexOl =
-    (arr, arrElementTransform) => arrToOl(arr, arrElementTransform, 'answerFlexOl');
+    (arr, arrElementTransform) => arrToOl(arr, arrElementTransform, 'answer-flex-ol');
 
 /**
  * @param {string[]} colHeadings 
@@ -263,14 +263,14 @@ function getNum(inputField) {
  */
 function createInputDiv() {
     const inputField = createElement('input');
-    inputField.className = 'inputField';
+    inputField.className = 'input-field';
 
     const randomizeBtn = createBtn('Randomize');
-    randomizeBtn.className = 'randomizeBtn';
+    randomizeBtn.className = 'randomize-btn';
     randomizeBtn.onclick = () => inputField.value = curSection.getRandomInput();
 
     const plusBtn = createBtn('+');
-    plusBtn.className = 'plusBtn';
+    plusBtn.className = 'plus-btn';
     plusBtn.onclick = () => {
         const { minInput, maxInput, needsEvenInput } = curSection;
 
@@ -290,7 +290,7 @@ function createInputDiv() {
     };
 
     const minusBtn = createBtn('−');
-    minusBtn.className = 'minusBtn';
+    minusBtn.className = 'minus-btn';
     minusBtn.onclick = () => {
         const { minInput, maxInput, needsEvenInput } = curSection;
 
@@ -310,19 +310,19 @@ function createInputDiv() {
     };
 
     const inputDiv = createDiv(inputField, randomizeBtn, plusBtn, minusBtn);
-    inputDiv.className = 'inputDiv';
+    inputDiv.className = 'input-div';
 
     return { inputDiv, inputField };
 }
 
-const sectionHeading = getElementById('sectionHeading');
+const sectionHeading = getElementById('section-heading');
 const homeHeadingText = sectionHeading.textContent;
-const homeContentDiv = getElementById('homeContentDiv');
+const homeContentDiv = getElementById('home-content-div');
 
 const sectionInfoDetailsSummary = createElement('summary', 'Info');
 const sectionInfoDiv = createDiv();
-sectionInfoDiv.id = 'sectionInfoDiv';
-sectionInfoDiv.className = 'nonAnswerInfoDiv';
+sectionInfoDiv.id = 'section-info-div';
+sectionInfoDiv.className = 'non-answer-info-div';
 /**
  * @type {HTMLDetailsElement}
  */
@@ -331,19 +331,19 @@ const sectionInfoDetails = createElement('details', sectionInfoDetailsSummary, s
 const { inputDiv: inputDiv1, inputField: inputField1 } = createInputDiv();
 const { inputDiv: inputDiv2, inputField: inputField2 } = createInputDiv();
 const inputDivDiv = createDiv(inputDiv1, inputDiv2);
-inputDivDiv.id = 'inputDivDiv';
+inputDivDiv.id = 'input-div-div';
 
 const sectionDirectionsP = createP();
 const calculateBtn = createBtn('Calculate');
-calculateBtn.id = 'calculateBtn';
+calculateBtn.id = 'calculate-btn';
 const answerDiv = createDiv();
-answerDiv.id = 'answerDiv';
+answerDiv.id = 'answer-div';
 
 const sectionContentDiv =
     createDiv(sectionInfoDetails, sectionDirectionsP, inputDivDiv, calculateBtn, answerDiv);
-sectionContentDiv.id = 'sectionContentDiv';
+sectionContentDiv.id = 'section-content-div';
 
-getElementById('homeBtn').onclick = () => {
+getElementById('home-btn').onclick = () => {
     if (Object.is(document.body.lastElementChild, sectionContentDiv)) {
         sectionHeading.textContent = homeHeadingText;
         document.body.replaceChild(homeContentDiv, sectionContentDiv);
@@ -392,7 +392,7 @@ class Section {
         this.#maxInput = maxInput;
         this.#apiEndpoint = apiEndpoint;
         
-        const sectionBtn = getElementById(btnIdStart + 'Btn');
+        const sectionBtn = getElementById(btnIdStart + '-btn');
         const heading = sectionBtn.textContent;
 
         /**
@@ -676,7 +676,7 @@ function createPrimesElements(primesStrings, inputString) {
 
 new SingleInputSection(
     {
-        btnIdStart: 'primeNums',
+        btnIdStart: 'prime-nums',
         infoHtmlStringOrArr: primesInfoHtml,
         actionSentenceEnding: 'the first 30 prime numbers ≥ that number',
         minInput: 0,
@@ -714,7 +714,7 @@ function createTwinPrimePairsElements(pairStarts, inputString) {
 
 new SingleInputSection(
     {
-        btnIdStart: 'twinPrimePairs',
+        btnIdStart: 'twin-prime-pairs',
         infoHtmlStringOrArr: twinPrimePairsInfoHtml,
         actionSentenceEnding: 'the first 20 twin prime pairs ≥ that number',
         minInput: 0,
@@ -775,7 +775,7 @@ function createPfSpan(fpArr) {
 function createPfElements(fpArr, inputString) {
     const headingText = `The prime factorization of ${inputString} is:`;
     const pfSpan = createPfSpan(fpArr);
-    pfSpan.className = 'centeredPfSpan';
+    pfSpan.className = 'centered-pf-span';
     return [createNonBoldAnswerH3(headingText), pfSpan];
 }
 
@@ -1030,7 +1030,7 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
     }
 
     const factorsOl = arrToAnswerFlexOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi);
-    factorsOl.id = 'divisAnswerFactorsOl';
+    factorsOl.id = 'divis-answer-factors-ol';
     pfDiv.appendChild(factorsOl);
     return pfDiv;
 }
@@ -1090,7 +1090,7 @@ function createEuclideanTableDiv(firstChild, iterations) {
     const table = createTable(tableColHeadings, iterations, getTableRowNums);
     const gcd = iterations[iterations.length - 1].min;
     const gcdMessageDiv = createDiv(`The GCD is ${createNumStringWithCommas(gcd)}.`);
-    gcdMessageDiv.className = 'gcdMessageDiv';
+    gcdMessageDiv.className = 'gcd-message-div';
     return createDiv(firstChild, table, gcdMessageDiv);
 }
 
@@ -1103,7 +1103,7 @@ function createEuclideanExampleDiv(iterations) {
         `Let's find the GCD of ${iterations[0].min} and ${iterations[0].max} using the Euclidean algorithm. \
         Here are the iterations:`;
     const tableDiv = createEuclideanTableDiv(createNarrowTextDiv(startText), iterations);
-    tableDiv.className = 'euclideanExampleTable';
+    tableDiv.className = 'euclidean-example-table';
     return tableDiv;
 }
     
@@ -1253,7 +1253,7 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
 
 new DoubleInputSection(
     {
-        btnIdStart: 'gcdAndLcm',
+        btnIdStart: 'gcd-and-lcm',
         infoHtmlStringOrArr: gcdAndLcmInfoElements,
         actionSentenceEnding: 'GCD and LCM info for those numbers',
         minInput: pfMinInput,
@@ -1286,7 +1286,7 @@ function createGoldbachConjectureElements(primePairStarts, inputString, inputNum
 
 new GoldbachConjectureSection(
     {
-        btnIdStart: 'goldbachConjecture',
+        btnIdStart: 'goldbach-conjecture',
         infoHtmlStringOrArr: goldbachConjectureInfoHtml,
         actionSentenceEnding: 'the pairs of prime numbers that sum to that number',
         minInput: 4,
@@ -1337,14 +1337,14 @@ function createPythagTriplesElements(triples, inputString) {
     }
 
     const triplesOl = arrToAnswerNormalOl(triples, tripleToLi);
-    triplesOl.id = 'pythagTriplesOl';
+    triplesOl.id = 'pythag-triples-ol';
 
     return [createNonBoldAnswerH3(headingText), triplesOl];
 }
 
 new SingleInputSection(
     {
-        btnIdStart: 'pythagTriples',
+        btnIdStart: 'pythag-triples',
         infoHtmlStringOrArr: pythagTriplesInfoHtml,
         actionSentenceEnding: 'the first 10 Pythagorean triples ≥ that number',
         minInput: 0,
@@ -1382,7 +1382,7 @@ function createTwoSquareTheoremElements({ primeNum, a, b }, inputString) {
 
 new SingleInputSection(
     {
-        btnIdStart: 'twoSquareTheorem',
+        btnIdStart: 'two-square-theorem',
         infoHtmlStringOrArr: twoSquareTheoremInfoHtml,
         actionSentenceEnding: twoSquareTheoremActionSentenceEnding,
         minInput: 0,
@@ -1456,14 +1456,14 @@ function createFiboLikeSequencesElements({ stringFiboLikeSequence, ratioDataArra
     const ratiosOl = arrToAnswerNormalOl(ratioDataArray, ratioDataToString);
     ratiosOl.append(createLi(`${phiLetter} ≈ ${phiNumString}`));
     const ratiosDiv = createDiv(ratiosHeading, ratiosOl);
-    ratiosDiv.id = 'fiboLikeSequenceRatiosDiv';
+    ratiosDiv.id = 'fibo-like-sequence-ratios-div';
 
     return [sequenceDiv, ratiosDiv];
 }
 
 new DoubleInputSection(
     {
-        btnIdStart: 'fiboLikeSequences',
+        btnIdStart: 'fibo-like-sequences',
         infoHtmlStringOrArr: fiboLikeSequencesInfoHtml,
         actionSentenceEnding: fiboLikeSequencesActionSentenceEnding,
         minInput: 1,
@@ -1508,7 +1508,7 @@ function createLiWithInnerHtml(innerHtml) {
 }
 
 const ancientMultStepsOl = arrToOl(ancientMultStepsArr, createLiWithInnerHtml);
-ancientMultStepsOl.id = 'ancientMultStepsOl';
+ancientMultStepsOl.id = 'ancient-mult-steps-ol';
 
 const ancientMultResultSentence = 'This gives us the product of the 2 numbers.';
 
@@ -1559,14 +1559,14 @@ function createAncientMultAnswerElements({ table1Rows, table2Rows, productString
             createTable(table1ColHeadings, table1Rows, getTableRowStrings),
             createTable(table2ColHeadings, table2Rows, getTableRowStrings)
         );
-    tableDiv.id = 'ancientMultTableDiv';
+    tableDiv.id = 'ancient-mult-table-div';
     
     return [createH3(mainHeadingText), tableDiv, productSentenceDiv];
 }
 
 new DoubleInputSection(
     {
-        btnIdStart: 'ancientMult',
+        btnIdStart: 'ancient-mult',
         infoHtmlStringOrArr: ancientMultInfoElements,
         actionSentenceEnding: 'ancient Egyptian multiplication info for those numbers',
         minInput: 2,

@@ -63,21 +63,21 @@ th, td {
     padding: 0.5rem;
 }
 
-h1, h2, h3, h4, summary, table, .centeredPfSpan, .gcdMessageDiv {
+h1, h2, h3, h4, summary, table, .centered-pf-span, .gcd-message-div {
     text-align: center;
 }
 
-h3, p, .narrowTextDiv, #ancientMultStepsOl, .answerFlexOl {
+h3, p, .narrow-text-div, #ancient-mult-steps-ol, .answer-flex-ol {
     max-width: 40rem;
 }
 
 /* Since h3s get a max width, they need this rule as well. */
-h3, p, ol, table, .narrowTextDiv {
+h3, p, ol, table, .narrow-text-div {
     margin: 0 auto;
 }
 
 
-#sectionBtnsDiv {
+#section-btns-div {
     margin-top: 1rem;
     display: flex;
     flex-wrap: wrap;
@@ -85,30 +85,30 @@ h3, p, ol, table, .narrowTextDiv {
     gap: 1.5rem;
 }
 
-#sectionBtnsDiv > button {
+#section-btns-div > button {
     background-color: rgb(16, 0, 105);
     color: white;
     padding: 0.8rem;
 }
 
-#sectionBtnsDiv > button:hover {
+#section-btns-div > button:hover {
     color: greenyellow;
     cursor: pointer;
 }
 
 
-#inputDivDiv {
+#input-div-div {
     display: flex;
     justify-content: center;
     gap: 1rem;
 }
 
-.inputDiv {
+.input-div {
     display: grid;
     gap: 0.1rem;
 }
 
-.inputDiv > .inputField {
+.input-div > .input-field {
     margin: auto;
     width: 9rem;
     grid-column: 1 / 3;
@@ -116,40 +116,40 @@ h3, p, ol, table, .narrowTextDiv {
     text-align: center;
 }
 
-.inputDiv > .randomizeBtn {
+.input-div > .randomize-btn {
     grid-column: 1 / 3;
     grid-row: 2;
     margin: auto;
 }
 
-.inputDiv > .plusBtn {
+.input-div > .plus-btn {
     grid-column: 1;
     grid-row: 3;
     margin-left: auto;
 }
 
-.inputDiv > .minusBtn {
+.input-div > .minus-btn {
     grid-column: 2;
     grid-row: 3;
     margin-right: auto;
 }
 
 
-#calculateBtn {
+#calculate-btn {
     display: block;
     margin: auto;
 }
 
 
-#sectionContentDiv > :not(:first-child), #sectionInfoDiv {
+#section-content-div > :not(:first-child), #section-info-div {
     margin-top: 1rem;
 }
 
-#sectionInfoDiv {
+#section-info-div {
     margin-bottom: 3rem;
 }
 
-.nonAnswerInfoDiv > :not(:first-child) {
+.non-answer-info-div > :not(:first-child) {
     margin-top: 1rem;
 }
 
@@ -157,11 +157,11 @@ h3, p, ol, table, .narrowTextDiv {
 For divs within a nonAnswerInfoDiv, the 1st child is a heading.
 */
 
-.nonAnswerInfoDiv > div > :nth-child(2) {
+.non-answer-info-div > div > :nth-child(2) {
     margin-top: 0.3rem;
 }
 
-.nonAnswerInfoDiv > div > :nth-child(n + 3) {
+.non-answer-info-div > div > :nth-child(n + 3) {
     margin-top: 0.8rem;
 }
 
@@ -169,22 +169,22 @@ For divs within a nonAnswerInfoDiv, the 1st child is a heading.
 The answer div is a direct child of the section content div but we must put both IDs in this selector to give it
 higher specificity than the "#sectionContentDiv > :not(:first-child)" selector.
 */
-#sectionContentDiv > #answerDiv {
+#section-content-div > #answer-div {
     margin-top: 2rem;
 }
 
 
-.nonBoldAnswerH3 {
+.non-bold-answer-h3 {
     margin-bottom: 1rem;
     font-weight: normal;
 }
 
-#answerDiv > div {
+#answer-div > div {
     margin-top: 1rem;
 }
 
 /* For GCD and LCM PFs info, Pythagorean triples, and Fibonacci-like sequence ratios info. */
-.answerNormalOl {
+.answer-normal-ol {
     width: max-content;
 }
 
@@ -192,22 +192,22 @@ higher specificity than the "#sectionContentDiv > :not(:first-child)" selector.
 For primes, twin prime pairs, divisibility info factors and PFs, Goldbach Conjecture prime pairs,
 and Fibonacci-like sequence numbers.
 */
-.answerFlexOl {
+.answer-flex-ol {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 1.5rem;
 }
 
-.centeredPfSpan {
+.centered-pf-span {
     display: block;
 }
 
-#divisAnswerFactorsOl {
+#divis-answer-factors-ol {
     margin-top: 0.5rem;
 }
 
-.euclideanExampleTable, .gcdMessageDiv {
+.euclidean-example-table, .gcd-message-div {
     margin-top: 0.5rem;
 }
 
@@ -215,32 +215,32 @@ and Fibonacci-like sequence numbers.
 Fibonacci-like sequence ratios divs will always be a direct child of the answer div but we must include both IDs
 in this selector to give it higher specificity than the "#answerDiv > div" selector.
 */
-#answerDiv > #fiboLikeSequenceRatiosDiv {
+#answer-div > #fibo-like-sequence-ratios-div {
     margin-top: 1.5rem;
 }
 
 /* The ratio is the last part of the text in each li in this ol. Align them. */
-#fiboLikeSequenceRatiosDiv > ol {
+#fibo-like-sequence-ratios-div > ol {
     text-align: right;
 }
 
-#pythagTriplesOl, #ancientMultStepsOl {
+#pythag-triples-ol, #ancient-mult-steps-ol {
     list-style-type: decimal;
     padding: revert;
 }
 
-#ancientMultTableDiv {
+#ancient-mult-table-div {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 1.5rem;
 }
 
-#ancientMultTableDiv > table {
+#ancient-mult-table-div > table {
     margin: 0;
     height: max-content;
 }
 
-#ancientMultTableDiv th {
+#ancient-mult-table-div th {
     width: 10rem;
 }

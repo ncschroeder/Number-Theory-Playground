@@ -528,6 +528,130 @@ The nested section class constructors call their superclass constructors and one
 
 A single page application is used. The content of the page changes when a section changes or an answer is displayed. A RESTful API is also used. If the "Calculate" button is clicked and the text boxes have valid input, an API request is sent to the server with info about the section and user input. The server does the calculation(s) for the section and sends a JSON response of data about the calculation. The webpage will then use this data and create some elements to display the data to the user.
 
+#### API Documentation
+
+All of the paths below are for `GET` requests and are preceded by `numbertheoryplayground.com/calculate/`. `{input}`, `{input1}`, and `{input2}` represent input values in the path. JSDoc syntax will be used to document return types.
+
+##### Prime Numbers
+
+`primes/{input}`
+`number[]`
+Returns an array of the first 30 primes ≥ the input.
+
+
+##### Twin Prime Pair Starts
+
+`twinPrimePairStarts/{input}`
+`number[]`
+Finds the first 20 twin prime pairs where the lower of the numbers in the pair is ≥ the input. For example, if the input is 3, then the pair 3 and 5 will be the first one found since the lower number in that pair is 3. If the input is 4, then the pair 5 and 7 will be the first one found. An array that contains the lower numbers of those pairs gets returned.
+
+
+##### Prime Factorization
+
+`primeFactorization/{input}`
+`{ factor: number, power: number }[]`
+Returns an array of objects that represents the prime factorization of the input. Each object in the array is for a prime factor and power in this prime factorization.
+
+
+##### Divisibility Answer Data
+
+`divisibilityAnswer/{input}`
+```
+{
+    rulesData: {
+        last2Digits: number,
+        last3Digits: number,
+        sumOfDigits: number,
+        blocksOf3AltSumAndExpression: ?{ sum: number, expression: string },
+        digitsAltSumAndExpression: { sum: number, expression: string }
+    },
+    pfAnswer: {
+        inputFpArr: { factor: number, power: number }[],
+        numFactorsExpression: string,
+        numFactors: number,
+        factorFpArrsAndNumStrings: {
+            fpArr: ?{ factor: number, power: number }[],
+            correspondingNumString: string
+        }[]
+    }
+}
+```
+
+##### GCD and LCM Answer Data
+
+`gcdAndLcmAnswer/{input1}/{input2}`
+```
+{
+    euclideanIterations: { max: number, min: number, remainder: number }[]
+    pfAnswer: {
+        input1FpArr: { factor: number, power: number }[]
+        input2FpArr: { factor: number, power: number }[]
+        gcdFpArrAndNumString: ?{
+            fpArr: ?{ factor: number, power: number }[],
+            correspondingNumString: string
+        }
+        lcmFpArrAndNumString: {
+            fpArr: ?{ factor: number, power: number }[],
+            correspondingNumString: string
+        }
+    }
+}
+```
+If `gcdFpArrAndNumString` is null, then that means that the GCD is 1.
+
+
+##### Goldbach Prime Pair Starts
+
+`goldbachPrimePairStarts/{input}`
+`number[]`
+
+Find the pairs of primes that sum to the input and returns an array that contains the lower numbers of those pairs.
+
+
+##### Pythagorean Triples
+
+`pythagoreanTriples/{input}`
+`{ a: number, b: number, c: number, isPrimitive: number }[]`
+
+Returns an array of objects for the first 10 Pythagorean triples where the lowest number in the triple is ≥ the input. For example, if the input is 3, then an object for the triple 3, 4, and 5 will be the first one since the lowest number in that triple is 3. If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
+
+
+##### Two Square Theorem Answer Data
+
+`twoSquareTheoremAnswer/{input}`
+`{ primeNum: number, a: number, b: number }`
+`primeNum` is the first prime number ≥ the input that's 1 above a multiple of 4. `a` and `b` are the numbers whose squares sum to `primeNum`.
+
+
+##### Fibonacci-like Sequences Answer Data
+
+`fibonacciLikeSequencesAnswer/{input1}/{input2}`
+```
+{
+    stringFiboLikeSequence: string[],
+    ratioDataArray: { num1String: string, num2String, ratio: number, isRounded: boolean }[]
+}
+```
+`stringFiboLikeSequence` contains string representations of the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. String representations are used since the numbers might be too big to be a safe JavaScript integer.
+1-9 quadrillion (9,000,000,000,000,000)
+
+
+##### Ancient Egyptian Multiplication Answer Data
+
+`ancientMultiplicationAnswer/{input1}/{input2}`
+```
+{
+    table1Rows: { powerOf2String: string, correspondingMultipleString: string }[],
+    table2Rows: { powerOf2String: string, correspondingMultipleString: string }[],
+    productString: string
+}
+```
+`table1Rows` contains rows for all the powers of 2 ≤ `input1` and the corresponding multiples of `input2`.
+`table2Rows` contains rows for all the powers of 2 that sum to `input1` and the corresponding multiples of `input2`, which sum to the product of `input1` and `input2`.
+String representations are used for numbers in the row objects since a number in a `correspondingMultipleString` might be too big to be a safe JavaScript integer. The numbers in each `powerOf2String` will be small enough to be a safe JavaScript integer but strings are still used for these for consistency.
+2-9 quadrillion (9,000,000,000,000,000)
+
+
 ## Project History
 
 During the summer of 2019, I took a number theory course on [brilliant.org](https://brilliant.org/) for fun and was enlightened by some of the stuff I was learning. Later that year, I was thinking of what kind of programming projects I could work on and some of the stuff I learned from that number theory course came to mind. I realized I could make a program that makes calculations about some of the stuff I learned. Along with the content of that number theory course, I also included additional number theory concepts that I was familiar with. I learned these other concepts from sources such as my discrete math textbook and YouTube videos from channels such as Numberphile, Mathologer, 3blue1brown, and Zach Star. I decided to use Java because it's a popular programming language that I had no familiarity with at the time. However, I found Java easy to learn since some of the syntax is similar to C++, which I had some familiarity with. In fact, the 3 languages I had the most familiarity with at the time were Python :snake:, C++, and JavaScript.

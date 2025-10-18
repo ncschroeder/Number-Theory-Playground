@@ -77,8 +77,10 @@ function createPWithInnerHtml(innerHtml) {
 }
 
 /**
- * @param {string} infoString A string with paragraphs of info, each of which is separated by a blank line.
- * @returns {HTMLParagraphElement[]} Each p in here contains a paragraph in infoString.
+ * @param {string} infoString
+ * A string with paragraphs of info HTML, each of which is separated by a blank line.
+ * @returns {HTMLParagraphElement[]}
+ * Each p element in here contains a paragraph in infoString.
  */
 const createPsWithParagraphs = (infoString) => infoString.split(/\n\s*\n/).map(createPWithInnerHtml);
 
@@ -140,7 +142,7 @@ const createNumAndSquareSpan = (num) =>
  * @param {ArrayElementToListItem} arrElementTransform 
  * @param {string} [olClassName]
  * @returns {HTMLOListElement}
-    */
+ */
 function arrToOl(arr, arrElementTransform, olClassName) {
     const ol = createOl();
     if (olClassName) {
@@ -163,16 +165,16 @@ const answerNormalOlClassName = 'answer-normal-ol';
  * @param {ArrayElementToListItem} arrElementTransform 
  * @returns {HTMLOListElement}
  */
-const arrToAnswerNormalOl =
-    (arr, arrElementTransform) => arrToOl(arr, arrElementTransform, answerNormalOlClassName);
+const arrToAnswerNormalOl = (arr, arrElementTransform) =>
+    arrToOl(arr, arrElementTransform, answerNormalOlClassName);
 
 /**
  * @param {any[]} arr 
  * @param {ArrayElementToListItem} arrElementTransform 
  * @returns {HTMLOListElement}
  */
-const arrToAnswerFlexOl =
-    (arr, arrElementTransform) => arrToOl(arr, arrElementTransform, 'answer-flex-ol');
+const arrToAnswerFlexOl = (arr, arrElementTransform) =>
+    arrToOl(arr, arrElementTransform, 'answer-flex-ol');
 
 /**
  * @param {string[]} colHeadings 
@@ -183,16 +185,16 @@ const arrToAnswerFlexOl =
  */
 function createTable(colHeadings, rowsDataSourceArr, rowsDataSourceTransform) {
     const table = createElement('table');
-    const tHead = createElement('thead');
     const createTr = () => createElement('tr');
-
+    
+    const tHead = createElement('thead');
     let tr = createTr();
     for (const heading of colHeadings) {
         tr.appendChild(createElement('th', heading));
     }
     tHead.appendChild(tr);
     table.append(tHead);
-
+    
     const tBody = createElement('tbody');
     for (const element of rowsDataSourceArr) {
         tr = createTr();
@@ -202,7 +204,7 @@ function createTable(colHeadings, rowsDataSourceArr, rowsDataSourceTransform) {
         tBody.appendChild(tr);
     }
     table.appendChild(tBody);
-
+    
     return table;
 }
 
@@ -228,7 +230,8 @@ const isOdd = (num) => !isEven(num);
 const commaAdder = new Intl.NumberFormat();
 
 /**
- * @param {number | string} value A number or an unformatted number string.
+ * @param {number | string} value
+ * A number or an unformatted number string.
  * @returns {string}
  */
 const createNumStringWithCommas = (value) => commaAdder.format(value);
@@ -260,6 +263,7 @@ function getNum(inputField) {
 
 /**
  * @returns {{ inputDiv: HTMLDivElement, inputField: HTMLInputElement }}
+ * The input field is a child of the input div.
  */
 function createInputDiv() {
     const inputField = createElement('input');
@@ -355,7 +359,7 @@ getElementById('home-btn').onclick = () => {
 const oneMillion = 1_000_000;
 const oneHundredMillion = oneMillion * 100;
 const oneBillion = 1_000_000_000;
-const nineQuadrillion = 9_000_000_000_000_000;
+const oneQuadrillion = 1_000_000_000_000_000;
 
 
 class Section {
@@ -368,16 +372,18 @@ class Section {
     #maxInput;
     #apiEndpoint;
 
-    /**
-     * 
+    /** 
      * @typedef {Object} SectionParams
      * @property {string} btnIdStart
+     * The ID of the button for this section in section-btns-div.
      * @property {string | HTMLElement[]} infoHtmlStringOrArr
      * If this is a string, it'll contain paragraphs of info with each one separated by a blank line.
      * @property {string} actionSentenceEnding
      * @property {number} minInput
      * @property {number} maxInput
      * @property {string} apiEndpoint
+     * The endpoint to make an HTTP request to that does the calculation(s) for this section. The full request
+     * URL is the website URL followed by "/calculate/" followed by this endpoint.
      */
 
     /**
@@ -387,7 +393,7 @@ class Section {
         const { 
             btnIdStart, infoHtmlStringOrArr, actionSentenceEnding, minInput, maxInput, apiEndpoint
         } = params;
-
+        
         this.#minInput = minInput;
         this.#maxInput = maxInput;
         this.#apiEndpoint = apiEndpoint;
@@ -419,7 +425,7 @@ class Section {
                 [oneMillion, '1 million'],
                 [oneHundredMillion, '100 million'],
                 [oneBillion, '1 billion'],
-                [nineQuadrillion, '9 quadrillion']
+                [oneQuadrillion, '1 quadrillion']
             ]);
 
         /**
@@ -429,23 +435,17 @@ class Section {
         const maxInputSentencePart =
             maxInputStringWithWord ? `${maxInputStringWithWord} (${maxInputString})` : maxInputString;
 
-        const validNumSentencePart1 =
-            this.isSingleInputSection
-            ? `this number be a whole number that's`
-            : 'these numbers be whole numbers that are';
-
-        const validNumSentencePart2 =
-            this.needsEvenInput
-            ? `even, ≥ ${minInput}, & ≤ ${maxInputSentencePart}`
-            : `≥ ${minInput} & ≤ ${maxInputSentencePart}`;
-
         const directions =
-            `Enter or generate ${this.isSingleInputSection ? 'a number' : '2 numbers'} and click the \
-            "Calculate" button to get ${actionSentenceEnding}. Have ${validNumSentencePart1} \
-            ${validNumSentencePart2}. Commas are optional.`;
+            `Enter or generate ${this.isSingleInputSection ? 'a whole number' : '2 whole numbers'} and click
+            the "Calculate" button to get ${actionSentenceEnding}.
+            Have ${this.isSingleInputSection ? 'this number' : 'these numbers'} be ${
+                this.needsEvenInput
+                ? `even, ≥ ${minInput}, and ≤ ${maxInputSentencePart}`
+                : `≥ ${minInput} and ≤ ${maxInputSentencePart}`
+            }. Commas are optional.`;
 
 
-        // Use arrow function so that this refers to the Section instance.
+        // Use arrow function so that "this" refers to the Section instance.
         const goToThisSection = () => {
             curSection = this;
             sectionHeading.textContent = heading;
@@ -509,8 +509,10 @@ class Section {
     }
 
     /**
-     * @param {number} lowerBound 
-     * @param {number} upperBound This is an exclusive bound.
+     * @param {number} lowerBound
+     * 
+     * @param {number} upperBound
+     * This is an exclusive bound.
      */
     static #getRandomNum = (lowerBound, upperBound) =>
         Math.floor(Math.random() * (upperBound - lowerBound)) + lowerBound;
@@ -522,7 +524,7 @@ class Section {
      * Otherwise, the max number of random digits is the number of digits of the max input.
      * 
      * Then, a random number with the generated random number of digits will be generated and returned. The
-     * random number will be > the min input & < the max input of this section.
+     * random number will be ≥ the min input and ≤ the max input of this section.
      * 
      * @returns {number}
      */
@@ -543,38 +545,47 @@ class Section {
 }
 
 class SingleInputSection extends Section {
-    #createElements;
+    #createAnswerElements;
 
     /**
-     * @typedef {(responseObj: any, inputString: string, inputNum: number) => HTMLElement[]} SingleInputElementsCreator
+     * @callback SingleInputAnswerElementsCreator
+     * @param {any} responseObj
+     * Object from the response of an HTTP request that does the calculation(s) for this section.
+     * @param {string} inputString
+     * Contains the input number with commas.
+     * @param {number} inputNum
+     * The createAnswerElements functions for the Divisibility and Goldbach Conjecture Sections use this number.
+     * The other createAnswerElements functions omit this param.
+     * @returns {HTMLElement[]}
      */
 
     /**
      * @param {SectionParams} sectionParams 
-     * @param {SingleInputElementsCreator} createElements 
+     * @param {SingleInputAnswerElementsCreator} createAnswerElements 
      */
-    constructor(sectionParams, createElements) {
+    constructor(sectionParams, createAnswerElements) {
         super(sectionParams);
-        this.#createElements = createElements;
+        this.#createAnswerElements = createAnswerElements;
     }
 
-    get createElements() {
-        return this.#createElements;
+    get createAnswerElements() {
+        return this.#createAnswerElements;
     }
 }
 
 class GoldbachConjectureSection extends SingleInputSection {
     /**
      * @param {SectionParams} sectionParams 
-     * @param {SingleInputElementsCreator} createElements 
+     * @param {SingleInputAnswerElementsCreator} createAnswerElements 
      */
-    constructor(sectionParams, createElements) {
-        super(sectionParams, createElements);
+    constructor(sectionParams, createAnswerElements) {
+        super(sectionParams, createAnswerElements);
     }
 
     /**
      * @param {number} num 
      * @returns {boolean}
+     * @override
      */
     isInvalidInput(num) {
         return super.isInvalidInput(num) || isOdd(num);
@@ -582,6 +593,7 @@ class GoldbachConjectureSection extends SingleInputSection {
 
     /**
      * @returns {number}
+     * @override
      */
     getRandomInput() {
         let randomInput;
@@ -593,19 +605,21 @@ class GoldbachConjectureSection extends SingleInputSection {
 }
 
 class DoubleInputSection extends Section {
-    #createElements;
+    #createAnswerElements;
 
     /**
      * @param {SectionParams} sectionParams 
-     * @param {(responseObj: any, inputString1: string, inputString2: string) => HTMLElement[]} createElements 
+     * @param {(responseObj: any, inputString1: string, inputString2: string) => HTMLElement[]} createAnswerElements 
+     * responseObj is the object from the response of an HTTP request that does the calculation(s) for this
+     * section. The input strings contain the input numbers with commas.
      */
-    constructor(sectionParams, createElements) {
+    constructor(sectionParams, createAnswerElements) {
         super(sectionParams);
-        this.#createElements = createElements;
+        this.#createAnswerElements = createAnswerElements;
     }
 
-    get createElements() {
-        return this.#createElements;
+    get createAnswerElements() {
+        return this.#createAnswerElements;
     }
 }
 
@@ -617,25 +631,28 @@ calculateBtn.onclick = () => {
     const urlParams = new URLSearchParams();
     /**
      * @type {(responseObj: any) => HTMLElement[]}
+     * responseObj is the object from a response from an HTTP request made below.
      */
-    let createElements;
+    let createAnswerElements;
 
     if (curSection.isSingleInputSection) {
         urlParams.append('input', inputNum1);
-        createElements = (responseObj) => curSection.createElements(responseObj, inputString1, inputNum1);
+        createAnswerElements = (responseObj) =>
+            curSection.createAnswerElements(responseObj, inputString1, inputNum1);
     } else {
         const inputNum2 = getNum(inputField2);
         if (inputNum2 === null || curSection.isInvalidInput(inputNum2)) return;
         urlParams.append('input1', inputNum1);
         urlParams.append('input2', inputNum2);
         const inputString2 = createNumStringWithCommas(inputNum2);
-        createElements = (responseObj) => curSection.createElements(responseObj, inputString1, inputString2);
+        createAnswerElements = (responseObj) =>
+            curSection.createAnswerElements(responseObj, inputString1, inputString2);
     }
     
     const errorMessage = 'Error with request.';
 
     fetch(`calculate/${curSection.apiEndpoint}?${urlParams}`)
-    .then(response => response.ok ? response.json().then(createElements) : [errorMessage])
+    .then(response => response.ok ? response.json().then(createAnswerElements) : [errorMessage])
     .then(elementsOrErrorMessageArr => answerDiv.replaceChildren(...elementsOrErrorMessageArr))
     .catch(reason => {
         answerDiv.replaceChildren(errorMessage);
@@ -664,13 +681,13 @@ const primesInfoHtml =
     of those and 33 is divisible by 3 so 29 is prime and 33 isn't.`;
 
 /**
- * @param {string[]} primesStrings
+ * @param {number[]} primes
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function createPrimesElements(primesStrings, inputString) {
-    const headingText = `The first ${primesStrings.length} primes ≥ ${inputString} are:`;
-    const primesOl = arrToAnswerFlexOl(primesStrings, createNumStringWithCommas);
+function createPrimesAnswerElements(primes, inputString) {
+    const headingText = `The first ${primes.length} primes ≥ ${inputString} are:`;
+    const primesOl = arrToAnswerFlexOl(primes, createNumStringWithCommas);
     return [createNonBoldAnswerH3(headingText), primesOl];
 }
 
@@ -683,7 +700,7 @@ new SingleInputSection(
         maxInput: oneHundredMillion,
         apiEndpoint: 'primes'
     },
-    createPrimesElements
+    createPrimesAnswerElements
 );
 
 
@@ -706,7 +723,7 @@ const twinPrimePairsInfoHtml =
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function createTwinPrimePairsElements(pairStarts, inputString) {
+function createTwinPrimePairsAnswerElements(pairStarts, inputString) {
     const headingText = `The first ${pairStarts.length} twin prime pairs ≥ ${inputString} are:`;
     const pairsOl = arrToAnswerFlexOl(pairStarts, (start) => numPairToString(start, start + 2));
     return [createNonBoldAnswerH3(headingText), pairsOl];
@@ -721,7 +738,7 @@ new SingleInputSection(
         maxInput: oneMillion,
         apiEndpoint: 'twinPrimePairStarts'
     },
-    createTwinPrimePairsElements
+    createTwinPrimePairsAnswerElements
 );
 
 
@@ -742,29 +759,40 @@ const pfInfoHtml =
     its PF is 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23. You could also multiply that number by 2, 3, or 4 and
     those numbers are ≤ the max input and have the same amount of unique prime factors.`;
 
-/**
+/** 
  * @typedef {{ factor: number, power: number }} FactorAndPower
- * @typedef {{ fpArr: ?FactorAndPower[], correspondingNumString: string }} FactorAndPowerArrayAndNumberString
+ * 
+ * @typedef {Object} FactorAndPowerArrayAndNumberString
+ * @property {?FactorAndPower[]} fpArr
+ * If this is null, then that means the corresponding number is prime and therefore the PF just consists of 1
+ * factor with 1 as its power.
+ * @property {string} correspondingNumString
+ */
+
+/**
  * @param {FactorAndPower[]} fpArr
  * @returns {HTMLSpanElement}
+ * A span that shows the prime factorization (PF) of a number. This PF consists of the factors and powers in
+ * fpArr. Each factor and power is separated by " × ."
  */
 function createPfSpan(fpArr) {
-    const span = createSpan();
+    const pfSpan = createSpan();
+    
     for (let i = 0; i < fpArr.length; i++) {
         if (i !== 0) {
-            span.append(' × ');
+            pfSpan.append(' × ');
         }
-
+        
         const { factor, power } = fpArr[i];
-        span.append(createNumStringWithCommas(factor));
-
-        if (power !== 1) {
-            span.appendChild(createSuperscript(power));
+        const fpSpan = createSpan(createNumStringWithCommas(factor));
+        if (power > 1) {
+            fpSpan.appendChild(createSuperscript(power));
         }
-
+        
+        pfSpan.appendChild(fpSpan);
     }
-
-    return span;
+    
+    return pfSpan;
 }
 
 /**
@@ -772,8 +800,8 @@ function createPfSpan(fpArr) {
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function createPfElements(fpArr, inputString) {
-    const headingText = `The prime factorization of ${inputString} is:`;
+function createPfAnswerElements(fpArr, inputString) {
+    const headingText = `The PF of ${inputString} is:`;
     const pfSpan = createPfSpan(fpArr);
     pfSpan.className = 'centered-pf-span';
     return [createNonBoldAnswerH3(headingText), pfSpan];
@@ -790,7 +818,7 @@ new SingleInputSection(
         maxInput: oneBillion,
         apiEndpoint: 'primeFactorization'
     },
-    createPfElements
+    createPfAnswerElements
 );
 
 
@@ -868,6 +896,7 @@ const divisInfoElements =
  * @typedef {Object} DivisibilityPrimeFactorizationAnswer
  * @property {FactorAndPower[]} inputFpArr
  * @property {string} numFactorsExpression
+ * An example of this is "(1 + 1) × (2 + 1)" for the input number with a PF of 2 × 3^2.
  * @property {number} numFactors
  * @property {FactorAndPowerArrayAndNumberString[]} factorFpArrsAndNumStrings
  */
@@ -877,7 +906,6 @@ const divisInfoElements =
  * @param {string} inputString
  * @param {number} inputNum 
  * @returns {HTMLElement[]}
- * An array that contains elements with divisibility info about the argument number based on the info in infoObject.
  */
 function createDivisAnswerElements({ rulesData, pfAnswer }, inputString, inputNum) {
     const elements = [createH3(`Divisibility Info for ${inputString}`)];
@@ -889,10 +917,14 @@ function createDivisAnswerElements({ rulesData, pfAnswer }, inputString, inputNu
 }
 
 /**
+ * This function does the only non-trivial calculations that are done on the front end.
+ * 
  * @param {DivisibilityRulesData} rulesData 
  * @param {string} inputString 
  * @param {number} inputNum 
  * @returns {HTMLDivElement}
+ * A div with a heading and a paragraph element with info about factors of the input number that are found
+ * using divisibility rules.
  */
 function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
     const {
@@ -901,8 +933,9 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
     const heading = createH4('Rules Info');
 
     /**
-     * For all the rules besides the ones for 6 and 12, we do a calculation with the input num and if the result
-     * of that calculation is divisible by a certain num, then the input num is also divisible by that num.
+     * For all the rules besides the ones for 6 and 12, we do a calculation with the input num and if the result of
+     * that calculation is divisible by a certain number, then the input number is also divisible by that number.
+     * 
      * @param {number} possibleFactor 
      * @param {number} numFromCalculation 
      * @param {boolean} isDivisible 
@@ -990,13 +1023,18 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
 }
 
 /**
- * @param {?DivisibilityPrimeFactorizationAnswer} pfAnswer 
+ * @param {?DivisibilityPrimeFactorizationAnswer} pfAnswer
+ * If this is null, then that means the input number is prime.
  * @param {string} inputString 
  * @returns {HTMLDivElement}
+ * A div with at least a heading and an inner div with text that shows the PF of the input number. If pfAnswer
+ * is null, then the inner div will only contain a little more info. Otherwise, the inner div will contain more
+ * info about the number of factors the input number has. Also, the returned div will also contain an ordered
+ * list that shows the factors of the input number and the PFs of those factors.
  */
 function createDivisPfAnswerDiv(pfAnswer, inputString) {
     const heading = createH4('Prime Factorization Info');
-    const pfInfoTextDiv = createNarrowTextDiv(`The prime factorization of ${inputString} is `);
+    const pfInfoTextDiv = createNarrowTextDiv(`The PF of ${inputString} is `);
     const pfDiv = createDiv(heading, pfInfoTextDiv);
 
     if (!pfAnswer) {
@@ -1010,13 +1048,15 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
     pfInfoTextDiv.append(createPfSpan(inputFpArr), '. ');
 
     const numFactorsInfoEnd =
-        numFactors === 3
-        ? `'s 1 factor`
-        : ` are ${createNumStringWithCommas(numFactors - 2)} factors`;
+        'there' + (
+            numFactors === 3
+            ? `'s 1 factor`
+            : ` are ${createNumStringWithCommas(numFactors - 2)} factors`
+        );
 
     const numFactorsInfo =
         `By looking at the powers, we can see that there are ${numFactorsExpression} = \
-        ${createNumStringWithCommas(numFactors)} factors. If 1 and ${inputString} are excluded then there${numFactorsInfoEnd}.`;
+        ${createNumStringWithCommas(numFactors)} factors. If 1 and ${inputString} are excluded, then ${numFactorsInfoEnd}.`;
 
     pfInfoTextDiv.append(numFactorsInfo, ' The factors and their PFs are:');
 
@@ -1077,8 +1117,11 @@ const euclideanInfoStartHtml =
 
 /**
  * @param {HTMLDivElement | HTMLHeadingElement} firstChild
+ * For examples in the GCD and LCM section info, this is a div and for answers, this is an h4.
  * @param {EuclideanIteration[]} iterations 
  * @returns {HTMLDivElement}
+ * A div with firstChild; a table that shows the max, min, and remainder of each iteration of the Euclidean
+ * algorithm performed on 2 input numbers; and a div with a message about the GCD of the input numbers.
  */
 function createEuclideanTableDiv(firstChild, iterations) {
     const tableColHeadings = ['Max', 'Min', 'Remainder'];
@@ -1176,6 +1219,7 @@ const gcdAndLcmInfoElements =
  * @property {FactorAndPower[]} input1FpArr
  * @property {FactorAndPower[]} input2FpArr
  * @property {?FactorAndPowerArrayAndNumberString} gcdFpArrAndNumString
+ * If this is null, then that means the GCD is 1.
  * @property {FactorAndPowerArrayAndNumberString} lcmFpArrAndNumString
  */
 
@@ -1189,7 +1233,6 @@ function createGcdAndLcmAnswerElements({ euclideanIterations, pfAnswer }, inputS
     const mainHeading = createH3(`GCD and LCM Info for ${inputString1} and ${inputString2}`);
     const euclideanDiv =
         createEuclideanTableDiv(
-            'euclideanAnswerTable',
             createH4('Euclidean Algorithm Iterations'),
             euclideanIterations
         );
@@ -1203,6 +1246,8 @@ function createGcdAndLcmAnswerElements({ euclideanIterations, pfAnswer }, inputS
  * @param {string} inputString1 
  * @param {string} inputString2 
  * @returns {HTMLDivElement}
+ * A div with a heading and an ordered list that shows the PFs of the input numbers, the PF of the GCD if it's 
+ * not 1, and the PF of the LCM.
  */
 function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
     const heading = createH4('Prime Factorizations Info');
@@ -1239,7 +1284,7 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
         ? createGcdOrLcmPfLi('GCD', gcdFpArrAndNumString)
         : 'There are no common prime factors so the GCD is 1.';
 
-    const ol =
+    const pfsOl =
         createOl(
             createInputPfLi(inputString1, input1FpArr),
             createInputPfLi(inputString2, input2FpArr),
@@ -1248,7 +1293,7 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
         );
     pfsOl.className = answerNormalOlClassName;
 
-    return createDiv(heading, ol);
+    return createDiv(heading, pfsOl);
 }
 
 new DoubleInputSection(
@@ -1274,8 +1319,9 @@ const goldbachConjectureInfoHtml =
  * @param {string} inputString
  * @param {number} inputNum 
  * @returns {HTMLElement[]}
+ * An array with a heading and an ordered list that shows the pairs of prime numbers that sum to the input num.
  */
-function createGoldbachConjectureElements(primePairStarts, inputString, inputNum) {
+function createGoldbachConjectureAnswerElements(primePairStarts, inputString, inputNum) {
     const thereIs1Pair = primePairStarts.length === 1;
     const headingText =
         `There${thereIs1Pair ? `'s 1 pair` : ` are ${createNumStringWithCommas(primePairStarts.length)} pairs`} \
@@ -1293,7 +1339,7 @@ new GoldbachConjectureSection(
         maxInput: 100_000,
         apiEndpoint: 'goldbachPrimePairStarts'
     },
-    createGoldbachConjectureElements
+    createGoldbachConjectureAnswerElements
 );
 
 
@@ -1323,8 +1369,10 @@ const pythagTriplesInfoHtml =
  * @param {PythagoreanTriple[]} triples
  * @param {string} inputString
  * @returns {HTMLElement[]}
+ * An array with a heading and an ordered list. There's an item in this list for each triple. Each item shows
+ * the numbers and squares of the triple. If the triple is primitive, then that'll be mentioned.
  */
-function createPythagTriplesElements(triples, inputString) {
+function createPythagTriplesAnswerElements(triples, inputString) {
     const headingText = `The first ${triples.length} Pythagorean triples ≥ ${inputString} are:`;
 
     /**
@@ -1351,7 +1399,7 @@ new SingleInputSection(
         maxInput: 500,
         apiEndpoint: 'pythagoreanTriples'
     },
-    createPythagTriplesElements
+    createPythagTriplesAnswerElements
 );
 
 
@@ -1372,11 +1420,12 @@ const twoSquareTheoremActionSentenceEnding =
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function createTwoSquareTheoremElements({ primeNum, a, b }, inputString) {
+function createTwoSquareTheoremAnswerElements({ primeNum, a, b }, inputString) {
     const headingText =
         `The first number ≥ ${inputString} that's prime and is 1 above a multiple of 4 is:`;
     const answerDiv =
         createDiv(createNumStringWithCommas(primeNum), ', which is ', createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b));
+    answerDiv.id = 'two-square-theorem-answer-div';
     return [createNonBoldAnswerH3(headingText), answerDiv];
 }
 
@@ -1389,7 +1438,7 @@ new SingleInputSection(
         maxInput: oneBillion,
         apiEndpoint: 'twoSquareTheoremAnswer'
     },
-    createTwoSquareTheoremElements
+    createTwoSquareTheoremAnswerElements
 );
 
 
@@ -1425,17 +1474,18 @@ const fiboLikeSequencesActionSentenceEnding =
  */
 
 /**
- * @param {{ stringFiboLikeSequence: string[], ratioDataArray: RatioData[] }}
+ * @param {{ fiboLikeSequence: string[], ratioDataArray: RatioData[] }}
  * @param {string} inputString1
  * @param {string} inputString2
  * @returns {HTMLElement[]}
+ * An array with a div that shows the Fibonacci-like sequence and another div that shows ratios between some
+ * consecutive numbers in the sequence.
  */
-function createFiboLikeSequencesElements({ stringFiboLikeSequence, ratioDataArray }, inputString1, inputString2) {
-
+function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratioDataArray }, inputString1, inputString2) {
     const sequenceHeadingText =
-        `The first ${stringFiboLikeSequence.length} numbers in the Fibonacci-like sequence that starts with \
+        `The first ${fiboLikeSequence.length} numbers in the Fibonacci-like sequence that starts with \
         ${inputString1} and ${inputString2} are:`;
-    const sequenceOl = arrToAnswerFlexOl(stringFiboLikeSequence, createNumStringWithCommas);
+    const sequenceOl = arrToAnswerFlexOl(fiboLikeSequence, createNumStringWithCommas);
     const sequenceDiv = createDiv(createNonBoldAnswerH3(sequenceHeadingText), sequenceOl);
 
     const ratiosHeading = createNonBoldAnswerH3();
@@ -1467,10 +1517,10 @@ new DoubleInputSection(
         infoHtmlStringOrArr: fiboLikeSequencesInfoHtml,
         actionSentenceEnding: fiboLikeSequencesActionSentenceEnding,
         minInput: 1,
-        maxInput: nineQuadrillion,
+        maxInput: oneQuadrillion,
         apiEndpoint: 'fibonacciLikeSequencesAnswer'
     },
-    createFiboLikeSequencesElements
+    createFiboLikeSequencesAnswerElements
 );
 
 
@@ -1539,21 +1589,20 @@ const ancientMultInfoElements =
  * @param {string} inputString1
  * @param {string} inputString2
  * @returns {HTMLElement[]}
+ * An array with a heading, a div with tables made using the data from the arrays in the param object, and a div
+ * with text about the product of the 2 input numbers.
  */
 function createAncientMultAnswerElements({ table1Rows, table2Rows, productString }, inputString1, inputString2) {
     const mainHeadingText = `Ancient Egyptian Multiplication Info for ${inputString1} and ${inputString2}`;
+    
     const correspondingMultiplesColHeading = `Corresponding Multiples of ${inputString2}`;
     const table1ColHeadings = [`Powers of 2 ≤ ${inputString1}`, correspondingMultiplesColHeading];
     const table2ColHeadings = [`Powers of 2 That Sum to ${inputString1}`, correspondingMultiplesColHeading];
-
     /**
      * @param {AncientMultiplicationTableRow} row 
      * @returns {string[]}
      */
     const getTableRowStrings = (row) => [row.powerOf2String, row.correspondingMultipleString];
-    const productSentence =
-        `The sum of the bottom right column is ${createNumStringWithCommas(productString)}, which is the product.`;
-
     const tableDiv =
         createDiv(
             createTable(table1ColHeadings, table1Rows, getTableRowStrings),
@@ -1561,6 +1610,11 @@ function createAncientMultAnswerElements({ table1Rows, table2Rows, productString
         );
     tableDiv.id = 'ancient-mult-table-div';
     
+    const productSentenceDiv = createNarrowTextDiv();
+    productSentenceDiv.innerHTML =
+        `The sum of the right column of the 2<sup>nd</sup> table is ${createNumStringWithCommas(productString)}, \
+        which is the product of ${inputString1} and ${inputString2}.`;
+
     return [createH3(mainHeadingText), tableDiv, productSentenceDiv];
 }
 
@@ -1570,7 +1624,7 @@ new DoubleInputSection(
         infoHtmlStringOrArr: ancientMultInfoElements,
         actionSentenceEnding: 'ancient Egyptian multiplication info for those numbers',
         minInput: 2,
-        maxInput: nineQuadrillion,
+        maxInput: oneQuadrillion,
         apiEndpoint: 'ancientMultiplicationAnswer'
     },
     createAncientMultAnswerElements

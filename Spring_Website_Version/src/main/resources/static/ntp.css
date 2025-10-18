@@ -63,7 +63,7 @@ th, td {
     padding: 0.5rem;
 }
 
-h1, h2, h3, h4, summary, table, .centered-pf-span, .gcd-message-div {
+h1, h2, h3, h4, summary, table, .centered-pf-span, .gcd-message-div, #two-square-theorem-answer-div {
     text-align: center;
 }
 
@@ -141,10 +141,17 @@ h3, p, ol, table, .narrow-text-div {
 }
 
 
+/*
+Some things that this rule does:
+1. Make the section directions appear 1 rem below the section info details summary element when that details
+   element is closed.
+2. Make the section info div appear 1 rem below the details summary element when that details element is open.
+*/
 #section-content-div > :not(:first-child), #section-info-div {
     margin-top: 1rem;
 }
 
+/* Spacing between section info and directions. */
 #section-info-div {
     margin-bottom: 3rem;
 }
@@ -153,9 +160,7 @@ h3, p, ol, table, .narrow-text-div {
     margin-top: 1rem;
 }
 
-/*
-For divs within a nonAnswerInfoDiv, the 1st child is a heading.
-*/
+/* For divs within a non-answer-info-div, the 1st child is a heading. */
 
 .non-answer-info-div > div > :nth-child(2) {
     margin-top: 0.3rem;
@@ -167,7 +172,7 @@ For divs within a nonAnswerInfoDiv, the 1st child is a heading.
 
 /*
 The answer div is a direct child of the section content div but we must put both IDs in this selector to give it
-higher specificity than the "#sectionContentDiv > :not(:first-child)" selector.
+higher specificity than the "#section-content-div > :not(:first-child)" selector.
 */
 #section-content-div > #answer-div {
     margin-top: 2rem;
@@ -213,7 +218,7 @@ and Fibonacci-like sequence numbers.
 
 /*
 Fibonacci-like sequence ratios divs will always be a direct child of the answer div but we must include both IDs
-in this selector to give it higher specificity than the "#answerDiv > div" selector.
+in this selector to give it higher specificity than the "#answer-div > div" selector.
 */
 #answer-div > #fibo-like-sequence-ratios-div {
     margin-top: 1.5rem;

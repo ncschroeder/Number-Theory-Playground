@@ -6,7 +6,8 @@ import java.util.List;
 import static com.numbertheoryplayground.InputValidation.*;
 
 public final class GcdAndLcmAnswer {
-    private static final long MAX_INPUT = ONE_BILLION;
+    private static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
+    private static final long MAX_INPUT = TEN_THOUSAND;
     
     private final List<EuclideanIteration> euclideanIterations;
     private final PrimeFactorization.GcdAndLcmAnswer pfAnswer;

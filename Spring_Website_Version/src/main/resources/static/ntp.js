@@ -356,9 +356,7 @@ getElementById('home-btn').onclick = () => {
 
 
 // Max input constants
-const oneMillion = 1_000_000;
-const oneHundredMillion = oneMillion * 100;
-const oneBillion = 1_000_000_000;
+const tenThousand = 10_000;
 const oneQuadrillion = 1_000_000_000_000_000;
 
 
@@ -410,30 +408,8 @@ class Section {
             : createPsWithParagraphs(infoHtmlStringOrArr);
 
         const maxInputString = createNumStringWithCommas(maxInput);
-
-        /*
-        If the max input is one of the nums that's a key in the map below, then have the 2nd directions sentence
-        say that the input num(s) should be ≤ the corresponding string value in the map followed by the num with
-        commas in parentheses. If the max input isn't one of the nums that's a key in the map, then have that
-        sentence just say that input num(s) should be ≤ that num with commas.
-        
-        The max inputs that aren't keys are 500 and 100,000, the max inputs for the Pythagorean triples and
-        Goldbach Conjecture sections, respectively.
-         */
-        const maxInputsAndStringsWithWords =
-            new Map([
-                [oneMillion, '1 million'],
-                [oneHundredMillion, '100 million'],
-                [oneBillion, '1 billion'],
-                [oneQuadrillion, '1 quadrillion']
-            ]);
-
-        /**
-         * @type {?string}
-         */
-        const maxInputStringWithWord = maxInputsAndStringsWithWords.get(maxInput);
         const maxInputSentencePart =
-            maxInputStringWithWord ? `${maxInputStringWithWord} (${maxInputString})` : maxInputString;
+            maxInput === oneQuadrillion ? `1 quadrillion (${maxInputString})` : maxInputString;
 
         const directions =
             `Enter or generate ${this.isSingleInputSection ? 'a whole number' : '2 whole numbers'} and click
@@ -697,7 +673,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: primesInfoHtml,
         actionSentenceEnding: 'the first 30 prime numbers ≥ that number',
         minInput: 0,
-        maxInput: oneHundredMillion,
+        maxInput: tenThousand,
         apiEndpoint: 'primes'
     },
     createPrimesAnswerElements
@@ -735,7 +711,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: twinPrimePairsInfoHtml,
         actionSentenceEnding: 'the first 20 twin prime pairs ≥ that number',
         minInput: 0,
-        maxInput: oneMillion,
+        maxInput: tenThousand,
         apiEndpoint: 'twinPrimePairStarts'
     },
     createTwinPrimePairsAnswerElements
@@ -762,11 +738,11 @@ const pfInfoHtml =
 /** 
  * @typedef {{ factor: number, power: number }} FactorAndPower
  * 
- * @typedef {Object} FactorAndPowerArrayAndNumberString
+ * @typedef {Object} FactorAndPowerArrayAndNumber
  * @property {?FactorAndPower[]} fpArr
  * If this is null, then that means the corresponding number is prime and therefore the PF just consists of 1
  * factor with 1 as its power.
- * @property {string} correspondingNumString
+ * @property {number} correspondingNum
  */
 
 /**
@@ -815,7 +791,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: pfInfoHtml,
         actionSentenceEnding: 'the prime factorization of that number',
         minInput: pfMinInput,
-        maxInput: oneBillion,
+        maxInput: tenThousand,
         apiEndpoint: 'primeFactorization'
     },
     createPfAnswerElements
@@ -898,23 +874,21 @@ const divisInfoElements =
  * @property {string} numFactorsExpression
  * An example of this is "(1 + 1) × (2 + 1)" for the input number with a PF of 2 × 3^2.
  * @property {number} numFactors
- * @property {FactorAndPowerArrayAndNumberString[]} factorFpArrsAndNumStrings
+ * @property {FactorAndPowerArrayAndNumber[]} factorFpArrsAndNums
  */
 
 /** 
- * @param {{ rulesData: ?DivisibilityRulesData, pfAnswer: ?DivisibilityPrimeFactorizationAnswer }}
+ * @param {{ rulesData: DivisibilityRulesData, pfAnswer: ?DivisibilityPrimeFactorizationAnswer }}
  * @param {string} inputString
  * @param {number} inputNum 
  * @returns {HTMLElement[]}
  */
-function createDivisAnswerElements({ rulesData, pfAnswer }, inputString, inputNum) {
-    const elements = [createH3(`Divisibility Info for ${inputString}`)];
-    if (rulesData) {
-        elements.push(createDivisRulesAnswerDiv(rulesData, inputString, inputNum));
-    }
-    elements.push(createDivisPfAnswerDiv(pfAnswer, inputString));
-    return elements;
-}
+const createDivisAnswerElements = ({ rulesData, pfAnswer }, inputString, inputNum) =>
+    [
+        createH3(`Divisibility Info for ${inputString}`),
+        createDivisRulesAnswerDiv(rulesData, inputString, inputNum),
+        createDivisPfAnswerDiv(pfAnswer, inputString)
+    ];
 
 /**
  * This function does the only non-trivial calculations that are done on the front end.
@@ -1044,7 +1018,7 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
         return pfDiv;
     }
 
-    const { inputFpArr, numFactorsExpression, numFactors, factorFpArrsAndNumStrings } = pfAnswer;
+    const { inputFpArr, numFactorsExpression, numFactors, factorFpArrsAndNums } = pfAnswer;
     pfInfoTextDiv.append(createPfSpan(inputFpArr), '. ');
 
     const numFactorsInfoEnd =
@@ -1061,15 +1035,15 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
     pfInfoTextDiv.append(numFactorsInfo, ' The factors and their PFs are:');
 
     /**
-     * @param {FactorAndPowerArrayAndNumberString} 
+     * @param {FactorAndPowerArrayAndNumber} 
      * @returns {HTMLLIElement}
      */
-    function fpArrAndNumStringToLi({ fpArr, correspondingNumString }) {
-        const numStringWithCommas = createNumStringWithCommas(correspondingNumString);
+    function fpArrAndNumStringToLi({ fpArr, correspondingNum }) {
+        const numStringWithCommas = createNumStringWithCommas(correspondingNum);
         return fpArr ? createLi(createPfSpan(fpArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
     }
 
-    const factorsOl = arrToAnswerFlexOl(factorFpArrsAndNumStrings, fpArrAndNumStringToLi);
+    const factorsOl = arrToAnswerFlexOl(factorFpArrsAndNums, fpArrAndNumStringToLi);
     factorsOl.id = 'divis-answer-factors-ol';
     pfDiv.appendChild(factorsOl);
     return pfDiv;
@@ -1080,8 +1054,8 @@ new SingleInputSection(
         btnIdStart: 'divis',
         infoHtmlStringOrArr: divisInfoElements,
         actionSentenceEnding: 'divisbility info for that number',
-        minInput: pfMinInput,
-        maxInput: oneBillion,
+        minInput: 10,
+        maxInput: tenThousand,
         apiEndpoint: 'divisibilityAnswer'
     },
     createDivisAnswerElements
@@ -1218,9 +1192,9 @@ const gcdAndLcmInfoElements =
  * @type {Object}
  * @property {FactorAndPower[]} input1FpArr
  * @property {FactorAndPower[]} input2FpArr
- * @property {?FactorAndPowerArrayAndNumberString} gcdFpArrAndNumString
+ * @property {?FactorAndPowerArrayAndNumber} gcdFpArrAndNumString
  * If this is null, then that means the GCD is 1.
- * @property {FactorAndPowerArrayAndNumberString} lcmFpArrAndNumString
+ * @property {FactorAndPowerArrayAndNumber} lcmFpArrAndNumString
  */
 
 /**
@@ -1262,26 +1236,26 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
 
     /**
      * @param {string} gcdOrLcmText 
-     * @param {FactorAndPowerArrayAndNumberString}
+     * @param {FactorAndPowerArrayAndNumber}
      * @returns {HTMLLIElement}
      */
-    function createGcdOrLcmPfLi(gcdOrLcmText, { fpArr, correspondingNumString }) {
+    function createGcdOrLcmPfLi(gcdOrLcmText, { fpArr, correspondingNum }) {
         const li = createLi(`The PF of the ${gcdOrLcmText} is `);
         if (fpArr) {
             li.append(createPfSpan(fpArr), ', which is ');
         }
-        li.append(createNumStringWithCommas(correspondingNumString), '.');
+        li.append(createNumStringWithCommas(correspondingNum), '.');
         return li;
     }
 
-    const { input1FpArr, input2FpArr, gcdFpArrAndNumString, lcmFpArrAndNumString } = answer;
+    const { input1FpArr, input2FpArr, gcdFpArrAndNum, lcmFpArrAndNum } = answer;
 
     /**
      * @type {Appendable}
      */
     const gcdInfoAppendable =
-        gcdFpArrAndNumString
-        ? createGcdOrLcmPfLi('GCD', gcdFpArrAndNumString)
+        gcdFpArrAndNum
+        ? createGcdOrLcmPfLi('GCD', gcdFpArrAndNum)
         : 'There are no common prime factors so the GCD is 1.';
 
     const pfsOl =
@@ -1289,7 +1263,7 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
             createInputPfLi(inputString1, input1FpArr),
             createInputPfLi(inputString2, input2FpArr),
             gcdInfoAppendable,
-            createGcdOrLcmPfLi('LCM', lcmFpArrAndNumString)
+            createGcdOrLcmPfLi('LCM', lcmFpArrAndNum)
         );
     pfsOl.className = answerNormalOlClassName;
 
@@ -1302,7 +1276,7 @@ new DoubleInputSection(
         infoHtmlStringOrArr: gcdAndLcmInfoElements,
         actionSentenceEnding: 'GCD and LCM info for those numbers',
         minInput: pfMinInput,
-        maxInput: oneBillion,
+        maxInput: tenThousand,
         apiEndpoint: 'gcdAndLcmAnswer'
     },
     createGcdAndLcmAnswerElements
@@ -1336,7 +1310,7 @@ new GoldbachConjectureSection(
         infoHtmlStringOrArr: goldbachConjectureInfoHtml,
         actionSentenceEnding: 'the pairs of prime numbers that sum to that number',
         minInput: 4,
-        maxInput: 100_000,
+        maxInput: 1_000,
         apiEndpoint: 'goldbachPrimePairStarts'
     },
     createGoldbachConjectureAnswerElements
@@ -1396,7 +1370,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: pythagTriplesInfoHtml,
         actionSentenceEnding: 'the first 10 Pythagorean triples ≥ that number',
         minInput: 0,
-        maxInput: 500,
+        maxInput: 100,
         apiEndpoint: 'pythagoreanTriples'
     },
     createPythagTriplesAnswerElements
@@ -1435,7 +1409,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: twoSquareTheoremInfoHtml,
         actionSentenceEnding: twoSquareTheoremActionSentenceEnding,
         minInput: 0,
-        maxInput: oneBillion,
+        maxInput: tenThousand,
         apiEndpoint: 'twoSquareTheoremAnswer'
     },
     createTwoSquareTheoremAnswerElements

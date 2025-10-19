@@ -8,7 +8,7 @@ import static com.numbertheoryplayground.InputValidation.*;
 
 public final class AncientMultiplicationAnswer {
     private static final long MIN_INPUT = 2;
-    private static final long MAX_INPUT = NINE_QUADRILLION;
+    private static final long MAX_INPUT = ONE_QUADRILLION;
     
     public record TableRow(String powerOf2String, String correspondingMultipleString) {}
     

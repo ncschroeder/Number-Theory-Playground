@@ -107,16 +107,13 @@ class PrimeFactorizationTests {
     }
     
     
-    void assertFpListAndLongString(
-        FactorAndPowerListAndLongString fpListAndLongString,
+    void assertFpListAndInt(
+        FactorAndPowerListAndInt fpListAndInt,
         List<FactorAndPower> expectedFpList,
-        long expectedCorrespondingLong
+        int expectedCorrespondingInt
     ) {
-        assertEquals(expectedFpList, fpListAndLongString.fpList());
-        assertEquals(
-            Long.toString(expectedCorrespondingLong),
-            fpListAndLongString.correspondingLongString()
-        );
+        assertEquals(expectedFpList, fpListAndInt.fpList());
+        assertEquals(expectedCorrespondingInt, fpListAndInt.correspondingInt());
     }
     
     /**
@@ -134,8 +131,8 @@ class PrimeFactorizationTests {
         var answer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
         
         assertAll(
-            () -> assertNull(answer.getGcdFpListAndLongString()),
-            () -> assertFpListAndLongString(answer.getLcmFpListAndLongString(), expectedLcmFpList, expectedLcm)
+            () -> assertNull(answer.getGcdFpListAndInt()),
+            () -> assertFpListAndInt(answer.getLcmFpListAndInt(), expectedLcmFpList, expectedLcm)
         );
     }
     
@@ -153,11 +150,11 @@ class PrimeFactorizationTests {
         
         assertAll(
             () -> {
-                var gcdFpListAndLongString = answer.getGcdFpListAndLongString();
-                assertNotNull(gcdFpListAndLongString);
-                assertFpListAndLongString(gcdFpListAndLongString, expectedGcdFpList, expectedGcd);
+                var gcdFpListAndInt = answer.getGcdFpListAndInt();
+                assertNotNull(gcdFpListAndInt);
+                assertFpListAndInt(gcdFpListAndInt, expectedGcdFpList, expectedGcd);
             },
-            () -> assertFpListAndLongString(answer.getLcmFpListAndLongString(), expectedLcmFpList, expectedLcm)
+            () -> assertFpListAndInt(answer.getLcmFpListAndInt(), expectedLcmFpList, expectedLcm)
         );
     }
     

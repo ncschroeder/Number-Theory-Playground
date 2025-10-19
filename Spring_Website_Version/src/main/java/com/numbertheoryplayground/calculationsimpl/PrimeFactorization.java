@@ -9,34 +9,19 @@ import static com.numbertheoryplayground.calculationsimpl.Calculations.isDivisib
 
 public final class PrimeFactorization {
     static final long MIN_INPUT = 2;
-    private static final long MAX_INPUT = ONE_BILLION;
+    private static final long MAX_INPUT = TEN_THOUSAND;
     
     public record FactorAndPower(int factor, int power) {}
     
-    public record FactorAndPowerListAndLongString(
+    public record FactorAndPowerListAndInt(
         @JsonProperty("fpArr") List<FactorAndPower> fpList,
-        @JsonProperty("correspondingNumString") String correspondingLongString
+        @JsonProperty("correspondingNum") int correspondingInt
     ) {}
     
     /**
-     * The long that this prime factorization is for.
+     * The int that this prime factorization is for.
      */
-    private final long correspondingLong;
-    
-    /*
-    Why use a long? Well, this class has 2 constructors, 1 of which has a list for a param.
-    1 place where that one is used is in the constructor for the
-    PrimeFactorization.GcdAndLcmAnswer class at the bottom of this class. The constructor
-    for that class creates a list of the prime factors and powers of the LCM of 2 input
-    ints, and then creates a PrimeFactorization using that list. That PrimeFactorization
-    constructor will then set this field to the product of all the factors raised to their
-    powers. The LCM of 2 ints is at most the product of them. The
-    calculationsimpl.GcdAndLcmAnswer class creates PrimeFactorization.GcdAndLcmAnswer
-    objects and the GCD and LCM section has a max input of 1 billion. The highest possible
-    LCM is 1 billion × (1 billion − 1), which is almost 1 quintillion, which is a number
-    with 19 digits. The max value for an int is 2 billion something and the max value for
-    a long is 9 quintillion something.
-     */
+    private final int correspondingInt;
     
     /**
      * An immutable list that's sorted by factors, which is appropriate when marshaling this
@@ -51,7 +36,7 @@ public final class PrimeFactorization {
     public PrimeFactorization(int input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        correspondingLong = input;
+        correspondingInt = input;
         var factorsAndPowersArrList = new ArrayList<FactorAndPower>();
         var maxIntToCheck = (int) Math.sqrt(input);
         int remaining = input;
@@ -100,11 +85,11 @@ public final class PrimeFactorization {
             .sorted(Comparator.comparingLong(FactorAndPower::factor))
             .toList();
         
-        long tempCorrespondingLong = 1;
+        var tempCorrespondingInt = 1;
         for (FactorAndPower fp : factorsAndPowers) {
-            tempCorrespondingLong *= (long) Math.pow(fp.factor, fp.power);
+            tempCorrespondingInt *= (int) Math.pow(fp.factor, fp.power);
         }
-        correspondingLong = tempCorrespondingLong;
+        correspondingInt = tempCorrespondingInt;
     }
     
     public List<FactorAndPower> getFactorsAndPowers() {
@@ -115,9 +100,9 @@ public final class PrimeFactorization {
         return factorsAndPowers.size() == 1 && factorsAndPowers.getFirst().power == 1;
     }
     
-    FactorAndPowerListAndLongString toFpListAndLongString() {
+    FactorAndPowerListAndInt toFpListAndInt() {
         List<FactorAndPower> fpList = isForAPrimeNumber() ? null : factorsAndPowers;
-        return new FactorAndPowerListAndLongString(fpList, Long.toString(correspondingLong));
+        return new FactorAndPowerListAndInt(fpList, correspondingInt);
     }
     
     /**
@@ -160,7 +145,7 @@ public final class PrimeFactorization {
         this PF, so it's the same as this PF. We don't want to include that as part of the factors.
          */
         factorPfs.removeLast();
-        factorPfs.sort(Comparator.comparingLong(pf -> pf.correspondingLong));
+        factorPfs.sort(Comparator.comparingInt(pf -> pf.correspondingInt));
         return factorPfs;
     }
     
@@ -171,11 +156,11 @@ public final class PrimeFactorization {
             .findFirst();
     }
     
-    List<FactorAndPowerListAndLongString> getFactorFpListsAndLongStrings() {
+    List<FactorAndPowerListAndInt> getFactorFpListsAndInts() {
         return
             getFactorPfs()
             .stream()
-            .map(PrimeFactorization::toFpListAndLongString)
+            .map(PrimeFactorization::toFpListAndInt)
             .toList();
     }
     
@@ -209,8 +194,8 @@ public final class PrimeFactorization {
         /**
          * If the GCD of the inputs is 1, this is null since only integers > 1 have a prime factorization.
          */
-        private final FactorAndPowerListAndLongString gcdFpListAndLongString;
-        private final FactorAndPowerListAndLongString lcmFpListAndLongString;
+        private final FactorAndPowerListAndInt gcdFpListAndInt;
+        private final FactorAndPowerListAndInt lcmFpListAndInt;
         
         GcdAndLcmAnswer(int input1, int input2) {
             assertIsInRange(input1, 0, 0);
@@ -244,13 +229,13 @@ public final class PrimeFactorization {
                 }
             }
             
-            gcdFpListAndLongString =
+            gcdFpListAndInt =
                 gcdPfFactorsAndPowers.isEmpty()
                 ? null
-                : new PrimeFactorization(gcdPfFactorsAndPowers).toFpListAndLongString();
+                : new PrimeFactorization(gcdPfFactorsAndPowers).toFpListAndInt();
             
-            lcmFpListAndLongString =
-                new PrimeFactorization(lcmPfFactorsAndPowers).toFpListAndLongString();
+            lcmFpListAndInt =
+                new PrimeFactorization(lcmPfFactorsAndPowers).toFpListAndInt();
         }
         
         @JsonProperty("input1FpArr")
@@ -263,14 +248,14 @@ public final class PrimeFactorization {
             return input2FpList;
         }
         
-        @JsonProperty("gcdFpArrAndNumString")
-        public FactorAndPowerListAndLongString getGcdFpListAndLongString() {
-            return gcdFpListAndLongString;
+        @JsonProperty("gcdFpArrAndNum")
+        public FactorAndPowerListAndInt getGcdFpListAndInt() {
+            return gcdFpListAndInt;
         }
         
-        @JsonProperty("lcmFpArrAndNumString")
-        public FactorAndPowerListAndLongString getLcmFpListAndLongString() {
-            return lcmFpListAndLongString;
+        @JsonProperty("lcmFpArrAndNum")
+        public FactorAndPowerListAndInt getLcmFpListAndInt() {
+            return lcmFpListAndInt;
         }
     }
 }

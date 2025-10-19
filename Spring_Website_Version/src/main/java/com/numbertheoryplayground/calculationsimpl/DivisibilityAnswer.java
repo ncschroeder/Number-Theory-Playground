@@ -8,13 +8,16 @@ import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.*;
 
 public final class DivisibilityAnswer {
+    private static final long MIN_INPUT = 10;
+    private static final long MAX_INPUT = TEN_THOUSAND;
+    
     private final RulesData rulesData;
     private final PrimeFactorizationAnswer pfAnswer;
     
     public DivisibilityAnswer(int input) {
-        assertIsInRange(input, PrimeFactorization.MIN_INPUT, ONE_BILLION);
+        assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        rulesData = input >= 10 ? new RulesData(input) : null;
+        rulesData = new RulesData(input);
         
         var pf = new PrimeFactorization(input);
         pfAnswer = pf.isForAPrimeNumber() ? null : new PrimeFactorizationAnswer(pf);
@@ -33,7 +36,7 @@ public final class DivisibilityAnswer {
         private final List<FactorAndPower> inputFpList;
         private int numFactors;
         private final String numFactorsExpression;
-        private final List<FactorAndPowerListAndLongString> factorFpListsAndLongStrings;
+        private final List<FactorAndPowerListAndInt> factorFpListsAndInts;
         
         PrimeFactorizationAnswer(PrimeFactorization inputPf) {
             inputFpList = inputPf.getFactorsAndPowers();
@@ -47,7 +50,7 @@ public final class DivisibilityAnswer {
             }
             numFactorsExpression = String.join(" × ", numFactorsExpressionParts);
             
-            factorFpListsAndLongStrings = inputPf.getFactorFpListsAndLongStrings();
+            factorFpListsAndInts = inputPf.getFactorFpListsAndInts();
         }
         
         @JsonProperty("inputFpArr")
@@ -63,9 +66,9 @@ public final class DivisibilityAnswer {
             return numFactorsExpression;
         }
         
-        @JsonProperty("factorFpArrsAndNumStrings")
-        public List<FactorAndPowerListAndLongString> getFactorFpListsAndLongStrings() {
-            return factorFpListsAndLongStrings;
+        @JsonProperty("factorFpArrsAndNums")
+        public List<FactorAndPowerListAndInt> getFactorFpListsAndInts() {
+            return factorFpListsAndInts;
         }
     }
     

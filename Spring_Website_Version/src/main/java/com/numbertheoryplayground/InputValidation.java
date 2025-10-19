@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 public class InputValidation {
     // Max input constants
-    public static final long ONE_BILLION = 1_000_000_000L;
-    public static final long NINE_QUADRILLION = 9_000_000_000_000_000L;
+    public static final long TEN_THOUSAND = 10_000;
+    public static final long ONE_QUADRILLION = 1_000_000_000_000_000L;
     
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public static final class InvalidInputNumberException extends IllegalArgumentException {

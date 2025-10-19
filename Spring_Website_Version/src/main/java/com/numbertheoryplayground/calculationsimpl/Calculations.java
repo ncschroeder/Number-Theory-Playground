@@ -48,7 +48,7 @@ public class Calculations {
      * Returns a stream of the first 30 primes ≥ the input.
      */
     public static IntStream getPrimes(int input) {
-        assertIsInRange(input, 0, 100_000_000);
+        assertIsInRange(input, 0, TEN_THOUSAND);
         
         int iterationStart = isOdd(input) ? input : input + 1;
         IntStream oddPrimes =
@@ -69,7 +69,7 @@ public class Calculations {
      * pairs gets returned.
      */
     public static int[] getTwinPrimePairStarts(int input) {
-        assertIsInRange(input, 0, 1_000_000);
+        assertIsInRange(input, 0, TEN_THOUSAND);
         
         /*
         Set iterationStart to the first int ≥ the input that is 1 below a multiple of 6 so
@@ -97,7 +97,7 @@ public class Calculations {
      * lower ints of those pairs.
      */
     public static int[] getGoldbachPrimePairStarts(int input) {
-        assertIsInRange(input, 4, 100_000);
+        assertIsInRange(input, 4, 1_000);
         if (isOdd(input)) {
             throw new InvalidInputNumberException();
         }
@@ -153,7 +153,7 @@ public class Calculations {
      * If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
      */
     public static List<PythagoreanTriple> getPythagTriples(int input) {
-        assertIsInRange(input, 0, 500);
+        assertIsInRange(input, 0, 100);
         
         final int numTriplesToFind = 10;
         var triples = new ArrayList<PythagoreanTriple>(numTriplesToFind);

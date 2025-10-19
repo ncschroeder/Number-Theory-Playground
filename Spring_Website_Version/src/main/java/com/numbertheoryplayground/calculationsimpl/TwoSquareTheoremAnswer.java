@@ -4,6 +4,9 @@ import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isPrime;
 
 public final class TwoSquareTheoremAnswer {
+    private static final long MIN_INPUT = 0;
+    private static final long MAX_INPUT = TEN_THOUSAND;
+    
     /**
      * The first prime number ≥ the input that's 1 above a multiple of 4.
      */
@@ -13,7 +16,7 @@ public final class TwoSquareTheoremAnswer {
     private int b;
     
     public TwoSquareTheoremAnswer(int input) {
-        assertIsInRange(input, 0, ONE_BILLION);
+        assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         primeNum = input;
         while (primeNum % 4 != 1) primeNum++;

@@ -10,7 +10,7 @@ import static com.numbertheoryplayground.InputValidation.*;
 
 public final class FibonacciLikeSequencesAnswer {
     private static final long MIN_INPUT = 1;
-    private static final long MAX_INPUT = NINE_QUADRILLION;
+    private static final long MAX_INPUT = ONE_QUADRILLION;
     
     private final List<String> stringFiboLikeSequence;
     

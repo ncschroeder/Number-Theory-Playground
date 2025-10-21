@@ -2,6 +2,7 @@ package com.numbertheoryplayground.calculationsimpl;
 
 import java.util.*;
 import java.util.stream.IntStream;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
@@ -13,11 +14,6 @@ public final class PrimeFactorization {
     
     public record FactorAndPower(int factor, int power) {}
     
-    public record FactorAndPowerListAndInt(
-        @JsonProperty("fpArr") List<FactorAndPower> fpList,
-        @JsonProperty("correspondingNum") int correspondingInt
-    ) {}
-    
     /**
      * The int that this prime factorization is for.
      */
@@ -28,7 +24,7 @@ public final class PrimeFactorization {
      * list to JSON and then sending that to the web page and then displaying the contents
      * of this list.
      */
-    private final List<FactorAndPower> factorsAndPowers;
+    private final List<FactorAndPower> fps;
     
     /**
      * Constructs a PrimeFactorization for the prime factorization of the input.
@@ -37,7 +33,7 @@ public final class PrimeFactorization {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         correspondingInt = input;
-        var factorsAndPowersArrList = new ArrayList<FactorAndPower>();
+        var tempFps = new ArrayList<FactorAndPower>();
         var maxIntToCheck = (int) Math.sqrt(input);
         int remaining = input;
 
@@ -54,7 +50,7 @@ public final class PrimeFactorization {
                 power++;
                 remaining /= 2;
             } while (isDivisible(remaining, 2));
-            factorsAndPowersArrList.add(new FactorAndPower(2, power));
+            tempFps.add(new FactorAndPower(2, power));
         }
         
         if (remaining > 1) {
@@ -65,44 +61,69 @@ public final class PrimeFactorization {
                         power++;
                         remaining /= possiblePrimeFactor;
                     } while (isDivisible(remaining, possiblePrimeFactor));
-                    factorsAndPowersArrList.add(new FactorAndPower(possiblePrimeFactor, power));
+                    tempFps.add(new FactorAndPower(possiblePrimeFactor, power));
                     if (remaining == 1) break;
                 }
             }
         }
         
         if (remaining > 1) {
-            factorsAndPowersArrList.add(new FactorAndPower(remaining, 1));
+            tempFps.add(new FactorAndPower(remaining, 1));
         }
         
-        factorsAndPowers = List.copyOf(factorsAndPowersArrList);
+        fps = List.copyOf(tempFps);
     }
     
-    PrimeFactorization(List<FactorAndPower> factorsAndPowers) {
-        this.factorsAndPowers =
-            factorsAndPowers
+    PrimeFactorization(List<FactorAndPower> fps) {
+        this.fps =
+            fps
             .stream()
             .sorted(Comparator.comparingLong(FactorAndPower::factor))
             .toList();
         
         var tempCorrespondingInt = 1;
-        for (FactorAndPower fp : factorsAndPowers) {
+        for (FactorAndPower fp : fps) {
             tempCorrespondingInt *= (int) Math.pow(fp.factor, fp.power);
         }
         correspondingInt = tempCorrespondingInt;
     }
     
-    public List<FactorAndPower> getFactorsAndPowers() {
-        return factorsAndPowers;
+    public int getCorrespondingInt() {
+        return correspondingInt;
+    }
+    
+    public List<FactorAndPower> getFps() {
+        return fps;
     }
     
     boolean isForAPrimeNumber() {
-        return factorsAndPowers.size() == 1 && factorsAndPowers.getFirst().power == 1;
+        return fps.size() == 1 && fps.getFirst().power == 1;
     }
     
-    FactorAndPowerListAndInt toFpListAndInt() {
-        List<FactorAndPower> fpList = isForAPrimeNumber() ? null : factorsAndPowers;
-        return new FactorAndPowerListAndInt(fpList, correspondingInt);
+    /**
+     * Contains data that'll be marshaled to JSON and sent to the front end.
+     *
+     * In the places this'll be used on the front end, if the corresponding num is NOT prime,
+     * then that number and the fps will be displayed, since they'll look different from each
+     * other. If the corresponding number is prime, then we only need to display that number
+     * since the PF just contains that number as its only factor and the power of it is 1.
+     * For example, if a PF instance is created for 2, we only need to display 2. If a PF
+     * instance is created for 6, we would display that number and its prime factors, which
+     * are 2 and 3.
+     */
+    public final class Dto {
+        @JsonProperty("correspondingNum")
+        public int getCorrespondingInt() {
+            return correspondingInt;
+        }
+        
+        public List<FactorAndPower> getFps() {
+            return isForAPrimeNumber() ? null : fps;
+        }
+    }
+    
+    public Dto toDto() {
+        return new Dto();
     }
     
     /**
@@ -110,7 +131,7 @@ public final class PrimeFactorization {
      */
     List<PrimeFactorization> getFactorPfs() {
         var factorPfs = new ArrayList<PrimeFactorization>();
-        for (FactorAndPower fp : factorsAndPowers) {
+        for (FactorAndPower fp : fps) {
             int factor = fp.factor;
             int thisPfPower = fp.power;
             
@@ -127,7 +148,7 @@ public final class PrimeFactorization {
                 for (var i = 0; i <= lastPfIndexToUse; i++) {
                     var newFactorAndPower = new FactorAndPower(factor, factorPfPower);
                     List<FactorAndPower> factorPfFactorsAndPowers =
-                        new ArrayList<>(factorPfs.get(i).factorsAndPowers);
+                        new ArrayList<>(factorPfs.get(i).fps);
                     
                     findIndexOfFactor(factorPfFactorsAndPowers, factor)
                     .ifPresentOrElse(
@@ -156,17 +177,9 @@ public final class PrimeFactorization {
             .findFirst();
     }
     
-    List<FactorAndPowerListAndInt> getFactorFpListsAndInts() {
-        return
-            getFactorPfs()
-            .stream()
-            .map(PrimeFactorization::toFpListAndInt)
-            .toList();
-    }
-    
     private OptionalInt findPowerOf(int factor) {
         return
-            factorsAndPowers
+            fps
             .stream()
             .filter(fp -> fp.factor == factor)
             .mapToInt(FactorAndPower::power)
@@ -175,7 +188,7 @@ public final class PrimeFactorization {
     
     private boolean containsFactor(int i) {
         return
-            factorsAndPowers
+            fps
             .stream()
             .anyMatch(fp -> fp.factor == i);
     }
@@ -189,13 +202,13 @@ public final class PrimeFactorization {
      * this class.
      */
     public static class GcdAndLcmAnswer {
-        private final List<FactorAndPower> input1FpList;
-        private final List<FactorAndPower> input2FpList;
+        private final List<FactorAndPower> input1Fps;
+        private final List<FactorAndPower> input2Fps;
         /**
          * If the GCD of the inputs is 1, this is null since only integers > 1 have a prime factorization.
          */
-        private final FactorAndPowerListAndInt gcdFpListAndInt;
-        private final FactorAndPowerListAndInt lcmFpListAndInt;
+        private final PrimeFactorization gcdPf;
+        private final PrimeFactorization lcmPf;
         
         GcdAndLcmAnswer(int input1, int input2) {
             assertIsInRange(input1, 0, 0);
@@ -203,12 +216,12 @@ public final class PrimeFactorization {
             
             var input1Pf = new PrimeFactorization(input1);
             var input2Pf = new PrimeFactorization(input2);
-            input1FpList = input1Pf.getFactorsAndPowers();
-            input2FpList = input2Pf.getFactorsAndPowers();
-            var gcdPfFactorsAndPowers = new ArrayList<FactorAndPower>();
-            var lcmPfFactorsAndPowers = new ArrayList<FactorAndPower>();
+            input1Fps = input1Pf.getFps();
+            input2Fps = input2Pf.getFps();
+            var gcdFps = new ArrayList<FactorAndPower>();
+            var lcmFps = new ArrayList<FactorAndPower>();
             
-            for (FactorAndPower fp : input1Pf.factorsAndPowers) {
+            for (FactorAndPower fp : input1Pf.fps) {
                 int factor = fp.factor;
                 int power1 = fp.power;
                 
@@ -216,46 +229,49 @@ public final class PrimeFactorization {
                 .findPowerOf(factor)
                 .ifPresentOrElse(
                     power2 -> {
-                        gcdPfFactorsAndPowers.add(new FactorAndPower(factor, Math.min(power1, power2)));
-                        lcmPfFactorsAndPowers.add(new FactorAndPower(factor, Math.max(power1, power2)));
+                        gcdFps.add(new FactorAndPower(factor, Math.min(power1, power2)));
+                        lcmFps.add(new FactorAndPower(factor, Math.max(power1, power2)));
                     },
-                    () -> lcmPfFactorsAndPowers.add(new FactorAndPower(factor, power1))
+                    () -> lcmFps.add(new FactorAndPower(factor, power1))
                 );
             }
             
-            for (FactorAndPower fp : input2Pf.factorsAndPowers) {
+            for (FactorAndPower fp : input2Pf.fps) {
                 if (!input1Pf.containsFactor(fp.factor)) {
-                    lcmPfFactorsAndPowers.add(new FactorAndPower(fp.factor, fp.power));
+                    lcmFps.add(new FactorAndPower(fp.factor, fp.power));
                 }
             }
             
-            gcdFpListAndInt =
-                gcdPfFactorsAndPowers.isEmpty()
-                ? null
-                : new PrimeFactorization(gcdPfFactorsAndPowers).toFpListAndInt();
-            
-            lcmFpListAndInt =
-                new PrimeFactorization(lcmPfFactorsAndPowers).toFpListAndInt();
+            gcdPf = gcdFps.isEmpty() ? null : new PrimeFactorization(gcdFps);
+            lcmPf = new PrimeFactorization(lcmFps);
         }
         
-        @JsonProperty("input1FpArr")
-        public List<FactorAndPower> getInput1FpList() {
-            return input1FpList;
+        public List<FactorAndPower> getInput1Fps() {
+            return input1Fps;
         }
         
-        @JsonProperty("input2FpArr")
-        public List<FactorAndPower> getInput2FpList() {
-            return input2FpList;
+        public List<FactorAndPower> getInput2Fps() {
+            return input2Fps;
         }
         
-        @JsonProperty("gcdFpArrAndNum")
-        public FactorAndPowerListAndInt getGcdFpListAndInt() {
-            return gcdFpListAndInt;
+        @JsonIgnore
+        public Optional<PrimeFactorization> getGcdPf() {
+            return Optional.ofNullable(gcdPf);
         }
         
-        @JsonProperty("lcmFpArrAndNum")
-        public FactorAndPowerListAndInt getLcmFpListAndInt() {
-            return lcmFpListAndInt;
+        @JsonProperty("gcdPf")
+        public Optional<PrimeFactorization.Dto> getGcdPfDto() {
+            return getGcdPf().map(PrimeFactorization::toDto);
+        }
+        
+        @JsonIgnore
+        public PrimeFactorization getLcmPf() {
+            return lcmPf;
+        }
+        
+        @JsonProperty("lcmPf")
+        public PrimeFactorization.Dto getLcmPfDto() {
+            return lcmPf.toDto();
         }
     }
 }

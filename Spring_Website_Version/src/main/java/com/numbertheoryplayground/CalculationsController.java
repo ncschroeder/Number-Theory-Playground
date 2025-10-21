@@ -35,7 +35,7 @@ public class CalculationsController {
     
     @GetMapping(PF_ENDPOINT)
     public List<PrimeFactorization.FactorAndPower> getPfFactorsAndPowers(@RequestParam int input) {
-        return new PrimeFactorization(input).getFactorsAndPowers();
+        return new PrimeFactorization(input).getFps();
     }
     
     

@@ -24,8 +24,8 @@ class PrimeFactorizationTests {
     
     @ParameterizedTest
     @FieldSource("intConstructorArgs")
-    void intConstructor(int input, List<FactorAndPower> expectedFactorsAndPowers) {
-        assertEquals(expectedFactorsAndPowers, new PrimeFactorization(input).getFactorsAndPowers());
+    void intConstructor(int input, List<FactorAndPower> expectedFps) {
+        assertEquals(expectedFps, new PrimeFactorization(input).getFps());
     }
     
     static final List<Arguments> intConstructorArgs =
@@ -53,7 +53,7 @@ class PrimeFactorizationTests {
             new PrimeFactorization(input)
             .getFactorPfs()
             .stream()
-            .map(PrimeFactorization::getFactorsAndPowers)
+            .map(PrimeFactorization::getFps)
             .toList();
         
         assertEquals(expectedFactorFpLists, actualFactorFpLists);
@@ -107,32 +107,32 @@ class PrimeFactorizationTests {
     }
     
     
-    void assertFpListAndInt(
-        FactorAndPowerListAndInt fpListAndInt,
-        List<FactorAndPower> expectedFpList,
+    void assertPf(
+        PrimeFactorization pf,
+        List<FactorAndPower> expectedFps,
         int expectedCorrespondingInt
     ) {
-        assertEquals(expectedFpList, fpListAndInt.fpList());
-        assertEquals(expectedCorrespondingInt, fpListAndInt.correspondingInt());
+        assertEquals(expectedFps, pf.getFps());
+        assertEquals(expectedCorrespondingInt, pf.getCorrespondingInt());
     }
     
     /**
-     * 2 integers are coprime if their GCD is 1 and they don't have any common prime factors.
-     * As a result, if a PrimeFactorization.GcdAndLcmAnswer object is created with coprime
-     * inputs, then the GCD PfListAndLongString of that object should be null.
+     * 2 integers are coprime if their GCD is 1, so if a PrimeFactorization.GcdAndLcmAnswer
+     * object is created with coprime inputs, then the getGcdPf method of that object
+     * should return an empty Optional.
      */
     @Test
     void gcdAndLcmAnswerForCoprimeInputs() {
         int input1 = 2 * 3;
         int input2 = 5 * 7;
-        List<FactorAndPower> expectedLcmFpList =
+        List<FactorAndPower> expectedLcmFps =
             List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1));
         int expectedLcm = 2 * 3 * 5 * 7;
         var answer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
         
         assertAll(
-            () -> assertNull(answer.getGcdFpListAndInt()),
-            () -> assertFpListAndInt(answer.getLcmFpListAndInt(), expectedLcmFpList, expectedLcm)
+            () -> assertTrue(answer.getGcdPf().isEmpty(), "GCD PF is empty."),
+            () -> assertPf(answer.getLcmPf(), expectedLcmFps, expectedLcm)
         );
     }
     
@@ -141,20 +141,21 @@ class PrimeFactorizationTests {
     void gcdAndLcmAnswerForNonCoprimeInputs(
         int input1,
         int input2,
-        List<FactorAndPower> expectedGcdFpList,
+        List<FactorAndPower> expectedGcdFps,
         int expectedGcd,
-        List<FactorAndPower> expectedLcmFpList,
+        List<FactorAndPower> expectedLcmFps,
         int expectedLcm
     ) {
         var answer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
         
         assertAll(
             () -> {
-                var gcdFpListAndInt = answer.getGcdFpListAndInt();
-                assertNotNull(gcdFpListAndInt);
-                assertFpListAndInt(gcdFpListAndInt, expectedGcdFpList, expectedGcd);
+                answer.getGcdPf().ifPresentOrElse(
+                    (pf) -> assertPf(pf, expectedGcdFps, expectedGcd),
+                    () -> fail("GCD PF is empty but shouldn't have been.")
+                );
             },
-            () -> assertFpListAndInt(answer.getLcmFpListAndInt(), expectedLcmFpList, expectedLcm)
+            () -> assertPf(answer.getLcmPf(), expectedLcmFps, expectedLcm)
         );
     }
     

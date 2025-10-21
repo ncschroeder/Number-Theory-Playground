@@ -2,7 +2,6 @@ package com.numbertheoryplayground.calculationsimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.*;
@@ -33,29 +32,33 @@ public final class DivisibilityAnswer {
     
     
     public static final class PrimeFactorizationAnswer {
-        private final List<FactorAndPower> inputFpList;
+        private final List<FactorAndPower> inputFps;
         private int numFactors;
         private final String numFactorsExpression;
-        private final List<FactorAndPowerListAndInt> factorFpListsAndInts;
+        private final List<PrimeFactorization.Dto> factorPfs;
         
         PrimeFactorizationAnswer(PrimeFactorization inputPf) {
-            inputFpList = inputPf.getFactorsAndPowers();
+            inputFps = inputPf.getFps();
             
             numFactors = 1;
-            var numFactorsExpressionParts = new ArrayList<String>(inputFpList.size());
-            for (FactorAndPower fp : inputFpList) {
+            var numFactorsExpressionParts = new ArrayList<String>(inputFps.size());
+            for (FactorAndPower fp : inputFps) {
                 int power = fp.power();
                 numFactors *= power + 1;
                 numFactorsExpressionParts.add(String.format("(%d + 1)", power));
             }
             numFactorsExpression = String.join(" × ", numFactorsExpressionParts);
             
-            factorFpListsAndInts = inputPf.getFactorFpListsAndInts();
+            factorPfs =
+                inputPf
+                .getFactorPfs()
+                .stream()
+                .map(PrimeFactorization::toDto)
+                .toList();
         }
         
-        @JsonProperty("inputFpArr")
-        public List<FactorAndPower> getInputFpList() {
-            return inputFpList;
+        public List<FactorAndPower> getInputFps() {
+            return inputFps;
         }
         
         public int getNumFactors() {
@@ -66,9 +69,8 @@ public final class DivisibilityAnswer {
             return numFactorsExpression;
         }
         
-        @JsonProperty("factorFpArrsAndNums")
-        public List<FactorAndPowerListAndInt> getFactorFpListsAndInts() {
-            return factorFpListsAndInts;
+        public List<PrimeFactorization.Dto> getFactorPfs() {
+            return factorPfs;
         }
     }
     

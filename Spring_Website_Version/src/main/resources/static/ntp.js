@@ -738,28 +738,28 @@ const pfInfoHtml =
 /** 
  * @typedef {{ factor: number, power: number }} FactorAndPower
  * 
- * @typedef {Object} FactorAndPowerArrayAndNumber
- * @property {?FactorAndPower[]} fpArr
+ * @typedef {Object} PrimeFactorization
+ * @property {?FactorAndPower[]} fps
  * If this is null, then that means the corresponding number is prime and therefore the PF just consists of 1
  * factor with 1 as its power.
  * @property {number} correspondingNum
  */
 
 /**
- * @param {FactorAndPower[]} fpArr
+ * @param {FactorAndPower[]} fps
  * @returns {HTMLSpanElement}
  * A span that shows the prime factorization (PF) of a number. This PF consists of the factors and powers in
  * fpArr. Each factor and power is separated by " × ."
  */
-function createPfSpan(fpArr) {
+function createPfSpan(fps) {
     const pfSpan = createSpan();
     
-    for (let i = 0; i < fpArr.length; i++) {
+    for (let i = 0; i < fps.length; i++) {
         if (i !== 0) {
             pfSpan.append(' × ');
         }
         
-        const { factor, power } = fpArr[i];
+        const { factor, power } = fps[i];
         const fpSpan = createSpan(createNumStringWithCommas(factor));
         if (power > 1) {
             fpSpan.appendChild(createSuperscript(power));
@@ -772,13 +772,13 @@ function createPfSpan(fpArr) {
 }
 
 /**
- * @param {FactorAndPower[]} fpArr
+ * @param {FactorAndPower[]} fps
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function createPfAnswerElements(fpArr, inputString) {
+function createPfAnswerElements(fps, inputString) {
     const headingText = `The PF of ${inputString} is:`;
-    const pfSpan = createPfSpan(fpArr);
+    const pfSpan = createPfSpan(fps);
     pfSpan.className = 'centered-pf-span';
     return [createNonBoldAnswerH3(headingText), pfSpan];
 }
@@ -870,11 +870,11 @@ const divisInfoElements =
  * @property {AlternatingSumAndExpression} digitsAltSumAndExpression
  * 
  * @typedef {Object} DivisibilityPrimeFactorizationAnswer
- * @property {FactorAndPower[]} inputFpArr
+ * @property {FactorAndPower[]} inputFps
  * @property {string} numFactorsExpression
  * An example of this is "(1 + 1) × (2 + 1)" for the input number with a PF of 2 × 3^2.
  * @property {number} numFactors
- * @property {FactorAndPowerArrayAndNumber[]} factorFpArrsAndNums
+ * @property {PrimeFactorization[]} factorPfs
  */
 
 /** 
@@ -1018,8 +1018,8 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
         return pfDiv;
     }
 
-    const { inputFpArr, numFactorsExpression, numFactors, factorFpArrsAndNums } = pfAnswer;
-    pfInfoTextDiv.append(createPfSpan(inputFpArr), '. ');
+    const { inputFps, numFactorsExpression, numFactors, factorPfs } = pfAnswer;
+    pfInfoTextDiv.append(createPfSpan(inputFps), '. ');
 
     const numFactorsInfoEnd =
         'there' + (
@@ -1035,15 +1035,15 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
     pfInfoTextDiv.append(numFactorsInfo, ' The factors and their PFs are:');
 
     /**
-     * @param {FactorAndPowerArrayAndNumber} 
+     * @param {PrimeFactorization} 
      * @returns {HTMLLIElement}
      */
-    function fpArrAndNumStringToLi({ fpArr, correspondingNum }) {
+    function pfToLi({ fps, correspondingNum }) {
         const numStringWithCommas = createNumStringWithCommas(correspondingNum);
-        return fpArr ? createLi(createPfSpan(fpArr), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
+        return fps ? createLi(createPfSpan(fps), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
     }
 
-    const factorsOl = arrToAnswerFlexOl(factorFpArrsAndNums, fpArrAndNumStringToLi);
+    const factorsOl = arrToAnswerFlexOl(factorPfs, pfToLi);
     factorsOl.id = 'divis-answer-factors-ol';
     pfDiv.appendChild(factorsOl);
     return pfDiv;
@@ -1190,11 +1190,11 @@ const gcdAndLcmInfoElements =
 /**
  * @typedef GcdAndLcmPrimeFactorizationAnswer
  * @type {Object}
- * @property {FactorAndPower[]} input1FpArr
- * @property {FactorAndPower[]} input2FpArr
- * @property {?FactorAndPowerArrayAndNumber} gcdFpArrAndNumString
+ * @property {FactorAndPower[]} input1Fps
+ * @property {FactorAndPower[]} input2Fps
+ * @property {?PrimeFactorization} gcdPf
  * If this is null, then that means the GCD is 1.
- * @property {FactorAndPowerArrayAndNumber} lcmFpArrAndNumString
+ * @property {PrimeFactorization} lcmPf
  */
 
 /**
@@ -1228,42 +1228,42 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
 
     /**
      * @param {string} inputString 
-     * @param {FactorAndPower[]} fpArr
+     * @param {FactorAndPower[]} fps
      * @returns {HTMLLIElement}
      */
-    const createInputPfLi = (inputString, fpArr) =>
-        createLi(`The PF of ${inputString} is `, createPfSpan(fpArr), '.');
+    const createInputPfLi = (inputString, fps) =>
+        createLi(`The PF of ${inputString} is `, createPfSpan(fps), '.');
 
     /**
      * @param {string} gcdOrLcmText 
-     * @param {FactorAndPowerArrayAndNumber}
+     * @param {PrimeFactorization}
      * @returns {HTMLLIElement}
      */
-    function createGcdOrLcmPfLi(gcdOrLcmText, { fpArr, correspondingNum }) {
+    function createGcdOrLcmPfLi(gcdOrLcmText, { fps, correspondingNum }) {
         const li = createLi(`The PF of the ${gcdOrLcmText} is `);
-        if (fpArr) {
-            li.append(createPfSpan(fpArr), ', which is ');
+        if (fps) {
+            li.append(createPfSpan(fps), ', which is ');
         }
         li.append(createNumStringWithCommas(correspondingNum), '.');
         return li;
     }
 
-    const { input1FpArr, input2FpArr, gcdFpArrAndNum, lcmFpArrAndNum } = answer;
+    const { input1Fps, input2Fps, gcdPf, lcmPf } = answer;
 
     /**
      * @type {Appendable}
      */
     const gcdInfoAppendable =
-        gcdFpArrAndNum
-        ? createGcdOrLcmPfLi('GCD', gcdFpArrAndNum)
+        gcdPf
+        ? createGcdOrLcmPfLi('GCD', gcdPf)
         : 'There are no common prime factors so the GCD is 1.';
 
     const pfsOl =
         createOl(
-            createInputPfLi(inputString1, input1FpArr),
-            createInputPfLi(inputString2, input2FpArr),
+            createInputPfLi(inputString1, input1Fps),
+            createInputPfLi(inputString2, input2Fps),
             gcdInfoAppendable,
-            createGcdOrLcmPfLi('LCM', lcmFpArrAndNum)
+            createGcdOrLcmPfLi('LCM', lcmPf)
         );
     pfsOl.className = answerNormalOlClassName;
 

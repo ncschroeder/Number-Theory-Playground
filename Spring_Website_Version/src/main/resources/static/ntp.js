@@ -863,6 +863,8 @@ const divisInfoElements =
  * @typedef {{ sum: number, expression: string }} AlternatingSumAndExpression
  * 
  * @typedef {Object} DivisibilityRulesData
+ * For the input number 5,544, blocksOf3AltSumAndExpression would have an expression of "544 - 5" and a sum of 539.
+ * digitsAltSumAndExpression would have an expression of "5 - 5 + 4 - 5" and a sum of 0.
  * @property {number} last2Digits
  * @property {number} last3Digits
  * @property {number} sumOfDigits
@@ -870,15 +872,17 @@ const divisInfoElements =
  * @property {AlternatingSumAndExpression} digitsAltSumAndExpression
  * 
  * @typedef {Object} DivisibilityPrimeFactorizationAnswer
+ * For the input number with a PF of 5^2 × 7^3, numFactorsExpression would be "(2 + 1) × (3 + 1)" and numFactors
+ * would be 12.
  * @property {FactorAndPower[]} inputFps
  * @property {string} numFactorsExpression
- * An example of this is "(1 + 1) × (2 + 1)" for the input number with a PF of 2 × 3^2.
  * @property {number} numFactors
  * @property {PrimeFactorization[]} factorPfs
  */
 
 /** 
  * @param {{ rulesData: DivisibilityRulesData, pfAnswer: ?DivisibilityPrimeFactorizationAnswer }}
+ * If pfAnswer is null, then that means the input number is prime.
  * @param {string} inputString
  * @param {number} inputNum 
  * @returns {HTMLElement[]}
@@ -901,9 +905,6 @@ const createDivisAnswerElements = ({ rulesData, pfAnswer }, inputString, inputNu
  * using divisibility rules.
  */
 function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
-    const {
-        last2Digits, last3Digits, sumOfDigits, blocksOf3AltSumAndExpression, digitsAltSumAndExpression
-    } = rulesData;
     const heading = createH4('Rules Info');
 
     /**
@@ -920,6 +921,7 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
             so ${inputString} ${isOrIsnt} divisible by ${possibleFactor}.`;
     }
 
+    const { last2Digits, last3Digits, sumOfDigits } = rulesData;
     /**
      * @type {string[]}
      */
@@ -976,21 +978,23 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
             other multiples of 3.`
         );
     }
-
+    
+    const { blocksOf3AltSumAndExpression, digitsAltSumAndExpression } = rulesData;
+    
     if (blocksOf3AltSumAndExpression) {
-        const { sum: blocksOf3AltSum, expression: blocksOf3Expression } = blocksOf3AltSumAndExpression;
-        const isDivisibleBy7 = isDivisible(blocksOf3AltSum, 7);
+        const { sum, expression } = blocksOf3AltSumAndExpression;
+        const isDivisibleBy7 = isDivisible(sum, 7);
         sentences.push(
-            `The alternating sum of blocks of 3 from right to left is ${blocksOf3Expression} = ${blocksOf3AltSum}.`,
-            getDivisSentence(7, blocksOf3AltSum, isDivisibleBy7)
+            `The alternating sum of blocks of 3 from right to left is ${expression} = ${sum}.`,
+            getDivisSentence(7, sum, isDivisibleBy7)
         );
     }
 
-    const { sum: digitsAltSum, expression: digitsExpression } = digitsAltSumAndExpression;
-    const isDivisibleBy11 = isDivisible(digitsAltSum, 11);
+    const { sum, expression } = digitsAltSumAndExpression;
+    const isDivisibleBy11 = isDivisible(sum, 11);
     sentences.push(
-        `The alternating sum of digits from left to right is ${digitsExpression} = ${digitsAltSum}.`,
-        getDivisSentence(11, digitsAltSum, isDivisibleBy11)
+        `The alternating sum of digits from left to right is ${expression} = ${sum}.`,
+        getDivisSentence(11, sum, isDivisibleBy11)
     );
 
     return createDiv(heading, createP(sentences.join(' ')));

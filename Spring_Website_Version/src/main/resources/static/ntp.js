@@ -729,11 +729,10 @@ const pfInfoHtml =
     There are some interesting applications for PFs. See the info for the "Divisibility" or "GCD and LCM"
     sections for some applications.
     
-    The input numbers with the highest amount of prime factors are 536,870,912 (2<sup>29</sup>) and 805,306,368
-    (2<sup>28</sup> × 3). An input number with the highest amount of <em>unique</em> prime factors is
-    223,092,870. This number is the product of the first 9 prime numbers so it has 9 unique prime factors and
-    its PF is 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23. You could also multiply that number by 2, 3, or 4 and
-    those numbers are ≤ the max input and have the same amount of unique prime factors.`;
+    The input number with the highest amount of prime factors is 8,192 (2<sup>13</sup>). An input number with
+    the highest amount of <em>unique</em> prime factors is 2,310. This number has a PF of 2 × 3 × 5 × 7 × 11.
+    You could also multiply that number by 2, 3, or 4 and those numbers are ≤ the max input and have the same
+    amount of unique prime factors.`;
 
 /** 
  * @typedef {{ factor: number, power: number }} FactorAndPower
@@ -816,45 +815,52 @@ const divisPfInfoHtml =
     "sub-factorizations", as I like to call them. For 2<sup>2</sup> × 3<sup>2</sup>, the sub-factorizations are
     2, 3, 2<sup>2</sup> (4), 2 × 3 (6), 3<sup>2</sup> (9), 2<sup>2</sup> × 3 (12), and 2 × 3<sup>2</sup> (18).
     
-    For whole numbers that are < the max input of this section, the number of factors they have are generally
-    pretty small, like < 100. An example of an input number with a high number of factors is 892,371,480.
-    This number is the product of 2<sup>3</sup> and the next 8 prime numbers so it has 9 unique prime factors
-    and its PF is 2<sup>3</sup> × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23. It has 1,024 total factors!`;
+    Whole numbers that are ≤ the max input of this section generally have a pretty small amount of factors, like
+    < 20. An example of an input number with a high number of factors is 9,240. This number has a PF of
+    2<sup>3</sup> × 3 × 5 × 7 × 11. It has 4 × 2<sup>4</sup> = 2<sup>6</sup> = 64 total factors!`;
 
 const divisPfInfoDiv =
     createDiv(createH3('Prime Factorization'), ...createPsWithParagraphs(divisPfInfoHtml));
     
 const divisRulesInfoHtml =
     `Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1
-    rule for each whole number in the range of 3 to 12, excluding 5 and 10, though there are rules for more
-    whole numbers and many whole numbers have multiple rules. I'll go over an example of using these rules to
-    find the factors of a whole number in the next paragraph. Let's have a variable <var>n</var> and let it
-    represent a whole number. If the last 2 digits of <var>n</var> is divisible by 4, then <var>n</var> is
-    divisible by 4. If the last 3 digits of <var>n</var> is divisible by 8, then <var>n</var> is divisible by 8.
-    If the sum of the digits of <var>n</var> is divisible by 3, then <var>n</var> is divisible by 3. If the sum
-    of the digits of <var>n</var> is divisible by 9, then <var>n</var> is divisible by 9. If <var>n</var> is
-    even and divisible by 3, then it's also divisible by 6. If <var>n</var> is divisible by both 3 and 4, then
-    it's also divisible by 12. For 7, we split <var>n</var> into blocks of 3 from right to left. Coincidentally,
-    these are the blocks separated by commas if we write <var>n</var> with commas. We do an alternating sum of the
-    blocks from right to left. We start with 0, add the last block, subtract the 2<sup>nd</sup> to last block,
-    add the 3<sup>rd</sup> to last block, and so on for all the blocks. If this alternating sum is divisible by
-    7, then <var>n</var> is divisible by 7. For 11, we do an alternating sum of digits of <var>n</var> from left
-    to right. We start with 0, add the 1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the
-    3<sup>rd</sup> digit, and so on for all digits. If this alternating sum is divisible by 11, then <var>n</var>
-    is divisible by 11.
+    rule for each number in the range of 3 to 12, excluding 5 and 10, though there are rules for more numbers
+    and many numbers have multiple rules. I'll go over an example of using these rules to find the factors of a
+    number in the "Example" section below. Let's have a variable <var>n</var> and let it represent a whole
+    number. If the last 2 digits of <var>n</var> is divisible by 4, then <var>n</var> is divisible by 4. If the
+    last 3 digits of <var>n</var> is divisible by 8, then <var>n</var> is divisible by 8. If the sum of the
+    digits of <var>n</var> is divisible by 3, then <var>n</var> is divisible by 3. If the sum of the digits of
+    <var>n</var> is divisible by 9, then <var>n</var> is divisible by 9. If <var>n</var> is even and divisible
+    by 3, then it's also divisible by 6. If <var>n</var> is divisible by both 3 and 4, then it's also divisible
+    by 12.
     
-    Here's an example. Let <var>n</var> be 4,695,768. The PF of <var>n</var> is
-    2<sup>3</sup> × 3<sup>2</sup> × 7<sup>2</sup> × 11<sup>3</sup>. We can tell from that PF that <var>n</var>
-    is divisible by all the numbers that had rules mentioned about them above. Let's check if <var>n</var> is
-    divisible by those numbers using those rules. The last 2 digits are 68, which is divisible by 4. The last 3
-    digits are 768, which is divisible by 8. The sum of the digits is 4 + 6 + 9 + 5 + 7 + 6 + 8 = 45, which is
-    divisible by 3 and 9. Since <var>n</var> is even and divisible by 3, it's also divisible by 6. Since
-    <var>i</var> is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of blocks of 3
-    from right to left is 768 − 695 + 4 = 77 , which is divisible by 7. The alternating sum of digits from left
-    to right is 4 − 6 + 9 − 5 + 7 − 6 + 8 = 11, which, of course, is divisible by 11.`;
+    For 7, we split <var>n</var> into 3-digit blocks from right to left, though the leftmost block can contain
+    1 or 2 digits. Coincidentally, these are the blocks separated by commas if we write <var>n</var> with
+    commas. We do an alternating sum of the blocks from right to left. We start with 0, add the rightmost block,
+    subtract the block to the left of that, add the block to the left of that, and so on for all the blocks. If
+    this sum is divisible by 7, then <var>n</var> is divisible by 7.
+    
+    For 11, we do an alternating sum of the digits of <var>n</var> from left to right. We start with 0, add the
+    1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all
+    the digits. If this sum is divisible by 11, then <var>n</var> is divisible by 11.`;
+
+const divisRulesExampleHtml =
+    `Let <var>n</var> be 5,544. Its PF is 2<sup>3</sup> × 3<sup>2</sup> × 7 × 11. We can tell from that PF that
+    <var>n</var> is divisible by all the numbers that had rules mentioned about them above. Let's check if
+    <var>n</var> is divisible by those numbers using those rules. The last 2 digits are 44, which is divisible
+    by 4. The last 3 digits are 544, which is divisible by 8. The sum of the digits is 5 + 5 + 4 + 4 = 18, which
+    is divisible by both 3 and 9. Since <var>n</var> is even and divisible by 3, it's also divisible by 6. Since
+    <var>i</var> is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of 3-digit blocks
+    from right to left is 544 − 5 = 539, which is divisible by 7. The alternating sum of digits from left to
+    right is 8 − 7 + 1 − 2 = 0, which is divisible by 11.`;
 
 const divisRulesInfoDiv =
-    createDiv(createH3('Divisibility Rules'), ...createPsWithParagraphs(divisRulesInfoHtml));
+    createDiv(
+        createH3('Divisibility Rules'),
+        ...createPsWithParagraphs(divisRulesInfoHtml),
+        createH4('Example'),
+        createPWithInnerHtml(divisRulesExampleHtml)
+    );
 
 const divisInfoElements =
     [createPWithInnerHtml(divisInfoStartHtml), divisPfInfoDiv, divisRulesInfoDiv];
@@ -1175,21 +1181,17 @@ const gcdAndLcmPfInfoHtml =
 const gcdAndLcmPfInfoDiv =
     createDiv(createH3('Prime Factorizations'), ...createPsWithParagraphs(gcdAndLcmPfInfoHtml));
 
-const gcdAndLcmInfoEndHtml =
-    `The input numbers whose LCM is the highest are 1 billion, the max input; and 1 billion − 1. The LCM is 
-    999,999,999,000,000,000, or 999 quadrillion 999 trillion 999 billion. It has 18 digits.
-    
-    A pair of input numbers whose LCM might have the highest amount of unique prime factors is 223,092,870, the
-    product of the first 9 prime numbers; and 64,097,801, the product of the next 5 prime numbers. The LCM is
-    14,299,762,385,778,870, or 14 quadrillion ... It has 17 digits and 14 unique prime factors and its PF is
-    2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41 × 47! Other pairs of input numbers have the same LCM,
-    such as that 1<sup>st</sup> input number divided by 2 and the 2<sup>nd</sup> input number multiplied by 2.`;
-
-const gcdAndLcmInfoEndDiv =
-    createDiv(createH3('Other Info'), ...createPsWithParagraphs(gcdAndLcmInfoEndHtml));
+const gcdAndLcmOtherInfo =
+    `2 whole numbers are said to be <i>coprime</i> if their GCD is 1. Therefore, coprime numbers don't have any
+    common factors in their PFs. The input numbers whose LCM is the highest are 10,000, the max input, and 9,999.
+    Their LCM is 99,990,000. A pair of input numbers whose LCM has the highest amount of prime factors is
+    8,192 (2<sup>13</sup>) and 6,561 (3<sup>8</sup>). Their LCM is 53,747,712. A pair of input numbers whose LCM
+    might have the highest amount of <em>unique</em> prime factors is 2,310, the product of the first 5 prime
+    numbers; and 4,199, the product of the next 3 prime numbers. Their LCM is 9,699,690 and its PF is
+    2 × 3 × 5 × 7 × 11 × 13 × 17 × 19.`
 
 const gcdAndLcmInfoElements =
-    [createP(gcdAndLcmInfoStart), euclideanInfoDiv, gcdAndLcmPfInfoDiv, gcdAndLcmInfoEndDiv];
+    [createP(gcdAndLcmInfoStart), euclideanInfoDiv, gcdAndLcmPfInfoDiv, gcdAndLcmOtherInfoDiv];
 
 /**
  * @typedef GcdAndLcmPrimeFactorizationAnswer

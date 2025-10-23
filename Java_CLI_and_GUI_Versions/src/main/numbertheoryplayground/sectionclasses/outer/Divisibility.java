@@ -24,29 +24,31 @@ manually do some division but there are other ways to find them.
 %s
 
 Some rules can be used to determine if a whole number is divisible by another whole number.
-I'll go over 1 rule for each whole number in the range of 3 to 12, excluding 5 and 10, though
-there are rules for more whole numbers and many whole numbers have multiple rules. I'll go over
-an example of using these rules to find the factors of a whole number in the next paragraph.
-Let's have a variable n and let it represent an whole number. If the last 2 digits of n is
-divisible by 4, then n is divisible by 4. If the last 3 digits of n is divisible by 8, then n
-is divisible by 8. If the sum of the digits of n is divisible by 3, then n is divisible by 3.
-If the sum of the digits of n is divisible by 9, then n is divisible by 9. If n is even and
-divisible by 3, then it's also divisible by 6. If n is divisible by both 3 and 4, then it's
-also divisible by 12. For 7, we split n into blocks of 3 from right to left. Coincidentally,
-these are the blocks separated by commas if we write n with commas. We do an alternating sum of
-the blocks from right to left. We start with 0, add the last block, subtract the second to last
-block, add the third to last block, and so on for all the blocks. If this alternating sum is
-divisible by 7, then n is divisible by 7. For 11, we do an alternating sum of digits of n from
-left to right. We start with 0, add the first digit, subtract the second digit, add the third
-digit, and so on for all digits. If this alternating sum is divisible by 11, then n is
-divisible by 11.
+I'll go over 1 rule for each number in the range of 3 to 12, excluding 5 and 10, though there
+are rules for more numbers and many numbers have multiple rules. I'll go over an example of
+using these rules to find the factors of a number in a few paragraphs. Let's have a variable n
+and let it represent an whole number. If the last 2 digits of n is divisible by 4, then n is
+divisible by 4. If the last 3 digits of n is divisible by 8, then n is divisible by 8. If the
+sum of the digits of n is divisible by 3, then n is divisible by 3. If the sum of the digits of
+n is divisible by 9, then n is divisible by 9. If n is even and divisible by 3, then it's also
+divisible by 6. If n is divisible by both 3 and 4, then it's also divisible by 12.
+
+For 7, we split n into 3-digit blocks of 3 from right to left, though the leftmost block can
+contain 1 or 2 digits. Coincidentally, these are the blocks separated by commas if we write n
+with commas. We do an alternating sum of the blocks from right to left. We start with 0, add
+the rightmost block, subtract the block to the left of that, add the block to the left of that,
+and so on for all the blocks. If this sum is divisible by 7, then n is divisible by 7.
+
+For 11, we do an alternating sum of the digits of n from left to right. We start with 0, add
+the first digit, subtract the second digit, add the third digit, and so on for all digits. If
+this sum is divisible by 11, then n is divisible by 11.
 
 Here's an example. Let n be 4,695,768. The PF of n is 2^3 × 3^2 × 7^2 × 11^3. We can tell from
 that PF that n is divisible by all the numbers that had rules mentioned about them above. Let's
 check using the rules. The last 2 digits are 68, which is divisible by 4. The last 3 digits are
-768, which is divisible by 8. The sum of the digits is 45, which is divisible by 3 and 9. Since
-n is even and divisible by 3, it's also divisible by 6. Since n is divisible by both 3 and 4,
-it's also divisible by 12. The alternating sum of blocks of 3 from right to left is
+768, which is divisible by 8. The sum of the digits is 45, which is divisible by both 3 and 9.
+Since n is even and divisible by 3, it's also divisible by 6. Since n is divisible by both 3
+and 4, it's also divisible by 12. The alternating sum of 3-digit blocks from right to left is
 768 - 695 + 4 = 77, which is divisible by 7. The alternating sum of digits from left to right
 is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
         .formatted(PrimeFactorization.FACTORS_INFO);

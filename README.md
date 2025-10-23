@@ -166,20 +166,18 @@ previous one if you ignore the order of the prime numbers. The Number Theory Pla
 prime numbers in ascending order. There are some interesting applications for PFs. See the info for the
 "Divisibility" or "GCD and LCM" sections for some applications.
 
-For the CLI and GUI versions, the input number with the highest amount of prime factors is 2<sup>53</sup>
-(9,007,199,254,740,992), the largest power of 2 ≤ 10 quadrillion, the max input. The input number with the
-highest amount of *unique* prime factors is 304,250,263,527,210. This number is the product of the first 13
-prime numbers so it has 13 unique prime factors and its PF is
+For the website version, the input number with the highest amount of prime factors is 8,192 (2<sup>13</sup>),
+the largest power of 2 ≤ 10,000, the max input. An input number with the highest amount of *unique* prime
+factors is 2,310. This number has a PF of $2 \times 3 \times 5 \times 7 \times 11$. You could also multiply that
+number by 2, 3, or 4 and those numbers are ≤ the max input and have the same amount of unique prime factors.
+
+For the CLI and GUI versions, the input number with the highest amount of prime factors is 9,007,199,254,740,992
+(2<sup>53</sup>), the largest power of 2 ≤ 10 quadrillion, the max input. The input number with the highest
+amount of *unique* prime factors is 304,250,263,527,210. This number is the product of the first 13 prime
+numbers so it has 13 unique prime factors and its PF is
 $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$.
 You could also multiply that number by 2 or 3 and those numbers are ≤ the max input and have the same
 amount of unique prime factors.
-
-For the website version, the input numbers with the highest amount of prime factors are 536,870,912
-(2<sup>29</sup>) and 805,306,368 (2<sup>28</sup> × 3). An input number with the highest amount of
-<em>unique</em> prime factors is 223,092,870. This number is the product of the first 9 prime numbers so it has
-9 unique prime factors and its PF is
-$2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23$. You could also multiply that
-number by 2, 3, or 4 and those numbers are ≤ the max input and have the same amount of unique prime factors.
 
 #### Calculation
 
@@ -217,41 +215,47 @@ That would give us 7 factors. You can find the factors of $n$ by finding all the
 $2$, $3$, $2^2 \text{ } (4)$, $2 \times 3 \text{ } (6)$, $3^2 \text{ } (9)$, $2^2 \times 3 \text{ } (12)$, and
 $2 \times 3^2 \text{ } (18)$.
 
-For whole numbers that are < the max input of this section, the number of factors they have are generally pretty
-small, like < 100. For the CLI and GUI versions, an example of an input number with a high number of factors is
-9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2<sup>6</sup> 
-and the next 12 prime numbers so it has 13 unique prime factors and its PF is
+For the website version, whole numbers that are ≤ the max input of this section generally have a pretty small
+amount of factors, like < 20. An example of an input number with a high amount of factors is 9,240. This number
+has a PF of $2^3 \times 3 \times 5 \times 7 \times 11$, so it has $4 \times 2^4 = 2^6 = 64$ total factors!
+
+For the CLI and GUI versions, whole numbers that are ≤ the max input of this section still generally have a
+pretty small amount of factors, like < 100. An example of an input number with a high amount of factors is
+9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2<sup>6</sup> and the
+next 12 prime numbers so it has 13 unique prime factors and its PF is
 $2^6 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$.
-It has 28,672 total factors! For the website version, an example of an input number with a high number of
-factors is 892,371,480. This number is the product of 2<sup>3</sup> and the next 8 prime numbers so it has 9
-unique prime factors and its PF is
-$2^3 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23$. It has 1,024 total factors!
+It has $7 \times 2^12 = 28,672$ total factors!
 
 ##### Divisibility Rules
 
 Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1 rule
-for each whole number in the range of 3 to 12, excluding 5 and 10, though there are rules for more whole numbers
-and many whole numbers have multiple rules. I'll go over an example of using these rules to find the factors of a
-whole number in the next paragraph. Let's have a variable $n$ and let it represent a whole number. If the last 2
-digits of $n$ is divisible by 4, then $n$ is divisible by 4. If the last 3 digits of $n$ is divisible by 8, then
-$n$ is divisible by 8. If the sum of the digits of $n$ is divisible by 3, then $n$ is divisible by 3. If the sum
-of the digits of $n$ is divisible by 9, then $n$ is divisible by 9. If $n$ is even and divisible by 3, then it's
-also divisible by 6. If $n$ is divisible by both 3 and 4, then it's also divisible by 12. For 7, we split the
-number into blocks of 3 from right to left. Coincidentally, these are the blocks separated by commas if we write
-the number with commas. We do an alternating sum of the blocks from right to left. We start with 0, add the last
-block, subtract the 2<sup>nd</sup> to last block, add the 3<sup>rd</sup> to last block, and so on for all the
-blocks. If this alternating sum is divisible by 7, then $n$ is divisible by 7. For 11, we do an alternating sum of
-digits from left to right. We start with 0, add the 1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add
-the 3<sup>rd</sup> digit, and so on for all digits. If this alternating sum is divisible by 11, then $n$ is
-divisible by 11.
+for each number in the range of 3 to 12, excluding 5 and 10, though there are rules for more numbers and many
+numbers have multiple rules. I'll go over an example of using these rules to find the factors of a
+number in the "Example" section below. Let's have a variable $n$ and let it represent a whole number. If the
+last 2 digits of $n$ is divisible by 4, then $n$ is divisible by 4. If the last 3 digits of $n$ is divisible by
+8, then $n$ is divisible by 8. If the sum of the digits of $n$ is divisible by 3, then $n$ is divisible by 3. If
+the sum of the digits of $n$ is divisible by 9, then $n$ is divisible by 9. If $n$ is even and divisible by 3,
+then it's also divisible by 6. If $n$ is divisible by both 3 and 4, then it's also divisible by 12.
 
-Here's an example. Let $n$ be 4,695,768. The PF of $n$ is $2^3 \times 3^2 \times 7^2 \times 11^3$. We can tell from
-that PF that $n$ is divisible by all the numbers that had rules mentioned about them above. Let's check if $n$ is
-divisible by those numbers using those rules. The last 2 digits are 68, which is divisible by 4. The last 3 digits
-are 768, which is divisible by 8. The sum of the digits is 45, which is divisible by 3 and 9. Since $n$ is even and
-divisible by 3, it's also divisible by 6. Since $n$ is divisible by both 3 and 4, it's also divisible by 12. The
-alternating sum of blocks of 3 from right to left is $768 - 695 + 4 = 77$, which is divisible by 7. The alternating
-sum of digits from left to right is $4 - 6 + 9 - 5 + 7 - 6 + 8 = 11$, which, of course, is divisible by 11.
+For 7, we split $n$ into 3-digit blocks from right to left, though the leftmost block can contain 1 or 2 digits.
+Coincidentally, these are the blocks separated by commas if we write $n$ with commas. We do an alternating sum
+of the blocks from right to left. We start with 0, add the rightmost block, subtract the block to the left of
+that, add the block to the left of that, and so on for all the blocks. If this sum is divisible by 7, then $n$
+is divisible by 7.
+
+For 11, we do an alternating sum of the digits of $n$ from left to right. We start with 0, add the
+1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all the
+digits. If this sum is divisible by 11, then $n$ is divisible by 11.
+
+###### Example
+
+Let $n$ be 5,544. Its PF is $2^3 \times 3^2 \times 7 \times 11$. We can tell from that PF that $n$ is divisible
+by all the numbers that had rules mentioned about them above. Let's check if $n$ is divisible by those numbers
+using those rules. The last 2 digits are 44, which is divisible by 4. The last 3 digits are 544, which is
+divisible by 8. The sum of the digits is $5 + 5 + 4 + 4 = 18$, which is divisible by both 3 and 9. Since $n$ is
+even and divisible by 3, it's also divisible by 6. Since $n$ is divisible by both 3 and 4, it's also divisible
+by 12. The alternating sum of 3-digit blocks from right to left is $544 - 4 = 539$, which is divisible by 7.
+The alternating sum of digits from left to right is $5 - 5 + 4 - 4 = 0$, which is divisible by 11.
 
 #### Calculations
 
@@ -329,6 +333,32 @@ There are no common prime factors so the GCD is 1. The LCM PF is $2 \times 3 \ti
 Let's find the GCD and LCM of 54 and 99. The PF of 54 is $2 \times 3^3$ and the PF of 99 is $3^2 \times 11$. 3 is
 the only common prime factor and the min power of it is 2 so the GCD PF is $3^2$, which is 9. The max power of 3
 is 3 so $3^3$ is in the LCM PF. The LCM PF is $2 \times 3^3 \times 11$, which is 594.
+
+##### Other Info
+
+2 whole numbers are said to be *coprime* if their GCD is 1. Therefore, coprime numbers don't have any common
+factors in their PFs.
+
+For the website version, the input numbers whose LCM is the highest are 10,000, the max input, and 9,999. Their
+LCM is 99,990,000. A pair of input numbers whose LCM has the highest amount of prime factors is
+8,192 (2<sup>13</sup>) and 6,561 (3<sup>8</sup>). Their LCM is 53,747,712. A pair of input numbers whose LCM
+might have the highest amount of *unique* prime factors is 2,310, the product of the first 5 prime numbers; and
+4,199, the product of the next 3 prime numbers. The LCM is 9,699,690 and its PF is
+$2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19$.
+
+For the CLI and GUI versions, the input numbers whose LCM is the highest are 5 quadrillion
+(5,000,000,000,000,000), the max input, and 4,999,999,999,999,999, the max input - 1. Their LCM is
+24,999,999,999,999,995,000,000,000,000,000, or
+24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion! It has 32 digits.
+Trillion is before quadrillion. A pair of input numbers whose LCM has the highest amount of prime factors is
+4,503,599,627,370,496 (2<sup>52</sup>) and 1,853,020,188,851,841 (3<sup>32</sup>). Their LCM is
+8,345,261,032,023,157,253,752,158,683,136, or 8 nonillion ... A pair of input numbers whose LCM might have the
+highest amount of *unique* prime factors is 304,250,263,527,210, the product of the first 13 prime numbers, and
+133,869,006,807,307, the product of the next 8 prime numbers. Their LCM is
+40,729,680,599,249,024,150,621,323,470, or 40 octillion ... It has 29 digits and 21 unique prime factors and its
+PF is
+$2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37
+\times 41 \times 47 \times 53 \times 59 \times 61 \times 67 \times 71 \times 73$!
 
 #### Calculations
 

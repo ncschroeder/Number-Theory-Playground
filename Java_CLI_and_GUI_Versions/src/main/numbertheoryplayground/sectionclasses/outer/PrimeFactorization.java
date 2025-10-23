@@ -188,11 +188,12 @@ You can find the factors of n by finding all the PFs within n's PF, or the "sub-
 as I like to call them. For 2^2 × 3^2, the sub-factorizations are
 2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).
 
-For whole numbers that are < the max input of this section, the number of factors they have are
-generally pretty small, like < 100. An example of an input number with a high number of factors
-is 9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2^6
-and the next 12 prime numbers so it has 13 unique prime factors and its PF is
-2^6 x 3 x 5 x 7 x 11 x 13 x 17 x 19 x 23 x 29 x 31 x 37 x 41. It has 28,672 total factors!""";
+Whole numbers that are ≤ the max input of this section generally have a pretty small amount of
+factors, like < 100. An example of an input number with a high number of factors is
+9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2^6 and
+the next 12 prime numbers so it has 13 unique prime factors and its PF is
+2^6 x 3 x 5 x 7 x 11 x 13 x 17 x 19 x 23 x 29 x 31 x 37 x 41. It has 7 × 2^12 = 28,672 total
+factors!""";
     
     /**
      * This method calculates the number of factors and returns a string that says the number

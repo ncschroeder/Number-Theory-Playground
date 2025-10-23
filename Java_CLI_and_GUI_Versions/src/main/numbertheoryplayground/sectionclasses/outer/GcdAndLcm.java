@@ -23,8 +23,8 @@ GCD stands for greatest common divisor and is also known as greatest common fact
 LCM stands for least common multiple. To find the GCD and LCM of 2 whole numbers, you could
 manually do some division and multiplication but there are other ways to find them.
 
-The Euclidean algorithm can be used to find just the GCD of 2 integers. This was named after
-the ancient Greek mathematician Euclid.
+The Euclidean algorithm can be used to find just the GCD of 2 whole numbers. This was named
+after the ancient Greek mathematician Euclid.
 
 A simple way of explaining this algorithm is that it starts with 2 whole numbers that we want
 to find the GCD of and if the max of those numbers is divisible by the min, then that min is
@@ -42,7 +42,23 @@ of the new iteration is the remainder of the last iteration. Again, we check if 
 is 0 and if it is, then the min of this iteration is the GCD. Otherwise, we keep doing
 iterations until we get a remainder of 0.
 
-%s"""
+%s
+
+2 whole numbers are said to be coprime if their GCD is 1. Therefore, coprime numbers don't have
+any common factors in their PFs. the input numbers whose LCM is the highest are
+5 quadrillion (5,000,000,000,000,000), the max input, and
+4,999,999,999,999,999, the max input - 1. Their LCM is
+24,999,999,999,999,995,000,000,000,000,000, or
+24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion!
+It has 32 digits. Trillion is before quadrillion. A pair of input numbers whose LCM has the
+highest amount of prime factors is 4,503,599,627,370,496 (2^52) and
+1,853,020,188,851,841 (3^32). Their LCM is 8,345,261,032,023,157,253,752,158,683,136, or
+8 nonillion ... A pair of input numbers whose LCM might have the highest amount of unique prime
+factors is 304,250,263,527,210, the product of the first 13 prime numbers, and
+133,869,006,807,307, the product of the next 8 prime numbers. Their LCM is
+40,729,680,599,249,024,150,621,323,470, or 40 octillion ... It has 29 digits and 21 unique
+prime factors and its PF is
+2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41 × 47 × 53 × 59 × 61 × 67 × 71 × 73!"""
         .formatted(PrimeFactorization.GCD_AND_LCM_INFO);
     
     // This section uses prime factorizations so the input constraints for those will be used.

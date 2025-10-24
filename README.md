@@ -1,8 +1,16 @@
 # Number Theory Playground &nbsp;&nbsp; :heavy_plus_sign: &nbsp; :heavy_minus_sign: &nbsp; :heavy_multiplication_x: &nbsp; :heavy_division_sign:
 
-*Number theory* is a branch of math that involves the study of *integers*, which are whole numbers that can be positive, negative, or 0. The Number Theory Playground is an application where a user can navigate among sections that give info and do calculations for number theory concepts. Only positive integers are used in these calculations. The calculations are done based on input numbers provided by the user. Some sections do calculations that require 1 input number and some sections require 2 input numbers. Plenty of info about the sections can be found in the "All Sections" section.
+*Number theory* is a branch of math and is the study of integers. Let's go over a few types of numbers. *Natural numbers* are 1, 2, 3, and so on. *Whole numbers* are the natural numbers along with 0. *Integers* are the whole numbers along with negative natural numbers; so ..., -2, -1, 0, 1, 2, ...
 
 There are 3 versions of this application: Java command line interface (CLI), Java graphical user interface (GUI), and website. The Java versions have been refactored recently and the website version hasn't. The Java versions share a lot of code, namely the code for the calculations and text that gets displayed. The Java versions have some unit testing. The JUnit testing framework was used. The code for the tests is in the "Tests" folder located within the "Java Versions" folder. The Java GUI version was made with the Swing library. The files for the Java versions are copies of the files in an IntelliJ IDEA project of mine.
+The *Number Theory Playground* is an application where a user can visit sections that show info and do calculations for number theory concepts. These calculations are done based on input numbers provided by the user. Some sections require 1 input number and some require 2. An example of a section is the prime numbers section. It has 17 sentences of info and can find the first 30 prime numbers that are ≥ an input number. Plenty of info about the sections can be found in the ["All Sections" section](#all-sections).
+
+Almost all of the calculations involve only natural numbers. There are 2 exceptions to this:
+
+1. The divisibility section does calculations that might involve negative integers or 0.
+2. The Fibonacci-like sequences section does calculations where the result is a floating-point number.
+
+The term "whole number" is often used in this app since I find it to be more self-explanatory than "natural number."
 
 
 ## App Overview
@@ -245,7 +253,9 @@ is divisible by 7.
 
 For 11, we do an alternating sum of the digits of $n$ from left to right. We start with 0, add the
 1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all the
-digits. If this sum is divisible by 11, then $n$ is divisible by 11.
+digits. If this sum is divisible by 11, then $n$ is divisible by 11. These alternating sums might involve
+negative integers or 0, so that makes them some of the few calculations done by the Number Theory Playground
+that involve numbers other than natural numbers.
 
 ###### Example
 
@@ -480,8 +490,12 @@ $\frac{8}{5} = 1.6$, and $\frac{21}{13} \approx 1.615384615384615$.
 
 #### Calculations
 
-Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers, as well as the ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup> and 20<sup>th</sup> and 19<sup>th</sup> numbers.
 #### Example Calculations Screenshots
+1. Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers.
+2. Find the ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>,
+   15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers. These ratios are 
+   floating-point numbers most of the time, so the calculations for them are some of the few calculations done by
+   the Number Theory Playground that involve numbers other than natural numbers.
 
 #### Input Range: 1 - 9,000,000,000,000,000,000 (9 quintillion)
 ![CLI Fibonacci-like sequences calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/fibo-like_sequences_calculations.JPG)

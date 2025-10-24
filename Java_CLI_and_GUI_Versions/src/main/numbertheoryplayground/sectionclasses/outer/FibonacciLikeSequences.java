@@ -58,7 +58,11 @@ The Golden Ratio is an irrational number symbolized by the Greek letter Phi.
 Phi = (1 + the square root of 5) / 2 ≈ %s. As we advance further and further into a
 Fibonacci-like sequence, the ratio between a number and the number before it gets closer and
 closer to Phi. For example, recall that the first 8 numbers of the Fibonacci sequence are
-1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ %s."""
+1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ %s.
+
+The ratios that get calculated by this section are floating-point numbers most of the time, so
+these calculations are some of the few calculations done by the Number Theory Playground that
+involve numbers other than natural numbers."""
         .formatted(
             PHI_STRING,
             BigDecimal.valueOf(21).divide(BigDecimal.valueOf(13), MATH_CONTEXT_WITH_ROUNDING) /* ~1.615 */

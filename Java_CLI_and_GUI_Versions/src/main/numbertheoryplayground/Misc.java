@@ -9,9 +9,25 @@ import java.util.stream.Stream;
  * Utility class with members that are used by multiple classes and don't fit in any other class.
  */
 public class Misc {
-    public static final Supplier<Stream<String>> ntpInfoParagraphStreamSupplier = () -> """
-"""
-        .transform(Misc::getParagraphStream);
+    public static final String NTP_INFO = """
+Number theory is a branch of math and is the study of integers. Let's go over a few types of
+numbers. Natural numbers are 1, 2, 3, and so on. Whole numbers are the natural numbers along
+with 0. Integers are the whole numbers along with negative natural numbers; so ...,
+-2, -1, 0, 1, 2, ...
+
+The Number Theory Playground is an application where a user can navigate among sections that show
+info and do calculations for number theory concepts. An example of a section is the prime numbers
+section and it has 17 sentences of info and can find the first 30 prime numbers that are ≥ an
+input number. Almost all of these calculations involve only natural numbers. There are 2
+exceptions to this:
+
+1. The divisibility section does calculations that might involve negative integers or 0.
+
+2. The Fibonacci-like sequences section does calculations that involve floating-point numbers.
+
+The calculations are done based on input numbers provided by the user. Some sections do
+calculations that require 1 input number and some require 2 input numbers.""";
+    
     
     // Max input constants
     public static final long FIVE_HUNDRED_BILLION = 500_000_000_000L;

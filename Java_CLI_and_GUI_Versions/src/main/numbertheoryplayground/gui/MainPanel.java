@@ -60,9 +60,7 @@ final class MainPanel extends NtpPanel {
         Font sectionBtnFont = GARAMOND_25;
         
         String homeText =
-            ntpInfoParagraphStreamSupplier
-            .get()
-            .collect(Collectors.joining("\n\n"));
+            getParagraphs(NTP_INFO).collect(Collectors.joining("\n\n"));
         
         JButton homeBtn = createButton("Home", sectionBtnFont);
         homeBtn.addActionListener(e -> {

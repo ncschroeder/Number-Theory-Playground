@@ -41,7 +41,9 @@ and so on for all the blocks. If this sum is divisible by 7, then n is divisible
 
 For 11, we do an alternating sum of the digits of n from left to right. We start with 0, add
 the first digit, subtract the second digit, add the third digit, and so on for all digits. If
-this sum is divisible by 11, then n is divisible by 11.
+this sum is divisible by 11, then n is divisible by 11. These alternating sums might involve
+negative integers or 0, so that makes them some of the few calculations done by the Number
+Theory Playground that involve numbers other than natural numbers.
 
 Here's an example. Let n be 4,695,768. The PF of n is 2^3 × 3^2 × 7^2 × 11^3. We can tell from
 that PF that n is divisible by all the numbers that had rules mentioned about them above. Let's

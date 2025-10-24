@@ -41,7 +41,8 @@ public class NtpCli {
         GoldbachConjecture.setMaxInputForCli();
         String ntpInfo =
             buildStringWithHeadingAndInfoParagraphs(
-                "Number Theory Playground", ntpInfoParagraphStreamSupplier.get()
+                "Number Theory Playground",
+                getParagraphs(NTP_INFO)
             );
         
         /*

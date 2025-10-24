@@ -842,7 +842,9 @@ const divisRulesInfoHtml =
     
     For 11, we do an alternating sum of the digits of <var>n</var> from left to right. We start with 0, add the
     1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all
-    the digits. If this sum is divisible by 11, then <var>n</var> is divisible by 11.`;
+    the digits. If this sum is divisible by 11, then <var>n</var> is divisible by 11. These alternating sums
+    might involve negative integers or 0, so that makes them some of the few calculations done by the Number
+    Theory Playground that involve numbers other than natural numbers.`;
 
 const divisRulesExampleHtml =
     `Let <var>n</var> be 5,544. Its PF is 2<sup>3</sup> × 3<sup>2</sup> × 7 × 11. We can tell from that PF that
@@ -1443,7 +1445,11 @@ const fiboLikeSequencesInfoHtml =
     ${phiLetter} = (1 + <math><msqrt><mn>5</mn></msqrt></math>) / 2 ≈ ${phiNumString}. As we advance further
     and further into a Fibonacci-like sequence, the ratio between a number and the number before it gets closer
     and closer to ${phiLetter}. For example, recall that the first 8 numbers of the Fibonacci sequence are
-    1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ 1.615384615384615.`;
+    1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ 1.615384615384615.
+    
+    The ratios that get calculated by this section are floating-point numbers most of the time, so these
+    calculations are some of the few calculations done by the Number Theory Playground that involve numbers other
+    than natural numbers.`;
 
 const fiboLikeSequencesActionSentenceEnding =
     'the first 20 numbers in the Fibonacci-like sequence that starts with those numbers, \
@@ -1538,7 +1544,6 @@ function createLiWithInnerHtml(innerHtml) {
 }
 
 const ancientMultStepsOl = arrToOl(ancientMultStepsArr, createLiWithInnerHtml);
-ancientMultStepsOl.id = 'ancient-mult-steps-ol';
 
 const ancientMultResultSentence = 'This gives us the product of the 2 numbers.';
 

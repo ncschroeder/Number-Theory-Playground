@@ -46,11 +46,6 @@ summary {
     font-size: 1.2rem;
 }
 
-ol {
-    list-style-type: none;
-    padding: 0;
-}
-
 table {
     border-collapse: collapse;
 }
@@ -67,7 +62,7 @@ h1, h2, h3, h4, summary, table, .centered-pf-span, .gcd-message-div, #two-square
     text-align: center;
 }
 
-h3, p, .narrow-text-div, #ancient-mult-steps-ol, .answer-flex-ol {
+h3, p, .narrow-text-div, .non-answer-info-div ol, .answer-flex-ol {
     max-width: 40rem;
 }
 
@@ -154,13 +149,21 @@ Some things that this rule does:
 /* Spacing between section info and directions. */
 #section-info-div {
     margin-bottom: 3rem;
+/*
+.div-with-p-and-ol is used for divs with at least 1 p and an ol that relates to the p(s) and is used for the
+second child of home-content-div and the first child of the ancient Egyptian multiplication info div.
+*/
+.non-answer-info-div > .div-with-p-and-ol > :not(:first-child) {
+    margin-top: 0.3rem;
 }
 
 .non-answer-info-div > :not(:first-child) {
     margin-top: 1rem;
+.div-with-p-and-ol li:not(:first-child) {
+    margin-top: 0.2rem;
 }
 
-/* For divs within a non-answer-info-div, the 1st child is a heading. */
+/* For other divs within a non-answer-info-div, the first child is a heading. */
 
 .non-answer-info-div > div > :nth-child(2) {
     margin-top: 0.3rem;
@@ -186,6 +189,11 @@ higher specificity than the "#section-content-div > :not(:first-child)" selector
 
 #answer-div > div {
     margin-top: 1rem;
+}
+
+.answer-normal-ol:not(#pythag-triples-ol), .answer-flex-ol {
+    list-style-type: none;
+    padding: 0;
 }
 
 /* For GCD and LCM PFs info, Pythagorean triples, and Fibonacci-like sequence ratios info. */
@@ -227,11 +235,6 @@ in this selector to give it higher specificity than the "#answer-div > div" sele
 /* The ratio is the last part of the text in each li in this ol. Align them. */
 #fibo-like-sequence-ratios-div > ol {
     text-align: right;
-}
-
-#pythag-triples-ol, #ancient-mult-steps-ol {
-    list-style-type: decimal;
-    padding: revert;
 }
 
 #ancient-mult-table-div {

@@ -337,14 +337,14 @@ const { inputDiv: inputDiv2, inputField: inputField2 } = createInputDiv();
 const inputDivDiv = createDiv(inputDiv1, inputDiv2);
 inputDivDiv.id = 'input-div-div';
 
-const sectionDirectionsP = createP();
+const sectionDirectionsDiv = createNarrowTextDiv();
 const calculateBtn = createBtn('Calculate');
 calculateBtn.id = 'calculate-btn';
 const answerDiv = createDiv();
 answerDiv.id = 'answer-div';
 
 const sectionContentDiv =
-    createDiv(sectionInfoDetails, sectionDirectionsP, inputDivDiv, calculateBtn, answerDiv);
+    createDiv(sectionInfoDetails, sectionDirectionsDiv, inputDivDiv, calculateBtn, answerDiv);
 sectionContentDiv.id = 'section-content-div';
 
 getElementById('home-btn').onclick = () => {
@@ -427,7 +427,7 @@ class Section {
             sectionHeading.textContent = heading;
             sectionInfoDetails.open = false;
             sectionInfoDiv.replaceChildren(...infoHtmlElements);
-            sectionDirectionsP.textContent = directions;
+            sectionDirectionsDiv.textContent = directions;
             inputField1.value = '';
             inputField2.value = '';
             answerDiv.innerHTML = '';
@@ -687,8 +687,8 @@ const conjectureDefinitionHtml =
 const twinPrimePairsInfoHtml =
     `A <i>twin prime pair</i> is a pair of prime numbers that differ by 2. The first 5 twin prime pairs are
     3 & 5, 5 & 7, 11 & 13, 17 & 19, and 27 & 29. The largest known twin prime pair is
-    (2,996,863,034,895 × 2<sup>1,290,000</sup>) ± 1. They have 388,342 digits! It's conjectured that there are
-    an infinite amount of twin prime pairs. ${conjectureDefinitionHtml}.
+    (2,996,863,034,895 × 2<sup>1,290,000</sup>) ± 1. They have 388,342 digits! The <i>twin prime conjecture</i>
+    says that there are an infinite amount of twin prime pairs. ${conjectureDefinitionHtml}.
     
     All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this means that all twin
     prime pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6 and another number that's 1
@@ -778,7 +778,7 @@ function createPfSpan(fps) {
 function createPfAnswerElements(fps, inputString) {
     const headingText = `The PF of ${inputString} is:`;
     const pfSpan = createPfSpan(fps);
-    pfSpan.className = 'centered-pf-span';
+    pfSpan.id = 'pf-section-pf-span';
     return [createNonBoldAnswerH3(headingText), pfSpan];
 }
 
@@ -852,16 +852,18 @@ const divisRulesExampleHtml =
     <var>n</var> is divisible by those numbers using those rules. The last 2 digits are 44, which is divisible
     by 4. The last 3 digits are 544, which is divisible by 8. The sum of the digits is 5 + 5 + 4 + 4 = 18, which
     is divisible by both 3 and 9. Since <var>n</var> is even and divisible by 3, it's also divisible by 6. Since
-    <var>i</var> is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of 3-digit blocks
+    <var>n</var> is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of 3-digit blocks
     from right to left is 544 − 5 = 539, which is divisible by 7. The alternating sum of digits from left to
     right is 8 − 7 + 1 − 2 = 0, which is divisible by 11.`;
+    
+const divisRulesExampleP = createPWithInnerHtml(divisRulesExampleHtml);
+divisRulesExampleP.id = 'divis-rules-example-p';
 
 const divisRulesInfoDiv =
     createDiv(
         createH3('Divisibility Rules'),
         ...createPsWithParagraphs(divisRulesInfoHtml),
-        createH4('Example'),
-        createPWithInnerHtml(divisRulesExampleHtml)
+        createDiv(createH4('Example'), divisRulesExampleP)
     );
 
 const divisInfoElements =
@@ -1132,7 +1134,7 @@ function createEuclideanExampleDiv(iterations) {
         `Let's find the GCD of ${iterations[0].min} and ${iterations[0].max} using the Euclidean algorithm. \
         Here are the iterations:`;
     const tableDiv = createEuclideanTableDiv(createNarrowTextDiv(startText), iterations);
-    tableDiv.className = 'euclidean-example-table';
+    tableDiv.querySelector('table').className = 'euclidean-example-table';
     return tableDiv;
 }
     
@@ -1192,6 +1194,9 @@ const gcdAndLcmOtherInfo =
     numbers; and 4,199, the product of the next 3 prime numbers. Their LCM is 9,699,690 and its PF is
     2 × 3 × 5 × 7 × 11 × 13 × 17 × 19.`
 
+const gcdAndLcmOtherInfoDiv =
+    createDiv(createH3('Other Info'), createPWithInnerHtml(gcdAndLcmOtherInfo));
+
 const gcdAndLcmInfoElements =
     [createP(gcdAndLcmInfoStart), euclideanInfoDiv, gcdAndLcmPfInfoDiv, gcdAndLcmOtherInfoDiv];
 
@@ -1218,6 +1223,7 @@ function createGcdAndLcmAnswerElements({ euclideanIterations, pfAnswer }, inputS
             createH4('Euclidean Algorithm Iterations'),
             euclideanIterations
         );
+    euclideanDiv.querySelector('table').id = 'euclidean-answer-table';
     const pfDiv = createGcdAndLcmPfAnswerDiv(pfAnswer, inputString1, inputString2);
     return [mainHeading, euclideanDiv, pfDiv];
 }
@@ -1273,6 +1279,7 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
             gcdInfoAppendable,
             createGcdOrLcmPfLi('LCM', lcmPf)
         );
+    pfsOl.id = 'gcd-and-lcm-pf-answer-ol';
     pfsOl.className = answerNormalOlClassName;
 
     return createDiv(heading, pfsOl);
@@ -1292,9 +1299,9 @@ new DoubleInputSection(
 
 
 const goldbachConjectureInfoHtml =
-    `The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers.
-    This was named after 1700s Prussian mathematician Christian Goldbach. ${conjectureDefinitionHtml}.
-    The Goldbach Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 10<sup>18</sup>.`;
+    `The <i>Goldbach conjecture</i> says that every even number ≥ 4 can be expressed as the sum of 2 prime
+    numbers. This was named after 1700s Prussian mathematician Christian Goldbach. ${conjectureDefinitionHtml}.
+    The Goldbach conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 10<sup>18</sup>.`;
 
 /**
  * @param {number[]} primePairStarts
@@ -1510,7 +1517,7 @@ new DoubleInputSection(
 );
 
 
-const ancientMultInfoStart =
+const ancientMultAlgorithmInfoStart =
     'The ancient Egyptians had an interesting algorithm for multiplication of 2 whole numbers. My way of \
     explaining the algorithm goes like this:';
 
@@ -1547,6 +1554,14 @@ const ancientMultStepsOl = arrToOl(ancientMultStepsArr, createLiWithInnerHtml);
 
 const ancientMultResultSentence = 'This gives us the product of the 2 numbers.';
 
+const ancientMultAlgorithmInfoDiv =
+    createDiv(
+        createP(ancientMultAlgorithmInfoStart),
+        ancientMultStepsOl,
+        createNarrowTextDiv(ancientMultResultSentence)
+    );
+ancientMultAlgorithmInfoDiv.className = 'div-with-p-and-ol';
+
 const ancientMultExampleParagraphs =
     `Let's find the product of 5 and 12. Let's first use 5 for the number represented by <var>a</var> in the
     algorithm above and 12 for <var>b</var>. The powers of 2 ≤ 5 are 1, 2, and 4. The products of 12 and these
@@ -1558,12 +1573,7 @@ const ancientMultExampleParagraphs =
     The products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 × (4 + 8) = 60.`;
 
 const ancientMultInfoElements =
-    [
-        createP(ancientMultInfoStart),
-        ancientMultStepsOl,
-        createNarrowTextDiv(ancientMultResultSentence),
-        ...createPsWithParagraphs(ancientMultExampleParagraphs)
-    ];
+    [ancientMultAlgorithmInfoDiv, ...createPsWithParagraphs(ancientMultExampleParagraphs)];
 
 /**
  * @typedef {{ powerOf2String: string, correspondingMultipleString: string }} AncientMultiplicationTableRow

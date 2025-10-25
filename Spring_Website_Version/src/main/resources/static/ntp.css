@@ -1,6 +1,5 @@
 body {
-    width: 90%;
-    margin: 1rem auto;
+    margin: 1.3rem 1.5rem 2rem;
     background-color: rgb(0, 82, 78);
     --default-color: gainsboro;
     color: var(--default-color);
@@ -8,10 +7,6 @@ body {
 
 body, button {
     font-family: Verdana;
-}
-
-h1, h2 {
-    font-family: Georgia;
 }
 
 h1 {
@@ -22,62 +17,34 @@ h1 {
 }
 
 h2 {
-    font-size: 1.5rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    font-size: 1.6rem;
+    /* Can put bottom margin on this instead of a top margin for both home and section content. */
+    margin: 1.2rem 0 0.5rem;
+}
+
+h1, h2 {
+    font-family: Georgia;
 }
 
 h3 {
-    /* margin: 1rem auto; */
-    font-size: 1.3rem;
+    font-size: 1.2rem;
 }
 
-h4 {
-    margin-top: 0;
-    margin-bottom: 0.3rem;
-    /* margin: 0.5rem auto; */
+h1, h2, h3, h4 {
+    text-align: center;
 }
 
 button {
     font-size: 1rem;
 }
 
-summary {
-    font-size: 1.2rem;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-table, th, td {
-    border: 0.15rem solid var(--default-color);
-}
-
-th, td {
-    padding: 0.5rem;
-}
-
-h1, h2, h3, h4, summary, table, .centered-pf-span, .gcd-message-div, #two-square-theorem-answer-div {
-    text-align: center;
-}
-
-h3, p, .narrow-text-div, .non-answer-info-div ol, .answer-flex-ol {
-    max-width: 40rem;
-}
-
-/* Since h3s get a max width, they need this rule as well. */
-h3, p, ol, table, .narrow-text-div {
-    margin: 0 auto;
-}
-
-
 #section-btns-div {
-    margin-top: 1rem;
+    max-width: 55rem;
+    margin: 1.1rem auto 0;
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem;
+    gap: 1.2rem;
+    flex-wrap: wrap;
 }
 
 #section-btns-div > button {
@@ -92,19 +59,95 @@ h3, p, ol, table, .narrow-text-div {
 }
 
 
+summary {
+    font-size: 1.15rem;
+    width: max-content;
+    margin: 0 auto 0.6rem;
+}
+
+h3, h4, p, .narrow-text-div, ol:not(.answer-normal-ol) {
+    max-width: 40rem;
+}
+
+/* Since h3s and h4s get a max width, they need this rule as well to have a center alignment. */
+h3, h4, p, ol, table, .narrow-text-div {
+    margin: 0 auto;
+}
+
+table {
+    text-align: center;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.4rem 0.7rem;
+}
+
+table, th, td {
+    border: 0.15rem solid var(--default-color);
+}
+
+.non-answer-info-div > :not(:first-child) {
+    margin-top: 0.8rem;
+}
+
+/*
+.div-with-p-and-ol is used for divs with at least 1 p and an ol that relates to the p(s) and is used for the
+second child of home-content-div and the first child of the ancient Egyptian multiplication info div.
+*/
+.non-answer-info-div > .div-with-p-and-ol > :not(:first-child) {
+    margin-top: 0.3rem;
+}
+
+.div-with-p-and-ol li:not(:first-child) {
+    margin-top: 0.2rem;
+}
+
+/* For other divs within a non-answer-info-div, the first child is a heading. */
+
+.non-answer-info-div > div > :nth-child(2) {
+    margin-top: 0.3rem;
+}
+
+.non-answer-info-div > div > :nth-child(n + 3) {
+    margin-top: 0.8rem;
+}
+
+/*
+Some things that this rule does:
+1. Make the section directions appear 0.8 rem below the section info details summary element when that details
+   element is closed.
+2. Make the section info div appear 0.8 rem below the details summary element when that details element is open.
+*/
+#section-content-div > :nth-child(n + 3):not(#answer-div) {
+    margin-top: 0.8rem;
+}
+
+#divis-rules-example-p {
+    margin-top: 0.2rem;
+}
+
+/* Spacing between section info and directions. */
+#section-info-div {
+    margin-bottom: 1.5rem;
+}
+
+
 #input-div-div {
     display: flex;
     justify-content: center;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .input-div {
     display: grid;
-    gap: 0.1rem;
+    gap: 0.3rem;
 }
 
 .input-div > .input-field {
     margin: auto;
+    /* Make a little wider than "1,000,000,000,000,000" (1 quadrillion), the max input of all sections. */
     width: 9rem;
     grid-column: 1 / 3;
     grid-row: 1;
@@ -129,71 +172,35 @@ h3, p, ol, table, .narrow-text-div {
     margin-right: auto;
 }
 
-
 #calculate-btn {
     display: block;
     margin: auto;
 }
 
 
-/*
-Some things that this rule does:
-1. Make the section directions appear 1 rem below the section info details summary element when that details
-   element is closed.
-2. Make the section info div appear 1 rem below the details summary element when that details element is open.
-*/
-#section-content-div > :not(:first-child), #section-info-div {
+#answer-div {
     margin-top: 1rem;
+    
+    /*
+    Put min height for 2 reasons:
+    1. A user can scroll to the bottom when the answer div is empty and generate an answer and then will
+       probably be able to see the whole answer without having to scroll down.
+    2. After generating an answer, the user can generate another answer and if the content for that answer takes
+       up less vertical space, the page probably won't get smaller.
+    */
+    min-height: 25rem;
 }
 
-/* Spacing between section info and directions. */
-#section-info-div {
-    margin-bottom: 3rem;
-/*
-.div-with-p-and-ol is used for divs with at least 1 p and an ol that relates to the p(s) and is used for the
-second child of home-content-div and the first child of the ancient Egyptian multiplication info div.
-*/
-.non-answer-info-div > .div-with-p-and-ol > :not(:first-child) {
-    margin-top: 0.3rem;
+#answer-div > div:not(#two-square-theorem-answer-div, #fibo-like-sequence-ratios-div, #ancient-mult-table-div) {
+    margin-top: 0.7rem;
 }
-
-.non-answer-info-div > :not(:first-child) {
-    margin-top: 1rem;
-.div-with-p-and-ol li:not(:first-child) {
-    margin-top: 0.2rem;
-}
-
-/* For other divs within a non-answer-info-div, the first child is a heading. */
-
-.non-answer-info-div > div > :nth-child(2) {
-    margin-top: 0.3rem;
-}
-
-.non-answer-info-div > div > :nth-child(n + 3) {
-    margin-top: 0.8rem;
-}
-
-/*
-The answer div is a direct child of the section content div but we must put both IDs in this selector to give it
-higher specificity than the "#section-content-div > :not(:first-child)" selector.
-*/
-#section-content-div > #answer-div {
-    margin-top: 2rem;
-}
-
 
 .non-bold-answer-h3 {
-    margin-bottom: 1rem;
     font-weight: normal;
 }
 
-#answer-div > div {
-    margin-top: 1rem;
-}
-
-.answer-normal-ol:not(#pythag-triples-ol), .answer-flex-ol {
-    list-style-type: none;
-    padding: 0;
+#answer-div h4 {
+    margin-bottom: 0.4rem;
 }
 
 /* For GCD and LCM PFs info, Pythagorean triples, and Fibonacci-like sequence ratios info. */
@@ -201,35 +208,55 @@ higher specificity than the "#section-content-div > :not(:first-child)" selector
     width: max-content;
 }
 
+.answer-normal-ol:not(#gcd-and-lcm-pf-answer-ol) {
+    margin-top: 0.4rem;
+}
+
+.answer-normal-ol > li:not(:first-child) {
+    margin-top: 0.3rem;
+}
+
 /*
 For primes, twin prime pairs, divisibility info factors and PFs, Goldbach Conjecture prime pairs,
 and Fibonacci-like sequence numbers.
 */
 .answer-flex-ol {
+    margin-top: 0.9rem;
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem;
+    --answer-flex-ol-row-gap: 0.8rem;
+    gap: var(--answer-flex-ol-row-gap) 1.3rem;
+    flex-wrap: wrap;
 }
 
-.centered-pf-span {
+.answer-normal-ol:not(#pythag-triples-ol), .answer-flex-ol {
+    list-style-type: none;
+    padding: 0;
+}
+
+#pf-section-pf-span {
     display: block;
 }
 
+#pf-section-pf-span, #two-square-theorem-answer-div {
+    margin-top: 0.3rem;
+    text-align: center;
+}
+
 #divis-answer-factors-ol {
+    margin-top: var(--answer-flex-ol-row-gap);
+}
+
+.gcd-message-div {
+    text-align: center;
+}
+
+.euclidean-example-table, #euclidean-answer-table, .gcd-message-div {
     margin-top: 0.5rem;
 }
 
-.euclidean-example-table, .gcd-message-div {
-    margin-top: 0.5rem;
-}
-
-/*
-Fibonacci-like sequence ratios divs will always be a direct child of the answer div but we must include both IDs
-in this selector to give it higher specificity than the "#answer-div > div" selector.
-*/
-#answer-div > #fibo-like-sequence-ratios-div {
-    margin-top: 1.5rem;
+#fibo-like-sequence-ratios-div {
+    margin-top: 1.1rem;
 }
 
 /* The ratio is the last part of the text in each li in this ol. Align them. */
@@ -238,14 +265,18 @@ in this selector to give it higher specificity than the "#answer-div > div" sele
 }
 
 #ancient-mult-table-div {
+    margin: 1rem 0;
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem;
+    gap: 1.4rem;
+    flex-wrap: wrap;
 }
 
 #ancient-mult-table-div > table {
+    /* Margin needs to be this to make tables always be 1.4 rem from each other when they're in 1 row. */
     margin: 0;
+    
+    /* Prevent the shorter table from expanding to be the same height as the taller one. */
     height: max-content;
 }
 

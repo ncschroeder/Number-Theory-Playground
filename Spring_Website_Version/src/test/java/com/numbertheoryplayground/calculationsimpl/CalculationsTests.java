@@ -13,7 +13,7 @@ class CalculationsTests {
     @ParameterizedTest
     @MethodSource("getArgsForGetPrimes")
     void getPrimes(int input, int[] expectedPrimes) {
-        assertArrayEquals(expectedPrimes, Calculations.getPrimes(input).toArray());
+        assertArrayEquals(expectedPrimes, Calculations.getPrimes(input));
     }
     
     static Stream<Arguments> getArgsForGetPrimes() {
@@ -141,7 +141,7 @@ class CalculationsTests {
         11,   60,   61,   5
         100,  621,  629,  11
         """)
-    void pythagoreanTripleIsPrimitive(int a, int b, int c, int multiplicand) {
+    void pythagTripleIsPrimitive(int a, int b, int c, int multiplicand) {
         assertAll(
             () -> assertTrue(pt(a, b, c).isPrimitive()),
             () -> assertFalse(pt(a * multiplicand, b * multiplicand, c * multiplicand).isPrimitive())

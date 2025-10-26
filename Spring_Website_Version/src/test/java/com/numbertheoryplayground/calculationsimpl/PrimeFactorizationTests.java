@@ -16,7 +16,6 @@ class PrimeFactorizationTests {
         return new FactorAndPower(factor, power);
     }
     
-    
     static int pow(int a, int b) {
         return (int) Math.pow(a, b);
     }
@@ -34,7 +33,6 @@ class PrimeFactorizationTests {
             arguments(pow(2, 3), List.of(fp(2, 3))),
             arguments(3, List.of(fp(3, 1))),
             arguments(2 * 3 * 5 * 7, List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1))),
-            arguments(2 * pow(5, 3) * pow(7, 2), List.of(fp(2, 1), fp(5, 3), fp(7, 2))),
             arguments(pow(2, 4) * 7, List.of(fp(2, 4), fp(7, 1))),
             arguments(pow(3, 3) * pow(5, 2) * 7, List.of(fp(3, 3), fp(5, 2), fp(7, 1))),
             arguments(pow(5, 2) * pow(17, 2), List.of(fp(5, 2), fp(17, 2))),
@@ -72,7 +70,7 @@ class PrimeFactorizationTests {
         List<FactorAndPower> input2 = List.of(fp(2, 1), fp(3, 2), fp(5, 2));
         List<List<FactorAndPower>> expectedFactorFpLists2 =
             List.of(
-                // The comments show the corresponding factor.
+                // The comments say the corresponding factor.
                 List.of(fp(2, 1)), // 2
                 List.of(fp(3, 1)), // 3
                 List.of(fp(5, 1)), // 5

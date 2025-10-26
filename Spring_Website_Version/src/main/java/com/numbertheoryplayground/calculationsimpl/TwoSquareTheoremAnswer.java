@@ -11,8 +11,12 @@ public final class TwoSquareTheoremAnswer {
      * The first prime number ≥ the input that's 1 above a multiple of 4.
      */
     private int primeNum;
-    // a and b are the ints whose squares sum to primeNum.
+    
+    /**
+     * a and b are the ints whose squares sum to primeNum.
+     */
     private int a;
+    
     private int b;
     
     public TwoSquareTheoremAnswer(int input) {

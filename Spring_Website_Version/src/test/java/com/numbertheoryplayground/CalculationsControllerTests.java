@@ -17,8 +17,8 @@ public class CalculationsControllerTests {
     @Autowired
     private MockMvc mockMvc;
     
-    void testBadRequest(String endpoint, String queryParams) {
-        String url = String.format("/calculate%s?%s", endpoint, queryParams);
+    void testBadRequest(String endpoint, String queryString) {
+        String url = String.format("/calculate%s?%s", endpoint, queryString);
         
         try {
             mockMvc
@@ -54,7 +54,8 @@ public class CalculationsControllerTests {
     
     static final List<String> doubleInputEndpoints =
         List.of(
-            GCD_AND_LCM_ANSWER_ENDPOINT, FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT,
+            GCD_AND_LCM_ANSWER_ENDPOINT,
+            FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT,
             ANCIENT_MULT_ANSWER_ENDPOINT
         );
 }

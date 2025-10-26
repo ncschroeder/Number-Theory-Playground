@@ -25,11 +25,11 @@ class TwoSquareTheoremAnswerTests {
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
         INPUT,    EXPECTED_PRIME_NUM,  EXPECTED_A,  EXPECTED_B
         5,             5,                  1,           2
-        273,           277,                9,           14
-        5_098,         5_101,              50,          51
-        340_000,       340_037,            166,         559
+        45,            53,                 2,           7
+        275,           277,                9,           14
+        5_090,         5_101,              50,          51
         """)
-    void twoSquareTheoremAnswer(int input, int expectedPrimeNum, int expectedA, int expectedB) {
+    void allMethods(int input, int expectedPrimeNum, int expectedA, int expectedB) {
         var answer = new TwoSquareTheoremAnswer(input);
         assertEquals(expectedPrimeNum, answer.getPrimeNum());
         assertEquals(expectedA, answer.getA());

@@ -30,7 +30,7 @@ class AncientMultiplicationAnswerTests {
     
     @ParameterizedTest
     @MethodSource("getArgs")
-    void ancientMultiplicationAnswerTableRows(
+    void tableRows(
         int input1,
         int input2,
         List<TableRow> expectedTable1Rows,

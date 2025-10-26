@@ -38,10 +38,10 @@ public final class PrimeFactorization {
         int remaining = input;
 
         /*
-        Find all the prime factors and their powers and put these in factorsAndPowers. Divide
-        remaining by each factor that is found. When remaining becomes 1, the entire prime
-        factorization has been found. First 2 will be checked and then odd numbers will be
-        checked since all prime numbers besides 2 are odd.
+        Find all the prime factors and their powers and put these in tempFps. Divide remaining
+        by each factor that's found. When remaining becomes 1, the entire prime factorization
+        has been found. First, 2 will be checked and then odd numbers will be checked since all
+        prime numbers besides 2 are odd.
          */
         
         if (isDivisible(remaining, 2)) {
@@ -74,11 +74,15 @@ public final class PrimeFactorization {
         fps = List.copyOf(tempFps);
     }
     
+    /**
+     * Constructs a PrimeFactorization for the prime factorization whose factors and powers are
+     * in the list provided.
+     */
     PrimeFactorization(List<FactorAndPower> fps) {
         this.fps =
             fps
             .stream()
-            .sorted(Comparator.comparingLong(FactorAndPower::factor))
+            .sorted(Comparator.comparingInt(FactorAndPower::factor))
             .toList();
         
         var tempCorrespondingInt = 1;
@@ -96,7 +100,7 @@ public final class PrimeFactorization {
         return fps;
     }
     
-    boolean isForAPrimeNumber() {
+    public boolean isForAPrimeNumber() {
         return fps.size() == 1 && fps.getFirst().power == 1;
     }
     
@@ -127,10 +131,14 @@ public final class PrimeFactorization {
     }
     
     /**
-     * This method finds the sub-factorizations by finding combinations of factors and powers.
+     * This method finds PFs of factors of the corresponding int, excluding 1 and the
+     * corresponding int, by finding sub-factorizations in this PF and that's done by finding
+     * combinations of factors and powers in this PF. The PFs in list returned are sorted by
+     * corresponding ints.
      */
-    List<PrimeFactorization> getFactorPfs() {
+    public List<PrimeFactorization> getFactorPfs() {
         var factorPfs = new ArrayList<PrimeFactorization>();
+        
         for (FactorAndPower fp : fps) {
             int factor = fp.factor;
             int thisPfPower = fp.power;
@@ -146,17 +154,16 @@ public final class PrimeFactorization {
                 factorPfs.add(new PrimeFactorization(singleton));
                 
                 for (var i = 0; i <= lastPfIndexToUse; i++) {
-                    var newFactorAndPower = new FactorAndPower(factor, factorPfPower);
-                    List<FactorAndPower> factorPfFactorsAndPowers =
-                        new ArrayList<>(factorPfs.get(i).fps);
+                    var newFp = new FactorAndPower(factor, factorPfPower);
+                    List<FactorAndPower> factorPfFps = new ArrayList<>(factorPfs.get(i).fps);
                     
-                    findIndexOfFactor(factorPfFactorsAndPowers, factor)
+                    findIndexOfFactor(factorPfFps, factor)
                     .ifPresentOrElse(
-                        indexToUpdate -> factorPfFactorsAndPowers.set(indexToUpdate, newFactorAndPower),
-                        () -> factorPfFactorsAndPowers.add(newFactorAndPower)
+                        indexToUpdate -> factorPfFps.set(indexToUpdate, newFp),
+                        () -> factorPfFps.add(newFp)
                     );
                     
-                    factorPfs.add(new PrimeFactorization(factorPfFactorsAndPowers));
+                    factorPfs.add(new PrimeFactorization(factorPfFps));
                 }
             }
         }
@@ -166,7 +173,7 @@ public final class PrimeFactorization {
         this PF, so it's the same as this PF. We don't want to include that as part of the factors.
          */
         factorPfs.removeLast();
-        factorPfs.sort(Comparator.comparingInt(pf -> pf.correspondingInt));
+        factorPfs.sort(Comparator.comparingInt(PrimeFactorization::getCorrespondingInt));
         return factorPfs;
     }
     
@@ -196,23 +203,27 @@ public final class PrimeFactorization {
     
     /**
      * This class uses prime factorizations to find the greatest common divisor (GCD) and
-     * least common multiple (LCM) of 2 integers. An advantage to having this class be a
-     * nested class within the PrimeFactorization class is that we can access the private
-     * factorsAndPowers list of the PrimeFactorizations we create in the constructor for
-     * this class.
+     * least common multiple (LCM) of 2 ints.
      */
     public static class GcdAndLcmAnswer {
         private final List<FactorAndPower> input1Fps;
+        
         private final List<FactorAndPower> input2Fps;
+        
         /**
          * If the GCD of the inputs is 1, this is null since only integers > 1 have a prime factorization.
          */
         private final PrimeFactorization gcdPf;
+        
         private final PrimeFactorization lcmPf;
         
         GcdAndLcmAnswer(int input1, int input2) {
-            assertIsInRange(input1, 0, 0);
-            assertIsInRange(input2, 0, 0);
+            final long minInput =
+                com.numbertheoryplayground.calculationsimpl.GcdAndLcmAnswer.MIN_INPUT;
+            final long maxInput =
+                com.numbertheoryplayground.calculationsimpl.GcdAndLcmAnswer.MAX_INPUT;
+            assertIsInRange(input1, minInput, maxInput);
+            assertIsInRange(input2, minInput, maxInput);
             
             var input1Pf = new PrimeFactorization(input1);
             var input2Pf = new PrimeFactorization(input2);

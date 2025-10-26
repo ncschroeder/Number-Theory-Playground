@@ -12,6 +12,10 @@ public final class FibonacciLikeSequencesAnswer {
     private static final long MIN_INPUT = 1;
     private static final long MAX_INPUT = ONE_QUADRILLION;
     
+    /**
+     * Contains strings of the numbers in the Fibonacci-like sequence that gets created.
+     * Strings are used since these numbers might be too big for a JavaScript safe integer.
+     */
     private final List<String> stringFiboLikeSequence;
     
     /**
@@ -37,16 +41,22 @@ public final class FibonacciLikeSequencesAnswer {
             .toList();
     }
     
+    @JsonProperty("fiboLikeSequence")
     public List<String> getStringFiboLikeSequence() {
         return stringFiboLikeSequence;
     }
     
-    @JsonProperty("ratioDataArray")
+    @JsonProperty("ratioDataArr")
     public List<RatioData> getRatioDataList() {
         return ratioDataList;
     }
     
     
+    /**
+     * Returns a list of BigIntegers of the first 20 numbers in the Fibonacci-like sequence
+     * that starts with input1 and input2. BigIntegers are used since some numbers in the
+     * list might be too big for a long.
+     */
     static List<BigInteger> getBigIntFiboLikeSequence(long input1, long input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
         assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
@@ -70,12 +80,21 @@ public final class FibonacciLikeSequencesAnswer {
     
     public static final class RatioData {
         private static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
+        
         private static final MathContext MATH_CONTEXT_WITHOUT_ROUNDING =
             new MathContext(MATH_CONTEXT_WITH_ROUNDING.getPrecision(), RoundingMode.UNNECESSARY);
         
+        /*
+        Strings are used for the 2 big ints since they might be too big for
+        JavaScript safe integers.
+         */
+        
         private final String bigInt1String;
+        
         private final String bigInt2String;
+        
         private BigDecimal ratio;
+        
         private boolean isRounded;
         
         RatioData(BigInteger bigInt1, BigInteger bigInt2) {

@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
 
+/**
+ * Utility class with static methods for doing calculations.
+ */
 public class Calculations {
     static boolean isDivisible(int a, int b) {
         return a % b == 0;
@@ -34,7 +37,7 @@ public class Calculations {
         return
             IntStream.concat(
                 IntStream.of(2),
-                IntStream.iterate(3, l -> l + 2)
+                IntStream.iterate(3, i -> i + 2)
             )
             .takeWhile(i -> i <= maxPossibleFactor)
             .noneMatch(i -> isDivisible(input, i));
@@ -45,20 +48,21 @@ public class Calculations {
     }
     
     /**
-     * Returns a stream of the first 30 primes ≥ the input.
+     * Returns an array of the first 30 primes ≥ the input.
      */
-    public static IntStream getPrimes(int input) {
+    public static int[] getPrimes(int input) {
         assertIsInRange(input, 0, TEN_THOUSAND);
         
         int iterationStart = isOdd(input) ? input : input + 1;
         IntStream oddPrimes =
-            IntStream.iterate(iterationStart, l -> l + 2)
+            IntStream.iterate(iterationStart, i -> i + 2)
             .filter(Calculations::isPrime);
         
         // 2 is the only even prime number.
         return
             (input <= 2 ? IntStream.concat(IntStream.of(2), oddPrimes) : oddPrimes)
-            .limit(30);
+            .limit(30)
+            .toArray();
     }
     
     /**

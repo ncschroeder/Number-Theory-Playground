@@ -3,6 +3,9 @@ package com.numbertheoryplayground;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.numbertheoryplayground.calculationsimpl.*;
+import com.numbertheoryplayground.calculationsimpl.divisibility.DivisibilityAnswer;
+
+import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
 
 @RestController
 @RequestMapping("/calculate")
@@ -15,15 +18,12 @@ public class CalculationsController {
     static final String PRIMES_ENDPOINT = "/primes";
     
     @GetMapping(PRIMES_ENDPOINT)
-    public List<String> getPrimesStrings(@RequestParam int input) {
-        return
-            Calculations.getPrimes(input)
-            .mapToObj(Integer::toString)
-            .toList();
+    public int[] getPrimes(@RequestParam int input) {
+        return Calculations.getPrimes(input);
     }
     
     
-    static final String TWIN_PRIME_PAIR_STARTS_ENDPOINT = "/twinPrimePairStarts";
+    static final String TWIN_PRIME_PAIR_STARTS_ENDPOINT = "/twin-prime-pair-starts";
     
     @GetMapping(TWIN_PRIME_PAIR_STARTS_ENDPOINT)
     public int[] getTwinPrimePairStarts(@RequestParam int input) {
@@ -31,15 +31,15 @@ public class CalculationsController {
     }
     
     
-    static final String PF_ENDPOINT = "/primeFactorization";
+    static final String PF_ENDPOINT = "/prime-factorization";
     
     @GetMapping(PF_ENDPOINT)
-    public List<PrimeFactorization.FactorAndPower> getPfFactorsAndPowers(@RequestParam int input) {
+    public List<FactorAndPower> getPfFactorsAndPowers(@RequestParam int input) {
         return new PrimeFactorization(input).getFps();
     }
     
     
-    static final String DIVIS_ANSWER_ENDPOINT = "/divisibilityAnswer";
+    static final String DIVIS_ANSWER_ENDPOINT = "/divisibility-answer";
     
     @GetMapping(DIVIS_ANSWER_ENDPOINT)
     public DivisibilityAnswer getDivisAnswer(@RequestParam int input) {
@@ -47,15 +47,17 @@ public class CalculationsController {
     }
     
     
-    static final String GCD_AND_LCM_ANSWER_ENDPOINT = "/gcdAndLcmAnswer";
+    static final String GCD_AND_LCM_ANSWER_ENDPOINT = "/gcd-and-lcm-answer";
     
     @GetMapping(GCD_AND_LCM_ANSWER_ENDPOINT)
-    public GcdAndLcmAnswer getGcdAndLcmAnswer(@RequestParam int input1, @RequestParam int input2) {
+    public GcdAndLcmAnswer getGcdAndLcmAnswer(
+        @RequestParam int input1, @RequestParam int input2
+    ) {
         return new GcdAndLcmAnswer(input1, input2);
     }
     
     
-    static final String GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT = "/goldbachPrimePairStarts";
+    static final String GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT = "/goldbach-prime-pair-starts";
     
     @GetMapping(GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT)
     public int[] getGoldbachPrimePairStarts(@RequestParam int input) {
@@ -63,7 +65,7 @@ public class CalculationsController {
     }
     
     
-    static final String PYTHAG_TRIPLES_ENDPOINT = "/pythagoreanTriples";
+    static final String PYTHAG_TRIPLES_ENDPOINT = "/pythagorean-triples";
     
     @GetMapping(PYTHAG_TRIPLES_ENDPOINT)
     public List<Calculations.PythagoreanTriple> getPythagTriples(@RequestParam int input) {
@@ -71,7 +73,7 @@ public class CalculationsController {
     }
     
     
-    static final String TWO_SQUARE_THEOREM_ANSWER_ENDPOINT = "/twoSquareTheoremAnswer";
+    static final String TWO_SQUARE_THEOREM_ANSWER_ENDPOINT = "/two-square-theorem-answer";
     
     @GetMapping(TWO_SQUARE_THEOREM_ANSWER_ENDPOINT)
     public TwoSquareTheoremAnswer getTwoSquareTheoremAnswer(@RequestParam int input) {
@@ -79,7 +81,7 @@ public class CalculationsController {
     }
     
     
-    static final String FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT = "/fibonacciLikeSequencesAnswer";
+    static final String FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT = "/fibonacci-like-sequences-answer";
     
     @GetMapping(FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT)
     public FibonacciLikeSequencesAnswer getFiboLikeSequencesAnswer(
@@ -89,7 +91,7 @@ public class CalculationsController {
     }
     
     
-    static final String ANCIENT_MULT_ANSWER_ENDPOINT = "/ancientMultiplicationAnswer";
+    static final String ANCIENT_MULT_ANSWER_ENDPOINT = "/ancient-multiplication-answer";
     
     @GetMapping(ANCIENT_MULT_ANSWER_ENDPOINT)
     public AncientMultiplicationAnswer getAncientMultAnswer(

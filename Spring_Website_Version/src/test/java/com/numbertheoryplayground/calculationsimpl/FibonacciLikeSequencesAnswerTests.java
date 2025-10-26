@@ -54,8 +54,10 @@ class FibonacciLikeSequencesAnswerTests {
            4,        5,          1.25,                false
         """)
     void ratioData(
-        BigInteger input1, BigInteger input2,
-        BigDecimal expectedRatio, boolean expectedIsRounded
+        BigInteger input1,
+        BigInteger input2,
+        BigDecimal expectedRatio,
+        boolean expectedIsRounded
     ) {
         var data = new RatioData(input1, input2);
         assertAll(

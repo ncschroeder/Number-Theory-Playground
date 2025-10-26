@@ -3,6 +3,10 @@ package com.numbertheoryplayground.calculationsimpl.divisibility;
 import com.numbertheoryplayground.calculationsimpl.divisibility.alternatingsums.*;
 import static com.numbertheoryplayground.InputValidation.assertIsInRange;
 
+/**
+ * Contains data that'll be used by the web page to determine what factors an input number has
+ * by using divisibility rules.
+ */
 public final class RulesData {
     private final int last2Digits;
     

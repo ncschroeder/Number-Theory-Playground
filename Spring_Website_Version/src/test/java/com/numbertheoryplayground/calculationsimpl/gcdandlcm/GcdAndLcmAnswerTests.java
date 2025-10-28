@@ -1,4 +1,4 @@
-package com.numbertheoryplayground.calculationsimpl;
+package com.numbertheoryplayground.calculationsimpl.gcdandlcm;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static com.numbertheoryplayground.calculationsimpl.GcdAndLcmAnswer.EuclideanIteration;
+import static com.numbertheoryplayground.calculationsimpl.gcdandlcm.GcdAndLcmAnswer.EuclideanIteration;
 
 class GcdAndLcmAnswerTests {
     @ParameterizedTest
@@ -27,4 +27,8 @@ class GcdAndLcmAnswerTests {
             arguments(99, 54, List.of(ei(99, 54, 45), ei(54, 45, 9), ei(45, 9, 0))),
             arguments(4_410, 2_100, List.of(ei(4_410, 2_100, 210), ei(2_100, 210, 0)))
         );
+    //arguments(
+//                120, 4_235,
+//                List.of(ei(4_235, 120, 35), ei(120, 35, 15), ei(35, 15, 5), ei(15, 5, 0))
+//)
 }

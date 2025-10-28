@@ -1,7 +1,8 @@
-package com.numbertheoryplayground.calculationsimpl;
+package com.numbertheoryplayground.calculationsimpl.gcdandlcm;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.numbertheoryplayground.calculationsimpl.PrimeFactorization;
 
 import static com.numbertheoryplayground.InputValidation.*;
 
@@ -11,18 +12,18 @@ public final class GcdAndLcmAnswer {
     
     private final List<EuclideanIteration> euclideanIterations;
     
-    private final PrimeFactorization.GcdAndLcmAnswer pfAnswer;
+    private final PrimeFactorizationAnswer pfAnswer;
     
     public GcdAndLcmAnswer(int input1, int input2) {
         euclideanIterations = getEuclideanIterations(input1, input2);
-        pfAnswer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
+        pfAnswer = new PrimeFactorizationAnswer(input1, input2);
     }
     
     public List<EuclideanIteration> getEuclideanIterations() {
         return euclideanIterations;
     }
     
-    public PrimeFactorization.GcdAndLcmAnswer getPfAnswer() {
+    public PrimeFactorizationAnswer getPfAnswer() {
         return pfAnswer;
     }
     

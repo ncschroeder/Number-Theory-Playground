@@ -1,30 +1,27 @@
 package com.numbertheoryplayground.calculationsimpl;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.*;
-import java.util.Collections;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.FieldSource;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.*;
+import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
 
 class PrimeFactorizationTests {
+    @ParameterizedTest
+    @FieldSource("intConstructorArgs")
+    void intConstructor(int input, List<FactorAndPower> expectedFps) {
+        assertEquals(expectedFps, new PrimeFactorization(input).getFps());
+    }
+    
     static FactorAndPower fp(int factor, int power) {
         return new FactorAndPower(factor, power);
     }
     
     static int pow(int a, int b) {
         return (int) Math.pow(a, b);
-    }
-    
-    
-    @ParameterizedTest
-    @FieldSource("intConstructorArgs")
-    void intConstructor(int input, List<FactorAndPower> expectedFps) {
-        assertEquals(expectedFps, new PrimeFactorization(input).getFps());
     }
     
     static final List<Arguments> intConstructorArgs =
@@ -39,145 +36,4 @@ class PrimeFactorizationTests {
             arguments(pow(13, 3), List.of(fp(13, 3))),
             arguments(1_213, List.of(fp(1_213, 1)))
         );
-    
-    
-    @ParameterizedTest
-    @MethodSource("getArgsForGetFactorPfs")
-    void getFactorPfs(
-        List<FactorAndPower> input,
-        List<List<FactorAndPower>> expectedFactorFpLists
-    ) {
-        List<List<FactorAndPower>> actualFactorFpLists =
-            new PrimeFactorization(input)
-            .getFactorPfs()
-            .stream()
-            .map(PrimeFactorization::getFps)
-            .toList();
-        
-        assertEquals(expectedFactorFpLists, actualFactorFpLists);
-    }
-    
-    static Stream<Arguments> getArgsForGetFactorPfs() {
-        List<FactorAndPower> input1 = List.of(fp(2, 2), fp(3, 1));
-        List<List<FactorAndPower>> expectedFactorFpLists1 =
-            List.of(
-                List.of(fp(2, 1)),
-                List.of(fp(3, 1)),
-                List.of(fp(2, 2)),
-                List.of(fp(2, 1), fp(3, 1))
-            );
-        
-        List<FactorAndPower> input2 = List.of(fp(2, 1), fp(3, 2), fp(5, 2));
-        List<List<FactorAndPower>> expectedFactorFpLists2 =
-            List.of(
-                // The comments say the corresponding factor.
-                List.of(fp(2, 1)), // 2
-                List.of(fp(3, 1)), // 3
-                List.of(fp(5, 1)), // 5
-                List.of(fp(2, 1), fp(3, 1)), // 6
-                List.of(fp(3, 2)), // 9
-                List.of(fp(2, 1), fp(5, 1)), // 10
-                List.of(fp(3, 1), fp(5, 1)), // 15
-                List.of(fp(2, 1), fp(3, 2)), // 18
-                List.of(fp(5, 2)), // 25
-                List.of(fp(2, 1), fp(3, 1), fp(5, 1)), // 30
-                List.of(fp(3, 2), fp(5, 1)), // 45
-                List.of(fp(2, 1), fp(5, 2)), // 50
-                List.of(fp(3, 1), fp(5, 2)), // 75
-                List.of(fp(2, 1), fp(3, 2), fp(5, 1)), // 90
-                List.of(fp(2, 1), fp(3, 1), fp(5, 2)), // 150
-                List.of(fp(3, 2), fp(5, 2)) // 225
-            );
-        
-        return Stream.of(
-            arguments(input1, expectedFactorFpLists1),
-            arguments(input2, expectedFactorFpLists2),
-            arguments(List.of(fp(2, 1)), Collections.emptyList()),
-            arguments(
-                List.of(fp(2, 4)),
-                List.of(List.of(fp(2, 1)), List.of(fp(2, 2)), List.of(fp(2, 3)))
-            ),
-            arguments(
-                List.of(fp(2, 1), fp(3, 1)),
-                List.of(List.of(fp(2, 1)), List.of(fp(3, 1)))
-            )
-        );
-    }
-    
-    
-    void assertPf(
-        PrimeFactorization pf,
-        List<FactorAndPower> expectedFps,
-        int expectedCorrespondingInt
-    ) {
-        assertEquals(expectedFps, pf.getFps());
-        assertEquals(expectedCorrespondingInt, pf.getCorrespondingInt());
-    }
-    
-    /**
-     * 2 integers are coprime if their GCD is 1, so if a PrimeFactorization.GcdAndLcmAnswer
-     * object is created with coprime inputs, then the getGcdPf method of that object
-     * should return an empty Optional.
-     */
-    @Test
-    void gcdAndLcmAnswerForCoprimeInputs() {
-        int input1 = 2 * 3;
-        int input2 = 5 * 7;
-        List<FactorAndPower> expectedLcmFps =
-            List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1));
-        int expectedLcm = 2 * 3 * 5 * 7;
-        var answer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
-        
-        assertAll(
-            () -> assertTrue(answer.getGcdPf().isEmpty(), "GCD PF is empty."),
-            () -> assertPf(answer.getLcmPf(), expectedLcmFps, expectedLcm)
-        );
-    }
-    
-    @ParameterizedTest
-    @MethodSource("getArgsForGcdAndLcmAnswerForNonCoprimeInputs")
-    void gcdAndLcmAnswerForNonCoprimeInputs(
-        int input1,
-        int input2,
-        List<FactorAndPower> expectedGcdFps,
-        int expectedGcd,
-        List<FactorAndPower> expectedLcmFps,
-        int expectedLcm
-    ) {
-        var answer = new PrimeFactorization.GcdAndLcmAnswer(input1, input2);
-        
-        assertAll(
-            () -> {
-                answer.getGcdPf().ifPresentOrElse(
-                    (pf) -> assertPf(pf, expectedGcdFps, expectedGcd),
-                    () -> fail("GCD PF is empty but shouldn't have been.")
-                );
-            },
-            () -> assertPf(answer.getLcmPf(), expectedLcmFps, expectedLcm)
-        );
-    }
-    
-    static Stream<Arguments> getArgsForGcdAndLcmAnswerForNonCoprimeInputs() {
-        List<FactorAndPower> factorsAndPowersFor10 = List.of(fp(2, 1), fp(5, 1));
-        
-        return Stream.of(
-            arguments(10, 10, factorsAndPowersFor10, 10, factorsAndPowersFor10, 10),
-            arguments(
-                2 * pow(3, 3),
-                pow(3, 2) * 11,
-                List.of(fp(3, 2)),
-                9,
-                List.of(fp(2, 1), fp(3, 3), fp(11, 1)),
-                594
-            ),
-            arguments(
-                pow(2, 2) * 3 * pow(5, 2) * 7,
-                2 * pow(3, 2) * 5 * pow(7, 2),
-                List.of(fp(2, 1), fp(3, 1), fp(5, 1), fp(7, 1)),
-                2 * 3 * 5 * 7,
-                List.of(fp(2, 2), fp(3, 2), fp(5, 2), fp(7, 2)),
-                pow(2, 2) * pow(3, 2) * pow(5, 2) * pow(7, 2)
-            )
-        );
-    }
 }

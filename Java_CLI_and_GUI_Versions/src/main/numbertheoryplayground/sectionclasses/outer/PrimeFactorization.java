@@ -146,6 +146,10 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
         return correspondingBigInt;
     }
 
+    public String getCorrespondingBigIntString() {
+        return correspondingBigIntString;
+    }
+
     /**
      * Returns a string that represents this PF the same way that the first info paragraph at the
      * top represents PFs. That paragraph says "the PF of 5 is just 5, the PF of 25 is 5^2, and
@@ -175,116 +179,13 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
     }
     
     /**
-     * This is the 3rd paragraph displayed in the Divisibility section.
      */
-    static final String FACTORS_INFO = """
-The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's
-have a variable n and let it represent a whole number > 1. First, you can find how many factors
-n has by looking at n's PF, taking all the powers of the factors, adding 1 to each, and then
-multiplying all these together. For example, the PF of 36 is 2^2 × 3^2. The powers are 2 and 2,
-so there are 3 × 3 = 9 factors. However, that count includes 1 and the number that the PF is for
-(36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors.
-You can find the factors of n by finding all the PFs within n's PF, or the "sub-factorizations",
-as I like to call them. For 2^2 × 3^2, the sub-factorizations are
-2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).
-
-Whole numbers that are ≤ the max input of this section generally have a pretty small amount of
-factors, like < 100. An example of an input number with a high number of factors is
-9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2^6 and
-the next 12 prime numbers so it has 13 unique prime factors and its PF is
-2^6 x 3 x 5 x 7 x 11 x 13 x 17 x 19 x 23 x 29 x 31 x 37 x 41. It has 7 × 2^12 = 28,672 total
-factors!""";
     
-    /**
-     * This method calculates the number of factors and returns a string that says the number
-     * of factors and how it was calculated.
-     */
-    String getNumFactorsInfo() {
-        var numFactors = 1;
-        var powerStrings = new ArrayList<String>(factorsAndPowers.size());
-        
-        for (FactorAndPower fp : factorsAndPowers) {
-            numFactors *= fp.power + 1;
-            powerStrings.add(String.format("(%d + 1)", fp.power));
-        }
-        
-        var infoEnd =
-            numFactors == 3
-            ? "'s 1 factor"
-            : String.format(" are %s factors", createStringWithCommas(numFactors - 2));
-        
-        return String.format(
-            "By looking at the power%s, we can see there are %s = %s factors. If 1 and %s are " +
-                "excluded then there%s.",
-            factorsAndPowers.size() == 1 ? "" : "s",
-            String.join(" × ", powerStrings),
-            createStringWithCommas(numFactors),
-            correspondingBigIntString,
-            infoEnd
-        );
     }
     
     /**
-     * This method finds the sub-factorizations by finding combinations of factors and powers.
      */
-    List<PrimeFactorization> getFactorPfs() {
-        var factorPfs = new ArrayList<PrimeFactorization>();
-        
-        for (FactorAndPower fp : factorsAndPowers) {
-            long factor = fp.factor;
-            int thisPfPower = fp.power;
-            
-            /*
-            In the 2nd for loop below, we want to iterate through all the PFs that are in factorPfs
-            at this point, and not the ones that get added below. Use this variable for that.
-             */
-            int lastPfIndexToUse = factorPfs.size() - 1;
-            
-            for (var factorPfPower = 1; factorPfPower <= thisPfPower; factorPfPower++) {
-                var singleton = List.of(new FactorAndPower(factor, factorPfPower));
-                factorPfs.add(new PrimeFactorization(singleton));
-                
-                for (var i = 0; i <= lastPfIndexToUse; i++) {
-                    var newFactorAndPower = new FactorAndPower(factor, factorPfPower);
-                    List<FactorAndPower> factorPfFactorsAndPowers =
-                        new ArrayList<>(factorPfs.get(i).factorsAndPowers);
-
-                    .ifPresentOrElse(
-                        indexToUpdate -> factorPfFactorsAndPowers.set(indexToUpdate, newFactorAndPower),
-                        () -> factorPfFactorsAndPowers.add(newFactorAndPower)
-                    );
-                    
-                    factorPfs.add(new PrimeFactorization(factorPfFactorsAndPowers));
-                }
-            }
-        }
-        
-        /*
-        The last PF has all the factors that this PF has and each power is the same as the powers in
-        this PF, so it's the same as this PF. We don't want to include that as part of the factors.
-         */
-        factorPfs.removeLast();
-        factorPfs.sort(Comparator.comparing(PrimeFactorization::getCorrespondingBigInt));
-        return factorPfs;
-    }
-    
-    private static OptionalInt findIndexOfFactor(List<FactorAndPower> fps, long factor) {
         return
-            IntStream.range(0, fps.size())
-            .filter(i -> fps.get(i).factor == factor)
-            .findFirst();
-    }
-    
-    Stream<String> getFactorPfStrings() {
-        return
-            getFactorPfs()
-            .stream()
-            .map(pf ->
-                pf.isForAPrimeNumber()
-                ? pf.correspondingBigIntString
-                : String.format("%s (%s)", pf, pf.correspondingBigIntString)
-            );
-    }
     private OptionalInt getPowerOf(long factor) {
         return
             factorsAndPowers
@@ -294,7 +195,7 @@ factors!""";
             .findFirst();
     }
     
-    private boolean containsFactor(long l) {
+    public boolean containsFactor(long l) {
         return
             factorsAndPowers
             .stream()
@@ -324,122 +225,6 @@ factors!""";
         public List<Component> getGuiComponents(long inputLong, String inputString) {
             String info = new PrimeFactorization(inputLong, inputString).getInfoSentence();
             return List.of(NtpGui.createCenteredAnswerContentLabel(info));
-        }
-    }
-    
-    
-    static final String GCD_AND_LCM_INFO = """
-The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs).
-If those numbers don't have any common prime factors, then the GCD is 1. If they do have common
-prime factors, then the GCD PF consists of all the common prime factors and the power of each
-factor is the min of the powers of that factor in the 2 PFs. The LCM PF consists of all factors
-that are in either of the PFs of the 2 numbers. If a factor is in both PFs, then the power of
-that factor in the LCM PF is the max of the powers of that factor in the 2 PFs. If a factor is
-unique to one of the PFs, then that factor and its power are in the LCM PF.
-
-Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is 2 × 3 and the PF of 35 is 5 × 7.
-There are no common prime factors so the GCD is 1. The LCM PF is 2 × 3 × 5 × 7, which is 210.
-
-Let's find the GCD and LCM of 54 and 99. The PF of 54 is 2 × 3^3 and the PF of 99 is 3^2 × 11.
-3 is the only common prime factor and the min power of it is 2 so the GCD PF is 3^2, which is 9.
-The max power of 3 is 3 so 3^3 is in the LCM PF. The LCM PF is 2 × 3^3 × 11, which is 594.
-
-The input numbers whose LCM is the highest are 5 quadrillion (5,000,000,000,000,000),
-the max input; and 5 quadrillion - 1. The LCM is 24,999,999,999,999,995,000,000,000,000,000,
-or 24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion!
-It has 32 digits. Trillion is before quadrillion.
-
-A pair of input numbers whose LCM might have the highest amount of unique prime factors is
-304,250,263,527,210, the product of the first 13 prime numbers; and 133,869,006,807,307,
-the product of the next 8 prime numbers. The LCM is 40,729,680,599,249,024,150,621,323,470,
-or 40 octillion ... It has 29 digits and 21 unique prime factors and its PF is
-2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41 × 47 × 53 × 59 × 61 × 67 × 71 × 73!
-Other pairs of input numbers have the same LCM, such as that first input number divided by 2 and
-the second input number multiplied by 2.""";
-    
-    /**
-     * This class uses prime factorizations to find the greatest common divisor (GCD) and least common
-     * multiple (LCM) of 2 integers. An advantage to having this class be a nested class within the
-     * PrimeFactorization class is that we can access the private factorsAndPowers list of the
-     * PrimeFactorizations we create in the constructor for this class.
-     */
-    static class GcdAndLcmAnswer {
-        private final PrimeFactorization input1Pf;
-        
-        private final PrimeFactorization input2Pf;
-        
-        /**
-         * If the GCD of the inputs is 1, this is null since only integers ≥ 2 have a prime factorization.
-         */
-        private final PrimeFactorization gcdPf;
-        
-        private final PrimeFactorization lcmPf;
-        GcdAndLcmAnswer(long input1Long, long input2Long, String input1String, String input2String) {
-            input1Pf = new PrimeFactorization(input1Long, input1String);
-            input2Pf = new PrimeFactorization(input2Long, input2String);
-            var gcdPfFactorsAndPowers = new ArrayList<FactorAndPower>();
-            var lcmPfFactorsAndPowers = new ArrayList<FactorAndPower>();
-            
-            for (FactorAndPower fp : input1Pf.factorsAndPowers) {
-                long factor = fp.factor;
-                int power1 = fp.power;
-                
-                input2Pf
-                .getPowerOf(factor)
-                .ifPresentOrElse(
-                    power2 -> {
-                        gcdPfFactorsAndPowers.add(new FactorAndPower(factor, Math.min(power1, power2)));
-                        lcmPfFactorsAndPowers.add(new FactorAndPower(factor, Math.max(power1, power2)));
-                    },
-                    () -> lcmPfFactorsAndPowers.add(new FactorAndPower(factor, power1))
-                );
-            }
-            
-            // Find the unique prime factors of input2Pf.
-            for (FactorAndPower fp : input2Pf.factorsAndPowers) {
-                if (!input1Pf.containsFactor(fp.factor)) {
-                    lcmPfFactorsAndPowers.add(new FactorAndPower(fp.factor, fp.power));
-                }
-            }
-            
-            gcdPf =
-                gcdPfFactorsAndPowers.isEmpty()
-                ? null
-                : new PrimeFactorization(gcdPfFactorsAndPowers);
-
-            lcmPf = new PrimeFactorization(lcmPfFactorsAndPowers);
-        }
-        
-        Stream<String> getInfoSentences() {
-            String gcdSentence =
-                gcdPf != null
-                ? getGcdOrLcmPfSentence("GCD", gcdPf)
-                : "There are no common prime factors so the GCD is 1.";
-            
-            String lcmSentence = getGcdOrLcmPfSentence("LCM", lcmPf);
-            
-            return Stream.of(
-                input1Pf.getInfoSentence(),
-                input2Pf.getInfoSentence(),
-                gcdSentence,
-                lcmSentence
-            );
-        }
-        
-        private static String getGcdOrLcmPfSentence(String gcdOrLcmText, PrimeFactorization pf) {
-            var textAfterIs = pf.isForAPrimeNumber() ? "" : pf + ", which is ";
-            return String.format(
-                "The PF of the %s is %s%s.",
-                gcdOrLcmText, textAfterIs, pf.correspondingBigIntString
-            );
-        }
-        
-        PrimeFactorization getGcdPf() {
-            return gcdPf;
-        }
-        
-        PrimeFactorization getLcmPf() {
-            return lcmPf;
         }
     }
 }

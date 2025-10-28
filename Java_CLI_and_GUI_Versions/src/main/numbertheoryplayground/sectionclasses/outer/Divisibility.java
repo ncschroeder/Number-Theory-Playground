@@ -10,19 +10,36 @@ import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
 import static numbertheoryplayground.gui.NtpGui.*;
+import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndPower;
 
 /**
  * Utility class related to divisibility and the section for it.
  */
 public class Divisibility {
-    private static final String INFO = """
+    private static final String INTRO_INFO = """
 Say we have 2 whole numbers that we'll represent with the variables a and b. If we divide a by
 b and get no remainder, then a is said to be divisible by b and b is said to be a factor or
 divisor of a. If you want to find some whole number factors of a whole number, you could
-manually do some division but there are other ways to find them.
-
-%s
-
+manually do some division but there are other ways to find them.""";
+    
+    static boolean isDivisible(long a, long b) {
+        return a % b == 0;
+    }
+    
+    public static boolean isEven(long l) {
+        return isDivisible(l, 2);
+    }
+    
+    static boolean isOdd(long l) {
+        return !isEven(l);
+    }
+    
+    // This section uses prime factorizations so the max input for those will be used.
+    private static final long MIN_INPUT = 10;
+    private static final long MAX_INPUT = PrimeFactorization.MAX_INPUT;
+    
+    
+    private static final String RULES_INFO = """
 Some rules can be used to determine if a whole number is divisible by another whole number.
 I'll go over 1 rule for each number in the range of 3 to 12, excluding 5 and 10, though there
 are rules for more numbers and many numbers have multiple rules. I'll go over an example of
@@ -52,24 +69,8 @@ check using the rules. The last 2 digits are 68, which is divisible by 4. The la
 Since n is even and divisible by 3, it's also divisible by 6. Since n is divisible by both 3
 and 4, it's also divisible by 12. The alternating sum of 3-digit blocks from right to left is
 768 - 695 + 4 = 77, which is divisible by 7. The alternating sum of digits from left to right
-is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
-        .formatted(PrimeFactorization.FACTORS_INFO);
+is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
     
-    static boolean isDivisible(long a, long b) {
-        return a % b == 0;
-    }
-    
-    public static boolean isEven(long l) {
-        return isDivisible(l, 2);
-    }
-    
-    static boolean isOdd(long l) {
-        return !isEven(l);
-    }
-    
-    // This section uses prime factorizations so the input constraints for those will be used.
-    private static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
-    private static final long MAX_INPUT = PrimeFactorization.MAX_INPUT;
     static final class RulesAnswer {
         /**
          * Contains divisibility info for the input long found using the mentioned rules.
@@ -265,6 +266,138 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
         }
     }
     
+    
+    static final String PF_INFO = """
+The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's
+have a variable n and let it represent a whole number > 1. First, you can find how many factors
+n has by looking at n's PF, taking all the powers of the factors, adding 1 to each, and then
+multiplying all these together. For example, the PF of 36 is 2^2 × 3^2. The powers are 2 and 2,
+so there are 3 × 3 = 9 factors. However, that count includes 1 and the number that the PF is for
+(36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors.
+You can find the factors of n by finding all the PFs within n's PF, or the "sub-factorizations",
+as I like to call them. For 2^2 × 3^2, the sub-factorizations are
+2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).
+
+Whole numbers that are ≤ the max input of this section generally have a pretty small amount of
+factors, like < 100. An example of an input number with a high number of factors is
+9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2^6 and
+the next 12 prime numbers so it has 13 unique prime factors and its PF is
+2^6 x 3 x 5 x 7 x 11 x 13 x 17 x 19 x 23 x 29 x 31 x 37 x 41. It has 7 × 2^12 = 28,672 total
+factors!""";
+    
+    static class NumberOfFactorsAndExpression {
+        private int numFactors;
+        
+        private final String expression;
+        
+        NumberOfFactorsAndExpression(PrimeFactorization pf) {
+            numFactors = 1;
+            var powerStrings = new ArrayList<String>();
+            
+            for (FactorAndPower fp : pf.getFps()) {
+                numFactors *= fp.power() + 1;
+                powerStrings.add(String.format("(%d + 1)", fp.power()));
+            }
+            
+            expression = String.join(" × ", powerStrings);
+        }
+        
+        public int getNumFactors() {
+            return numFactors;
+        }
+        
+        public String getExpression() {
+            return expression;
+        }
+    }
+    
+    private static String getNumFactorsInfo(PrimeFactorization pf) {
+        var numFactorsAndExpression = new NumberOfFactorsAndExpression(pf);
+        int numFactors = numFactorsAndExpression.numFactors;
+        var infoEnd =
+            "there" + (
+                numFactors == 3
+                ? "'s 1 factor"
+                : String.format(" are %s factors", createStringWithCommas(numFactors - 2))
+            );
+        
+        return String.format(
+            "By looking at the power%s, we can see there are %s = %s factors. If 1 and %s are " +
+                "excluded, then %s.",
+            pf.getFps().size() == 1 ? "" : "s",
+            numFactorsAndExpression.expression,
+            createStringWithCommas(numFactors),
+            pf.getCorrespondingBigIntString(),
+            infoEnd
+        );
+    }
+    
+    /**
+     * This method finds PFs of factors of the input PF's corresponding big int, excluding 1
+     * and the corresponding big int, by finding sub-factorizations in the input PF and that's
+     * done by finding combinations of factors and powers in that PF. The PFs in the list
+     * returned are sorted by corresponding big ints.
+     */
+    static List<PrimeFactorization> getFactorPfs(PrimeFactorization pf) {
+        var factorPfs = new ArrayList<PrimeFactorization>();
+        
+        for (FactorAndPower fp : pf.getFps()) {
+            long factor = fp.factor();
+            int inputPfPower = fp.power();
+            
+            /*
+            In the 2nd for loop below, we want to iterate through all the PFs that are in factorPfs
+            at this point, and not the ones that get added below. Use this variable for that.
+             */
+            int lastPfIndexToUse = factorPfs.size() - 1;
+            
+            for (var factorPfPower = 1; factorPfPower <= inputPfPower; factorPfPower++) {
+                var singleton = List.of(new FactorAndPower(factor, factorPfPower));
+                factorPfs.add(new PrimeFactorization(singleton));
+                
+                for (var i = 0; i <= lastPfIndexToUse; i++) {
+                    var newFp = new FactorAndPower(factor, factorPfPower);
+                    List<FactorAndPower> factorPfFps = new ArrayList<>(factorPfs.get(i).getFps());
+                    
+                    findIndexOfFactor(factorPfFps, factor)
+                    .ifPresentOrElse(
+                        indexToUpdate -> factorPfFps.set(indexToUpdate, newFp),
+                        () -> factorPfFps.add(newFp)
+                    );
+                    
+                    factorPfs.add(new PrimeFactorization(factorPfFps));
+                }
+            }
+        }
+        
+        /*
+        The last PF has all the factors that this PF has and each power is the same as the powers in
+        this PF, so it's the same as this PF. We don't want to include that as part of the factors.
+         */
+        factorPfs.removeLast();
+        factorPfs.sort(Comparator.comparing(PrimeFactorization::getCorrespondingBigInt));
+        return factorPfs;
+    }
+    
+    private static OptionalInt findIndexOfFactor(List<FactorAndPower> fps, long factor) {
+        return
+            IntStream.range(0, fps.size())
+            .filter(i -> fps.get(i).factor() == factor)
+            .findFirst();
+    }
+    
+    private static Stream<String> getFactorPfStrings(PrimeFactorization pf) {
+        return
+            getFactorPfs(pf)
+            .stream()
+            .map(pf2 ->
+                pf2.isForAPrimeNumber()
+                ? pf2.getCorrespondingBigIntString()
+                : String.format("%s (%s)", pf2, pf2.getCorrespondingBigIntString())
+            );
+    }
+    
+    
     private static String getAnswerMainHeading(String inputString) {
         return "Divisibility Info for " + inputString;
     }
@@ -284,7 +417,7 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
         public Section() {
             super(
                 "Divisibility",
-                INFO,
+                String.join("\n\n", INTRO_INFO, PF_INFO, RULES_INFO),
                 MIN_INPUT,
                 MAX_INPUT,
                 "divisibility info for that number",
@@ -324,10 +457,14 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
             } else {
                 String textAboveFactorPfs =
                     NtpCli.putNewLineChars(
-                        pf.getInfoSentence() + ' ' + pf.getNumFactorsInfo() + ' ' + FACTORS_AND_PFS_SENTENCE
+                        pf.getInfoSentence() + ' ' + getNumFactorsInfo(pf) +
+                        ' ' + FACTORS_AND_PFS_SENTENCE
                     );
                 linesJoiner.add(
-                    NtpCli.buildStringWithStreamElementsOnLongLines(textAboveFactorPfs, pf.getFactorPfStrings())
+                    NtpCli.buildStringWithStreamElementsOnLongLines(
+                        textAboveFactorPfs,
+                        getFactorPfStrings(pf)
+                    )
                 );
             }
             
@@ -380,18 +517,20 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11."""
                 String textToDisplay = pf.getInfoSentence() + ' ' + getPrimeNumberSentence(inputString);
                 comps.add(new NtpTextArea(textToDisplay));
             } else {
+                String numFactorsInfo = getNumFactorsInfo(pf);
+                
                 try {
                     var factorPfsArea =
-                        NtpTextArea.createWideOneWithStreamElements(pf.getFactorPfStrings());
+                        NtpTextArea.createWideOneWithStreamElements(getFactorPfStrings(pf));
                     String textAboveFactorPfs =
-                        pf.getInfoSentence() + ' ' + pf.getNumFactorsInfo() + ' ' +
-                        FACTORS_AND_PFS_SENTENCE;
+                        pf.getInfoSentence() + ' ' + numFactorsInfo +
+                        ' ' + FACTORS_AND_PFS_SENTENCE;
                     comps.add(new NtpTextArea(textAboveFactorPfs));
                     comps.add(factorPfsArea);
                 } catch (NtpTextArea.StringTooLongException ex) {
                     String textToDisplay =
-                        pf.getInfoSentence() + ' ' + pf.getNumFactorsInfo() + ' ' +
-                        NtpTextArea.StringTooLongException.ERROR_MESSAGE;
+                        pf.getInfoSentence() + ' ' + numFactorsInfo +
+                        ' ' + NtpTextArea.StringTooLongException.ERROR_MESSAGE;
                     comps.add(new NtpTextArea(textToDisplay));
                 }
             }

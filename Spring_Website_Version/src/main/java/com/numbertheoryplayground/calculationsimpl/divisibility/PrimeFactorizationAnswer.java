@@ -22,10 +22,9 @@ public final class PrimeFactorizationAnswer {
     private int numFactors;
     
     /**
-     * Contains DTOs for the PFs of the factors of the input number, excluding 1 and the
-     * input number.
+     * Contains the PFs of the factors of the input number, excluding 1 and the input number.
      */
-    private final List<PrimeFactorization.Dto> factorPfs;
+    private final List<PrimeFactorization> factorPfs;
     
     private PrimeFactorizationAnswer(PrimeFactorization inputPf) {
         inputFps = inputPf.getFps();
@@ -39,11 +38,7 @@ public final class PrimeFactorizationAnswer {
         }
         numFactorsExpression = String.join(" × ", numFactorsExpressionParts);
         
-        factorPfs =
-            getFactorPfs(inputPf)
-            .stream()
-            .map(PrimeFactorization::toDto)
-            .toList();
+        factorPfs = getFactorPfs(inputPf);
     }
     
     /**
@@ -67,7 +62,7 @@ public final class PrimeFactorizationAnswer {
         return numFactorsExpression;
     }
     
-    public List<PrimeFactorization.Dto> getFactorPfs() {
+    public List<PrimeFactorization> getFactorPfs() {
         return factorPfs;
     }
     

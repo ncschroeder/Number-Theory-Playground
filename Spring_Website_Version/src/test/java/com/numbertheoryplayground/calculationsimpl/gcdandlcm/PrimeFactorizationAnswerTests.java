@@ -45,7 +45,7 @@ class PrimeFactorizationAnswerTests {
         var answer = new PrimeFactorizationAnswer(input1, input2);
         
         assertAll(
-            () -> assertTrue(answer.getGcdPf().isEmpty(), "GCD PF is empty."),
+            () -> assertNull(answer.getGcdPf()),
             () -> assertPf(answer.getLcmPf(), expectedLcmFps, expectedLcm)
         );
     }
@@ -64,10 +64,8 @@ class PrimeFactorizationAnswerTests {
         
         assertAll(
             () -> {
-                answer.getGcdPf().ifPresentOrElse(
-                    pf -> assertPf(pf, expectedGcdFps, expectedGcd),
-                    () -> fail("GCD PF is empty but shouldn't have been.")
-                );
+                assertNotNull(answer.getGcdPf());
+                assertPf(answer.getGcdPf(), expectedGcdFps, expectedGcd);
             },
             () -> assertPf(answer.getLcmPf(), expectedLcmFps, expectedLcm)
         );

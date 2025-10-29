@@ -7,6 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isDivisible;
 
+/**
+ * Sometimes, instances of this class get marshaled to JSON as part of a response for an HTTP
+ * request and sometimes, just the factors and powers list of an instance gets marshaled.
+ */
 public final class PrimeFactorization {
     public static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = TEN_THOUSAND;
@@ -91,43 +95,36 @@ public final class PrimeFactorization {
         correspondingInt = tempCorrespondingInt;
     }
     
+    @JsonProperty("correspondingNum")
     public int getCorrespondingInt() {
         return correspondingInt;
     }
     
+    @JsonIgnore
     public List<FactorAndPower> getFps() {
         return fps;
     }
     
+    @JsonIgnore
     public boolean isForAPrimeNumber() {
         return fps.size() == 1 && fps.getFirst().power == 1;
     }
     
     /**
-     * Contains data that'll be marshaled to JSON and sent to the front end.
-     *
-     * In the places this'll be used on the front end, if the corresponding num is NOT prime,
-     * then that number and the fps will be displayed, since they'll look different from each
-     * other. If the corresponding number is prime, then we only need to display that number
-     * since the PF just contains that number as its only factor and the power of it is 1.
-     * For example, if a PF instance is created for 2, we only need to display 2. If a PF
-     * instance is created for 6, we would display that number and its prime factors, which
-     * are 2 and 3.
+     * In the places that marshaled PFs will be used on the front end, if the corresponding
+     * number is NOT prime, then that number and the fps will be displayed, since they'll look
+     * different from each other. If the corresponding number is prime, then only that number
+     * will be displayed since the PF just contains that number as its only factor and the power
+     * of it is 1. For example, for a PF with a corresponding number of 2, only 2 would be
+     * displayed. For a PF with a corresponding number of 6, 6 and its prime factors, 2 and 3,
+     * would be displayed. If a marshaled PF has an fps property of null, then that means that
+     * only the corresponding number needs to be displayed.
      */
-    public final class Dto {
-        @JsonProperty("correspondingNum")
-        public int getCorrespondingInt() {
-            return correspondingInt;
-        }
-        
-        public List<FactorAndPower> getFps() {
-            return isForAPrimeNumber() ? null : fps;
-        }
+    @JsonProperty("fps")
+    public List<FactorAndPower> getFpsOrNull() {
+        return isForAPrimeNumber() ? null : fps;
     }
     
-    public Dto toDto() {
-        return new Dto();
-    }
     public OptionalInt findPowerOf(int factor) {
         return
             fps

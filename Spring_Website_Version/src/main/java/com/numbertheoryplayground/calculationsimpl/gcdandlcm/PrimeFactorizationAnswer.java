@@ -1,8 +1,6 @@
 package com.numbertheoryplayground.calculationsimpl.gcdandlcm;
 
 import java.util.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.numbertheoryplayground.calculationsimpl.PrimeFactorization;
 
 import static com.numbertheoryplayground.InputValidation.assertIsInRange;
@@ -69,23 +67,11 @@ public final class PrimeFactorizationAnswer {
         return input2Fps;
     }
     
-    @JsonIgnore
-    public Optional<PrimeFactorization> getGcdPf() {
-        return Optional.ofNullable(gcdPf);
+    public PrimeFactorization getGcdPf() {
+        return gcdPf;
     }
     
-    @JsonProperty("gcdPf")
-    public Optional<PrimeFactorization.Dto> getGcdPfDto() {
-        return getGcdPf().map(PrimeFactorization::toDto);
-    }
-    
-    @JsonIgnore
     public PrimeFactorization getLcmPf() {
         return lcmPf;
-    }
-    
-    @JsonProperty("lcmPf")
-    public PrimeFactorization.Dto getLcmPfDto() {
-        return lcmPf.toDto();
     }
 }

@@ -14,7 +14,7 @@ public final class RulesData {
     
     private final int sumOfDigits;
     
-    private final AlternatingSumAndExpression blocksOf3AltSumAndExpression;
+    private final AlternatingSumAndExpression blocksAltSumAndExpression;
     
     private final AlternatingSumAndExpression digitsAltSumAndExpression;
     
@@ -31,8 +31,8 @@ public final class RulesData {
             .map(Character::getNumericValue)
             .sum();
         
-        blocksOf3AltSumAndExpression =
-            BlocksOf3AlternatingSumAndExpression.createIfLongEnough(inputString);
+        blocksAltSumAndExpression =
+            BlocksAlternatingSumAndExpression.createIfLongEnough(inputString);
         digitsAltSumAndExpression = new DigitsAlternatingSumAndExpression(inputString);
     }
     
@@ -48,8 +48,8 @@ public final class RulesData {
         return sumOfDigits;
     }
     
-    public AlternatingSumAndExpression getBlocksOf3AltSumAndExpression() {
-        return blocksOf3AltSumAndExpression;
+    public AlternatingSumAndExpression getBlocksAltSumAndExpression() {
+        return blocksAltSumAndExpression;
     }
     
     public AlternatingSumAndExpression getDigitsAltSumAndExpression() {

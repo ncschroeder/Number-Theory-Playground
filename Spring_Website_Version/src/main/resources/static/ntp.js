@@ -873,12 +873,12 @@ const divisInfoElements =
  * @typedef {{ sum: number, expression: string }} AlternatingSumAndExpression
  * 
  * @typedef {Object} DivisibilityRulesData
- * For the input number 5,544, blocksOf3AltSumAndExpression would have an expression of "544 - 5" and a sum of 539.
+ * For the input number 5,544, blocksAltSumAndExpression would have an expression of "544 - 5" and a sum of 539.
  * digitsAltSumAndExpression would have an expression of "5 - 5 + 4 - 5" and a sum of 0.
  * @property {number} last2Digits
  * @property {number} last3Digits
  * @property {number} sumOfDigits
- * @property {?AlternatingSumAndExpression} blocksOf3AltSumAndExpression
+ * @property {?AlternatingSumAndExpression} blocksAltSumAndExpression
  * @property {AlternatingSumAndExpression} digitsAltSumAndExpression
  * 
  * @typedef {Object} DivisibilityPrimeFactorizationAnswer
@@ -989,10 +989,10 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
         );
     }
     
-    const { blocksOf3AltSumAndExpression, digitsAltSumAndExpression } = rulesData;
+    const { blocksAltSumAndExpression, digitsAltSumAndExpression } = rulesData;
     
-    if (blocksOf3AltSumAndExpression) {
-        const { sum, expression } = blocksOf3AltSumAndExpression;
+    if (blocksAltSumAndExpression) {
+        const { sum, expression } = blocksAltSumAndExpression;
         const isDivisibleBy7 = isDivisible(sum, 7);
         sentences.push(
             `The alternating sum of blocks of 3 from right to left is ${expression} = ${sum}.`,

@@ -82,7 +82,7 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
         /**
          * Contains text for the alternating sum of blocks of 3 from right to left.
          */
-        private final StringBuilder blocksOf3AltSumExpressionBuilder;
+        private final StringBuilder blocksAltSumExpressionBuilder;
         /**
          * Contains text for the alternating sum of digits from left to right.
          */
@@ -190,30 +190,29 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
             }
             
             if (inputLong < 1_000) {
-                blocksOf3AltSumExpressionBuilder = null;
+                blocksAltSumExpressionBuilder = null;
             } else {
-                String[] blocksOf3 = inputStringWithCommas.split(",");
-                var blocksOf3AltSum = 0;
-                blocksOf3AltSumExpressionBuilder = new StringBuilder();
+                String[] threeDigitBlocks = inputStringWithCommas.split(",");
+                var blocksAltSum = 0;
+                blocksAltSumExpressionBuilder = new StringBuilder();
                 var add = true;
                 
-                for (var i = blocksOf3.length - 1; i >= 0; i--) {
                     var blockString = blocksOf3[i];
                     var blockInt = Integer.parseInt(blockString);
-                    blocksOf3AltSum += add ? blockInt : -blockInt;
-                    if (!blocksOf3AltSumExpressionBuilder.isEmpty()) {
-                        blocksOf3AltSumExpressionBuilder.append(add ? " + " : " − ");
+                for (var i = threeDigitBlocks.length - 1; i >= 0; i--) {
                     }
-                    blocksOf3AltSumExpressionBuilder.append(blockString);
                     add = !add;
                 }
                 
-                blocksOf3AltSumExpressionBuilder.append(" = ").append(createStringWithCommas(blocksOf3AltSum));
-                boolean isDivisibleBy7 = isDivisible(blocksOf3AltSum, 7);
+                blocksAltSumExpressionBuilder
+                .append(" = ")
+                .append(createStringWithCommas(blocksAltSum));
+                
+                boolean isDivisibleBy7 = isDivisible(blocksAltSum, 7);
                 
                 infoSentencesJoiner
                 .add("The alternating sum of blocks of 3 from right to left is " + blocksOf3AltSumExpressionBuilder)
-                .add(getDivisSentence.apply(7, blocksOf3AltSum, isDivisibleBy7));
+                .add(getDivisSentence.apply(7, blocksAltSum, isDivisibleBy7));
             }
             
             var digitsAltSum = 0;
@@ -255,10 +254,10 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
         }
         
         /**
-         * Throws NullPointerException if blocksOf3AltSumExpressionBuilder is null.
+         * Throws NullPointerException if blocksAltSumExpressionBuilder is null.
          */
-        String getBlocksOf3AltSumExpression() {
-            return blocksOf3AltSumExpressionBuilder.toString();
+        String getBlocksAltSumExpression() {
+            return blocksAltSumExpressionBuilder.toString();
         }
         
         String getDigitsAltSumExpression() {

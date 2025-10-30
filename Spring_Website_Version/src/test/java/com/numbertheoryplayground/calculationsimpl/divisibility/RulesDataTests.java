@@ -17,37 +17,37 @@ class RulesDataTests {
      */
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
-INPUT,  LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_OF_3_ALT_SUM_EXPRESSION,  BLOCKS_OF_3_ALT_SUM,  DIGITS_ALT_SUM_EXPRESSION,  DIGITS_ALT_SUM
-1_000,        0,             0,              1,                    000 − 1,                      -1,                 1 − 0 + 0 − 0,              1
-2_008,        8,             8,              10,                   008 − 2,                      6,                  2 − 0 + 0 − 8,              -6
-5_544,        44,            544,            18,                   544 − 5,                      539,                5 − 5 + 4 − 4,              0
-6_060,        60,            60,             12,                   060 − 6,                      54,                 6 − 0 + 6 − 0,              12
+INPUT,  LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_ALT_SUM_EXPRESSION,  BLOCKS_ALT_SUM,  DIGITS_ALT_SUM_EXPRESSION,  DIGITS_ALT_SUM
+1_000,        0,             0,              1,                  000 − 1,                 -1,              1 − 0 + 0 − 0,              1
+2_008,        8,             8,              10,                 008 − 2,                 6,               2 − 0 + 0 − 8,              -6
+5_544,        44,            544,            18,                 544 − 5,                 539,             5 − 5 + 4 − 4,              0
+6_060,        60,            60,             12,                 060 − 6,                 54,              6 − 0 + 6 − 0,              12
 """)
     void allMethods(
         int input,
         int expectedLast2Digits,
         int expectedLast3Digits,
         int expectedSumOfDigits,
-        String expectedBlocksOf3AltSumExpression,
-        int expectedBlocksOf3AltSum,
+        String expectedBlocksAltSumExpression,
+        int expectedBlocksAltSum,
         String expectedDigitsAltSumExpression,
         int expectedDigitsAltSum
     ) {
         var data = new RulesData(input);
         
-        Executable assertBlocksOf3AltSumAndExpression = () -> {
-            var blocksOf3AltSumAndExpression = data.getBlocksOf3AltSumAndExpression();
+        Executable assertBlocksAltSumAndExpression = () -> {
+            var blocksAltSumAndExpression = data.getBlocksAltSumAndExpression();
             // All the inputs are ≥ 1,000 so this shouldn't be null.
-            assertNotNull(blocksOf3AltSumAndExpression);
+            assertNotNull(blocksAltSumAndExpression);
             
             assertAll(
                 () -> assertEquals(
-                    expectedBlocksOf3AltSumExpression,
-                    blocksOf3AltSumAndExpression.getExpression()
+                    expectedBlocksAltSumExpression,
+                    blocksAltSumAndExpression.getExpression()
                 ),
                 () -> assertEquals(
-                    expectedBlocksOf3AltSum,
-                    blocksOf3AltSumAndExpression.getSum()
+                    expectedBlocksAltSum,
+                    blocksAltSumAndExpression.getSum()
                 )
             );
         };
@@ -58,7 +58,7 @@ INPUT,  LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_OF_3_ALT_SUM_EXPR
             () -> assertEquals(expectedLast2Digits, data.getLast2Digits()),
             () -> assertEquals(expectedLast3Digits, data.getLast3Digits()),
             () -> assertEquals(expectedSumOfDigits, data.getSumOfDigits()),
-            assertBlocksOf3AltSumAndExpression,
+            assertBlocksAltSumAndExpression,
             () -> assertEquals(expectedDigitsAltSumExpression, digitsAltSumAndExpression.getExpression()),
             () -> assertEquals(expectedDigitsAltSum, digitsAltSumAndExpression.getSum())
         );

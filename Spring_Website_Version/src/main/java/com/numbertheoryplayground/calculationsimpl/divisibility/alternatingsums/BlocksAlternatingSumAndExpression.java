@@ -3,8 +3,8 @@ package com.numbertheoryplayground.calculationsimpl.divisibility.alternatingsums
 /**
  * For the input number 5,544, expression would be "544 - 5" and sum would be 539.
  */
-public final class BlocksOf3AlternatingSumAndExpression extends AlternatingSumAndExpression {
-    private BlocksOf3AlternatingSumAndExpression(String inputString) {
+public final class BlocksAlternatingSumAndExpression extends AlternatingSumAndExpression {
+    private BlocksAlternatingSumAndExpression(String inputString) {
         sum = 0;
         var expressionBuilder = new StringBuilder();
         var add = true;
@@ -27,10 +27,10 @@ public final class BlocksOf3AlternatingSumAndExpression extends AlternatingSumAn
         expression = expressionBuilder.toString();
     }
     
-    public static BlocksOf3AlternatingSumAndExpression createIfLongEnough(String inputString) {
+    public static BlocksAlternatingSumAndExpression createIfLongEnough(String inputString) {
         return
             inputString.length() >= 4
-            ? new BlocksOf3AlternatingSumAndExpression(inputString)
+            ? new BlocksAlternatingSumAndExpression(inputString)
             : null;
     }
 }

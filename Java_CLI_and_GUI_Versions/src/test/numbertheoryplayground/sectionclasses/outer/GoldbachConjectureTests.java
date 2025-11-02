@@ -8,7 +8,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static numbertheoryplayground.sectionclasses.outer.GoldbachConjecture.getPrimePairStarts;
 
 /**
  * Has tests for code in the GoldbachConjecture class.
@@ -21,8 +20,8 @@ class GoldbachConjectureTests {
     
     @ParameterizedTest
     @FieldSource("args")
-    void testGetPrimePairStarts(long input, int[] expectedPairStarts) {
-        assertArrayEquals(expectedPairStarts, getPrimePairStarts(input));
+    void getPrimePairStarts(long input, int[] expectedPairStarts) {
+        assertArrayEquals(expectedPairStarts, GoldbachConjecture.getPrimePairStarts(input));
     }
     
     static final List<Arguments> args =

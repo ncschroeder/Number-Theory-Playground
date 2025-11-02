@@ -20,6 +20,11 @@ a number that can be formed by taking an integer and multiplying it by itself, o
 The first 4 square numbers are 0 (0^2), 1 (1^2 or (-1)^2), 4 (2^2 or (-2)^2), and
 9 (3^2 or (-3)^2). An example of a number that's prime and is 1 above a multiple of 4 is 29
 and it can be expressed as 2^2 (4) + 5^2 (25).""";
+    
+    /*
+    The calculations for this section are: find the first prime number ≥ an input number that's
+    1 above a multiple of 4, as well as the whole numbers whose squares sum to that prime number.
+     */
 
     private static final long MIN_INPUT = 0;
     private static final long MAX_INPUT = ONE_QUADRILLION;
@@ -30,8 +35,9 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
          */
         private long primeNum;
         
-        // a and b are the longs whose squares sum to primeNum.
-        
+        /**
+         * a and b are the longs whose squares sum to primeNum.
+         */
         private long a;
         
         private long b;
@@ -46,7 +52,6 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
             while (!isPrime(primeNum)) primeNum += 4;
             
             b = 0;
-            
             for (a = 1; a < primeNum; a++) {
                 long aSquared = a * a;
                 long bSquared = primeNum - aSquared;
@@ -67,6 +72,7 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
                     createLongAndSquareString(a),
                     createLongAndSquareString(b)
                 );
+        }
 
         long getPrimeNum() {
             return primeNum;

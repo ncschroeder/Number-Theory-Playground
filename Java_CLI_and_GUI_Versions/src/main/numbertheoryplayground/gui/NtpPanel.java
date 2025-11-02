@@ -70,15 +70,22 @@ public class NtpPanel extends JPanel {
         return this;
     }
     
+    /**
+     * The args for contentSourceStream are streams of either GcdAndLcm.EuclideanIterations or
+     * AncientMultiplication.TableRows. The args for getRowStrings are functions that return
+     * streams with strings of the fields of those records.
+     */
     public static <T> NtpPanel createTablePanel(
-        List<String> headings,
+        List<String> columnHeadings,
         Stream<T> contentSourceStream,
         Function<T, Stream<String>> getRowStrings
     ) {
-        var layout = new GridLayout(0, headings.size(), 4, 4);
+        var layout = new GridLayout(0, columnHeadings.size(), 4, 4);
         
         Stream<JLabel> headingLabels =
-            headings.stream().map(NtpGui::createAnswerTableColumnHeadingLabel);
+            columnHeadings
+            .stream()
+            .map(NtpGui::createAnswerTableColumnHeadingLabel);
         
         Stream<JLabel> contentLabels =
             contentSourceStream

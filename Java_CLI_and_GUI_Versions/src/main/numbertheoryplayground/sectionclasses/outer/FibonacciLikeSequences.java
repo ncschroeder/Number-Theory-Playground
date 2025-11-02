@@ -25,6 +25,7 @@ public class FibonacciLikeSequences {
      */
     
     private static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
+    
     private static final MathContext MATH_CONTEXT_WITHOUT_ROUNDING =
         new MathContext(MATH_CONTEXT_WITH_ROUNDING.getPrecision(), RoundingMode.UNNECESSARY);
     
@@ -38,12 +39,9 @@ public class FibonacciLikeSequences {
         .divide(BigDecimal.TWO, MATH_CONTEXT_WITH_ROUNDING)
         .toPlainString();
     
-    /**
-     * Approximately 1.618.
-     */
     /*
-    I would use the Unicode char 𝚽 for Phi in the info paragraph and ratioAndPhiExpressions
-    field in the Answer class, but Swing doesn't recognize that char.
+    I would use the Unicode char 𝚽 for Phi in INFO and the ratioAndPhiExpressions field in the
+    Answer class, but Swing doesn't recognize that char.
      */
     
     private static final String INFO = """
@@ -68,9 +66,16 @@ involve numbers other than natural numbers."""
             BigDecimal.valueOf(21).divide(BigDecimal.valueOf(13), MATH_CONTEXT_WITH_ROUNDING) /* ~1.615 */
         );
     
+    /*
+    The calculations for this section are: find the first 20 numbers of the Fibonacci-like
+    sequence that starts with 2 input numbers, as well as the ratios between the 5th and 4th,
+    10th and 9th, 15th and 14th, and 20th and 19th numbers.
+     */
+    
     private static final long MIN_INPUT = 1;
     private static final long MAX_INPUT = NINE_QUINTILLION;
     private static final int SEQUENCE_LENGTH = 20;
+    
     private static final class Answer {
         private final String sequenceHeading;
 
@@ -83,9 +88,8 @@ involve numbers other than natural numbers."""
          */
         private final Stream<String> ratioAndPhiExpressions;
 
-        private Answer(long input1, long input2, String input1String, String input2String) {
-            // Call getBigIntSequence first to see if it throws.
-            List<BigInteger> bigIntSequence = getBigIntSequence(input1, input2);
+        private Answer(long input1Long, long input2Long, String input1String, String input2String) {
+            List<BigInteger> bigIntSequence = getBigIntFiboLikeSequence(input1Long, input2Long);
             
             sequenceHeading =
                 String.format(
@@ -107,8 +111,12 @@ involve numbers other than natural numbers."""
         }
     }
     
-    
-    static List<BigInteger> getBigIntSequence(long input1, long input2) {
+    /**
+     * Returns a list of BigIntegers of the first 20 numbers in the Fibonacci-like sequence
+     * that starts with input1 and input2. BigIntegers are used since some numbers in the
+     * list might be too big for a long.
+     */
+    static List<BigInteger> getBigIntFiboLikeSequence(long input1, long input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
         assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
         
@@ -151,6 +159,9 @@ involve numbers other than natural numbers."""
         );
     }
     
+    private static final String RATIOS_HEADING = """
+The ratios between the 5th and 4th, 10th and 9th, 15th and 14th, and 20th and 19th numbers are:""";
+    
     
     public static final class Section extends DoubleInputSection {
         public Section() {
@@ -174,12 +185,15 @@ involve numbers other than natural numbers."""
             String input1String, String input2String
         ) {
             var answer = new Answer(input1Long, input2Long, input1String, input2String);
-            String heading = NtpCli.putNewLineChars(answer.sequenceHeading);
-            var sequenceStringWithHeading =
-                NtpCli.buildStringWithStreamElementsOnShortLines(heading, answer.stringSequence);
-            var phiAndRatioExpressionsString =
-                NtpCli.buildStringWithStreamElementsOnSeparateLines(answer.ratioAndPhiExpressions);
-            return sequenceStringWithHeading + "\n\n" + phiAndRatioExpressionsString;
+            
+            String sequenceHeading = NtpCli.putNewLineChars(answer.sequenceHeading);
+            var sequenceString =
+                NtpCli.buildStringWithStreamElementsOnShortLines(sequenceHeading, answer.stringSequence);
+            
+            var ratioAndPhiExpressionsString =
+                NtpCli.buildStringWithStreamElementsOnSeparateLines(RATIOS_HEADING, answer.ratioAndPhiExpressions);
+            
+            return sequenceString + "\n\n" + ratioAndPhiExpressionsString;
         }
         
         @Override
@@ -193,6 +207,7 @@ involve numbers other than natural numbers."""
                 createListHeadingLabel(answer.sequenceHeading),
                 NtpTextArea.createNarrowOneWithStreamElements(answer.stringSequence),
                 createGapBetweenAnswerSections(),
+                createListHeadingLabel(RATIOS_HEADING),
                 NtpTextArea.createWithStreamElementsOnSeparateLines(answer.ratioAndPhiExpressions)
             );
         }

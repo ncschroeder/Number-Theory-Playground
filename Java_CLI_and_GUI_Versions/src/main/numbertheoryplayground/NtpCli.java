@@ -9,9 +9,9 @@ import numbertheoryplayground.sectionclasses.outer.GoldbachConjecture;
 import static numbertheoryplayground.Misc.*;
 
 /**
- * Class with code related to the Number Theory Playground Command Line Interface, including the code for
- * running the application and some static methods. The static methods are used in this class and by Section
- * classes for implementing getCliAnswer.
+ * Class with code related to the Number Theory Playground Command Line Interface, including the
+ * code for running the application and some static methods. The static methods are used in this
+ * class and by nested Section classes for implementing getCliAnswer.
  */
 public class NtpCli {
     private static Scanner inputReader;
@@ -46,52 +46,56 @@ public class NtpCli {
             );
         
         /*
-        Setup and show main menu. There'll be options to go to the sections and an exit option.
-        There are currently 10 sections so the ints 1-10 will be what the user can type to go to
-        a section. "e" can be typed to exit. The ints and "e" will be at the start of the lines
-        for the options. There'll be a 1-space indent for the lines that start with a single
-        digit or "e".
+        Setup and show main menu. There'll be options to exit, get info about the NTP, and go to
+        the sections. There are currently 10 sections so the ints 1-10 will be what the user can
+        enter to go to a section. These ints will be at the start of the lines for the section
+        options. There'll be a 1-space indent for the lines that start with a single digit.
 
         Let inputsAndSections be a map where the keys are the string representations of the
         aforementioned ints and the values are the corresponding Section objects.
          */
         
-        
         var inputsAndSections = new HashMap<String, Section>();
-        final String ntpInfoValue = "i";
         final String exitValue = "e";
+        final String ntpInfoValue = "i";
         String menuString;
         
         {
-            var menuLines = new ArrayList<String>();
-            menuLines.add("You're at the main menu. Which section would you like to go to?");
-            menuLines.add(String.format(" (%s) Get info about the Number Theory Playground", ntpInfoValue));
+            final String directions = """
+                Enter "e" to exit, "i" to get info about the Number Theory Playground, \
+                or one of the following to go to a section:""";
+            
+            StringJoiner menuLinesJoiner =
+                new StringJoiner("\n")
+                .add("Number Theory Playground Main Menu")
+                .add("")
+                .add(putNewLineChars(directions));
             
             var inputForSection = 1;
             for (var section : Section.createInstances()) {
                 var maybeIndent = inputForSection < 10 ? " " : "";
-                menuLines.add(String.format("%s(%d) %s", maybeIndent, inputForSection, section.getHeading()));
+                menuLinesJoiner.add(String.format("%s(%d) %s", maybeIndent, inputForSection, section.getHeading()));
                 inputsAndSections.put(Integer.toString(inputForSection++), section);
             }
-
-            menuLines.add(String.format(" (%s) Exit", exitValue));
-            menuLines.add("Enter your choice: ");
-            menuString = String.join("\n", menuLines);
+            
+            menuString = menuLinesJoiner.toString();
         }
         
-        println("\nWelcome to the command line version of the Number Theory Playground\n");
+        println("\nWelcome to the command line version of the Number Theory Playground.");
         
         while (true) {
-            print(menuString);
+            println();
+            println(menuString);
             String input = getFormattedInput();
             
             switch (input) {
                 case ntpInfoValue:
+                    println();
                     println(ntpInfo);
                     break;
                 
                 case exitValue:
-                    println("I hope you found this interesting.");
+                    println("\nI hope you found this interesting.");
                     return;
                     
                 default:
@@ -99,6 +103,7 @@ public class NtpCli {
                     if (sectionToGoTo != null) {
                         goToSection(sectionToGoTo);
                     } else {
+                        println();
                         printInvalidInput();
                     }
             }
@@ -111,10 +116,7 @@ public class NtpCli {
      * to use for the calculation(s), get info about the section, or go back to the main menu.
      */
     private static void goToSection(Section section) {
-        /*
-        These are valid input values and they're final so they can be used for branches in the
-        switch statement below.
-         */
+        // Valid input values
         final String randomValue = "r";
         final String infoValue = "i";
         final String menuValue = "m";
@@ -127,22 +129,22 @@ public class NtpCli {
                 sectionHeading, section.getInfoParagraphs().stream()
             );
         
-        println();
         
         while (true) {
+            println();
             println(sectionHeading);
             println();
             println(sectionChoicesString);
+            
             String input = getFormattedInput();
+            if (input.equals(menuValue)) return;
+            
             println();
             
             switch (input) {
                 case infoValue:
                     println(sectionInfo);
                     break;
-                    
-                case menuValue:
-                    return;
                     
                 case randomValue:
                     println(section.getRandomCliAnswer());
@@ -170,39 +172,45 @@ public class NtpCli {
                         printInvalidInput();
                     }
             }
-            
-            println();
         }
     }
     
     /**
      */
-    private static String getSectionChoicesString(Section section, String randomValue, String infoValue, String menuValue) {
-        
-        String actionSentence =
+    private static String buildSectionChoicesString(
+        Section section,
+        String randomValue,
+        String infoValue,
+        String menuValue
+    ) {
+        String numChoice =
             String.format(
-                "%s to %s",
-                section.isSingleInputSection() ? "A number" : "2 space-separated numbers",
-                section.getActionSentencesEnding()
+                "%s to %s. %s",
+                section.isSingleInputSection() ? "A whole number" : "2 whitespace-separated whole numbers",
+                section.getActionSentencesEnding(),
+                section.getInputInfoSentences()
             );
-        String intChoice = actionSentence + ' ' + section.getInputInfoSentences();
         
         String randomChoice =
             String.format(
-                "(%s) to generate %s and %s",
+                "\"%s\" to generate %s and %s.",
                 randomValue,
-                section.isSingleInputSection() ? "a random number" : "2 random numbers",
+                section.isSingleInputSection() ? "a random whole number" : "2 random whole numbers",
                 section.getActionSentencesEnding()
             );
         
         String infoChoice =
-            String.format("(%s) to get info about %s.", infoValue, section.getCliInfoOptionEnding());
-        String menuChoice = String.format("(%s) to go to the menu.", menuValue);
+            String.format(
+                "\"%s\" to get info about %s.",
+                infoValue, section.getCliInfoOptionEnding()
+            );
+        
+        String menuChoice = String.format("\"%s\" to go to the main menu.", menuValue);
         
         Stream<String> lines =
             Stream.of(
-                "Type one of the following and press Enter:",
-                intChoice,
+                "Enter one of the following:",
+                numChoice,
                 randomChoice,
                 infoChoice,
                 menuChoice
@@ -212,7 +220,8 @@ public class NtpCli {
     }
     
     private static String buildStringWithHeadingAndInfoParagraphs(
-        String headingStart, Stream<String> infoParagraphsStream
+        String headingStart,
+        Stream<String> infoParagraphsStream
     ) {
         return
             Stream.concat(
@@ -257,7 +266,7 @@ public class NtpCli {
     }
     
     /**
-     * false is provided as the 2nd arg so that no indenting is done.
+     * false is provided as the second arg so that no indenting is done.
      */
     public static String putNewLineChars(String s) {
         return putNewLineChars(s, false);
@@ -274,7 +283,8 @@ public class NtpCli {
         Stream<String> stream,
         int maxLineLength
     ) {
-        String spaceSeparator = getSpace(4);
+        final int spaceSeparatorLength = 4;
+        String spaceSeparator = getSpace(spaceSeparatorLength);
         var lines = new ArrayList<CharSequence>();
         lines.add(heading);
         
@@ -293,7 +303,7 @@ public class NtpCli {
         
         while (iterator.hasNext()) {
             var curString = iterator.next();
-            if (curLine.length() + spaceSeparator.length() + curString.length() > maxLineLength) {
+            if (curLine.length() + spaceSeparatorLength + curString.length() > maxLineLength) {
                 lines.add(curLine.toString());
                 curLine = new StringJoiner(spaceSeparator);
             }
@@ -337,7 +347,11 @@ public class NtpCli {
      * column2Contents. The length of column1Contents and the space will be equal to
      * column1Width. column1Width should be > the length of column1Contents.
      */
-    public static String getRowFor2ColumnTable(String column1Contents, int column1Width, String column2Contents) {
+    public static String getRowFor2ColumnTable(
+        String column1Contents,
+        int column1Width,
+        String column2Contents
+    ) {
         int column1EndGap = column1Width - column1Contents.length();
         if (column1EndGap < 1) {
             printError("column1Width wasn't > the length of column1Contents");

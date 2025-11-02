@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static numbertheoryplayground.Misc.createStringWithCommas;
 import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
 import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndPower;
 
@@ -31,7 +32,8 @@ INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_ALT_SUM_EXPRE
         String expectedBlocksAltSumExpression,
         String expectedDigitsAltSumExpression
     ) {
-        var answer = new RulesAnswer(input, "");
+        var answer = new RulesAnswer(input, createStringWithCommas(input));
+        
         assertAll(
             () -> assertEquals(expectedLast2Digits, answer.getLast2Digits()),
             () -> assertEquals(expectedLast3Digits, answer.getLast3Digits()),
@@ -40,6 +42,26 @@ INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_ALT_SUM_EXPRE
             () -> assertEquals(expectedDigitsAltSumExpression, answer.getDigitsAltSumExpression())
         );
     }
+    
+    
+    @ParameterizedTest
+    @FieldSource("argsForNumberOfFactorsAndExpression")
+    void numberOfFactorsAndExpression(int input, String expectedExpression, int expectedNumFactors) {
+        var numFactorsAndExpression =
+            new NumberOfFactorsAndExpression(new PrimeFactorization(input, ""));
+        
+        assertAll(
+            () -> assertEquals(expectedExpression, numFactorsAndExpression.getExpression()),
+            () -> assertEquals(expectedNumFactors, numFactorsAndExpression.getNumFactors())
+        );
+    }
+    
+    static final List<Arguments> argsForNumberOfFactorsAndExpression =
+        List.of(
+            arguments(2 * 2, "(2 + 1)", 3),
+            arguments(2 * 3, "(1 + 1) × (1 + 1)", 2 * 2),
+            arguments(2 * 3 * 3 * 5 * 5 * 5, "(1 + 1) × (2 + 1) × (3 + 1)", 2 * 3 * 4)
+        );
     
     
     @ParameterizedTest

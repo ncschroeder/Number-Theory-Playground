@@ -20,12 +20,12 @@ class PrimeFactorizationTests {
     static int pow(int a, int b) {
         return (int) Math.pow(a, b);
     }
-
+    
     
     @ParameterizedTest
     @FieldSource("longConstructorArgs")
-    void longConstructor(long input, List<FactorAndPower> expectedFactorsAndPowers) {
-        assertEquals(expectedFactorsAndPowers, new PrimeFactorization(input, "").getFactorsAndPowers());
+    void longConstructor(long input, List<FactorAndPower> expectedFps) {
+        assertEquals(expectedFps, new PrimeFactorization(input, "").getFps());
     }
 
     static final List<Arguments> longConstructorArgs =

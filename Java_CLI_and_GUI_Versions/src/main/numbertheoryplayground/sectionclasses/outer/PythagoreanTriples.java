@@ -35,8 +35,17 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
 55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025).""";
     
+    /*
+    The calculation for this section is: find the first 10 Pythagorean triples where the lowest
+    number in the triple is ≥ an input number. For example, if the input number is 3, then the
+    triple 3, 4, and 5 will be the first one found since the lowest number in that triple is 3.
+    If the input number is 4, then the triple 5, 12, and 13 will be the first one found. These
+    triples will be displayed similarly to how the examples at the end of the paragraphs in the
+    text block above are displayed. If a triple is primitive, then it'll be followed by "(primitive)".
+     */
+    
     /**
-     * Record for the 3 integers of a Pythagorean triple.
+     * Record for the 3 numbers of a Pythagorean triple.
      */
     record Triple(int a, int b, int c) {
         @Override
@@ -74,10 +83,10 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
     private static final int NUM_TRIPLES_TO_FIND = 10;
     
     /**
-     * Returns a list of triple objects for the first 10 Pythagorean triples where the lowest integer in the
-     * triple is ≥ the input. For example, if the input is 3 then an object for the triple 3, 4, and 5 will
-     * be the first one since the lowest number in that triple is 3. If the input number is 4, then an object
-     * for the triple 5, 12, and 13 will be the first one.
+     * Returns a list of Triples for the first 10 Pythagorean triples where the lowest int in
+     * the triple is ≥ the input. For example, if the input is 3 then a Triple for the triple
+     * 3, 4, and 5 will be the first one since the lowest int in that triple is 3. If the input
+     * is 4, then a Triple for the triple 5, 12, and 13 will be the first one.
      */
     static List<Triple> getTriples(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
@@ -116,7 +125,6 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
      * there'll be a 1-space indent for the strings that start with a single digit.
      */
     private static Stream<String> getNumberedTripleStrings(long input, int indentLength) {
-        // Call getTriples first to see if it throws.
         List<Triple> triples = getTriples(input);
         String indent = getSpace(indentLength);
         var position = new AtomicInteger(1);
@@ -149,11 +157,6 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
             );
         }
         
-        // For the methods below, call getNumberedTripleStrings first to see if it throws.
-
-        /**
-         * Returns a string that contains a heading and triple strings, each on their own line.
-         */
         @Override
         public String getCliAnswer(long inputLong, String inputString) {
             Stream<String> tripleStrings = getNumberedTripleStrings(inputLong, 1);
@@ -163,9 +166,6 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
             );
         }
         
-        /**
-         * Returns a list with a heading label and an NtpTextArea with triple strings, each on their own line.
-         */
         @Override
         public List<Component> getGuiComponents(long inputLong, String inputString) {
             Stream<String> tripleStrings = getNumberedTripleStrings(inputLong, 2);

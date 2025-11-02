@@ -7,23 +7,23 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static numbertheoryplayground.sectionclasses.outer.PythagoreanTriples.*;
+import static numbertheoryplayground.sectionclasses.outer.PythagoreanTriples.Triple;
 
 /**
  * Has tests for code in the PythagoreanTriples class.
  */
 class PythagoreanTriplesTests {
+    @ParameterizedTest
+    @MethodSource("getArgsForGetTriples")
+    void getTriples(int input, List<Triple> expectedTriples) {
+        assertEquals(expectedTriples, PythagoreanTriples.getTriples(input));
+    }
+    
     static Triple t(int a, int b, int c) {
         return new Triple(a, b, c);
     }
 
-    @ParameterizedTest
-    @MethodSource("getArgsForTestGetTriples")
-    void testGetTriples(int input, List<Triple> expectedTriples) {
-        assertEquals(expectedTriples, getTriples(input));
-    }
-
-    static Stream<Arguments> getArgsForTestGetTriples() {
+    static Stream<Arguments> getArgsForGetTriples() {
         /*
         Primitive Pythagorean triples are ones where the 3 numbers have a GCD of 1.
         Each non-primitive triple in the lists is followed by a comment of the primitive

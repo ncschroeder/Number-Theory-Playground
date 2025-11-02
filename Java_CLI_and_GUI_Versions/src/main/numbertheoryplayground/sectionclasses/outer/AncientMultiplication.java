@@ -49,11 +49,19 @@ Now let's use 12 for a and 5 for b. The powers of 2 ≤ 12 are 1, 2, 4, and 8. T
 and these powers are 5, 10, 20, and 40. The powers of 2 that sum to 12 are 4 and 8. The
 products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 × (4 + 8) = 60.""";
     
+    /*
+    Given 2 input numbers, the calculations for this section are:
+    1. Find the powers of 2 ≤ the first input number and the corresponding multiples of the
+       second input number. Display these in a table.
+    2. Find the powers of 2 that sum to the first input number and the corresponding multiples
+       of the second input number. Display these in another table.
+     */
+    
     private static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = NINE_QUINTILLION;
     
     /**
-     * Has data that will be in rows of the tables displayed to the user when showing ancient Egyptian
+     * This record has data that'll be in rows of tables shown when showing ancient Egyptian
      * multiplication info.
      */
     record TableRow(long powerOf2, BigInteger correspondingMultiple) {
@@ -83,7 +91,7 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
         private final String allPowersOf2ColumnHeading;
         
         /**
-         * Heading for the 2nd column in both tables.
+         * Heading for the second column in both tables.
          */
         private final String input2MultiplesColumnHeading;
         
@@ -96,15 +104,22 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
             assertIsInRange(input2Long, MIN_INPUT, MAX_INPUT);
             
             mainHeading =
-                String.format("Ancient Egyptian Multiplication Info for %s and %s", input1String, input2String);
+                String.format(
+                    "Ancient Egyptian Multiplication Info for %s and %s",
+                    input1String, input2String
+                );
             allPowersOf2ColumnHeading = "Powers of 2 ≤ " + input1String;
             input2MultiplesColumnHeading = "Corresponding Multiples of " + input2String;
             powersOf2ThatSumToInput1ColumnHeading = "Powers of 2 That Sum to " + input1String;
-            BigInteger product = BigInteger.valueOf(input1).multiply(BigInteger.valueOf(input2));
+            
+            BigInteger product =
+                BigInteger.valueOf(input1Long)
+                .multiply(BigInteger.valueOf(input2Long));
             productSentence =
                 String.format(
-                    "The sum of the bottom right column is %s, which is the product.",
-                    createStringWithCommas(product)
+                    "The sum of the right column of the second table is %s, which is the " +
+                        "product of %s and %s.",
+                    createStringWithCommas(product), input1String, input2String
                 );
             
             Stream.Builder<TableRow> table1RowsBuilder = Stream.builder();
@@ -119,12 +134,16 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
             var input2BigInt = BigInteger.valueOf(input2Long);
             
             for (int i = input1BinaryString.length() - 1; i >= 0; i--) {
-                var row = new TableRow(powerOf2, input2BigInt.multiply(BigInteger.valueOf(powerOf2)));
+                BigInteger correspondingMultiple =
+                    input2BigInt.multiply(BigInteger.valueOf(powerOf2));
+                var row = new TableRow(powerOf2, correspondingMultiple);
                 table1RowsBuilder.accept(row);
+                
                 if (input1BinaryString.charAt(i) == '1') {
                     // powerOf2 is one of the powers of 2 that sum to input1.
                     table2RowsBuilder.accept(row);
                 }
+                
                 powerOf2 *= 2;
             }
             
@@ -141,7 +160,7 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
         }
     }
     
-
+    
     public static final class Section extends DoubleInputSection {
         public Section() {
             super(
@@ -154,9 +173,6 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
             );
         }
         
-        /**
-         * Returns a string with a heading, 2 tables, and a sentence about what the product of input1 and input2 is.
-         */
         @Override
         public String getCliAnswer(
             long input1Long, long input2Long,
@@ -193,14 +209,10 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
                 answer.mainHeading,
                 table1,
                 table2,
-                answer.productSentence
+                NtpCli.putNewLineChars(answer.productSentence)
             );
         }
         
-        /**
-         * Returns a list with a heading label, 2 table panels, a label with a sentence about what the
-         * product of input1 and input2 is, and gaps in between these.
-         */
         @Override
         public List<Component> getGuiComponents(
             long input1Long, long input2Long,
@@ -211,19 +223,15 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
             Function<TableRow, Stream<String>> getRowStrings =
                 tr -> Stream.of(tr.powerOf2String(), tr.correspondingMultipleString());
             
+            List<String> table1ColumnHeadings =
+                List.of(answer.allPowersOf2ColumnHeading, answer.input2MultiplesColumnHeading);
             NtpPanel table1 =
-                NtpPanel.createTablePanel(
-                    List.of(answer.allPowersOf2ColumnHeading, answer.input2MultiplesColumnHeading),
-                    answer.table1Rows,
-                    getRowStrings
-                );
+                NtpPanel.createTablePanel(table1ColumnHeadings, answer.table1Rows, getRowStrings);
             
+            List<String> table2ColumnHeadings =
+                List.of(answer.powersOf2ThatSumToInput1ColumnHeading, answer.input2MultiplesColumnHeading);
             NtpPanel table2 =
-                NtpPanel.createTablePanel(
-                    List.of(answer.powersOf2ThatSumToInput1ColumnHeading, answer.input2MultiplesColumnHeading),
-                    answer.table2Rows,
-                    getRowStrings
-                );
+                NtpPanel.createTablePanel(table2ColumnHeadings, answer.table2Rows, getRowStrings);
             
             return List.of(
                 createAnswerMainHeadingLabel(answer.mainHeading),

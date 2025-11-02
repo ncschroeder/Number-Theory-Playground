@@ -67,6 +67,9 @@ public class NtpGui {
         return new Font("Garamond", Font.BOLD, size);
     }
     
+    /**
+     * Common font and size used.
+     */
     static final Font GARAMOND_25 = createGaramondFont(25);
     static final Font BOLD_GARAMOND_25 = createBoldGaramondFont(25);
     private static final Font ANSWER_MAIN_HEADING_FONT = createBoldGaramondFont(30);

@@ -45,12 +45,8 @@ class NtpCliTests {
                 );
             },
             () -> {
-                /*
-                If the 91st character is a space, putNewLines should replace that character
-                with a new line character and an indent if the indent arg is set to true.
-                 */
                 var testMessage = """
-                    If the 91st character is a space, putNewLines replaces that \
+                    If the 91st character is a space, putNewLineChars replaces that \
                     character with a new line character
                     """;
                 
@@ -63,7 +59,7 @@ class NtpCliTests {
 
                 // Next test is the same as the first but loops more than once.
                 testMessage = """
-                    In each loop, if the 91st character is a space, putNewLines replaces \
+                    In each loop, if the 91st character is a space, putNewLineChars replaces \
                     that character with a new line character
                     """;
                 
@@ -72,8 +68,8 @@ class NtpCliTests {
                 assertEquals(expectedResult, putNewLineChars(arg), testMessage + '.');
 
                 /*
-                Next test is the same as the 2nd but loops more than once. We're expecting
-                4 space characters to be inserted at the start of the 2nd line, so take off
+                Next test is the same as the second but loops more than once. We're expecting
+                4 space characters to be inserted at the start of the second line, so take off
                 4 characters from string90 and use that string.
                  */
                 var string86 = string90.substring(0, 86);
@@ -85,7 +81,7 @@ class NtpCliTests {
             },
             () -> {
                 var testMessage =
-                    "If the 91st character isn't a space, putNewLines goes back to find a space.";
+                    "If the 91st character isn't a space, putNewLineChars goes back to find a space.";
                 var string91 = string80 + ' ' + string10WithoutASpace;
                 assumeTrue(string91.length() == 91);
                 assertEquals(
@@ -100,11 +96,15 @@ class NtpCliTests {
 
     @ParameterizedTest
     @MethodSource("getArgsForTestBuildStringWithStreamElementsOnShortLines")
-    void testBuildStringWithStreamElementsOnShortLines(String expectedContentResult, List<String> contentStrings, String message) {
+    void buildStringWithStreamElementsOnShortLines(
+        String expectedContentResult,
+        List<String> contentStrings,
+        String message
+    ) {
         var testHeading = "test heading";
         assertEquals(
             testHeading + '\n' + expectedContentResult,
-            buildStringWithStreamElementsOnShortLines(testHeading, contentStrings.stream()),
+            NtpCli.buildStringWithStreamElementsOnShortLines(testHeading, contentStrings.stream()),
             message
         );
     }
@@ -147,7 +147,7 @@ class NtpCliTests {
 
 
     @Test
-    void testGetRowFor3ColumnTable() {
-        assertEquals("1 2  3", getRowFor3ColumnTable("1", 2, "2", 3, "3"));
+    void getRowFor3ColumnTable() {
+        assertEquals("1 2  3", NtpCli.getRowFor3ColumnTable("1", 2, "2", 3, "3"));
     }
 }

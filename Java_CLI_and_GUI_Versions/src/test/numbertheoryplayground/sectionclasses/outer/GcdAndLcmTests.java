@@ -27,16 +27,16 @@ class GcdAndLcmTests {
      */
 
     @ParameterizedTest
-    @FieldSource("args")
-    void testGetEuclideanIterations(int input1, int input2, List<EuclideanIteration> expectedIterations) {
-        assertEquals(expectedIterations, getEuclideanIterations(input1, input2));
+    @FieldSource("argsForGetEuclideanIterations")
+    void getEuclideanIterations(int input1, int input2, List<EuclideanIteration> expectedIterations) {
+        assertEquals(expectedIterations, GcdAndLcm.getEuclideanIterations(input1, input2));
     }
     
     static EuclideanIteration ei(int max, int min, int remainder) {
         return new EuclideanIteration(max, min, remainder);
     }
 
-    static final List<Arguments> args =
+    static final List<Arguments> argsForGetEuclideanIterations =
         List.of(
             arguments(10, 10, List.of(ei(10, 10, 0))),
             arguments(10, 5, List.of(ei(10, 5, 0))),

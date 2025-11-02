@@ -6,7 +6,7 @@ import java.util.List;
 import static numbertheoryplayground.Misc.createStringWithCommas;
 
 /**
- * Superclass for Sections that require 2 input ints for their algorithm(s).
+ * Superclass for Sections that require 2 input longs for their algorithm(s).
  */
 public abstract non-sealed class DoubleInputSection extends Section {
     protected DoubleInputSection(

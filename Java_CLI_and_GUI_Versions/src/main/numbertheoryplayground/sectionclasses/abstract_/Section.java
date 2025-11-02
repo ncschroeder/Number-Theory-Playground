@@ -32,8 +32,7 @@ public abstract sealed class Section
     private final String heading;
     
     /**
-     * This list is immutable since Steam.toList returns an immutable list and that method is used
-     * to create this list.
+     * This is immutable.
      */
     private final List<String> infoParagraphs;
     
@@ -44,23 +43,23 @@ public abstract sealed class Section
     /**
      * There are a few "action" sentences used that say what the user is to do and what will happen
      * in response. For the GUI, there's 1 action sentence that starts with "Enter or generate a
-     * number and click the 'Calculate' button to ". For the CLI, there's 1 action sentence for the
-     * custom input option and 1 for the random input option. The custom input option starts with
-     * "A number to ". The random input option starts with "(r) to generate a random number
-     * and ". This field is for the ending of those sentences. For example, for PrimeNumbers.Section,
-     * this field is "get the first 30 prime numbers ≥ that number."
+     * whole number and click the 'Calculate' button to ." For the CLI, there's an action sentence
+     * for the custom input option and one for the random input option. The custom input option
+     * starts with "A whole number to ." The random input option starts with "(r) to generate a
+     * random whole number and ." This field is for the ending of those sentences. For example, for
+     * PrimeNumbers.Section, this field is "get the first 30 prime numbers ≥ that number."
      */
     private final String actionSentencesEnding;
     
     /**
-     * The 1st input info sentence mentions that the input number(s) should be ≥ the min input
-     * and ≤ the max input. For the Goldbach Conjecture section, it's also mentioned that the
+     * The first input info sentence mentions that the input number(s) should be ≥ the min input
+     * and ≤ the max input. For the Goldbach conjecture section, it's also mentioned that the
      * input should be even. The 2nd input info sentence is "Commas are optional."
      */
     private final String inputInfoSentences;
     
     /**
-     * The beginning of the CLI info option is "(i) to get info about ".
+     * The beginning of the CLI info option is "'i' to get info about ."
      */
     private final String cliInfoOptionEnding;
     
@@ -77,20 +76,20 @@ public abstract sealed class Section
         infoParagraphs = getParagraphs(info).toList();
         this.minInput = minInput;
         this.maxInput = maxInput;
-        this.actionSentencesEnding = String.format("get %s.", actionSentencesEnding);
+        this.actionSentencesEnding = "get " + actionSentencesEnding;
         this.cliInfoOptionEnding = cliInfoOptionEnding;
         
         
         var maxInputString = createStringWithCommas(maxInput);
 
         /*
-        If the max input is one of the longs that's a key in the map below, have the 1st input
-        info sentence say that the input number(s) should be ≤ the corresponding string value
+        If the max input is one of the longs that's a key in the map below, then have the first
+        input info sentence say that the input number(s) should be ≤ the corresponding string value
         in the map followed by the long with commas in parentheses. If the max input isn't one of
         the longs that's a key in the map, then have that sentence just say that input number(s)
-        should be ≤ that long with commas. The max inputs that aren't keys are 10,000 and
-        1.5 million, the max inputs for the Pythagorean triples and Goldbach Conjecture sections,
-        respectively.
+        should be ≤ that long with commas. The max inputs that aren't keys are 10,000 and 250,000,
+        the max inputs for the Pythagorean triples section and the Goldbach conjecture section
+        in the GUI version, respectively.
         
         As of Java 21, the version I'm using right now, longs can't be used as the selector for
         switch statements and expressions, which seems pathetic. Using a map seems to be the next
@@ -99,6 +98,7 @@ public abstract sealed class Section
         
         Map<Long, String> maxInputsAndStringsWithWords =
             Map.of(
+                ONE_POINT_FIVE_MILLION, "1.5 million",
                 FIVE_HUNDRED_BILLION, "500 billion",
                 TEN_TRILLION, "10 trillion",
                 ONE_QUADRILLION, "1 quadrillion",
@@ -114,23 +114,18 @@ public abstract sealed class Section
             )
             .orElse(maxInputString);
 
-        var inputInfoSentence1Part1 =
-            isSingleInputSection()
-            ? "this number be a whole number that's"
-            : "these numbers be whole numbers that are";
-        
-        var inputInfoSentence1Part2Format =
-            needsEvenInput()
-            ? "even, ≥ %d, & ≤ %s"
-            : "≥ %d & ≤ %s";
-        
-        var inputInfoSentence1Part2 =
-            String.format(inputInfoSentence1Part2Format, minInput, maxInputSentencePart);
+        var inputInfoSentence1End =
+            String.format(
+                needsEvenInput() ? "even, ≥ %d, and ≤ %s" : "≥ %d and ≤ %s",
+                minInput,
+                maxInputSentencePart
+            );
 
         inputInfoSentences =
             String.format(
-                "Have %s %s. Commas are optional.",
-                inputInfoSentence1Part1, inputInfoSentence1Part2
+                "Have %s be %s. Commas are optional.",
+                isSingleInputSection() ? "this number" : "these numbers",
+                inputInfoSentence1End
             );
     }
     

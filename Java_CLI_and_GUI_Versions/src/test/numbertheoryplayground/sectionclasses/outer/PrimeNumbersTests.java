@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.getPrimes;
 
 /**
  * Has tests for code in the PrimeNumbers class.
@@ -15,8 +14,8 @@ import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.getPrimes
 class PrimeNumbersTests {
     @ParameterizedTest
     @MethodSource("getArgs")
-    void testGetPrimes(long input, long[] expectedPrimes) {
-        assertArrayEquals(expectedPrimes, getPrimes(input).toArray());
+    void getPrimes(long input, long[] expectedPrimes) {
+        assertArrayEquals(expectedPrimes, PrimeNumbers.getPrimes(input).toArray());
     }
 
     static Stream<Arguments> getArgs() {

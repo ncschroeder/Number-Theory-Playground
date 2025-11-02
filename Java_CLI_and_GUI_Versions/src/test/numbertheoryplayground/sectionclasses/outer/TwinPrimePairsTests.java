@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static numbertheoryplayground.sectionclasses.outer.TwinPrimePairs.getPairStarts;
 
 /**
  * Has tests for code in the TwinPrimePairs class.
@@ -15,8 +14,8 @@ import static numbertheoryplayground.sectionclasses.outer.TwinPrimePairs.getPair
 class TwinPrimePairsTests {
     @ParameterizedTest
     @MethodSource("getArgs")
-    void testGetPairStarts(long input, long[] expectedPairStarts) {
-        assertArrayEquals(expectedPairStarts, getPairStarts(input).toArray());
+    void getPairStarts(long input, long[] expectedPairStarts) {
+        assertArrayEquals(expectedPairStarts, TwinPrimePairs.getPairStarts(input).toArray());
     }
 
     static Stream<Arguments> getArgs() {

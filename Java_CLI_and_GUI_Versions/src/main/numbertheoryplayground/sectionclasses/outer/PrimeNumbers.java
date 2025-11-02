@@ -35,14 +35,15 @@ root of that number. This is called trial division. Let's determine if 29 and 33
 5^2 = 25 and 6^2 = 36 so the square roots of 29 and 33 are between 5 and 6. We check if 29 and
 33 are divisible by 2, 3, or 5; which are the primes ≤ 5. 29 isn't divisible by any of those
 and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
-
+    
+    // The calculation for this section is: find the first 30 primes that are ≥ an input number.
     static boolean isPrime(long input) {
         if (input < 2) return false;
-
+        
         /*
-        We only need to check if the input is divisible by any primes <= the floor of the square root
-        of the input. If it is, then the input is not prime. Odd numbers will be checked since all primes
-        besides 2 are odd.
+        We only need to check if the input is divisible by any primes ≤ the floor of the square
+        root of the input. If it is, then the input is not prime. 2 and odd numbers will be
+        checked since all primes besides 2 are odd.
          */
         
         var maxPossibleFactor = (long) Math.sqrt(input);
@@ -69,20 +70,17 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     static LongStream getPrimes(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
+        // Create a stream of odd primes since all primes besides 2 are odd.
         long iterationStart = isOdd(input) ? input : input + 1;
         LongStream oddPrimes =
             LongStream.iterate(iterationStart, l -> l + 2)
             .filter(PrimeNumbers::isPrime);
         
-        // 2 is the only even prime.
         return
             (input <= 2 ? LongStream.concat(LongStream.of(2), oddPrimes) : oddPrimes)
             .limit(NUM_PRIMES_TO_FIND);
     }
     
-    /**
-     * Returns a stream of the string representations of the first 30 primes >= the input.
-     */
     private static Stream<String> getPrimesStrings(long input) {
         return getPrimes(input).mapToObj(Misc::createStringWithCommas);
     }
@@ -109,17 +107,19 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
         
         @Override
         public String getCliAnswer(long inputLong, String inputString) {
+            Stream<String> primesStrings = getPrimesStrings(inputLong);
             return NtpCli.buildStringWithStreamElementsOnShortLines(
                 getPrimesHeading(inputString),
-                getPrimesStrings(inputLong)
+                primesStrings
             );
         }
         
         @Override
         public List<Component> getGuiComponents(long input, String inputString) {
+            var textArea = NtpTextArea.createNarrowOneWithStreamElements(getPrimesStrings(input));
             return List.of(
                 NtpGui.createListHeadingLabel(getPrimesHeading(inputString)),
-                NtpTextArea.createNarrowOneWithStreamElements(getPrimesStrings(input))
+                textArea
             );
         }
     }

@@ -1,9 +1,9 @@
 package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
@@ -21,6 +21,15 @@ Say we have 2 whole numbers that we'll represent with the variables a and b. If 
 b and get no remainder, then a is said to be divisible by b and b is said to be a factor or
 divisor of a. If you want to find some whole number factors of a whole number, you could
 manually do some division but there are other ways to find them.""";
+    
+    /*
+    Given an input number, the calculations for this section are:
+    1. Use the divisibility rules to see if we can find some factors of the number and build a
+       paragraph with info from this.
+    2. Find the PF of the number. If we can determine from this PF that the input number is
+       composite (not prime), then find the factors of the input number by finding the
+       sub-factorizations of the PF.
+     */
     
     static boolean isDivisible(long a, long b) {
         return a % b == 0;
@@ -71,27 +80,35 @@ and 4, it's also divisible by 12. The alternating sum of 3-digit blocks from rig
 768 - 695 + 4 = 77, which is divisible by 7. The alternating sum of digits from left to right
 is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
     
+    /**
+     * Class with data related to rules that can be used to determine if the input long is
+     * divisible by other whole numbers.
+     */
     static final class RulesAnswer {
         /**
-         * Contains divisibility info for the input long found using the mentioned rules.
+         * Contains divisibility info for the input found using the mentioned rules.
          */
         private final String infoParagraph;
+        
         private final long last2Digits;
+        
         private final long last3Digits;
+        
         private final int sumOfDigits;
+        
         /**
-         * Contains text for the alternating sum of blocks of 3 from right to left.
+         * Contains text for an expression of the alternating sum of 3-digit blocks from right
+         * to left. For 4,695,768, from the example in the info above, this would be
+         * "768 - 695 + 4 = 77."
          */
         private final StringBuilder blocksAltSumExpressionBuilder;
+        
         /**
-         * Contains text for the alternating sum of digits from left to right.
+         * Contains text for an expression of the alternating sum of digits from left to right.
+         * For 4,695,768, from the example in the info above, this would be
+         * "4 - 6 + 9 - 5 + 7 - 6 + 8 = 11."
          */
         private final StringBuilder digitsAltSumExpressionBuilder;
-        
-        @FunctionalInterface
-        private interface DivisibilitySentenceFunction {
-            String apply(int possibleFactor, long longFromCalculation, boolean isDivisible);
-        }
         
         RulesAnswer(long inputLong, String inputStringWithCommas) {
             assertIsInRange(inputLong, MIN_INPUT, MAX_INPUT);
@@ -101,6 +118,11 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
             and if the result of that calculation is divisible by a certain integer, then the input
             long is also divisible by that integer.
              */
+            @FunctionalInterface
+            interface DivisibilitySentenceFunction {
+                String apply(int possibleFactor, long longFromCalculation, boolean isDivisible);
+            }
+            
             DivisibilitySentenceFunction getDivisSentence =
                 (possibleFactor, longFromCalculation, isDivisible) ->
                     String.format(
@@ -124,7 +146,7 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
                 );
             } else if (inputLong >= 100) {
                 infoSentencesJoiner
-                .add("The last 2 digits form the integer " + last2Digits)
+                .add("The last 2 digits form the number " + last2Digits)
                 .add(getDivisSentence.apply(4, last2Digits, isDivisibleBy4));
                 
                 if (isDivisibleBy4) {
@@ -132,7 +154,7 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
                         boolean isDivisibleBy8 = isDivisible(last3Digits, 8);
                         
                         infoSentencesJoiner
-                        .add("The last 3 digits form the integer " + last3Digits)
+                        .add("The last 3 digits form the number " + last3Digits)
                         .add(getDivisSentence.apply(8, last3Digits, isDivisibleBy8));
                     }
                 } else {
@@ -189,6 +211,12 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
                 );
             }
             
+            /*
+            This is a special minus sign in the Mathematical Operators Unicode block and has a
+            Unicode value of U+2212. Depending on the font, it might look like a hyphen.
+             */
+            final char minusSign = '−';
+            
             if (inputLong < 1_000) {
                 blocksAltSumExpressionBuilder = null;
             } else {
@@ -197,10 +225,18 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
                 blocksAltSumExpressionBuilder = new StringBuilder();
                 var add = true;
                 
-                    var blockString = blocksOf3[i];
-                    var blockInt = Integer.parseInt(blockString);
                 for (var i = threeDigitBlocks.length - 1; i >= 0; i--) {
+                    if (!blocksAltSumExpressionBuilder.isEmpty()) {
+                        blocksAltSumExpressionBuilder
+                        .append(' ')
+                        .append(add ? '+' : minusSign)
+                        .append(' ');
                     }
+                    
+                    var blockString = threeDigitBlocks[i];
+                    blocksAltSumExpressionBuilder.append(blockString);
+                    var blockInt = Integer.parseInt(blockString);
+                    blocksAltSum += add ? blockInt : -blockInt;
                     add = !add;
                 }
                 
@@ -211,7 +247,7 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
                 boolean isDivisibleBy7 = isDivisible(blocksAltSum, 7);
                 
                 infoSentencesJoiner
-                .add("The alternating sum of blocks of 3 from right to left is " + blocksOf3AltSumExpressionBuilder)
+                .add("The alternating sum of 3-digit blocks from right to left is " + blocksAltSumExpressionBuilder)
                 .add(getDivisSentence.apply(7, blocksAltSum, isDivisibleBy7));
             }
             
@@ -220,13 +256,17 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
             var add = true;
             
             for (var i = 0; i < inputStringWithoutCommas.length(); i++) {
+                if (!digitsAltSumExpressionBuilder.isEmpty()) {
+                    digitsAltSumExpressionBuilder
+                    .append(' ')
+                    .append(add ? '+' : minusSign)
+                    .append(' ');
+                }
+                
                 var digitChar = inputStringWithoutCommas.charAt(i);
+                digitsAltSumExpressionBuilder.append(digitChar);
                 var digitInt = Character.getNumericValue(digitChar);
                 digitsAltSum += add ? digitInt : -digitInt;
-                if (!digitsAltSumExpressionBuilder.isEmpty()) {
-                    digitsAltSumExpressionBuilder.append(add ? " + " : " − ");
-                }
-                digitsAltSumExpressionBuilder.append(digitChar);
                 add = !add;
             }
             
@@ -239,7 +279,6 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
             
             infoParagraph = infoSentencesJoiner.toString();
         }
-        
         
         int getSumOfDigits() {
             return sumOfDigits;
@@ -266,7 +305,7 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
     }
     
     
-    static final String PF_INFO = """
+    private static final String PF_INFO = """
 The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's
 have a variable n and let it represent a whole number > 1. First, you can find how many factors
 n has by looking at n's PF, taking all the powers of the factors, adding 1 to each, and then
@@ -285,8 +324,18 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
 factors!""";
     
     static class NumberOfFactorsAndExpression {
+        /**
+         * The number of factors of the corresponding big int of the input PF, or the input
+         * long for getCliAnswer or getGuiComponents since those are the methods that call
+         * getNumFactorsInfo which then calls the constructor for this class.
+         */
         private int numFactors;
         
+        /**
+         * A mathematical expression that shows how the number of factors was calculated.
+         * For the input long with a PF of 5^2 × 7^3, this would be "(2 + 1) × (3 + 1)" and
+         * numFactors would be 12.
+         */
         private final String expression;
         
         NumberOfFactorsAndExpression(PrimeFactorization pf) {
@@ -301,11 +350,11 @@ factors!""";
             expression = String.join(" × ", powerStrings);
         }
         
-        public int getNumFactors() {
+        int getNumFactors() {
             return numFactors;
         }
         
-        public String getExpression() {
+        String getExpression() {
             return expression;
         }
     }
@@ -405,12 +454,14 @@ factors!""";
     
     private static final String PF_INFO_HEADING = "Prime Factorization Info";
     
-    private static final String FACTORS_AND_PFS_SENTENCE =
-        "The factors and their prime factorizations are:";
+    private static final String FACTORS_AND_PFS_SENTENCE = "The factors and their PFs are:";
     
     private static String getPrimeNumberSentence(String inputString) {
-        return inputString + " is prime and doesn't have any factors other than 1 and itself.";
+        return
+            inputString +
+            " is prime and doesn't have any whole number factors other than 1 and itself.";
     }
+    
     
     public static final class Section extends SingleInputSection {
         public Section() {
@@ -425,33 +476,27 @@ factors!""";
         }
         
         /**
-         * Returns a string that shows divisibility info acquired using special tricks followed by info
-         * related to prime factorizations.
+         * Returns a string with a main heading, divisibility rules info, and PF info.
          */
         @Override
         public String getCliAnswer(long inputLong, String inputString) {
-            // Call PF constructor first to see if it throws.
+            String rulesInfo = new RulesAnswer(inputLong, inputString).infoParagraph;
             var pf = new PrimeFactorization(inputLong, inputString);
             
-            StringJoiner linesJoiner =
+            var linesJoiner =
                 new StringJoiner("\n")
                 .add(getAnswerMainHeading(inputString))
-                .add("");
-            
-            if (inputLong >= 10) {
-                String rulesInfo = new RulesAnswer(inputLong, inputString).infoParagraph;
-                
-                linesJoiner
+                .add("")
                 .add(RULES_INFO_HEADING)
                 .add(NtpCli.putNewLineChars(rulesInfo))
-                .add("");
-            }
-            
-            linesJoiner.add(PF_INFO_HEADING);
+                .add("")
+                .add(PF_INFO_HEADING);
             
             if (pf.isForAPrimeNumber()) {
                 linesJoiner.add(
-                    NtpCli.putNewLineChars(pf.getInfoSentence() + ' ' + getPrimeNumberSentence(inputString))
+                    NtpCli.putNewLineChars(
+                        pf.getInfoSentence() + ' ' + getPrimeNumberSentence(inputString)
+                    )
                 );
             } else {
                 String textAboveFactorPfs =
@@ -479,38 +524,31 @@ factors!""";
         displayed instead of the factors and their PFS. See the documentation comment for
         NtpTextArea.StringTooLongException for more info. Longs that have so many factors that
         the resulting string takes a long time to display seem rare. An example of one that's
-        below the max input is 9,736,008,432,870,720. The PF of it is
-        2^6 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41. From doing the calculation
-        that PrimeFactorization.getNumFactorsInfo does, there are 28,672 factors.
+        below the max input is 9,736,008,432,870,720, which was mentioned in the PF_INFO string
+        and has 28,672 total factors.
          */
         
         /**
-         * Returns a list of GUI components which includes a main heading label, components for divisibility
-         * info acquired using special tricks, components for info relating to prime factorizations, and gaps
-         * where appropriate.
+         * Returns a list with a main heading label, divisibility rules info components,
+         * PF info components, and gaps where appropriate.
          */
         @Override
         public List<Component> getGuiComponents(long inputLong, String inputString) {
-            // Call PF constructor first to see if it throws.
+            String rulesInfo = new RulesAnswer(inputLong, inputString).infoParagraph;
             var pf = new PrimeFactorization(inputLong, inputString);
             
-            var comps = new ArrayList<Component>(10);
-            comps.add(createAnswerMainHeadingLabel(getAnswerMainHeading(inputString)));
-            comps.add(createGapBetweenAnswerSections());
-            
-            if (inputLong >= 10) {
-                String rulesInfo = new RulesAnswer(inputLong, inputString).infoParagraph;
-                comps.addAll(
-                    List.of(
-                        createAnswerSubHeadingLabel(RULES_INFO_HEADING),
-                        createGap(5),
-                        new NtpTextArea(rulesInfo),
-                        createGapBetweenAnswerSections()
-                    )
-                );
-            }
-            
-            comps.add(createAnswerSubHeadingLabel(PF_INFO_HEADING));
+            var comps = new ArrayList<Component>(9);
+            comps.addAll(
+                List.of(
+                    createAnswerMainHeadingLabel(getAnswerMainHeading(inputString)),
+                    createGapBetweenAnswerSections(),
+                    createAnswerSubHeadingLabel(RULES_INFO_HEADING),
+                    createGap(5),
+                    new NtpTextArea(rulesInfo),
+                    createGapBetweenAnswerSections(),
+                    createAnswerSubHeadingLabel(PF_INFO_HEADING)
+                )
+            );
             
             if (pf.isForAPrimeNumber()) {
                 String textToDisplay = pf.getInfoSentence() + ' ' + getPrimeNumberSentence(inputString);

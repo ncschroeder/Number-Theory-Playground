@@ -15,24 +15,28 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.isOdd;
 import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePrime;
 
 /**
- * Utility class related to the Goldbach Conjecture and the section for it.
+ * Utility class related to the Goldbach conjecture and the section for it.
  *
- * The Goldbach Conjecture section needs even input so that's why getPrimePairStarts throws an
+ * The Goldbach conjecture section needs even input so that's why getPrimePairStarts throws an
  * exception for odd inputs and the getRandomInput method is overridden.
  */
 public class GoldbachConjecture {
     private static final String INFO = """
-The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime
+The Goldbach conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime
 numbers. This was named after 1700s Prussian mathematician Christian Goldbach. %s. The Goldbach
-Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 10^18."""
-        .formatted(CONJECTURE_DEFINITION);
+conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 10^18."""
+        .formatted(TwinPrimePairs.CONJECTURE_DEFINITION);
+    
+    /*
+    The calculation for this section is: find the pairs of prime numbers that sum to an even
+    input number.
+     */
     
     private static final long MIN_INPUT = 4;
-    
     private static long MAX_INPUT;
     
     public static void setMaxInputForCli() {
-        MAX_INPUT = 1_500_000;
+        MAX_INPUT = ONE_POINT_FIVE_MILLION;
     }
     
     public static void setMaxInputForGui() {
@@ -43,8 +47,9 @@ Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
     Why does this section have separate max inputs for the CLI and GUI? Well, this section can
     find the pairs of prime numbers that sum to an input long. After finding them, a string gets
     built that contains them. This string can be pretty long. There doesn't seem to be any
-    problem displaying long strings in the CLI, but it can take a long time to do that in the GUI.
-    See the documentation comment for NtpTextArea.StringTooLongException for more info.
+    problem displaying long strings in the CLI, but it can take a long time to do that in an
+    NtpTextArea in the GUI. See the documentation comment for NtpTextArea.StringTooLongException
+    for more info.
     
     The max input is set to 250,000 for the GUI since the resulting string from that input isn't
     deemed too long but the string for 300,000 is. There are still some inputs below 250,000 that
@@ -59,7 +64,7 @@ Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
     static int[] getPrimePairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         if (isOdd(input)) {
-            throw InvalidInputNumberException.instance;
+            throw InvalidInputNumberException.getInstance();
         }
         
         /*
@@ -90,14 +95,16 @@ Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
     }
     
     private static String getNumPairsSentence(int numPairs, String inputString) {
-        String textAfterThere =
-            numPairs == 1
-            ? "'s 1 pair"
-            : String.format(" are %s pairs", createStringWithCommas(numPairs));
+        String sentenceStart =
+            "There" + (
+                numPairs == 1
+                ? "'s 1 pair"
+                : String.format(" are %s pairs", createStringWithCommas(numPairs))
+            );
         
         return String.format(
-            "There%s of prime numbers that sum to %s.",
-            textAfterThere, inputString
+            "%s of prime numbers that sum to %s.",
+            sentenceStart, inputString
         );
     }
     
@@ -107,6 +114,7 @@ Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
             (numPairs == 1 ? "It is" : "They are") + ':';
     }
     
+    
     public static final class Section extends SingleInputSection {
         public Section() {
             super(
@@ -115,7 +123,7 @@ Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
                 MIN_INPUT,
                 MAX_INPUT,
                 "the pairs of prime numbers that sum to that number",
-                "the Goldbach Conjecture"
+                "the Goldbach conjecture"
             );
         }
         
@@ -132,6 +140,10 @@ Conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
         public List<Component> getGuiComponents(long inputLong, String inputString) {
             int[] pairStarts = getPrimePairStarts(inputLong);
             
+            /*
+            Check if the string formed when trying to create pairsTextArea is deemed too long.
+            See the long comment close to the top of this class for more info.
+             */
             try {
                 var pairsTextArea =
                     NtpTextArea.createWideOneWithStreamElements(getPrimePairStrings(pairStarts, inputLong));

@@ -12,8 +12,9 @@ import static numbertheoryplayground.Misc.*;
 import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
 
 /**
- * Class that can be instantiated and also has static members related to prime factorizations and the
- * section for it.
+ * Class that can be instantiated and also has static members related to prime factorizations and
+ * the section for it. The initials PF are used to refer to instances of this class or to prime
+ * factorizations in general.
  */
 public final class PrimeFactorization {
     private static final String INFO = """
@@ -34,16 +35,15 @@ numbers so it has 13 unique prime factors and its PF is
 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41. You could also multiply that number
 by 2 or 3 and those numbers are ≤ the max input and have the same amount of unique prime factors.""";
 
+    // The calculation for this section is: find the PF of an input number.
+    
     static final long MIN_INPUT = 2;
     static final long MAX_INPUT = TEN_QUADRILLION;
     
-    record FactorAndPower(long factor, int power) {}
     /**
-     * An immutable list that's sorted by factors, which is appropriate for the string
-     * representation of this.
+     * Instances of this class are shortened to fp or its plural fps.
      */
-    private final List<FactorAndPower> factorsAndPowers;
-
+    record FactorAndPower(long factor, int power) {}
     /**
      * The BigInteger that this prime factorization is for.
      */
@@ -51,14 +51,13 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
     
     /*
     Why use a BigInteger? Well, this class has 2 constructors, 1 of which has a list for a param.
-    1 place where that one is used is in the constructor for the GcdAndLcmAnswer class at the
-    bottom of this class. The GcdAndLcmAnswer constructor creates a list of the prime factors
-    and powers of the LCM of 2 input longs, and then creates a PrimeFactorization using that
-    list. That PrimeFactorization constructor will then set this field to the product of all the
-    factors raised to their powers. The LCM of 2 longs is at most the product of them. The
-    GcdAndLcm class creates GcdAndLcmAnswer objects and the GCD and LCM section has a max input of
-    5 quadrillion. The highest possible LCM is described in the GCD_AND_LCM_INFO string above the
-    GcdAndLcmAnswer class at the bottom of this class. That LCM is
+    1 place where that one is used is in the constructor for the
+    GcdAndLcmAnswer.PrimeFactorizationAnswer class. That constructor creates a list of the prime
+    factors and powers of the LCM of 2 input longs, and then creates a PrimeFactorization using
+    that list. That PrimeFactorization constructor will then set this field to the product of all
+    the factors raised to their powers. The LCM of 2 longs is at most the product of them. The
+    GCD and LCM section has a max input of 5 quadrillion. The highest possible LCM is described in
+    the PF_INFO string above the GcdAndLcmAnswer.PrimeFactorizationAnswer class. That LCM is
     5 quadrillion × (5 quadrillion − 1), which is almost 25 nonillion, which is a number with 32
     digits. The max value for a long is 9 quintillion something, which is a relatively small
     number with 19 digits.
@@ -66,6 +65,11 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
     
     private final String correspondingBigIntString;
     
+    /**
+     * An immutable list that's sorted by factors, which is appropriate for the string
+     * representation of this.
+     */
+    private final List<FactorAndPower> fps;
     
     /**
      * Constructs a PrimeFactorization for the prime factorization of the input long.
@@ -75,15 +79,15 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
         
         correspondingBigInt = BigInteger.valueOf(inputLong);
         correspondingBigIntString = inputString;
-        var factorsAndPowersArrList = new ArrayList<FactorAndPower>();
+        var tempFps = new ArrayList<FactorAndPower>();
         var maxLongToCheck = (long) Math.sqrt(inputLong);
         long remaining = inputLong;
 
         /*
-        Find all the prime factors and their powers and put these in factorsAndPowers. Divide remaining
-        by each prime factor that is found. When remaining becomes 1, the entire prime factorization has
-        been found. First 2 will be checked and then odd numbers will be checked since all prime numbers
-        besides 2 are odd.
+        Find all the prime factors and their powers and put these in tempFps. Divide remaining
+        by each factor that's found. When remaining becomes 1, the entire prime factorization has
+        been found. First 2 will be checked and then odd numbers will be checked since all prime
+        numbers besides 2 are odd.
          */
         
         if (isDivisible(remaining, 2)) {
@@ -92,7 +96,7 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
                 power++;
                 remaining /= 2;
             } while (isDivisible(remaining, 2));
-            factorsAndPowersArrList.add(new FactorAndPower(2, power));
+            tempFps.add(new FactorAndPower(2, power));
         }
         
         if (remaining > 1) {
@@ -103,33 +107,32 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
                         power++;
                         remaining /= possiblePrimeFactor;
                     } while (isDivisible(remaining, possiblePrimeFactor));
-                    factorsAndPowersArrList.add(new FactorAndPower(possiblePrimeFactor, power));
+                    tempFps.add(new FactorAndPower(possiblePrimeFactor, power));
                     if (remaining == 1) break;
                 }
             }
         }
         
         if (remaining > 1) {
-            factorsAndPowersArrList.add(new FactorAndPower(remaining, 1));
+            tempFps.add(new FactorAndPower(remaining, 1));
         }
         
-        factorsAndPowers = List.copyOf(factorsAndPowersArrList);
+        fps = List.copyOf(tempFps);
     }
     
     /**
-     * Constructs a new PrimeFactorization to represent the prime factorization whose factors and powers
-     * are keys and values, respectively, in the map provided.
+     * Constructs a PrimeFactorization for the prime factorization whose factors and powers
+     * are in the list provided.
      */
-    
-    PrimeFactorization(List<FactorAndPower> factorsAndPowers) {
-        this.factorsAndPowers =
-            factorsAndPowers
+    PrimeFactorization(List<FactorAndPower> fps) {
+        this.fps =
+            fps
             .stream()
             .sorted(Comparator.comparingLong(FactorAndPower::factor))
             .toList();
         
         BigInteger tempCorrespondingBigInt = BigInteger.ONE;
-        for (FactorAndPower fp : factorsAndPowers) {
+        for (FactorAndPower fp : fps) {
             BigInteger multiplicand = BigInteger.valueOf((long) Math.pow(fp.factor, fp.power));
             tempCorrespondingBigInt = tempCorrespondingBigInt.multiply(multiplicand);
         }
@@ -137,19 +140,18 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
         correspondingBigIntString = createStringWithCommas(correspondingBigInt);
     }
     
-    
-    List<FactorAndPower> getFactorsAndPowers() {
-        return factorsAndPowers;
-    }
-    
     BigInteger getCorrespondingBigInt() {
         return correspondingBigInt;
     }
-
+    
     public String getCorrespondingBigIntString() {
         return correspondingBigIntString;
     }
-
+    
+    List<FactorAndPower> getFps() {
+        return fps;
+    }
+    
     /**
      * Returns a string that represents this PF the same way that the first info paragraph at the
      * top represents PFs. That paragraph says "the PF of 5 is just 5, the PF of 25 is 5^2, and
@@ -158,7 +160,7 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
     @Override
     public String toString() {
         return
-            factorsAndPowers
+            fps
             .stream()
             .map(fp -> {
                 var factorString = createStringWithCommas(fp.factor);
@@ -167,11 +169,8 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
             .collect(Collectors.joining(" × "));
     }
     
-    /**
-     * Prime numbers have a prime factorization that consists of a single factor with 1 as its power.
-     */
     boolean isForAPrimeNumber() {
-        return factorsAndPowers.size() == 1 && factorsAndPowers.getFirst().power == 1;
+        return fps.size() == 1 && fps.getFirst().power == 1;
     }
     
     String getInfoSentence() {
@@ -179,25 +178,21 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
     }
     
     /**
+     * If the factor is in this PF, then an Optional with that factor's power will be returned.
+     * Otherwise, an empty Optional will be returned.
      */
-    
-    }
-    
-    /**
-     */
+    OptionalInt getPowerOf(long factor) {
         return
-    private OptionalInt getPowerOf(long factor) {
-        return
-            factorsAndPowers
+            fps
             .stream()
             .filter(fp -> fp.factor == factor)
             .mapToInt(FactorAndPower::power)
             .findFirst();
     }
     
-    public boolean containsFactor(long l) {
+    boolean containsFactor(long l) {
         return
-            factorsAndPowers
+            fps
             .stream()
             .anyMatch(fp -> fp.factor == l);
     }

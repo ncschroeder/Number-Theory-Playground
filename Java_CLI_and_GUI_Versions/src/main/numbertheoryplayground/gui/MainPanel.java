@@ -58,8 +58,7 @@ final class MainPanel extends NtpPanel {
         });
         
         Font sectionBtnFont = GARAMOND_25;
-        
-        String homeText =
+        String ntpInfo =
             getParagraphs(NTP_INFO).collect(Collectors.joining("\n\n"));
         
         JButton homeBtn = createButton("Home", sectionBtnFont);
@@ -69,7 +68,7 @@ final class MainPanel extends NtpPanel {
             calcBtn.setVisible(false);
             answerPanel.clear();
             sectionHeadingLabel.setText(homeBtn.getText());
-            sectionInfoTextArea.setText(homeText);
+            sectionInfoTextArea.setText(ntpInfo);
             directionsTextArea.clear();
         });
         homeBtn.doClick();
@@ -86,8 +85,8 @@ final class MainPanel extends NtpPanel {
                 
                 String actionSentence =
                     String.format(
-                        "Enter or generate %s and click the \"Calculate\" button to %s",
-                        section.isSingleInputSection() ? "a number" : "2 numbers",
+                        "Enter or generate %s and click the \"Calculate\" button to %s.",
+                        section.isSingleInputSection() ? "a whole number" : "2 whole numbers",
                         section.getActionSentencesEnding()
                     );
                 directionsTextArea.setText(actionSentence + ' ' + section.getInputInfoSentences());
@@ -164,7 +163,6 @@ final class MainPanel extends NtpPanel {
             JButton incrementBtn = createButton("+", GARAMOND_25);
             incrementBtn.setMinimumSize(incrementAndDecrementBtnSize);
             incrementBtn.setMaximumSize(incrementAndDecrementBtnSize);
-            
             incrementBtn.addActionListener(e -> {
                 try {
                     var inputLong = getInputAsLong();

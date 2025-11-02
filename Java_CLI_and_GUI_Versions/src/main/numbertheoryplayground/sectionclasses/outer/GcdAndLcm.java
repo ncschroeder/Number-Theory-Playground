@@ -59,6 +59,11 @@ factors is 304,250,263,527,210, the product of the first 13 prime numbers, and
 prime factors and its PF is
 2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41 × 47 × 53 × 59 × 61 × 67 × 71 × 73!""";
     
+    /*
+    Given 2 input numbers, the calculations for this section are:
+    1. Perform the Euclidean algorithm on the numbers and display a table with info about all iterations.
+    2. Find the PFs of the numbers and use these to find the PFs of the GCD and LCM.
+     */
     
     // This section uses prime factorizations so the min input for those will be used.
     private static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
@@ -92,7 +97,6 @@ prime factors and its PF is
         long max = Math.max(input1, input2);
         long min = Math.min(input1, input2);
         long remainder = max % min;
-        
         var iterations = new ArrayList<EuclideanIteration>();
         iterations.add(new EuclideanIteration(max, min, remainder));
         
@@ -106,8 +110,8 @@ prime factors and its PF is
         return iterations;
     }
     
-    // Text used for the Euclidean algorithm info table.
-    private static final String EUCLIDEAN_TABLE_HEADING = "Euclidean Algorithm Info";
+    // Text used for the Euclidean algorithm table.
+    private static final String EUCLIDEAN_TABLE_HEADING = "Euclidean Algorithm Iterations";
     private static final String EUCLIDEAN_MAX_COLUMN_HEADING = "Max";
     private static final String EUCLIDEAN_MIN_COLUMN_HEADING = "Min";
     private static final String EUCLIDEAN_REMAINDER_COLUMN_HEADING = "Remainder";
@@ -179,8 +183,8 @@ prime factors and its PF is
     
     /**
      * Returns an NtpPanel with a heading label, table, and label with a message about what the GCD of
-     * input1Long and input2Long is. The table has columns for the max number, min number, and remainder for each
-     * iteration of the Euclidean algorithm performed on input1Long and input2Long.
+     * input1Long and input2Long is. The table has columns for the max number, min number, and remainder
+     * for each iteration of the Euclidean algorithm performed on input1Long and input2Long.
      */
     private static NtpPanel getEuclideanPanel(
         long input1Long, long input2Long,
@@ -191,9 +195,16 @@ prime factors and its PF is
         Function<EuclideanIteration, Stream<String>> getIterationRowStrings =
             ei -> Stream.of(ei.maxString(), ei.minString(), ei.remainderString());
         
+        List<String> columnHeadings =
+            List.of(
+                EUCLIDEAN_MAX_COLUMN_HEADING,
+                EUCLIDEAN_MIN_COLUMN_HEADING,
+                EUCLIDEAN_REMAINDER_COLUMN_HEADING
+            );
+        
         NtpPanel iterationsTable =
             NtpPanel.createTablePanel(
-                EUCLIDEAN_COLUMN_HEADINGS,
+                columnHeadings,
                 iterations.stream(),
                 getIterationRowStrings
             );
@@ -240,9 +251,9 @@ Other pairs of input numbers have the same LCM, such as that first input number 
 the second input number multiplied by 2.""";
     
     /**
-     * This class uses PFs to find the GCD and LCM of 2 integers.
+     * This class uses PFs to find the GCD and LCM of 2 longs.
      */
-    static class PrimeFactorizationAnswer {
+    static final class PrimeFactorizationAnswer {
         private final PrimeFactorization input1Pf;
         
         private final PrimeFactorization input2Pf;
@@ -273,7 +284,7 @@ the second input number multiplied by 2.""";
                 input2Pf
                 .getPowerOf(factor)
                 .ifPresentOrElse(
-                    (power2) -> {
+                    power2 -> {
                         gcdPfFps.add(new FactorAndPower(factor, Math.min(power1, power2)));
                         lcmPfFps.add(new FactorAndPower(factor, Math.max(power1, power2)));
                     },
@@ -287,11 +298,7 @@ the second input number multiplied by 2.""";
                 }
             }
             
-            gcdPf =
-                gcdPfFps.isEmpty()
-                ? null
-                : new PrimeFactorization(gcdPfFps);
-            
+            gcdPf = gcdPfFps.isEmpty() ? null : new PrimeFactorization(gcdPfFps);
             lcmPf = new PrimeFactorization(lcmPfFps);
         }
         
@@ -307,7 +314,7 @@ the second input number multiplied by 2.""";
             String gcdSentence =
                 getGcdPf()
                 .map(pf -> getGcdOrLcmPfSentence("GCD", gcdPf))
-                .orElseGet(() -> "There are no common prime factors so the GCD is 1.");
+                .orElse("There are no common prime factors so the GCD is 1.");
             
             return Stream.of(
                 input1Pf.getInfoSentence(),
@@ -351,14 +358,16 @@ the second input number multiplied by 2.""";
             long input1Long, long input2Long,
             String input1String, String input2String
         ) {
-            // Call getEuclideanCliAnswer first to see if it throws.
             String euclideanAnswer =
                 getEuclideanCliAnswer(input1Long, input2Long, input1String, input2String);
+            
             Stream<String> pfInfoSentences =
                 new PrimeFactorizationAnswer(input1Long, input2Long, input1String, input2String)
                 .getInfoSentences();
+            
             String pfAnswer =
                 NtpCli.buildStringWithStreamElementsOnSeparateLines(PF_INFO_HEADING, pfInfoSentences);
+            
             return String.join(
                 "\n\n",
                 getAnswerMainHeading(input1String, input2String),
@@ -372,9 +381,9 @@ the second input number multiplied by 2.""";
             long input1Long, long input2Long,
             String input1String, String input2String
         ) {
-            // Call getEuclideanPanel first to see if it throws.
             NtpPanel euclideanPanel =
                 getEuclideanPanel(input1Long, input2Long, input1String, input2String);
+            
             Stream<String> pfInfoSentences =
                 new PrimeFactorizationAnswer(input1Long, input2Long, input1String, input2String)
                 .getInfoSentences();

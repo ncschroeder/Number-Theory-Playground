@@ -133,7 +133,6 @@ Find the first 30 primes that are ≥ an input number.
 
 #### Input Constraints
 
-![CLI primes calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/primes_calculation.JPG)
 Min: 0
 <br/>
 Website max: 10,000
@@ -143,6 +142,8 @@ CLI and GUI max: 10 trillion (10,000,000,000)
 #### Example Calculation Screenshots
 
 ![Website primes calculation](/Spring_Website_Version/screenshots/section_calculations/primes_calculation.JPG)
+
+![CLI primes calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/primes_calculation.JPG)
 
 </details>
 
@@ -173,10 +174,11 @@ Website max: 10,000
 <br/>
 CLI and GUI max: 500 billion (500,000,000,000)
 
-![CLI twin prime pairs calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
 #### Example Calculation Screenshots
 
 ![Website twin prime pairs calculation](/Spring_Website_Version/screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
+
+![CLI twin prime pairs calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
 
 </details>
 
@@ -219,10 +221,11 @@ Website max: 10,000
 <br/>
 CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
 
-![CLI PF calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/PF_calculation.JPG)
 #### Example Calculation Screenshots
 
 ![Website PF calculation](/Spring_Website_Version/screenshots/section_calculations/PF_calculation.JPG)
+
+![CLI PF calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/PF_calculation.JPG)
 
 </details>
 
@@ -303,7 +306,6 @@ Given an input number:
 
 #### Input Constraints
 
-![CLI divisibility calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/divisibility_calculations.JPG)
 Min: 10
 <br/>
 Website max: 10,000
@@ -313,6 +315,8 @@ CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
 #### Example Calculations Screenshots
 
 ![Website divisibility calculations](/Spring_Website_Version/screenshots/section_calculations/divisibility_calculations.JPG)
+
+![CLI divisibility calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/divisibility_calculations.JPG)
 
 </details>
 
@@ -414,7 +418,6 @@ Given 2 input numbers:
 
 #### Input Constraints
 
-![CLI GCD and LCM calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
 Min: 2
 <br/>
 Website max: 10,000
@@ -424,6 +427,8 @@ CLI and GUI max: 5 quadrillion (5,000,000,000,000,000)
 #### Example Calculations Screenshots
 
 ![Website GCD and LCM calculations](/Spring_Website_Version/screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
+
+![CLI GCD and LCM calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
 
 </details>
 
@@ -453,12 +458,13 @@ CLI max: 1.5 million (1,500,000)
 <br/>
 GUI max: 250,000
 
-![CLI Goldbach Conjecture calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
 Why are there separate max inputs for the CLI and GUI? See the comment by the start of the `GoldbachConjecture` class and the documentation comment for `StringTooLongException` in the `NtpTextArea` class.
 
 #### Example Calculation Screenshots
 
 ![Website Goldbach Conjecture calculation](/Spring_Website_Version/screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
+
+![CLI Goldbach Conjecture calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
 
 </details>
 
@@ -496,10 +502,11 @@ Website max: 100
 <br/>
 CLI and GUI max: 10,000
 
-![CLI Pythagorean triples calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/pythag_triples_calculation.JPG)
 #### Example Calculation Screenshots
 
 ![Website Pythagorean triples calculation](/Spring_Website_Version/screenshots/section_calculations/pythag_triples_calculation.JPG)
+
+![CLI Pythagorean triples calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/pythag_triples_calculation.JPG)
 
 </details>
 
@@ -521,7 +528,6 @@ Find the 1<sup>st</sup> prime number ≥ an input number that's 1 above a multip
 
 #### Input Constraints
 
-![CLI Two Square Theorem calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/two_square_theorem_calculations.JPG)
 Min: 0
 <br/>
 Website max: 10,000
@@ -531,6 +537,8 @@ CLI and GUI max: 1 quadrillion (1,000,000,000,000,000)
 #### Example Calculations Screenshots
 
 ![Website Two Square Theorem calculations](/Spring_Website_Version/screenshots/section_calculations/two_square_theorem_calculations.JPG)
+
+![CLI Two Square Theorem calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/two_square_theorem_calculations.JPG)
 
 </details>
 
@@ -561,7 +569,6 @@ $\frac{8}{5} = 1.6$, and $\frac{21}{13} \approx 1.615384615384615$.
    them are some of the few calculations done by the Number Theory Playground that involve numbers other than
    natural numbers.
 
-![CLI Fibonacci-like sequences calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
 #### Input Constraints
 
 Min: 1
@@ -573,6 +580,8 @@ CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
 #### Example Calculations Screenshots
 
 ![Website Fibonacci-like sequences calculations](/Spring_Website_Version/screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
+
+![CLI Fibonacci-like sequences calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
 
 </details>
 
@@ -625,10 +634,11 @@ Website max: 1 quadrillion (1,000,000,000,000,000)
 <br/>
 CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
 
-![CLI ancient Egyptian multiplication calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/ancient_mult_calculations.JPG)
 #### Example Calculations Screenshots
 
 ![Website ancient Egyptian multiplication calculations](/Spring_Website_Version/screenshots/section_calculations/ancient_mult_calculations.JPG)
+
+![CLI ancient Egyptian multiplication calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/ancient_mult_calculations.JPG)
 
 </details>
 

@@ -72,13 +72,20 @@ A double input section:
 
 ![Website double input section](/Spring_Website_Version/screenshots/app_overview/double_input_section.JPG)
 Some input and a calculation:
+## All Sections
 
 ![Website input and calculation](/Spring_Website_Version/screenshots/app_overview/calculation.JPG)
+Shown in the collapsible sections below is info about all sections featured in the app; including concept info, what can be calculated and displayed, input constraints, and example calculation screenshots from the app.
 
+<details>
+<summary>Math Expressions and Unicode Chars</summary>
 
+There are some math expressions featured in this README that can be written with GitHub Markdown. The Spring website version uses MathML for some math expressions. For example, in the concept info for the prime numbers section; $\sqrt{29}$, the square root of 29, is used. This can be written using `$\sqrt{29}$` in the Markdown for this README and `<math><msqrt><mn>29</mn></msqrt></math>` using MathML. Here's a [*GitHub Docs* article on writing math expressions](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions) and here's an [MDN article on MathML](https://developer.mozilla.org/en-US/docs/Web/MathML).
 
+There are also some Unicode chars for math symbols such as ≥ and × that were copied and pasted into this README and the source code. × is used for multiplication and is different from the letter x or X. A Unicode char for the Greek letter 𝚽 (Phi) is used for the Fibonacci-like sequences concept info.
 
 The user can navigate among the sections using the buttons at the top. The user can enter input in the text boxes or can change the text of one by clicking one of the buttons below it. Clicking the "Randomize" button will generate a random number in the range of valid input numbers and set the text of the text box to that number. For the "Goldbach Conjecture" section, this number will also be even.
+</details>
 
 Clicking the "+" button will have one of the effects below:
 - If the text box has a number that's lower than the max input number, the text box will have its text set to the next highest valid input number.
@@ -87,15 +94,17 @@ Clicking the "+" button will have one of the effects below:
 Clicking the "-" button will have one of the effects below:
 - If the text box has a number that's higher than the min input number, the text box will have its text set to the next lowest valid input number.
 - If the text box is empty or has a number less than or equal to the min input number, the text box will have its text set to the max input number.
+<details>
+<summary>Max Input Info</summary>
 
 In addition to the above, if the text box has something other than a number or a number that's not in the range of the integers that can fit in an `int` type (-2<sup>31</sup> to 2<sup>31</sup> - 1, or -2,147,483,648 to 2,147,483,647), nothing will happen if either the "+" or "-" buttons are clicked.
+The calculations for the Fibonacci-like sequences and ancient Egyptian multiplication sections are pretty cheap, like so cheap that you might be able to have the input numbers be a googol (10<sup>100</sup>) and they still might be able to be done pretty quickly. For the max inputs, I picked 1 quadrillion (1,000,000,000,000,000) for the website version and 9 quintillion (9,000,000,000,000,000,000) for the CLI and GUI versions. 1 quadrillion is a little lower than the max value of a safe integer in JavaScript, which is 2<sup>53</sup> − 1 or 9,007,199,254,740,991 (9 quadrillion 7 trillion ...). 9 quintillion is a little lower than the max value for a `long` primitive type, which is 2<sup>63</sup> − 1 or 9,223,372,036,854,775,807 (9 quintillion 223 quadrillion ...). I could make the max inputs higher but if I did, I would have to use `BigInt`s for the website version and `BigInteger`s for the CLI and GUI versions for input numbers. I would also have to adjust the generation of random input numbers because of this. I think 1 quadrillion and 9 quintillion are good enough for max inputs so I'll just use them.
 
+For other sections in the CLI and GUI versions, I picked the max inputs such that the inputs ≤ the max input that required the most work to be done would take a few seconds or so on my computer. For the prime factorization, divisibility, and GCD and LCM sections, the input that requires the most work is the largest prime number ≤ the max input. For the GCD and LCM section, both inputs need to be this number. For other sections, there aren't any easy ways to determine the input the requires the most work but it's probably the max input or a number close to it.
 
+The max inputs for the website version are proportional to the max inputs for the CLI and GUI versions but a lot lower. This is to reduce the amount of work the server has to do since the calculations will be done every time a user enters a valid input number and clicks the "Calculate" button. The max input is 10,000 for 6 sections, 1,000 for a section, 100 for a section, and the other 2 sections were the ones mentioned a couple of paragraphs ago.
 </details>
 
-## All Sections
-
-Shown in the collapsible sections below is info about all sections featured in the application, including concept info, what can be calculated and displayed, and the range of valid input integers. The concept info in this document is mostly the same as the concept info displayed in the application, though there are some mathematical expressions and symbols featured in this document that can be written with GitHub Markdown, such as $\sqrt{29}$ and $\Phi$. Here's a [*GitHub Docs* article on writing mathematical expressions](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions). There are also usages of *italics and emphasis* in this document.
 
 <details>
 <summary>Prime Numbers</summary>
@@ -120,13 +129,19 @@ isn't divisible by any of those and 33 is divisible by 3 so 29 is prime and 33 i
 
 #### Calculation
 
-Find the first 30 primes that are $\geq$ an input number.
+Find the first 30 primes that are ≥ an input number.
+
+#### Input Constraints
+
+![CLI primes calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/primes_calculation.JPG)
+Min: 0
+<br/>
+Website max: 10,000
+<br/>
+CLI and GUI max: 10 trillion (10,000,000,000)
 
 #### Example Calculation Screenshots
 
-![CLI primes calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/primes_calculation.JPG)
-
-#### Input Range: 0 - 10,000,000,000,000 (10 trillion)
 ![Website primes calculation](/Spring_Website_Version/screenshots/section_calculations/primes_calculation.JPG)
 
 </details>
@@ -138,9 +153,9 @@ Find the first 30 primes that are $\geq$ an input number.
 
 A *twin prime pair* is a pair of prime numbers that differ by 2. The first 5 twin prime pairs are
 3 & 5, 5 & 7, 11 & 13, 17 & 19, and 27 & 29. The largest known twin prime pair is
-$2,996,863,034,895 \times 2^{1,290,000} \pm 1$. They have 388,342 digits! It's conjectured that there are an
-infinite amount of twin prime pairs. A *conjecture* is a statement that's believed to be true but hasn't been
-proven to be.
+$2,996,863,034,895 \times 2^{1,290,000} \pm 1$. They have 388,342 digits! The *twin prime conjecture* says that
+there are an infinite amount of twin prime pairs. A *conjecture* is a statement that's believed to be true but
+hasn't been proven to be.
 
 All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this means that all twin prime
 pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6 and another number that's 1 above that
@@ -148,13 +163,18 @@ same multiple of 6. 5 is the only number to be in 2 twin prime pairs, the first 
 
 #### Calculation
 
-Find the first 20 pairs of twin primes where the lowest number in the pair is $\geq$ an input number. For example, if the input number is 3, then the pair 3 and 5 will be the first one found since the lowest number in that pair is 3. If the input number is 4, then the pair 5 and 7 will be the first one found.
+Find the first 20 twin prime pairs where the lowest number in the pair is ≥ an input number. For example, if the input number is 3, then the pair 3 and 5 will be the first one found since the lowest number in that pair is 3. If the input number is 4, then the pair 5 and 7 will be the first one found.
 
-#### Input Range: 0 - 500,000,000,000 (500 billion)
+#### Input Constraints
 
-#### Example Calculation Screenshots
+Min: 0
+<br/>
+Website max: 10,000
+<br/>
+CLI and GUI max: 500 billion (500,000,000,000)
 
 ![CLI twin prime pairs calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
+#### Example Calculation Screenshots
 
 ![Website twin prime pairs calculation](/Spring_Website_Version/screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
 
@@ -168,8 +188,8 @@ Find the first 20 pairs of twin primes where the lowest number in the pair is $\
 The Fundamental Theorem of Arithmetic says that every whole number > 1 can be expressed as the product of
 prime numbers in 1 way if you ignore the order of those prime numbers. The *prime factorization* (PF) of a whole
 number > 1 is an expression of the prime numbers whose product is that number. For example, the PF of 5 is just
-$5$, the PF of 25 is $5^2$, and the PF of 12,250 is $2 \times 5^3 \times 7^2$ if the prime numbers are in
-ascending order. 12,250 could also be expressed as $5^3 \times 2 \times 7^2$ but that's the same expression as the
+$5$, the PF of 25 is $5^2$, and the PF of 4,725 is $3^3 \times 5^2 \times 7$ if the prime numbers are in
+ascending order. 12,250 could also be expressed as $5^2 \times 3^3 \times 7$ but that's the same expression as the
 previous one if you ignore the order of the prime numbers. The Number Theory Playground displays PFs with the
 prime numbers in ascending order. There are some interesting applications for PFs. See the info for the
 "Divisibility" or "GCD and LCM" sections for some applications.
@@ -189,13 +209,18 @@ amount of unique prime factors.
 
 #### Calculation
 
-Find the PF of an input number faster than you can say "prime factorization". :slightly_smiling_face:
+Find the PF of an input number faster than you can say "prime factorization." :slightly_smiling_face:
 
-#### Input Range: 2 - 10,000,000,000,000,000 (10 quadrillion)
+#### Input Constraints
 
-#### Example Calculation Screenshots
+Min: 2
+<br/>
+Website max: 10,000
+<br/>
+CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
 
 ![CLI PF calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/PF_calculation.JPG)
+#### Example Calculation Screenshots
 
 ![Website PF calculation](/Spring_Website_Version/screenshots/section_calculations/PF_calculation.JPG)
 
@@ -269,14 +294,23 @@ The alternating sum of digits from left to right is $5 - 5 + 4 - 4 = 0$, which i
 
 #### Calculations
 
-1. Use the special tricks to see if we can find some factors of an input number and build a paragraph that says info from this.
-2. Find the PF of the input number. If we can determine from this PF that the input number is composite, then manually find the factors and their PFs and show that they are sub-factorizations of the PF of the input number.
+Given an input number:
+1. Use the divisibility rules to see if we can find some factors of the number and display a paragraph with info
+   from this.
+2. Find the PF of the number. If we can determine from this PF that the input number is composite (not prime),
+   then find the factors by finding the sub-factorizations.
 
-#### Input Range: 2 - 10,000,000,000,000,000 (10 quadrillion)
 
-#### Example Calculations Screenshots
+#### Input Constraints
 
 ![CLI divisibility calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/divisibility_calculations.JPG)
+Min: 10
+<br/>
+Website max: 10,000
+<br/>
+CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
+
+#### Example Calculations Screenshots
 
 ![Website divisibility calculations](/Spring_Website_Version/screenshots/section_calculations/divisibility_calculations.JPG)
 
@@ -357,7 +391,7 @@ might have the highest amount of *unique* prime factors is 2,310, the product of
 $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19$.
 
 For the CLI and GUI versions, the input numbers whose LCM is the highest are 5 quadrillion
-(5,000,000,000,000,000), the max input, and 4,999,999,999,999,999, the max input - 1. Their LCM is
+(5,000,000,000,000,000), the max input, and 5 quadrillion − 1. Their LCM is
 24,999,999,999,999,995,000,000,000,000,000, or
 24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion! It has 32 digits.
 Trillion is before quadrillion. A pair of input numbers whose LCM has the highest amount of prime factors is
@@ -372,14 +406,22 @@ $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 
 
 #### Calculations
 
-1. Perform the Euclidean algorithm on 2 input numbers and display a table with info about all iterations. Each iteration has a max number, min number, and remainder when the max is divided by the min.
-2. Find the PFs of the input numbers and use these to find the PFs of the GCD and LCM. Display a table with all 4 numbers and their PFs.
+Given 2 input numbers:
+1. Perform the Euclidean algorithm on the numbers and display a table with info about all iterations. This table
+   will look like the tables shown in the info above.
+2. Find the PFs of the numbers and use these to find the PFs of the GCD and LCM.
 
-#### Input Range: 2 - 5,000,000,000,000,000 (5 quadrillion)
 
-#### Example Calculations Screenshots
+#### Input Constraints
 
 ![CLI GCD and LCM calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
+Min: 2
+<br/>
+Website max: 10,000
+<br/>
+CLI and GUI max: 5 quadrillion (5,000,000,000,000,000)
+
+#### Example Calculations Screenshots
 
 ![Website GCD and LCM calculations](/Spring_Website_Version/screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
 
@@ -390,20 +432,31 @@ $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 
 
 #### Info
 
-The Goldbach Conjecture says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers. This
+The *Goldbach conjecture* says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers. This
 was named after 1700s Prussian mathematician Christian Goldbach. A *conjecture* is a statement that's believed to
-be true but hasn't been proven to be. The Goldbach Conjecture has been verified to be true for all even numbers
+be true but hasn't been proven to be. The Goldbach conjecture has been verified to be true for all even numbers
 ≥ 4 and ≤ 4 × 10<sup>18</sup>.
 
 #### Calculation
 
-Find the pairs of prime numbers that sum to an even input number.
+Find the pairs of prime numbers that sum to an input number.
 
-#### Input Range: 4 - 1,500,000
+#### Input Constraints
 
-#### Example Calculation Screenshots
+Must be even
+<br/>
+Min: 4
+<br/>
+Website max: 1,000
+<br/>
+CLI max: 1.5 million (1,500,000)
+<br/>
+GUI max: 250,000
 
 ![CLI Goldbach Conjecture calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
+Why are there separate max inputs for the CLI and GUI? See the comment by the start of the `GoldbachConjecture` class and the documentation comment for `StringTooLongException` in the `NtpTextArea` class.
+
+#### Example Calculation Screenshots
 
 ![Website Goldbach Conjecture calculation](/Spring_Website_Version/screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
 
@@ -433,13 +486,18 @@ $55^2 \text{ } (3,025) + 300^2 \text{ } (90,000) = 305^2 \text{ } (93,025)$.
 
 #### Calculation
 
-Find the first 10 Pythagorean triples where the lowest number in the triple is $\geq$ an input number. For example, if the input number is 3, then the triple 3, 4, and 5 will be the first one found since the lowest number in that triple is 3. If the input number is 4, then the triple 5, 12, and 13 will be the first one found. These triples will be displayed similarly to how the examples at the end of the paragraphs in the "Info" section above are displayed. If a triple is primitive, then it will be followed by "(primitive)".
+Find the first 10 Pythagorean triples where the lowest number in the triple is ≥ an input number. For example, if the input number is 3, then the triple 3, 4, and 5 will be the first one found since the lowest number in that triple is 3. If the input number is 4, then the triple 5, 12, and 13 will be the first one found. These triples will be displayed like the examples at the end of the paragraphs in the info above are displayed. If a triple is primitive, then it'll be followed by "(primitive)".
 
-#### Input Range: 0 - 10,000
+#### Input Constraints
 
-#### Example Calculation Screenshots
+Min: 0
+<br/>
+Website max: 100
+<br/>
+CLI and GUI max: 10,000
 
 ![CLI Pythagorean triples calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/pythag_triples_calculation.JPG)
+#### Example Calculation Screenshots
 
 ![Website Pythagorean triples calculation](/Spring_Website_Version/screenshots/section_calculations/pythag_triples_calculation.JPG)
 
@@ -459,12 +517,18 @@ $2^2 \text{ } (4) + 5^2 \text{ } (25)$.
 
 #### Calculations
 
-Find the first prime number $\geq$ an input number that is 1 above a multiple of 4, as well as the numbers whose squares sum to that number.
+Find the 1<sup>st</sup> prime number ≥ an input number that's 1 above a multiple of 4, as well as the whole numbers whose squares sum to that prime number.
+
+#### Input Constraints
+
+![CLI Two Square Theorem calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/two_square_theorem_calculations.JPG)
+Min: 0
+<br/>
+Website max: 10,000
+<br/>
+CLI and GUI max: 1 quadrillion (1,000,000,000,000,000)
 
 #### Example Calculations Screenshots
-
-#### Input Range: 0 - 1,000,000,000,000,000 (1 quadrillion)
-![CLI Two Square Theorem calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/two_square_theorem_calculations.JPG)
 
 ![Website Two Square Theorem calculations](/Spring_Website_Version/screenshots/section_calculations/two_square_theorem_calculations.JPG)
 
@@ -490,15 +554,23 @@ $\frac{8}{5} = 1.6$, and $\frac{21}{13} \approx 1.615384615384615$.
 
 #### Calculations
 
-#### Example Calculations Screenshots
 1. Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers.
 2. Find the ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>,
-   15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers. These ratios are 
-   floating-point numbers most of the time, so the calculations for them are some of the few calculations done by
-   the Number Theory Playground that involve numbers other than natural numbers.
+   15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in the sequence. These
+   ratios get closer and closer to 𝚽 and are floating-point numbers most of the time, so the calculations for
+   them are some of the few calculations done by the Number Theory Playground that involve numbers other than
+   natural numbers.
 
-#### Input Range: 1 - 9,000,000,000,000,000,000 (9 quintillion)
 ![CLI Fibonacci-like sequences calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
+#### Input Constraints
+
+Min: 1
+<br/>
+Website max: 1 quadrillion (1,000,000,000,000,000)
+<br/>
+CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
+
+#### Example Calculations Screenshots
 
 ![Website Fibonacci-like sequences calculations](/Spring_Website_Version/screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
 
@@ -538,16 +610,23 @@ powers are 5, 10, 20, and 40. The powers of 2 that sum to 12 are 4 and 8. The pr
 #### Calculations
 
 Given 2 input numbers:
-1. Find the powers of 2 $\leq$ the 1<sup>st</sup> input number and the corresponding multiples of the 2<sup>nd</sup> input number. Display these in a table.
-2. Find the powers of 2 that sum to the 1<sup>st</sup> input number and the corresponding multiples of the 2<sup>nd</sup> input number. Display these in another table.
+1. Find the powers of 2 ≤ the 1<sup>st</sup> input number and the corresponding multiples of the 2<sup>nd</sup>
+   input number. Display these in a table.
+2. Find the powers of 2 that sum to the 1<sup>st</sup> input number and the corresponding multiples of the
+   2<sup>nd</sup> input number. Display these in another table.
 
 This process will be done faster than you can say "ancient Egyptian multiplication". :slightly_smiling_face:
 
-#### Input Range: 2 - 9,000,000,000,000,000,000 (9 quintillion)
+#### Input Constraints
 
-#### Example Calculations Screenshots
+Min: 2
+<br/>
+Website max: 1 quadrillion (1,000,000,000,000,000)
+<br/>
+CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
 
 ![CLI ancient Egyptian multiplication calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/ancient_mult_calculations.JPG)
+#### Example Calculations Screenshots
 
 ![Website ancient Egyptian multiplication calculations](/Spring_Website_Version/screenshots/section_calculations/ancient_mult_calculations.JPG)
 

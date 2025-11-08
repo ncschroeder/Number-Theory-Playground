@@ -15,16 +15,82 @@ The term "whole number" is often used in this app since I find it to be more sel
 
 ## App Overview
 
-Here are some collapsible sections that show some info and screenshots for the different versions.
+Here are some collapsible sections that show some info and screenshots for the different versions. There isn't any software design or implementation info here but the ["Some Design and Implementation Info" section](#some-design-and-implementation-info) has that.
+
+<details>
+<summary>Website and GUI</summary>
+
+The website and GUI versions of the app are similar. The screenshots below show the website version.
+
+A single page application is used for the website version. Only 1 HTML document gets rendered and the content of  this document gets changed when a section changes, an answer is displayed, or an invalid input message is displayed. When a user enters a valid input number(s) and clicks the "Calculate" button, an HTTP request is made to the server, which does the calculations. This means that an internet connection is required to be able to do those calculations.
+
+The app starts at a home section:
+
+![Website home](/Spring_Website_Version/screenshots/app_overview/home.JPG)
+
+The user can visit sections using the buttons at the top.
+
+A single input section without info:
+
+![Website single input section without info](/Spring_Website_Version/screenshots/app_overview/single_input_section_without_info.JPG)
+
+The info for the section can be shown and hidden by clicking the arrow to the left of "Info."
+
+A single input section with info:
+
+![Website single input section with info](/Spring_Website_Version/screenshots/app_overview/single_input_section_with_info.JPG)
+
+A double input section:
+
+![Website double input section](/Spring_Website_Version/screenshots/app_overview/double_input_section.JPG)
+
+The user can enter input in the text fields or can change the text of one by clicking one of the buttons below it. As shown in the screenshot, commas are optional. Below, when I'm talking about numbers in the text fields, I mean numbers optionally with commas.
+
+Clicking the "Randomize" button will generate a random input number and put it in the text field. First, a valid random number of digits will be generated and then a valid random number with that number of digits will be generated.
+
+For the "+" and "−" buttons, nothing will happen if any of these are clicked in these situations:
+- The text field has something other than a whole number. Recall that the whole numbers are 0, 1, 2, 3, and so on.
+- Website version: the text field has a number > the max value of a JavaScript safe integer (2<sup>53</sup> − 1, or 9,007,199,254,740,991, or 9 quadrillion 7 trillion ...).
+- GUI version: the text field has a number > the max value of a Java `long` (2<sup>63</sup> − 1, or 9,223,372,036,854,775,807, or 9 quintillion 223 quadrillion ...).
+
+Otherwise:
+
+Clicking the "+" button will have one of these effects:
+- If the text field has a number < the max input number, then the text field will have its text set to the next highest valid input number. For the Goldbach conjecture section, this'll be the next highest even number and for all other sections, this'll be the next highest number.
+- If the text field is blank or has a number ≥ the max input number, then the text field will have its text set to the min input number.
+
+Clicking the "−" button will have one of these effects:
+- If the text field has a number > the min input number, then the text field will have its text set to the next lowest valid input number. For the Goldbach conjecture section, this'll be the next lowest even number and for all other sections, this'll be the next lowest number.
+- If the text field is blank or has a number ≤ the min input number, then the text field will have its text set to the max input number.
+
+Some input and a calculation:
+
+![Website input and calculation](/Spring_Website_Version/screenshots/app_overview/calculation.JPG)
+
+More example calculations screenshots can be seen in the ["All Sections" section](#all-sections) below.
+
+Invalid input:
+
+![Website invalid input](/Spring_Website_Version/screenshots/app_overview/invalid_input.JPG)
+
+</details>
 
 <details>
 <summary>Command Line Interface Info</summary>
 
-The `NTPCLI` class has the `main` method and some other code for running this version of the app. If you're wondering, I was using the IntelliJ IDEA terminal with the Darcula :vampire: theme when I took the screenshots below.
+I used the IntelliJ IDEA terminal with the Darcula :vampire: theme for these screenshots.
 
 The app starts at a main menu:
 
 ![CLI main menu](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/main_menu.JPG)
+
+Leading and trailing whitespace is ignored for all input. Letter inputs are case-**in**sensitive.
+
+Number Theory Playground info:
+
+![CLI NTP info](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/ntp_info.JPG)
+
+Any time info, calculations, or an invalid input message is displayed, the options for the menu or section get redisplayed.
 
 A single input section:
 
@@ -38,43 +104,29 @@ Info about a section:
 
 ![CLI section info](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/section_info.JPG)
 
-Some input and calculations:
+Typed input and calculations:
 
-![CLI input and calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/double_input_section_calculations.JPG)
+![CLI typed input and calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/typed_input_and_calculations.JPG)
+
+For the double input sections, the input numbers can be separated by any amount of whitespace.
+
+Random input and calculations:
+
+![CLI random input and calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/random_input_and_calculations.JPG)
+
+Random input numbers are generated by first generating a valid random number of digits and then generating a valid random number with that number of digits.
+
+More example calculations screenshots can be seen in the ["All Sections" section](#all-sections) below.
 
 Invalid input:
 
 ![CLI invalid input](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/invalid_input.JPG)
 
-#### Input Remarks
-
-- Leading and trailing whitespace is ignored for all input.
-- Inputs involving letters are case-insensitive.
-- For the input for the 2 numbers for the double input sections, the 2 numbers can be separated by any amount of whitespace.
-- Any time section info, an answer, or an invalid input message are displayed, the options for the menu or section will be redisplayed.
-
 </details>
 
-<details>
-<summary>GUI and Website Info</summary>
 
-The GUI and website versions of the app are similar. The screenshots below show the GUI version. The `NTPGUI` class has the `main` method to launch the GUI app and a little of the code for running it. A lot of the other code for doing this is in the `MainPanel` class.
-
-
-A single input section without info:
-
-![Website single input section without info](/Spring_Website_Version/screenshots/app_overview/single_input_section_without_info.JPG)
-
-A single input section with info:
-![Website single input section with info](/Spring_Website_Version/screenshots/app_overview/single_input_section_with_info.JPG)
-
-A double input section:
-
-![Website double input section](/Spring_Website_Version/screenshots/app_overview/double_input_section.JPG)
-Some input and a calculation:
 ## All Sections
 
-![Website input and calculation](/Spring_Website_Version/screenshots/app_overview/calculation.JPG)
 Shown in the collapsible sections below is info about all sections featured in the app; including concept info, what can be calculated and displayed, input constraints, and example calculation screenshots from the app.
 
 <details>
@@ -84,20 +136,12 @@ There are some math expressions featured in this README that can be written with
 
 There are also some Unicode chars for math symbols such as ≥ and × that were copied and pasted into this README and the source code. × is used for multiplication and is different from the letter x or X. A Unicode char for the Greek letter 𝚽 (Phi) is used for the Fibonacci-like sequences concept info.
 
-The user can navigate among the sections using the buttons at the top. The user can enter input in the text boxes or can change the text of one by clicking one of the buttons below it. Clicking the "Randomize" button will generate a random number in the range of valid input numbers and set the text of the text box to that number. For the "Goldbach Conjecture" section, this number will also be even.
 </details>
 
-Clicking the "+" button will have one of the effects below:
-- If the text box has a number that's lower than the max input number, the text box will have its text set to the next highest valid input number.
-- If the text box is empty or has a number greater than or equal to the max input number, the text box will have its text set to the min input number.
 
-Clicking the "-" button will have one of the effects below:
-- If the text box has a number that's higher than the min input number, the text box will have its text set to the next lowest valid input number.
-- If the text box is empty or has a number less than or equal to the min input number, the text box will have its text set to the max input number.
 <details>
 <summary>Max Input Info</summary>
 
-In addition to the above, if the text box has something other than a number or a number that's not in the range of the integers that can fit in an `int` type (-2<sup>31</sup> to 2<sup>31</sup> - 1, or -2,147,483,648 to 2,147,483,647), nothing will happen if either the "+" or "-" buttons are clicked.
 The calculations for the Fibonacci-like sequences and ancient Egyptian multiplication sections are pretty cheap, like so cheap that you might be able to have the input numbers be a googol (10<sup>100</sup>) and they still might be able to be done pretty quickly. For the max inputs, I picked 1 quadrillion (1,000,000,000,000,000) for the website version and 9 quintillion (9,000,000,000,000,000,000) for the CLI and GUI versions. 1 quadrillion is a little lower than the max value of a safe integer in JavaScript, which is 2<sup>53</sup> − 1 or 9,007,199,254,740,991 (9 quadrillion 7 trillion ...). 9 quintillion is a little lower than the max value for a `long` primitive type, which is 2<sup>63</sup> − 1 or 9,223,372,036,854,775,807 (9 quintillion 223 quadrillion ...). I could make the max inputs higher but if I did, I would have to use `BigInt`s for the website version and `BigInteger`s for the CLI and GUI versions for input numbers. I would also have to adjust the generation of random input numbers because of this. I think 1 quadrillion and 9 quintillion are good enough for max inputs so I'll just use them.
 
 For other sections in the CLI and GUI versions, I picked the max inputs such that the inputs ≤ the max input that required the most work to be done would take a few seconds or so on my computer. For the prime factorization, divisibility, and GCD and LCM sections, the input that requires the most work is the largest prime number ≤ the max input. For the GCD and LCM section, both inputs need to be this number. For other sections, there aren't any easy ways to determine the input the requires the most work but it's probably the max input or a number close to it.
@@ -645,133 +689,216 @@ CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
 ## Some Design and Implementation Info
 
 
-### Java Versions
-
-There’s an abstract `Section` class that has data and functionality that the app will use. The direct subclasses of this are the abstract classes `SingleInputSection` and `DoubleInputSection`. There are 2 abstract methods on each of these, `getCliAnswer` and `getGuiComponents`. Both of these do the calculation(s) for the section and return something that contains info from the calculation and will be displayed in the app. `getCliAnswer` returns a string and `getGuiComponents` returns a list of GUI components. The number of parameters for these is either 1 or 2, depending on the class.
-
-For each section in the app, there's a class with code related to that section. The names of these classes are similar to the section names in the “All Sections” section. These classes will be referred to as *outer section classes*. Some methods in these classes are used by other classes as well. The `PrimeFactorization` class has instance and static members and all other outer section classes are *utility classes*, meaning that they contain only static members.
-
-Each outer section class has a nested, concrete, static class called `Section` that extends either `SingleInputSection` or `DoubleInputSection`. These classes will be referred to as *nested section classes*. These implement `getCliAnswer` and `getGuiComponents` using the code in the outer section class and sometimes code from other classes as well.
-
-Input validation for a calculation is implemented by having a method that does a calculation call `Misc.assertIsInRange`, which will throw an `IllegalArgumentException` for args that are out of range. The Goldbach Conjecture calculation method also throws this exception for odd number args. These exceptions bubble up to either `getCliAnswer` or `getGuiComponents`, and then to either the `NTPCLI` or the `MainPanel`, where the exception is handled.
-
-The nested section class constructors call their superclass constructors and one of the args for this is a list of strings to represent paragraphs of info that will be displayed to the user. The string literals used for these are placed near related code, usually at the top of an outer section class. This is done in an attempt to help explain that related code.
-
 ### Website
 
-A single page application is used. The content of the page changes when a section changes or an answer is displayed. A RESTful API is also used. If the "Calculate" button is clicked and the text boxes have valid input, an API request is sent to the server with info about the section and user input. The server does the calculation(s) for the section and sends a JSON response of data about the calculation. The webpage will then use this data and create some elements to display the data to the user.
+A single page application is used. The content of the page changes when a section changes, an answer is displayed, or an error message is displayed.
+
+A server API is used for most of the calculations. If the text field(s) have valid input and the "Calculate" button is clicked, an HTTP request will be sent to the server with the input number(s). There's an endpoint for each section of the app. The server will do the calculation(s) for the section and send a JSON response of data about the calculation. The webpage script will then use this data and create some HTML elements to display to the user.
+
+The only calculations that aren't done by this API and instead are done on the front end are some of the calculations for finding factors of an input number using divisibility rules. The webpage script builds a paragraph that contains info about the factors of an input number found using divisibility rules. The input number is displayed in this paragraph with commas. The webpage displays numbers with commas by using a JavaScript `Intl.NumberFormat` object in the webpage script.
 
 #### API Documentation
 
-All of the paths below are for `GET` requests and are preceded by `numbertheoryplayground.com/calculate/`. `{input}`, `{input1}`, and `{input2}` represent input values in the path. JSDoc syntax will be used to document return types.
+All of the endpoints below are for `GET` requests and are preceded by `numbertheoryplayground.com/calculate/`. The query params are just `input` for single input section endpoints, and `input1` and `input2` for double input section endpoints. For the Goldbach conjecture endpoint, valid query param values are even numbers in the input range specified. For all other endpoints, valid query param values are whole numbers in the input range. If a request is made to an endpoint with an invalid query param value(s), the server will respond with error code 400 (bad request). [JSDoc syntax](https://jsdoc.app/tags-type) is used to document return types.
+
+There are some shortenings used for fields in the response types:
+- `fp` is a shortening of "factor and power," an object of this type: `{ factor: number, power: number }`.
+- `pf` is a shortening of "prime factorization," an object of this type: `{ fps: ?{ factor: number, power: number }, correspondingNum: number }`.
+
 
 ##### Prime Numbers
 
-`primes/{input}`
-`number[]`
-Returns an array of the first 30 primes ≥ the input.
+URL end: `primes`
+<br/>
+Query param: `input`
+<br/>
+Input Range: 0 - 10,000
+
+###### Response
+
+Type: `number[]`
+
+An array of the first 30 primes ≥ the input.
 
 
 ##### Twin Prime Pair Starts
 
-`twinPrimePairStarts/{input}`
-`number[]`
-Finds the first 20 twin prime pairs where the lower of the numbers in the pair is ≥ the input. For example, if the input is 3, then the pair 3 and 5 will be the first one found since the lower number in that pair is 3. If the input is 4, then the pair 5 and 7 will be the first one found. An array that contains the lower numbers of those pairs gets returned.
+URL end: `twin-prime-pair-starts`
+<br/>
+Query param: `input`
+<br/>
+Input Range: 0 - 10,000
+
+###### Response
+
+Type: `number[]`
+
+Finds the first 20 twin prime pairs where the lowest of the numbers in the pair is ≥ the input. For example, if the input is 3, then the pair 3 and 5 will be the first one found since the lowest number in that pair is 3. If the input is 4, then the pair 5 and 7 will be the first one found. The response is an array that contains the lowest numbers of those pairs.
 
 
 ##### Prime Factorization
 
-`primeFactorization/{input}`
-`{ factor: number, power: number }[]`
-Returns an array of objects that represents the prime factorization of the input. Each object in the array is for a prime factor and power in this prime factorization.
+Path end: `prime-factorization`
+<br/>
+Query param: `input`
+<br/>
+Input Range: 2 - 10,000
+
+###### Response
+
+Type: `{ factor: number, power: number }[]`
+
+An array of objects that represents the prime factorization of the input. Each object in the array is for a prime factor and power in the prime factorization.
 
 
 ##### Divisibility Answer Data
 
-`divisibilityAnswer/{input}`
+URL end: `divisibility-answer`
+<br/>
+Query param: `input`
+<br/>
+Input Range: 10 - 10,000
+
+###### Response
+
+Type:
 ```
 {
     rulesData: {
         last2Digits: number,
         last3Digits: number,
         sumOfDigits: number,
-        blocksOf3AltSumAndExpression: ?{ sum: number, expression: string },
+        blocksAltSumAndExpression: ?{ sum: number, expression: string },
         digitsAltSumAndExpression: { sum: number, expression: string }
     },
     pfAnswer: {
-        inputFpArr: { factor: number, power: number }[],
+        inputFps: { factor: number, power: number }[],
         numFactorsExpression: string,
         numFactors: number,
-        factorFpArrsAndNumStrings: {
-            fpArr: ?{ factor: number, power: number }[],
-            correspondingNumString: string
+        factorPfs: {
+            fps: ?{ factor: number, power: number }[],
+            correspondingNum: number
         }[]
     }
 }
 ```
 
+`AltSumAndExpression` is a shortening of "alternating sum and expression."
+
+If the input is < 1,000, then `blocksAltSumAndExpression` will be null, since the input must have at least 4 digits for this calculation to be useful.
+
+
 ##### GCD and LCM Answer Data
 
-`gcdAndLcmAnswer/{input1}/{input2}`
+URL end: `gcd-and-lcm-answer`
+<br/>
+Query params: `input1` and `input2`
+<br/>
+Input Range: 2 - 10,000
+
+###### Response
+
+Type:
 ```
 {
-    euclideanIterations: { max: number, min: number, remainder: number }[]
+    euclideanIterations: { max: number, min: number, remainder: number }[],
     pfAnswer: {
-        input1FpArr: { factor: number, power: number }[]
-        input2FpArr: { factor: number, power: number }[]
-        gcdFpArrAndNumString: ?{
-            fpArr: ?{ factor: number, power: number }[],
-            correspondingNumString: string
-        }
-        lcmFpArrAndNumString: {
-            fpArr: ?{ factor: number, power: number }[],
-            correspondingNumString: string
+        input1Fps: { factor: number, power: number }[],
+        input2Fps: { factor: number, power: number }[],
+        gcdPf: ?{
+            fps: ?{ factor: number, power: number }[],
+            correspondingNum: number
+        },
+        lcmPf: {
+            fps: ?{ factor: number, power: number }[],
+            correspondingNum: number
         }
     }
 }
 ```
-If `gcdFpArrAndNumString` is null, then that means that the GCD is 1.
+
+`euclideanIteration` is a list of iteration objects for all iterations of the Euclidean algorithm performed on input1 and input2.
+
+If `gcdPf` is null, then that means that the inputs have no common prime factors and the GCD is 1.
 
 
 ##### Goldbach Prime Pair Starts
 
-`goldbachPrimePairStarts/{input}`
-`number[]`
+URL end: `goldbach-prime-pair-starts`
+<br/>
+Query param: `input`
+<br/>
+Input Range: 4 - 1,000
 
-Find the pairs of primes that sum to the input and returns an array that contains the lower numbers of those pairs.
+###### Response
+
+Type: `number[]`
+
+Find the pairs of primes that sum to the input. The response is an array that contains the lowest numbers of those pairs, meaning that the other number in the pair can be found by subtracting the lowest number of the pair from the input number.
 
 
 ##### Pythagorean Triples
 
-`pythagoreanTriples/{input}`
-`{ a: number, b: number, c: number, isPrimitive: number }[]`
+URL end: `pythagorean-triples`
+<br/>
+Query param: `input`
+<br/>
+Input Range: 0 - 100
 
-Returns an array of objects for the first 10 Pythagorean triples where the lowest number in the triple is ≥ the input. For example, if the input is 3, then an object for the triple 3, 4, and 5 will be the first one since the lowest number in that triple is 3. If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
+###### Response
+
+Type: `{ a: number, b: number, c: number, isPrimitive: number }[]`
+
+An array of objects for the first 10 Pythagorean triples where the lowest number in the triple is ≥ the input. For example, if the input is 3, then an object for the triple 3, 4, and 5 will be the first one since the lowest number in that triple is 3. If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
 
 
 ##### Two Square Theorem Answer Data
 
-`twoSquareTheoremAnswer/{input}`
-`{ primeNum: number, a: number, b: number }`
+URL end: `two-square-theorem-answer`
+<br/>
+Query param: `input`
+<br/>
+Input Range: 0 - 10,000
+
+###### Response
+
+Type: `{ primeNum: number, a: number, b: number }`
+
 `primeNum` is the first prime number ≥ the input that's 1 above a multiple of 4. `a` and `b` are the numbers whose squares sum to `primeNum`.
 
 
 ##### Fibonacci-like Sequences Answer Data
 
-`fibonacciLikeSequencesAnswer/{input1}/{input2}`
+URL end: `fibonacci-like-sequences-answer`
+<br/>
+Query params: `input1` and `input2`
+<br/>
+Input Range: 1 - 1 quadrillion (1,000,000,000,000,000)
+
+###### Response
+
+Type:
 ```
 {
-    stringFiboLikeSequence: string[],
-    ratioDataArray: { num1String: string, num2String, ratio: number, isRounded: boolean }[]
+    fiboLikeSequence: string[],
+    ratioDataArr: { num1String: string, num2String: string, ratio: number, isRounded: boolean }[]
 }
 ```
-`stringFiboLikeSequence` contains string representations of the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. String representations are used since the numbers might be too big to be a safe JavaScript integer.
-1-9 quadrillion (9,000,000,000,000,000)
+
+`fiboLikeSequence` contains strings of the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. `ratioDataArr` contains ratio data objects for the ratios of the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in the sequence. Strings are used for the sequence and the numbers in the ratio data objects since these numbers might be too big for a safe JavaScript integer.
 
 
 ##### Ancient Egyptian Multiplication Answer Data
 
-`ancientMultiplicationAnswer/{input1}/{input2}`
+URL end: `ancient-multiplication-answer`
+<br/>
+Query params: `input1` and `input2`
+<br/>
+Input Range: 2 - 1 quadrillion (1,000,000,000,000,000)
+
+###### Response
+
+Type:
 ```
 {
     table1Rows: { powerOf2String: string, correspondingMultipleString: string }[],
@@ -779,11 +906,27 @@ Returns an array of objects for the first 10 Pythagorean triples where the lowes
     productString: string
 }
 ```
-`table1Rows` contains rows for all the powers of 2 ≤ `input1` and the corresponding multiples of `input2`.
-`table2Rows` contains rows for all the powers of 2 that sum to `input1` and the corresponding multiples of `input2`, which sum to the product of `input1` and `input2`.
-String representations are used for numbers in the row objects since a number in a `correspondingMultipleString` might be too big to be a safe JavaScript integer. The numbers in each `powerOf2String` will be small enough to be a safe JavaScript integer but strings are still used for these for consistency.
-2-9 quadrillion (9,000,000,000,000,000)
 
+`table1Rows` contains rows for all the powers of 2 ≤ `input1` and the corresponding multiples of `input2`. `table2Rows` contains rows for all the powers of 2 that sum to `input1` and the corresponding multiples of `input2`, which sum to the product of `input1` and `input2`.
+
+Strings are used for numbers in the row objects since a number in a `correspondingMultipleString` might be too big for a safe JavaScript integer. A number in a `powerOf2String` will always be small enough to be a safe JavaScript integer but a string is still used for consistency. `productString` is a string of the product of `input1` and `input2`. Just like with `correspondingMultipleString`, this product might be too big for a safe JavaScript integer.
+
+
+### Java Versions
+
+The `NtpCli` class has the `main` method and some other code for running the CLI version of the app. The `NtpGui` class has the `main` method and a little of the code for running the GUI version of the app. A lot of the other code for running it is in the `MainPanel` class.
+
+#### `Section` Classes
+
+There’s an abstract `Section` class that has data and functionality that the app will use. The direct subclasses of this are the abstract classes `SingleInputSection` and `DoubleInputSection`. There are 2 abstract methods on each of these, `getCliAnswer` and `getGuiComponents`. The `SingleInputSection` methods have 1 param for an input long and 1 for a string that contains that long and commas. The `DoubleInputSection` methods have 2 params for the 1<sup>st</sup> input long and its string and 2 more params for the 2<sup>nd</sup> input long and its string. These methods do the calculation(s) for the section and return something that contains info from the calculation and will be displayed in the app. `getCliAnswer` returns a string and `getGuiComponents` returns a list of GUI components.
+
+For each section in the app, there's a class with code related to that section. The names of these classes are similar to the section names in the “All Sections” section. These classes will be referred to as *outer section classes*. Some methods in these classes are used by other classes as well. The `PrimeFactorization` class has instance and static members and all other outer section classes are *utility classes*, meaning that they contain only static members.
+
+Each outer section class has a nested, concrete, static class called `Section` that extends either `SingleInputSection` or `DoubleInputSection`. These classes will be referred to as *nested section classes*. These implement `getCliAnswer` and `getGuiComponents` using the code in the outer section class and sometimes code from other classes as well.
+
+Input validation for a calculation is implemented by having a method or class constructor that does a calculation call `Misc.assertIsInRange`, which will throw the instance of `Misc.InvalidInputNumberException` for args that are out of range. The Goldbach conjecture calculation method also throws this exception for odd number args. For the CLI, these exceptions bubble up to `getCliAnswer` and then to `NtpCli.goToSection`, where they're handled. For the GUI, they bubble up to `getGuiComponents` and then to the action listener for `calcBtn` in `MainPanel`, where they're handled. Implementations of `getCliAnswer` and `getGuiComponents` call the method or class constructor first to check if they throw an exception.
+
+The nested section class constructors call their superclass constructors and one of the args for this is a string that contains paragraphs of info that'll be displayed to the user. Text blocks are used for these and are placed near related code, usually at the top of an outer section class. This is done in an attempt to help explain that related code.
 
 ## Project History
 

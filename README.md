@@ -2,7 +2,6 @@
 
 *Number theory* is a branch of math and is the study of integers. Let's go over a few types of numbers. *Natural numbers* are 1, 2, 3, and so on. *Whole numbers* are the natural numbers along with 0. *Integers* are the whole numbers along with negative natural numbers; so ..., -2, -1, 0, 1, 2, ...
 
-There are 3 versions of this application: Java command line interface (CLI), Java graphical user interface (GUI), and website. The Java versions have been refactored recently and the website version hasn't. The Java versions share a lot of code, namely the code for the calculations and text that gets displayed. The Java versions have some unit testing. The JUnit testing framework was used. The code for the tests is in the "Tests" folder located within the "Java Versions" folder. The Java GUI version was made with the Swing library. The files for the Java versions are copies of the files in an IntelliJ IDEA project of mine.
 The *Number Theory Playground* is an application where a user can visit sections that show info and do calculations for number theory concepts. These calculations are done based on input numbers provided by the user. Some sections require 1 input number and some require 2. An example of a section is the prime numbers section. It has 17 sentences of info and can find the first 30 prime numbers that are ≥ an input number. Plenty of info about the sections can be found in the ["All Sections" section](#all-sections).
 
 Almost all of the calculations involve only natural numbers. There are 2 exceptions to this:
@@ -10,15 +9,35 @@ Almost all of the calculations involve only natural numbers. There are 2 excepti
 1. The divisibility section does calculations that might involve negative integers or 0.
 2. The Fibonacci-like sequences section does calculations where the result is a floating-point number.
 
-The term "whole number" is often used in this app since I find it to be more self-explanatory than "natural number."
+The term "whole number" is often used in this README and the app since I find it to be more self-explanatory than "natural number."
 
+There are 4 versions of this app: Java command line interface (CLI), Java graphical user interface (GUI), Java and Spring website, and Node website. The Node website version hasn't been worked on for years and there aren't many notable things to say about it, so it won't be mentioned for the rest of this README, except for the ["Project History" section](#project-history). Any time I mention the website version, I'm referring to the Spring website version.
+
+<br/>
+
+## Collapsible Sections
+
+There are plenty of collapsible sections throughout this README. Each one has a summary and there's a triangle to the left of it. Collapsible sections can be opened by clicking on the triangle or summary. Most of the time, the summary is "Info." Here's an example:
+
+<details>
+<summary>Example Summary</summary>
+<br/>
+
+Example text.
+
+</details>
+
+<br/>
 
 ## App Overview
 
-Here are some collapsible sections that show some info and screenshots for the different versions. There isn't any software design or implementation info here but the ["Some Design and Implementation Info" section](#some-design-and-implementation-info) has that.
+There isn't any software design or implementation info here but the ["Some Design and Implementation Info" section](#some-design-and-implementation-info) has that.
+
+### Website and GUI
 
 <details>
-<summary>Website and GUI</summary>
+<summary>Info</summary>
+<br/>
 
 The website and GUI versions of the app are similar. The screenshots below show the website version.
 
@@ -34,7 +53,7 @@ A single input section without info:
 
 ![Website single input section without info](/Spring_Website_Version/screenshots/app_overview/single_input_section_without_info.JPG)
 
-The info for the section can be shown and hidden by clicking the arrow to the left of "Info."
+The info for the section can be shown and hidden by clicking "Info" or the triangle to the left of that.
 
 A single input section with info:
 
@@ -73,10 +92,14 @@ Invalid input:
 
 ![Website invalid input](/Spring_Website_Version/screenshots/app_overview/invalid_input.JPG)
 
+<br/>
 </details>
 
+### CLI
+
 <details>
-<summary>Command Line Interface Info</summary>
+<summary>Info</summary>
+<br/>
 
 I used the IntelliJ IDEA terminal with the Darcula :vampire: theme for these screenshots.
 
@@ -124,15 +147,17 @@ Invalid input:
 
 </details>
 
+<br/>
 
 ## All Sections
 
-Shown in the collapsible sections below is info about all sections featured in the app; including concept info, what can be calculated and displayed, input constraints, and example calculation screenshots from the app.
+Shown in the sections below is info about all sections featured in the app; including info about the number theory concept, what can be calculated and displayed, input constraints, and example calculation(s) screenshots.
 
 <details>
-<summary>Math Expressions and Unicode Chars</summary>
+<summary>Mathematical Expressions and Unicode Chars</summary>
+<br/>
 
-There are some math expressions featured in this README that can be written with GitHub Markdown. The Spring website version uses MathML for some math expressions. For example, in the concept info for the prime numbers section; $\sqrt{29}$, the square root of 29, is used. This can be written using `$\sqrt{29}$` in the Markdown for this README and `<math><msqrt><mn>29</mn></msqrt></math>` using MathML. Here's a [*GitHub Docs* article on writing math expressions](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions) and here's an [MDN article on MathML](https://developer.mozilla.org/en-US/docs/Web/MathML).
+There are some mathematical expressions featured in this README that can be written with GitHub Markdown. The Spring website version webpage uses MathML for some mathematical expressions. For example, in the concept info for the prime numbers section; $\sqrt{29}$, the square root of 29, is used. This can be written using `$\sqrt{29}$` in the Markdown for this README and `<math><msqrt><mn>29</mn></msqrt></math>` using MathML. Here's a [*GitHub Docs* article on writing mathematical expressions](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions) and here's an [MDN article on MathML](https://developer.mozilla.org/en-US/docs/Web/MathML).
 
 There are also some Unicode chars for math symbols such as ≥ and × that were copied and pasted into this README and the source code. × is used for multiplication and is different from the letter x or X. A Unicode char for the Greek letter 𝚽 (Phi) is used for the Fibonacci-like sequences concept info.
 
@@ -141,19 +166,22 @@ There are also some Unicode chars for math symbols such as ≥ and × that were 
 
 <details>
 <summary>Max Input Info</summary>
+<br/>
 
-The calculations for the Fibonacci-like sequences and ancient Egyptian multiplication sections are pretty cheap, like so cheap that you might be able to have the input numbers be a googol (10<sup>100</sup>) and they still might be able to be done pretty quickly. For the max inputs, I picked 1 quadrillion (1,000,000,000,000,000) for the website version and 9 quintillion (9,000,000,000,000,000,000) for the CLI and GUI versions. 1 quadrillion is a little lower than the max value of a safe integer in JavaScript, which is 2<sup>53</sup> − 1 or 9,007,199,254,740,991 (9 quadrillion 7 trillion ...). 9 quintillion is a little lower than the max value for a `long` primitive type, which is 2<sup>63</sup> − 1 or 9,223,372,036,854,775,807 (9 quintillion 223 quadrillion ...). I could make the max inputs higher but if I did, I would have to use `BigInt`s for the website version and `BigInteger`s for the CLI and GUI versions for input numbers. I would also have to adjust the generation of random input numbers because of this. I think 1 quadrillion and 9 quintillion are good enough for max inputs so I'll just use them.
+The calculations for the Fibonacci-like sequences and ancient Egyptian multiplication sections are pretty cheap, like so cheap that I was able to have the input numbers be a googol (10<sup>100</sup>) and the calculations were done instantly. For the max inputs of those sections, I picked 1 quadrillion (1,000,000,000,000,000) for the website version and 9 quintillion (9,000,000,000,000,000,000) for the CLI and GUI versions. 1 quadrillion is a little lower than the max value of a safe integer in JavaScript, which is 2<sup>53</sup> − 1 or 9,007,199,254,740,991 (9 quadrillion 7 trillion ...). 9 quintillion is a little lower than the max value of a Java `long`, which is 2<sup>63</sup> − 1 or 9,223,372,036,854,775,807 (9 quintillion 223 quadrillion ...). I could make the max inputs higher but if I did, I would have to use `BigInt`s for the website version and `BigInteger`s for the CLI and GUI versions for input numbers. I would also have to adjust the generation of random input numbers because of this. I think 1 quadrillion and 9 quintillion are good enough for max inputs so I'll just use them.
 
-For other sections in the CLI and GUI versions, I picked the max inputs such that the inputs ≤ the max input that required the most work to be done would take a few seconds or so on my computer. For the prime factorization, divisibility, and GCD and LCM sections, the input that requires the most work is the largest prime number ≤ the max input. For the GCD and LCM section, both inputs need to be this number. For other sections, there aren't any easy ways to determine the input the requires the most work but it's probably the max input or a number close to it.
+For other sections in the CLI and GUI versions, I picked the max inputs such that the inputs ≤ the max input that required the most work to be done would take a few seconds or so on my computer. For the prime factorization, divisibility, and GCD and LCM sections, the input that requires the most work is the largest prime number or largest square number ≤ the max input. If both of these numbers have the same square root floor, then either can be used. Otherwise, the larger number must be used. For the GCD and LCM section, both inputs need to be this number. For other sections, there aren't any easy ways to determine the input the requires the most work but it's probably the max input or a number close to it. I generated random large numbers ≤ the max input and tried out the calculations with them.
 
 The max inputs for the website version are proportional to the max inputs for the CLI and GUI versions but a lot lower. This is to reduce the amount of work the server has to do since the calculations will be done every time a user enters a valid input number and clicks the "Calculate" button. The max input is 10,000 for 6 sections, 1,000 for a section, 100 for a section, and the other 2 sections were the ones mentioned a couple of paragraphs ago.
+
 </details>
 
 
-<details>
-<summary>Prime Numbers</summary>
+### Prime Numbers
 
-#### Info
+<details>
+<summary>Info</summary>
+<br/>
 
 A *prime number*, or a *prime*, is a whole number > 1 that isn't divisible by any whole numbers other than 1 and
 itself. A *composite number* is a whole number > 1 that is divisible by a whole number other than 1 and itself.
@@ -185,16 +213,23 @@ CLI and GUI max: 10 trillion (10,000,000,000)
 
 #### Example Calculation Screenshots
 
+##### Website
+
 ![Website primes calculation](/Spring_Website_Version/screenshots/section_calculations/primes_calculation.JPG)
+
+##### CLI
 
 ![CLI primes calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/primes_calculation.JPG)
 
+<br/>
 </details>
 
-<details>
-<summary>Twin Prime Pairs</summary>
 
-#### Info
+### Twin Prime Pairs
+
+<details>
+<summary>Info</summary>
+<br/>
 
 A *twin prime pair* is a pair of prime numbers that differ by 2. The first 5 twin prime pairs are
 3 & 5, 5 & 7, 11 & 13, 17 & 19, and 27 & 29. The largest known twin prime pair is
@@ -220,16 +255,23 @@ CLI and GUI max: 500 billion (500,000,000,000)
 
 #### Example Calculation Screenshots
 
+##### Website
+
 ![Website twin prime pairs calculation](/Spring_Website_Version/screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
+
+##### CLI
 
 ![CLI twin prime pairs calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/twin_prime_pairs_calculation.JPG)
 
+<br/>
 </details>
 
-<details>
-<summary>Prime Factorization</summary>
 
-#### Info
+### Prime Factorization
+
+<details>
+<summary>Info</summary>
+<br/>
 
 The Fundamental Theorem of Arithmetic says that every whole number > 1 can be expressed as the product of
 prime numbers in 1 way if you ignore the order of those prime numbers. The *prime factorization* (PF) of a whole
@@ -267,23 +309,30 @@ CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
 
 #### Example Calculation Screenshots
 
+##### Website
+
 ![Website PF calculation](/Spring_Website_Version/screenshots/section_calculations/PF_calculation.JPG)
+
+##### CLI
 
 ![CLI PF calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/PF_calculation.JPG)
 
+<br/>
 </details>
 
-<details>
-<summary>Divisibility &nbsp; :heavy_division_sign:</summary>
 
-#### Info
+### Divisibility &nbsp; :heavy_division_sign:
+
+<details>
+<summary>Info</summary>
+<br/>
 
 Say we have 2 whole numbers that we'll represent with the variables $a$ and $b$. If we divide $a$ by $b$ and get
 no remainder, then $a$ is said to be *divisible* by $b$ and $b$ is said to be a *factor* or *divisor* of $a$. If
 you want to find some whole number factors of a whole number, you could manually do some division but there are
 other ways to find them.
 
-##### Prime Factorization
+#### Prime Factorization
 
 The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a variable $n$
 and let it represent a whole number > 1. First, you can find how many factors $n$ has by looking at $n$'s PF,
@@ -306,7 +355,7 @@ next 12 prime numbers so it has 13 unique prime factors and its PF is
 $2^6 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$.
 It has $7 \times 2^12 = 28,672$ total factors!
 
-##### Divisibility Rules
+#### Divisibility Rules
 
 Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1 rule
 for each number in the range of 3 to 12, excluding 5 and 10, though there are rules for more numbers and many
@@ -329,7 +378,7 @@ digits. If this sum is divisible by 11, then $n$ is divisible by 11. These alter
 negative integers or 0, so that makes them some of the few calculations done by the Number Theory Playground
 that involve numbers other than natural numbers.
 
-###### Example
+##### Example
 
 Let $n$ be 5,544. Its PF is $2^3 \times 3^2 \times 7 \times 11$. We can tell from that PF that $n$ is divisible
 by all the numbers that had rules mentioned about them above. Let's check if $n$ is divisible by those numbers
@@ -339,6 +388,7 @@ even and divisible by 3, it's also divisible by 6. Since $n$ is divisible by bot
 by 12. The alternating sum of 3-digit blocks from right to left is $544 - 4 = 539$, which is divisible by 7.
 The alternating sum of digits from left to right is $5 - 5 + 4 - 4 = 0$, which is divisible by 11.
 
+
 #### Calculations
 
 Given an input number:
@@ -346,7 +396,6 @@ Given an input number:
    from this.
 2. Find the PF of the number. If we can determine from this PF that the input number is composite (not prime),
    then find the factors by finding the sub-factorizations.
-
 
 #### Input Constraints
 
@@ -358,21 +407,28 @@ CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
 
 #### Example Calculations Screenshots
 
+##### Website
+
 ![Website divisibility calculations](/Spring_Website_Version/screenshots/section_calculations/divisibility_calculations.JPG)
+
+##### CLI
 
 ![CLI divisibility calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/divisibility_calculations.JPG)
 
+<br/>
 </details>
 
-<details>
-<summary>Greatest Common Divisor (GCD) and Least Common Multiple (LCM) &nbsp; :heavy_division_sign: &nbsp; :heavy_multiplication_x:</summary>
 
-#### Info
+### Greatest Common Divisor (GCD) and Least Common Multiple (LCM) &nbsp; :heavy_division_sign: &nbsp; :heavy_multiplication_x:
+
+<details>
+<summary>Info</summary>
+<br/>
 
 Greatest common divisor is also known as greatest common factor, or GCF. To find the GCD and LCM of 2 whole
 numbers, you could manually do some division and multiplication but there are other ways to find them.
 
-##### The Euclidean Algorithm
+#### The Euclidean Algorithm
 
 The Euclidean algorithm can be used to find just the GCD of 2 whole numbers. This was named after the ancient
 Greek mathematician Euclid.
@@ -390,7 +446,7 @@ Otherwise, we do another iteration and the max of the new iteration is the min o
 of the new iteration is the remainder of the last iteration. Again, we check if the remainder is 0 and if it is,
 then the min of this iteration is the GCD. Otherwise, we keep doing iterations until we get a remainder of 0.
 
-Let's find the GCD of 6 and 35 using the Euclidean algorithm: Here are the iterations:
+Let's find the GCD of 6 and 35 using the Euclidean algorithm. Here are the iterations:
 
 | Max | Min | Remainder |
 | --- | --- | --------- |
@@ -400,7 +456,7 @@ Let's find the GCD of 6 and 35 using the Euclidean algorithm: Here are the itera
 
 The GCD is 1.
 
-Let's find the GCD of 54 and 99 using the Euclidean algorithm: Here are the iterations:
+Let's find the GCD of 54 and 99 using the Euclidean algorithm. Here are the iterations:
 
 | Max | Min | Remainder |
 | --- | --- | --------- |
@@ -410,7 +466,7 @@ Let's find the GCD of 54 and 99 using the Euclidean algorithm: Here are the iter
 
 The GCD is 9.
 
-##### Prime Factorizations
+#### Prime Factorizations
 
 The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs). If those
 numbers don't have any common prime factors, then the GCD is 1. If they do have common prime factors, then the GCD
@@ -426,7 +482,7 @@ Let's find the GCD and LCM of 54 and 99. The PF of 54 is $2 \times 3^3$ and the 
 the only common prime factor and the min power of it is 2 so the GCD PF is $3^2$, which is 9. The max power of 3
 is 3 so $3^3$ is in the LCM PF. The LCM PF is $2 \times 3^3 \times 11$, which is 594.
 
-##### Other Info
+#### Other Info
 
 2 whole numbers are said to be *coprime* if their GCD is 1. Therefore, coprime numbers don't have any common
 factors in their PFs.
@@ -452,13 +508,13 @@ PF is
 $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37
 \times 41 \times 47 \times 53 \times 59 \times 61 \times 67 \times 71 \times 73$!
 
+
 #### Calculations
 
 Given 2 input numbers:
 1. Perform the Euclidean algorithm on the numbers and display a table with info about all iterations. This table
    will look like the tables shown in the info above.
 2. Find the PFs of the numbers and use these to find the PFs of the GCD and LCM.
-
 
 #### Input Constraints
 
@@ -470,16 +526,23 @@ CLI and GUI max: 5 quadrillion (5,000,000,000,000,000)
 
 #### Example Calculations Screenshots
 
+##### Website
+
 ![Website GCD and LCM calculations](/Spring_Website_Version/screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
+
+##### CLI
 
 ![CLI GCD and LCM calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/GCD_and_LCM_calculations.JPG)
 
+<br/>
 </details>
 
-<details>
-<summary>Goldbach Conjecture</summary>
 
-#### Info
+### Goldbach Conjecture
+
+<details>
+<summary>Info</summary>
+<br/>
 
 The *Goldbach conjecture* says that every even number ≥ 4 can be expressed as the sum of 2 prime numbers. This
 was named after 1700s Prussian mathematician Christian Goldbach. A *conjecture* is a statement that's believed to
@@ -506,16 +569,23 @@ Why are there separate max inputs for the CLI and GUI? See the comment by the st
 
 #### Example Calculation Screenshots
 
-![Website Goldbach Conjecture calculation](/Spring_Website_Version/screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
+##### Website
 
-![CLI Goldbach Conjecture calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
+![Website Goldbach conjecture calculation](/Spring_Website_Version/screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
 
+##### CLI
+
+![CLI Goldbach conjecture calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/Goldbach_Conjecture_calculation.JPG)
+
+<br/>
 </details>
 
-<details>
-<summary>Pythagorean Triples</summary>
 
-#### Info
+### Pythagorean Triples
+
+<details>
+<summary>Info</summary>
+<br/>
 
 The Pythagorean Theorem says that for a right triangle, the sum of the squares of the lengths of the 2 short sides
 equals the square of the long side (hypotenuse) length, or $a^2 + b^2 = c^2$. This theorem was named after the
@@ -548,16 +618,23 @@ CLI and GUI max: 10,000
 
 #### Example Calculation Screenshots
 
+##### Website
+
 ![Website Pythagorean triples calculation](/Spring_Website_Version/screenshots/section_calculations/pythag_triples_calculation.JPG)
+
+##### CLI
 
 ![CLI Pythagorean triples calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/pythag_triples_calculation.JPG)
 
+<br/>
 </details>
 
-<details>
-<summary>Two Square Theorem</summary>
 
-#### Info
+### Two Square Theorem
+
+<details>
+<summary>Info</summary>
+<br/>
 
 The Two Square Theorem says that every prime number that's 1 above a multiple of 4 can be expressed as the sum of
 2 square numbers. A *square number*, also known as a *perfect square*, is a number that can be formed by taking an
@@ -580,16 +657,23 @@ CLI and GUI max: 1 quadrillion (1,000,000,000,000,000)
 
 #### Example Calculations Screenshots
 
+##### Website
+
 ![Website Two Square Theorem calculations](/Spring_Website_Version/screenshots/section_calculations/two_square_theorem_calculations.JPG)
+
+##### CLI
 
 ![CLI Two Square Theorem calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/two_square_theorem_calculations.JPG)
 
+<br/>
 </details>
 
-<details>
-<summary>Fibonacci-like Sequences</summary>
 
-#### Info
+### Fibonacci-Like Sequences
+
+<details>
+<summary>Info</summary>
+<br/>
 
 I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every following number be
 the sum of the 2 previous numbers. The Fibonacci sequence does this and the first 8 numbers of it are
@@ -623,16 +707,23 @@ CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
 
 #### Example Calculations Screenshots
 
+##### Website
+
 ![Website Fibonacci-like sequences calculations](/Spring_Website_Version/screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
+
+##### CLI
 
 ![CLI Fibonacci-like sequences calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/fibo-like_sequences_calculations.JPG)
 
+<br/>
 </details>
 
-<details>
-<summary>Ancient Egyptian Multiplication</summary>
 
-#### Info
+### Ancient Egyptian Multiplication
+
+<details>
+<summary>Info</summary>
+<br/>
 
 The ancient Egyptians had an interesting algorithm for multiplication of 2 whole numbers. My way of explaining the
 algorithm goes like this:
@@ -680,16 +771,45 @@ CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
 
 #### Example Calculations Screenshots
 
+##### Website
+
 ![Website ancient Egyptian multiplication calculations](/Spring_Website_Version/screenshots/section_calculations/ancient_mult_calculations.JPG)
+
+##### CLI
 
 ![CLI ancient Egyptian multiplication calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/ancient_mult_calculations.JPG)
 
 </details>
 
+<br/>
+
+## Deployment to the Internet
+
+I used GoDaddy as my registrar for the domain `numbertheoryplayground.com` and used [Microsoft Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/overview) to deploy this app to the internet. I created a container image for this app by first creating a `jar` file and then using the Docker CLI and a `Dockerfile` in the `Spring_Website_Version` directory with this code:
+
+```dockerfile
+FROM mcr.microsoft.com/openjdk/jdk:21-mariner
+COPY target/number-theory-playground-1.jar app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]
+```
+
+I then pushed my image to this [repository of mine on Docker Hub](https://hub.docker.com/repository/docker/nschroeder131/number-theory-playground/general). The container app pulls the image from this repo.
+
+<details>
+<summary>Info about mcr.microsoft.com/openjdk/jdk:21-mariner</summary>
+<br/>
+
+This is a container image for the [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/overview) for Java 21 for [Mariner, AKA Azure Linux](https://learn.microsoft.com/en-us/azure/azure-linux/faq). I decided to use this JDK image as my base image simply because there's a [sample app for Azure Container Apps](https://github.com/Azure-Samples/containerapps-albumapi-java) that used it as its base image and the [plain OpenJDK Docker image](https://hub.docker.com/_/openjdk) is deprecated.
+
+</details>
+
+<br/>
+
 ## Some Design and Implementation Info
 
-
 ### Website
+
+Java 21 is used for the server.
 
 A single page application is used. The content of the page changes when a section changes, an answer is displayed, or an error message is displayed.
 
@@ -697,18 +817,25 @@ A server API is used for most of the calculations. If the text field(s) have val
 
 The only calculations that aren't done by this API and instead are done on the front end are some of the calculations for finding factors of an input number using divisibility rules. The webpage script builds a paragraph that contains info about the factors of an input number found using divisibility rules. The input number is displayed in this paragraph with commas. The webpage displays numbers with commas by using a JavaScript `Intl.NumberFormat` object in the webpage script.
 
-#### API Documentation
+#### API Endpoints Documentation
 
-All of the endpoints below are for `GET` requests and are preceded by `numbertheoryplayground.com/calculate/`. The query params are just `input` for single input section endpoints, and `input1` and `input2` for double input section endpoints. For the Goldbach conjecture endpoint, valid query param values are even numbers in the input range specified. For all other endpoints, valid query param values are whole numbers in the input range. If a request is made to an endpoint with an invalid query param value(s), the server will respond with error code 400 (bad request). [JSDoc syntax](https://jsdoc.app/tags-type) is used to document return types.
+<details>
+<summary>Info</summary>
+<br/>
+
+All of the endpoints are for `GET` requests. The start of each endpoint is `numbertheoryplayground.com/calculate/`. [JSDoc syntax](https://jsdoc.app/tags-type) is used to document response types.
+
+Query params are used for input numbers. For single input section endpoints, the only query param is `input`. For double input section endpoints, the query params are `input1` and `input2`. For the Goldbach prime pair starts endpoint, valid query param values are even numbers in the input range specified. For all other endpoints, valid query param values are whole numbers in the input range. If a request is made to an endpoint with an invalid query param value(s), the server will respond with error code 400 (bad request).
 
 There are some shortenings used for fields in the response types:
 - `fp` is a shortening of "factor and power," an object of this type: `{ factor: number, power: number }`.
 - `pf` is a shortening of "prime factorization," an object of this type: `{ fps: ?{ factor: number, power: number }, correspondingNum: number }`.
 
+<br/>
 
 ##### Prime Numbers
 
-URL end: `primes`
+Endpoint end: `primes`
 <br/>
 Query param: `input`
 <br/>
@@ -720,10 +847,11 @@ Type: `number[]`
 
 An array of the first 30 primes ≥ the input.
 
+<br/>
 
 ##### Twin Prime Pair Starts
 
-URL end: `twin-prime-pair-starts`
+Endpoint end: `twin-prime-pair-starts`
 <br/>
 Query param: `input`
 <br/>
@@ -735,10 +863,11 @@ Type: `number[]`
 
 Finds the first 20 twin prime pairs where the lowest of the numbers in the pair is ≥ the input. For example, if the input is 3, then the pair 3 and 5 will be the first one found since the lowest number in that pair is 3. If the input is 4, then the pair 5 and 7 will be the first one found. The response is an array that contains the lowest numbers of those pairs.
 
+<br/>
 
-##### Prime Factorization
+##### Prime Factorization (PF)
 
-Path end: `prime-factorization`
+Endpoint end: `prime-factorization`
 <br/>
 Query param: `input`
 <br/>
@@ -748,12 +877,13 @@ Input Range: 2 - 10,000
 
 Type: `{ factor: number, power: number }[]`
 
-An array of objects that represents the prime factorization of the input. Each object in the array is for a prime factor and power in the prime factorization.
+An array of objects that represents the PF of the input. Each object in the array is for a factor and power in the PF.
 
+<br/>
 
 ##### Divisibility Answer Data
 
-URL end: `divisibility-answer`
+Endpoint end: `divisibility-answer`
 <br/>
 Query param: `input`
 <br/>
@@ -785,12 +915,21 @@ Type:
 
 `AltSumAndExpression` is a shortening of "alternating sum and expression."
 
-If the input is < 1,000, then `blocksAltSumAndExpression` will be null, since the input must have at least 4 digits for this calculation to be useful.
+`rulesData.blocksAltSumAndExpression` contains a sum and mathematical expression for the alternating sum of 3-digit blocks from right to left. If the input is < 1,000, then this'll be `null`, since the input must have at least 4 digits for this calculation to be useful. An example of this is that for the input 5,544, the expression would be "544 - 5" and the sum would be 539.
+<br/>
+`rulesData.digitsAltSumAndExpression` contains a sum and mathematical expression for the alternating sum of digits from left to right. An example of this is that for the input 5,544, the expression would be "5 - 5 + 4 - 4" and the sum would be 0.
 
+`pfAnswer.inputFps` contains the factors and powers of the PF of the input.
+<br/>
+`pfAnswer.numFactorsExpression` is a mathematical expression that shows how the number of factors was calculated. An example of this is that for the input 8,575, which has a PF of $5^2 \times 7^3$, this would be "(2 + 1) × (3 + 1)" and `pfAnswer.numFactors` would be 12.
+<br/>
+`pfAnswer.factorPfs` contains the PFs of the factors of the input, excluding 1 and the input.
+
+<br/>
 
 ##### GCD and LCM Answer Data
 
-URL end: `gcd-and-lcm-answer`
+Endpoint end: `gcd-and-lcm-answer`
 <br/>
 Query params: `input1` and `input2`
 <br/>
@@ -817,14 +956,15 @@ Type:
 }
 ```
 
-`euclideanIteration` is a list of iteration objects for all iterations of the Euclidean algorithm performed on input1 and input2.
+`euclideanIteration` is a list of iteration objects for all iterations of the Euclidean algorithm performed on `input1` and `input2`.
 
-If `gcdPf` is null, then that means that the inputs have no common prime factors and the GCD is 1.
+`input1Fps` contains the factors and powers of the PF of `input`. `input2Fps` has the same for `input2`. If `gcdPf` is null, then that means that the input numbers have no common prime factors and their GCD is 1.
 
+<br/>
 
 ##### Goldbach Prime Pair Starts
 
-URL end: `goldbach-prime-pair-starts`
+Endpoint end: `goldbach-prime-pair-starts`
 <br/>
 Query param: `input`
 <br/>
@@ -836,10 +976,11 @@ Type: `number[]`
 
 Find the pairs of primes that sum to the input. The response is an array that contains the lowest numbers of those pairs, meaning that the other number in the pair can be found by subtracting the lowest number of the pair from the input number.
 
+<br/>
 
 ##### Pythagorean Triples
 
-URL end: `pythagorean-triples`
+Endpoint end: `pythagorean-triples`
 <br/>
 Query param: `input`
 <br/>
@@ -851,10 +992,11 @@ Type: `{ a: number, b: number, c: number, isPrimitive: number }[]`
 
 An array of objects for the first 10 Pythagorean triples where the lowest number in the triple is ≥ the input. For example, if the input is 3, then an object for the triple 3, 4, and 5 will be the first one since the lowest number in that triple is 3. If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
 
+<br/>
 
 ##### Two Square Theorem Answer Data
 
-URL end: `two-square-theorem-answer`
+Endpoint end: `two-square-theorem-answer`
 <br/>
 Query param: `input`
 <br/>
@@ -866,10 +1008,11 @@ Type: `{ primeNum: number, a: number, b: number }`
 
 `primeNum` is the first prime number ≥ the input that's 1 above a multiple of 4. `a` and `b` are the numbers whose squares sum to `primeNum`.
 
+<br/>
 
 ##### Fibonacci-like Sequences Answer Data
 
-URL end: `fibonacci-like-sequences-answer`
+Endpoint end: `fibonacci-like-sequences-answer`
 <br/>
 Query params: `input1` and `input2`
 <br/>
@@ -887,10 +1030,11 @@ Type:
 
 `fiboLikeSequence` contains strings of the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. `ratioDataArr` contains ratio data objects for the ratios of the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in the sequence. Strings are used for the sequence and the numbers in the ratio data objects since these numbers might be too big for a safe JavaScript integer.
 
+<br/>
 
 ##### Ancient Egyptian Multiplication Answer Data
 
-URL end: `ancient-multiplication-answer`
+Endpoint end: `ancient-multiplication-answer`
 <br/>
 Query params: `input1` and `input2`
 <br/>
@@ -911,41 +1055,124 @@ Type:
 
 Strings are used for numbers in the row objects since a number in a `correspondingMultipleString` might be too big for a safe JavaScript integer. A number in a `powerOf2String` will always be small enough to be a safe JavaScript integer but a string is still used for consistency. `productString` is a string of the product of `input1` and `input2`. Just like with `correspondingMultipleString`, this product might be too big for a safe JavaScript integer.
 
+<br/>
+</details>
 
-### Java Versions
 
-The `NtpCli` class has the `main` method and some other code for running the CLI version of the app. The `NtpGui` class has the `main` method and a little of the code for running the GUI version of the app. A lot of the other code for running it is in the `MainPanel` class.
+### CLI and GUI Versions
 
-#### `Section` Classes
+For most of the history of this project, Java 11 was used for these versions, though Java 21 is used now. I have these versions in the same IntelliJ IDEA project and they share a lot of code, such as code for the calculations and text that gets displayed. The `NtpCli` class has the `main` method and some other code for running the CLI version of the app. The `NtpGui` class has the `main` method and a little of the code for running the GUI version of the app. A lot of the other code for running it is in the `MainPanel` class. The Swing GUI library was used.
 
-There’s an abstract `Section` class that has data and functionality that the app will use. The direct subclasses of this are the abstract classes `SingleInputSection` and `DoubleInputSection`. There are 2 abstract methods on each of these, `getCliAnswer` and `getGuiComponents`. The `SingleInputSection` methods have 1 param for an input long and 1 for a string that contains that long and commas. The `DoubleInputSection` methods have 2 params for the 1<sup>st</sup> input long and its string and 2 more params for the 2<sup>nd</sup> input long and its string. These methods do the calculation(s) for the section and return something that contains info from the calculation and will be displayed in the app. `getCliAnswer` returns a string and `getGuiComponents` returns a list of GUI components.
+#### Section Classes
 
-For each section in the app, there's a class with code related to that section. The names of these classes are similar to the section names in the “All Sections” section. These classes will be referred to as *outer section classes*. Some methods in these classes are used by other classes as well. The `PrimeFactorization` class has instance and static members and all other outer section classes are *utility classes*, meaning that they contain only static members.
+<details>
+<summary>Info</summary>
+<br/>
 
-Each outer section class has a nested, concrete, static class called `Section` that extends either `SingleInputSection` or `DoubleInputSection`. These classes will be referred to as *nested section classes*. These implement `getCliAnswer` and `getGuiComponents` using the code in the outer section class and sometimes code from other classes as well.
+There’s an abstract `Section` class that has data and functionality that the app will use. The direct subclasses of this are the abstract classes `SingleInputSection` and `DoubleInputSection`. These 3 classes are in the `numbertheoryplayground.sectionclasses.abstract_` package. If it's unclear why there's an `_`, it's because `abstract` is a reserved keyword in Java and you can't have reserved keywords in package names. `SingleInputSection` and `DoubleInputSection` each have 2 abstract methods, `getCliAnswer` and `getGuiComponents`. The `SingleInputSection` methods have 1 param for an input long and 1 for a string that contains that long and commas. The `DoubleInputSection` methods have 2 params for the 1<sup>st</sup> input long and its string and 2 more params for the 2<sup>nd</sup> input long and its string. These methods do the calculation(s) for the section and return something that contains info from the calculation and get displayed in the app. `getCliAnswer` returns a string and `getGuiComponents` returns a list of GUI components.
 
-Input validation for a calculation is implemented by having a method or class constructor that does a calculation call `Misc.assertIsInRange`, which will throw the instance of `Misc.InvalidInputNumberException` for args that are out of range. The Goldbach conjecture calculation method also throws this exception for odd number args. For the CLI, these exceptions bubble up to `getCliAnswer` and then to `NtpCli.goToSection`, where they're handled. For the GUI, they bubble up to `getGuiComponents` and then to the action listener for `calcBtn` in `MainPanel`, where they're handled. Implementations of `getCliAnswer` and `getGuiComponents` call the method or class constructor first to check if they throw an exception.
+For each section in the app, there's a class with code related to that section. These classes will be referred to as *outer section classes*. They're in the `numbertheoryplayground.sectionclasses.outer` package and the names of them are similar to the section names in the ["All Sections" section](#all-sections). The `PrimeFactorization` class has instance and static members and all other outer section classes are *utility classes*, meaning that they contain only static members. Some members of these classes are used by other classes as well.
+
+Each outer section class has a nested, static, concrete class called `Section` that extends either `SingleInputSection` or `DoubleInputSection`. These classes will be referred to as *nested section classes*. These implement `getCliAnswer` and `getGuiComponents` using code in their outer section class and sometimes code from other classes as well. Methods and classes that do a calculation(s) are members of outer section classes for both `Section` methods to use. For strings used in both methods, string constants and methods that return strings are used.
 
 The nested section class constructors call their superclass constructors and one of the args for this is a string that contains paragraphs of info that'll be displayed to the user. Text blocks are used for these and are placed near related code, usually at the top of an outer section class. This is done in an attempt to help explain that related code.
 
+Input validation for a calculation is implemented by having a method or class constructor that does a calculation call `Misc.assertIsInRange` with the input number as the 1<sup>st</sup> arg and the min and max input numbers for the section as the 2<sup>nd</sup> and 3<sup>rd</sup> args, respectively. `Misc.assertIsInRange` will throw the instance of `Misc.InvalidInputNumberException` if the input number is out of range. The Goldbach conjecture calculation method also throws this exception if the input number is odd. For the CLI, this exception bubbles up to `getCliAnswer` and then to `NtpCli.goToSection`, where it's handled. For the GUI, it bubbles up to `getGuiComponents` and then to the action listener for `calcBtn` in `MainPanel`, where it's handled. Implementations of `getCliAnswer` and `getGuiComponents` call a method or class constructor for a calculation first to check if it throws an exception.
+
+</details>
+
+<br/>
+
+## Unit Testing
+
+The JUnit framework was used. There are tests for the website, CLI, and GUI versions. The location of the test classes is the `src/test` directory. For the website, CLI, and GUI versions, there are tests for methods and classes that do calculations. For just the website version, there are also [a couple tests for the calculations controller](https://github.com/ncschroeder/Number-Theory-Playground/blob/master/Spring_Website_Version/src/test/java/com/numbertheoryplayground/CalculationsControllerTests.java). For just the CLI and GUI versions, there are also tests for methods in the `NtpCli` and `Misc` classes. Almost all tests are parameterized and the ones that aren't are ones that use the `@Test` annotation. For the website version, there are 18 tests, all but 1 of which are parameterized. For the CLI and GUI versions, there are 22 tests, all but 4 of which are parameterized.
+
+### Methods and Classes that Exist for Unit Testing
+
+<details>
+<summary>Info</summary>
+<br/>
+
+For the CLI and GUI versions, there are several methods and classes that exist only for the purpose of unit testing. An example of a method is `PrimesNumbers.getPrimes`. The only places this method is used is in the `getPrimesStrings` method and in a test in the `PrimeNumbersTests` class. `getPrimes` and `getPrimesStrings`
+look like this:
+
+```java
+static LongStream getPrimes(long input) {
+    ...
+    return
+        (input <= 2 ? LongStream.concat(LongStream.of(2), oddPrimes) : oddPrimes)
+        .limit(NUM_PRIMES_TO_FIND);
+}
+
+private static Stream<String> getPrimesStrings(long input) {
+    return getPrimes(input).mapToObj(Misc::createStringWithCommas);
+}
+```
+
+If it wasn't for using `getPrimes` for unit testing, I would be able to just have `getPrimesStrings` and have it be like this:
+
+```java
+private static Stream<String> getPrimesStrings(long input) {
+    // Code from getPrimes
+    return
+        (input <= 2 ? LongStream.concat(LongStream.of(2), oddPrimes) : oddPrimes)
+        .limit(NUM_PRIMES_TO_FIND)
+        .mapToObj(Misc::createStringWithCommas);
+}
+```
+
+An example of a class is `TwoSquareTheorem.Answer`:
+
+```java
+static final class Answer {
+    private long primeNum;
+    
+    private long a;
+    
+    private long b;
+    
+    private final String infoSentence;
+    
+    // Constructor and getters
+}
+```
+
+The `infoSentence` field is used in `getCliAnswer` and `getGuiComponents` and the other fields are used in a test in the `TwoSquareTheoremTests` class. If it wasn't for using this class for unit testing, I would be able to just have a static method that returns an info sentence string and call that method in `getCliAnswer` and `getGuiComponents`.
+
+</details>
+
+<br/>
+
 ## Project History
 
-During the summer of 2019, I took a number theory course on [brilliant.org](https://brilliant.org/) for fun and was enlightened by some of the stuff I was learning. Later that year, I was thinking of what kind of programming projects I could work on and some of the stuff I learned from that number theory course came to mind. I realized I could make a program that makes calculations about some of the stuff I learned. Along with the content of that number theory course, I also included additional number theory concepts that I was familiar with. I learned these other concepts from sources such as my discrete math textbook and YouTube videos from channels such as Numberphile, Mathologer, 3blue1brown, and Zach Star. I decided to use Java because it's a popular programming language that I had no familiarity with at the time. However, I found Java easy to learn since some of the syntax is similar to C++, which I had some familiarity with. In fact, the 3 languages I had the most familiarity with at the time were Python :snake:, C++, and JavaScript.
+<details>
+<summary>Info</summary>
+<br/>
 
-I started in December 2019 and from then to October 2020, I was on and off this project. I had my last normal semester of college from January to May. Well, it was normal until the middle of March. I then had an independent study course over the summer where I worked on my Singletonopoly project. The first completed version of this project was uploaded to GitHub in October. This included a Java command line interface and graphical user interface. This included the first 7 of the 10 sections that are in the application now, starting with the prime numbers section and ending with the Pythagorean Triples section.
+During the summer of 2019, I took a number theory course on [brilliant.org](https://brilliant.org/) for fun and was enlightened by some of the stuff I was learning. Later that year, I was thinking of what kind of programming projects I could work on and some of the stuff I learned from that number theory course came to mind. I realized I could make a program that makes calculations about some of the stuff I learned. Along with the content of that number theory course, I also included additional number theory concepts that I was familiar with. I learned these other concepts from sources such as my discrete math textbook, *Discrete Mathematics and Its Applications* by Kenneth Rosen, and YouTube videos from channels such as [Numberphile](https://www.youtube.com/@numberphile), [Mathologer](https://www.youtube.com/@Mathologer), [3blue1brown](https://www.youtube.com/@3blue1brown), and [Zach Star](https://www.youtube.com/@zachstar). I decided to use Java because it's a popular programming language that I had no familiarity with at the time. However, I found Java easy to learn since some of the syntax is similar to C++, which I had some familiarity with. In fact, the 3 languages I had the most familiarity with at the time were Python :snake:, C++, and JavaScript.
 
-I think it was around this time (October 2020) when I decided to make a website version. I used the Pug template engine for the HTML and vanilla JavaScript and CSS. I used Node.js and Express for the back end. These are the same tools that I used for a web development course. I originally had the calculations done on the front end but moved these to the back end. For this website version, I included the 7 sections that were in the Java versions and also added 3 more sections, the Two Square Theorem, Fibonacci-like sequences, and ancient Egyptian multiplication sections. These would later be added to the Java versions.
+I started in December 2019 and from then to October 2020, I was on and off this project. I had my last normal semester of college from January to May. Well, it was normal until the middle of March. I then had an independent study course over the summer where I worked on my Singletonopoly project. The first completed versions of this project were uploaded to GitHub in October 2020. These were Java CLI and GUI versions. These had the first 7 of the 10 sections that are in the app now, starting with the prime numbers section and ending with the Pythagorean triples section.
+
+I think it was around this time (October 2020) when I decided to make a website version. For the back end, I used Node.js and Express. For the front end, I used the Pug template engine for the HTML and vanilla JavaScript and CSS. These are the same tools that I used for a web development course. I originally had the calculations done on the front end but moved them to the back end. For this website version, I included the 7 sections that were in the Java CLI and GUI versions and also added 3 more sections; the Two Square Theorem, Fibonacci-like sequences, and ancient Egyptian multiplication sections. These would later be added to the Java CLI and GUI versions.
 
 Refactoring was done and other changes were made throughout 2021, 2022, and 2023. Unit tests were created for the Java versions in 2022.
+
+In December 2024, I decided to make a website version using Java and Spring for the back end and vanilla HTML, CSS, and JavaScript for the front end.
+</details>
 
 ### Refactoring Examples
 
 #### Implementation of Calculations
 
-<details>
-<summary>Code</summary>
+##### Finding Prime Numbers
 
-[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/b0afb8fc9e406987a212e8ce54c487f3ed3a4b9c/Primes.java#L48-L110)
+<details>
+<summary>Info</summary>
+<br/>
+
+Refactoring has been done on the code used for the calculations. For the most part, the algorithms haven't changed much. For example, finding prime numbers was implemented like this in the [commit from January 21<sup>st</sup>, 2021](https://github.com/ncschroeder/Number-Theory-Playground/commit/b0afb8fc9e406987a212e8ce54c487f3ed3a4b9c):
+
+[GitHub link for the code below](https://github.com/ncschroeder/Number-Theory-Playground/blob/b0afb8fc9e406987a212e8ce54c487f3ed3a4b9c/Primes.java#L48-L110)
 
 ```java
 /**
@@ -1013,14 +1240,10 @@ public static List<Integer> getPrimesAfter(int number) {
 }
 ```
 
-</details>
 
 This is the current implementation:
 
-<details>
-<summary>Code</summary>
-
-[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/9824944ed91cf2ff0e289bd7d9bb8d6a378592bf/Java_CLI_and_GUI_Versions/src/main/numbertheoryplayground/sectionclasses/outer/PrimeNumbers.java#L66-L81)
+[GitHub link for the code below](https://github.com/ncschroeder/Number-Theory-Playground/blob/8923b9b6d25d7bd4c42509d440f2eb906eb36725/Java_CLI_and_GUI_Versions/src/main/numbertheoryplayground/sectionclasses/outer/PrimeNumbers.java#L67-L82)
 
 ```java
 /**
@@ -1029,29 +1252,35 @@ This is the current implementation:
 static LongStream getPrimes(long input) {
     assertIsInRange(input, MIN_INPUT, MAX_INPUT);
     
+    // Create a stream of odd primes since all primes besides 2 are odd.
     long iterationStart = isOdd(input) ? input : input + 1;
     LongStream oddPrimes =
         LongStream.iterate(iterationStart, l -> l + 2)
         .filter(PrimeNumbers::isPrime);
     
-    // 2 is the only even prime.
     return
         (input <= 2 ? LongStream.concat(LongStream.of(2), oddPrimes) : oddPrimes)
         .limit(NUM_PRIMES_TO_FIND);
 }
 ```
 
+The 1<sup>st</sup> implementation puts the primes in a list and returns it and the 2<sup>nd</sup> implementation returns a stream whose elements are primes. The 1<sup>st</sup> implementation iterates through ints that are 1 below or 1 above a multiple of 6 and the 2<sup>nd</sup> implementation iterates through odd ints and as a result, this implementation is simpler. Both of these implementations take close to the same amount of time to run.
+
+<br/>
 </details>
+
+##### Finding Factors of a Number and Their PFs
+
+<details>
+<summary>Info</summary>
+<br/>
 
 A calculation that did have a significant algorithm change is for finding factors of an input number and the 
 prime factorizations (PFs) of those factors. This started out by using brute force and iterating through ints in
 the range of 2 to half of the input number. This was implemented with a for-loop in the
 [commit from August 6<sup>th</sup>, 2020](https://github.com/ncschroeder/Number-Theory-Playground/commit/b83df662d79bf702c28d857371b6613476f0e455):
 
-<details>
-<summary>Code</summary>
-
-[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/b83df662d79bf702c28d857371b6613476f0e455/Functions.java#L263-L289)
+[GitHub link for the code below](https://github.com/ncschroeder/Number-Theory-Playground/blob/b83df662d79bf702c28d857371b6613476f0e455/Functions.java#L263-L289)
 
 ```java
 public static String[] getDivisInfoViaPF(long number) {
@@ -1084,15 +1313,10 @@ public static String[] getDivisInfoViaPF(long number) {
 }
 ```
 
-</details>
-
 This was then implemented with streams in the
 [commit from November 11<sup>th</sup>, 2022](https://github.com/ncschroeder/Number-Theory-Playground/commit/9adfdda4e34afe4c31b0947776dccc20a0c5d5b1):
 
-<details>
-<summary>Code</summary>
-
-[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/9adfdda4e34afe4c31b0947776dccc20a0c5d5b1/Java%20Versions/Divisibility.java#L65-L94)
+[GitHub link for the code below](https://github.com/ncschroeder/Number-Theory-Playground/blob/9adfdda4e34afe4c31b0947776dccc20a0c5d5b1/Java%20Versions/Divisibility.java#L65-L94)
 
 ```java
 /**
@@ -1128,19 +1352,14 @@ public static List<String> getFactorPfStrings(int intParam) {
 }
 ```
 
-</details>
-
 I learned from that brilliant.org course that the PFs within a PF are the PFs of the factors. In order to find
 these programatically, you would have to find combinations of factors and powers. I used to not know how to do
-that and I didn't bother to research it. It was in 2024 when I got some practice with combinations by doing
-LeetCode problems with them. Then, I came up with a way to find combinations of factors and powers and added
-this code to the repo in the
+that, as pointed out in my documentation comment, and I didn't bother to research it. It was in 2024 when I got
+some practice with combinations by doing LeetCode problems with them. Then, I came up with a way to find
+combinations of factors and powers and added this code to the repo in the
 [commit from December 2<sup>nd</sup>, 2024](https://github.com/ncschroeder/Number-Theory-Playground/commit/d25c5d4fd789da760b8c2d84b567e41776827297):
 
-<details>
-<summary>Code</summary>
-
-[GitHub code link](https://github.com/ncschroeder/Number-Theory-Playground/blob/d25c5d4fd789da760b8c2d84b567e41776827297/Java%20Versions/PrimeFactorization.java#L213-L249)
+[GitHub link for the code below](https://github.com/ncschroeder/Number-Theory-Playground/blob/d25c5d4fd789da760b8c2d84b567e41776827297/Java%20Versions/PrimeFactorization.java#L213-L249)
 
 ```java
 /**
@@ -1182,30 +1401,30 @@ public Stream<String> getFactorPfStrings() {
 }
 ```
 
-</details>
-
-For the first 2 implementations, the iterating through the ints has a time complexity of $O(n^2)$, where $n$ is
+For the first 2 implementations, the iterating through the ints has a time complexity of $O(n)$, where $n$ is
 the input number. Then, for every factor that gets found while iterating, the prime factorization for it gets
 calculated and this has a time complexity of $O(\sqrt{n})$. For the current implementation, the amount of work
 that needs to be done is proportional to the number of factors of the input number, which is proportional to the
-product of the powers in its prime factorization. For more info about this, see the collapsible section below.
+product of the powers in its prime factorization. For more info about this, see the collapsible section below. 
+The amount of time it takes to run the current implementation is significantly lower.
 
 <details>
 <summary>More info about how many factors a whole number has</summary>
+<br/>
 
-Here's an excerpt from the Divisibility section info in the ["All Sections" section](#all-sections):
+Here's an excerpt from the [divisibility section info](#divisibility--heavy_division_sign) in the "All Sections" section:
 
 > you can find how many factors $n$ has by looking at $n$'s PF, taking all the powers of the factors, adding 1
 > to each, and then multiplying all these together. For example, the PF of 36 is $2^2 \times 3^2$. The powers
 > are 2 and 2, so there are $3 \times 3 = 9$ factors.
 
-For whole numbers that are < the max input of the Divisibility section, the number of factors they have are
+For whole numbers that are < the max input of the divisibility section, the number of factors they have are
 generally pretty small. I ran the CLI version of the app, which has a higher max input than the website version,
-and used random input for the Divisibility section 10 times. The random numbers and the number of factors they
-have are shown in the table below.
+and used random input for the divisibility section 10 times. The random numbers and the number of factors they
+have are:
 
-|    Input Number     | Number of Factors |
-| ------------------- | ----------------- |
+|    Random Number    | Number of Factors |
+| :-----------------: | :---------------: |
 |   672,570,401,060   |        24         |
 |       452,724       |        24         |
 |          7          |        2          |
@@ -1217,30 +1436,33 @@ have are shown in the table below.
 |    8,408,979,082    |        48         |
 | 56,361,505,554,770  |        32         |
 
-Here's an excerpt from the Divisibility section info about an input number that has a high amount of factors:
+Here's another excerpt from the divisibility section info about an input number for the CLI and GUI versions that has a high number of factors:
 
-> For the CLI and GUI versions, an example of an input number with a high number of factors is
-> 9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2<sup>6</sup> 
-> and the next 12 prime numbers so it has 13 unique prime factors and its PF is
+> An example of an input number with a high number of factors is
+> 9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of
+> 2<sup>6</sup> and the next 12 prime numbers so it has 13 unique prime factors and its PF is
 > $2^6 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$.
-> It has 28,672 total factors!
+> It has $7 \times 2^12 = 28,672$ total factors!
 
+</details>
+<br/>
 </details>
 
 
 #### Code Duplication
 
+<details>
+<summary>Info</summary>
+<br/>
+
 A problem with early versions of this project was code duplication. For example, in the `NTPCLI` class (now
 called `NtpCli`), in the
 [commit from October 16<sup>th</sup>, 2020](https://github.com/ncschroeder/Number-Theory-Playground/commit/31b9e4f05cc396f8ba05a49c4146717e2c468a23),
 there was a static method for each section that was used to interact with the user for that section. There's a
-**lot** of code that's common to each of these methods. The collapsible section below shows an overview of what
+**lot** of code that's common to each of these methods. The code below shows an overview of what
 each method looked like. The min and max input numbers were hardcoded and I replaced these with `x` and `y`,
 respectively. I also replaced some code with comments and some string text with `...`. Here's a
 [GitHub link to the whole `NTPCLI` class at the time of this commit](https://github.com/ncschroeder/Number-Theory-Playground/blob/31b9e4f05cc396f8ba05a49c4146717e2c468a23/NTPCLI.java).
-
-<details>
-<summary>Method Overview</summary>
 
 ```java
 while (true) {
@@ -1286,16 +1508,78 @@ while (true) {
 }
 ```
 
-</details>
-
 This is fixed in the current version by having `Section` objects that have the data and functionality necessary
 for doing all of the things in the code above. As a result, the one place in the code for interacting with a
-user for a section is the `goToSection` method, as can be seen in the collapsible section below:
+user for a section is the `goToSection` method:
 
-<details>
+[GitHub link for the code below](https://github.com/ncschroeder/Number-Theory-Playground/blob/8923b9b6d25d7bd4c42509d440f2eb906eb36725/Java_CLI_and_GUI_Versions/src/main/numbertheoryplayground/NtpCli.java#L113-L176)
 
-
-</details>
+```java
+/**
+ * Displays the section heading and choices for the section and then lets the user either
+ * enter custom input to use for the calculation(s) of the section, generate random input
+ * to use for the calculation(s), get info about the section, or go back to the main menu.
+ */
+private static void goToSection(Section section) {
+    // Valid input values
+    final String randomValue = "r";
+    final String infoValue = "i";
+    final String menuValue = "m";
+    
+    var sectionChoicesString =
+        buildSectionChoicesString(section, randomValue, infoValue, menuValue);
+    String sectionHeading = section.getHeading();
+    String sectionInfo =
+        buildStringWithHeadingAndInfoParagraphs(
+            sectionHeading, section.getInfoParagraphs().stream()
+        );
+    
+    
+    while (true) {
+        println();
+        println(sectionHeading);
+        println();
+        println(sectionChoicesString);
+        
+        String input = getFormattedInput();
+        if (input.equals(menuValue)) return;
+        
+        println();
+        
+        switch (input) {
+            case infoValue:
+                println(sectionInfo);
+                break;
+                
+            case randomValue:
+                println(section.getRandomCliAnswer());
+                break;
+                
+            default:
+                try {
+                    if (section instanceof SingleInputSection sis) {
+                        var inputLong = stripCommasAndParse(input);
+                        var inputString = createStringWithCommas(inputLong);
+                        println(sis.getCliAnswer(inputLong, inputString));
+                    } else if (section instanceof DoubleInputSection dis) {
+                        String[] inputContents = input.split("\\s+");
+                        if (inputContents.length != 2) {
+                            printInvalidInput();
+                        } else {
+                            var input1Long = stripCommasAndParse(inputContents[0]);
+                            var input2Long = stripCommasAndParse(inputContents[1]);
+                            var input1String = createStringWithCommas(input1Long);
+                            var input2String = createStringWithCommas(input2Long);
+                            println(dis.getCliAnswer(input1Long, input2Long, input1String, input2String));
+                        }
+                    }
+                } catch (NumberFormatException | InvalidInputNumberException ex) {
+                    printInvalidInput();
+                }
+        }
+    }
+}
+```
 
 In addition, as mentioned above, the min and max input numbers were hardcoded and, as can be seen in the code,
 were used multiple times. 1 billion (1,000,000,000) was the max input number for a few sections so the int
@@ -1315,4 +1599,5 @@ public static final long TEN_QUADRILLION = ONE_QUADRILLION * 10;
 public static final long NINE_QUINTILLION = 9_000_000_000_000_000_000L;
 ```
 
-Another improvement made to this code that reduces repetition is the use of `String.join` to create the options string to avoid having to type out so many `\n`s, as can seen in the snippet above.
+</details>
+

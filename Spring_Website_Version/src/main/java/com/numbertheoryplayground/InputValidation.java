@@ -9,18 +9,24 @@ public class InputValidation {
     public static final long ONE_QUADRILLION = 1_000_000_000_000_000L;
     
     /**
-     * This exception is used for server-side validation and isn't supposed to be thrown since
-     * there's also client-side validation. The constructor is used by assertIsInRange below and
+     * This exception is used for back end validation and isn't supposed to be thrown since
+     * there's also front end validation. The constructor is used by assertIsInRange below and
      * by Calculations.getGoldbachPrimePairStarts.
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public static final class InvalidInputNumberException extends IllegalArgumentException {
-        public InvalidInputNumberException() {}
+        private InvalidInputNumberException() {}
+        
+        private static final InvalidInputNumberException instance = new InvalidInputNumberException();
+        
+        public static InvalidInputNumberException getInstance() {
+            return instance;
+        }
     }
     
-    public static void assertIsInRange(long l, long min, long max) {
-        if (l < min || l > max) {
-            throw new InvalidInputNumberException();
+    public static void assertIsInRange(long input, long minInput, long maxInput) {
+        if (input < minInput || input > maxInput) {
+            throw InvalidInputNumberException.instance;
         }
     }
 }

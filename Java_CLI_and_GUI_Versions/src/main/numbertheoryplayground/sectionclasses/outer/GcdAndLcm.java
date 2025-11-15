@@ -110,26 +110,19 @@ prime factors and its PF is
         return iterations;
     }
     
-    // Text used for the Euclidean algorithm table.
+    // Text used for the Euclidean algorithm table
     private static final String EUCLIDEAN_TABLE_HEADING = "Euclidean Algorithm Iterations";
     private static final String EUCLIDEAN_MAX_COLUMN_HEADING = "Max";
     private static final String EUCLIDEAN_MIN_COLUMN_HEADING = "Min";
     private static final String EUCLIDEAN_REMAINDER_COLUMN_HEADING = "Remainder";
     
     /**
-     * Returns a message about what the GCD of input1 and input2 is. iterations should be a list
-     * returned from making a call to getEuclideanIterations using input1 and input2. The min of
-     * the last element in that list is the GCD.
+     * Returns a message about what the GCD of 2 input numbers is. iterations should be a list
+     * returned from making a call to getEuclideanIterations. The min of the last object in that
+     * list is the GCD.
      */
-    private static String getEuclideanGcdMessage(
-        String input1String,
-        String input2String,
-        List<EuclideanIteration> iterations
-    ) {
-        return String.format(
-            "The GCD of %s and %s is %s.",
-            input1String, input2String, iterations.getLast().minString()
-        );
+    private static String getEuclideanGcdMessage(List<EuclideanIteration> iterations) {
+        return String.format("The GCD is %s.", iterations.getLast().minString());
     }
     
     /**
@@ -168,7 +161,7 @@ prime factors and its PF is
             );
         
         String collectingPrefix = EUCLIDEAN_TABLE_HEADING + '\n' + headRow + '\n';
-        String collectingSuffix = '\n' + getEuclideanGcdMessage(input1String, input2String, iterations);
+        String collectingSuffix = '\n' + getEuclideanGcdMessage(iterations);
         
         return
             iterations
@@ -209,7 +202,7 @@ prime factors and its PF is
                 getIterationRowStrings
             );
         
-        String gcdMessage = getEuclideanGcdMessage(input1String, input2String, iterations);
+        String gcdMessage = getEuclideanGcdMessage(iterations);
         
         return
             new NtpPanel()
@@ -238,7 +231,7 @@ Let's find the GCD and LCM of 54 and 99. The PF of 54 is 2 × 3^3 and the PF of 
 The max power of 3 is 3 so 3^3 is in the LCM PF. The LCM PF is 2 × 3^3 × 11, which is 594.
 
 The input numbers whose LCM is the highest are 5 quadrillion (5,000,000,000,000,000),
-the max input; and 5 quadrillion - 1. The LCM is 24,999,999,999,999,995,000,000,000,000,000,
+the max input, and 5 quadrillion - 1. The LCM is 24,999,999,999,999,995,000,000,000,000,000,
 or 24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion!
 It has 32 digits. Trillion is before quadrillion.
 
@@ -338,7 +331,7 @@ the second input number multiplied by 2.""";
         return String.format("GCD and LCM Info for %s and %s", input1String, input2String);
     }
     
-    private static final String PF_INFO_HEADING = "Prime Factorization Info";
+    private static final String PF_INFO_HEADING = "Prime Factorizations Info";
     
     
     public static final class Section extends DoubleInputSection {

@@ -33,7 +33,7 @@ public final class AncientMultiplicationAnswer {
     
     /**
      * A string of the product of the 2 input longs. Just like with correspondingMultipleString,
-     * a string is used since this product might be too big to be a safe JavaScript integer.
+     * a string is used since this product might be too big for a safe JavaScript integer.
      */
     private final String productString;
     

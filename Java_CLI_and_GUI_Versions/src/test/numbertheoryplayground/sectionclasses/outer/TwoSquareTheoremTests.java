@@ -6,9 +6,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.*;
 import static numbertheoryplayground.sectionclasses.outer.TwoSquareTheorem.Answer;
 
-/**
- * Has tests for code in the TwoSquareTheorem class.
- */
 class TwoSquareTheoremTests {
     /**
      * At the start of the Answer constructor, there are 2 loops to determine the 1st number ≥ the

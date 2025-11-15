@@ -54,13 +54,11 @@ twin prime pairs, the first 2 mentioned above."""
         /*
         As mentioned in the INFO string, all twin prime pairs besides 3 and 5 consist of 1 number
         that's 1 below a multiple of 6 and another number that's 1 above that same multiple of 6.
-        Set iterationStart to the first int ≥ the input that's 1 below a multiple of 6 so that
+        Set iterationStart to the first long ≥ the input that's 1 below a multiple of 6 so that
         we'll be able to iterate through longs that are 1 below a multiple of 6.
          */
-        
         long iterationStart = input;
         while (iterationStart % 6 != 5) iterationStart++;
-        
         LongStream pairStarts =
             LongStream.iterate(iterationStart, l -> l + 6)
             .filter(l -> bothArePrime(l, l + 2));

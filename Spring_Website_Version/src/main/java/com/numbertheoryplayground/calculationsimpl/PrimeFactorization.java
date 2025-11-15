@@ -8,6 +8,8 @@ import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isDivisible;
 
 /**
+ * The initials PF are used to refer to instances of this class or to prime factorizations in general.
+ *
  * Sometimes, instances of this class get marshaled to JSON as part of a response for an HTTP
  * request and sometimes, just the factors and powers list of an instance gets marshaled.
  */
@@ -15,6 +17,9 @@ public final class PrimeFactorization {
     public static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = TEN_THOUSAND;
     
+    /**
+     * Instances of this class are shortened to fp or its plural fps.
+     */
     public record FactorAndPower(int factor, int power) {}
     
     /**
@@ -125,6 +130,10 @@ public final class PrimeFactorization {
         return isForAPrimeNumber() ? null : fps;
     }
     
+    /**
+     * If the factor is in this PF, then an Optional with that factor's power will be returned.
+     * Otherwise, an empty Optional will be returned.
+     */
     public OptionalInt findPowerOf(int factor) {
         return
             fps

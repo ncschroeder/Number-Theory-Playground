@@ -11,9 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static numbertheoryplayground.sectionclasses.outer.AncientMultiplication.*;
 
-/**
- * Has tests for code in the AncientMultiplication class.
- */
 class AncientMultiplicationTests {
     /*
     I've identified 3 possible outcomes when creating an Answer object:

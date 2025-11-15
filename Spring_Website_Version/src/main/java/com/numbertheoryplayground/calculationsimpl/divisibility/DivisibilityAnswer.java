@@ -14,8 +14,6 @@ public final class DivisibilityAnswer {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         rulesData = new RulesData(input);
         pfAnswer = PrimeFactorizationAnswer.createIfNotPrime(input);
-//        var pf = new PrimeFactorization(input);
-//        pfAnswer = pf.isForAPrimeNumber() ? null : new PrimeFactorizationAnswer(pf);
     }
     
     public RulesData getRulesData() {

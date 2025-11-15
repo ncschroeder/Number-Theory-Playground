@@ -11,19 +11,16 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static numbertheoryplayground.sectionclasses.outer.GcdAndLcm.*;
 import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndPower;
 
-/**
- * Has tests for code in the GcdAndLcm class.
- */
 class GcdAndLcmTests {
     /*
-    There are 4 situations I can think of when calculating the GCD and LCM for 2 ints:
-    1. Both ints are the same so the GCD and LCM is that int.
-    2. 1 of the ints is a multiple of the other int. The GCD will be the smaller of the ints and
-       the LCM will be the other int.
-    3. The 2 ints have some common prime factors in their prime factorizations so the GCD is > 1
-       && < the smaller int and the LCM is > the bigger int && < the product of the 2 ints.
-    4. The 2 ints have no common prime factors so the GCD is 1 and the LCM is the product of the
-       2 ints. The term to describe 2 ints like this is coprime.
+    There are 4 situations I can think of for calculating the GCD and LCM of 2 ints:
+    1. Both ints are the same so their GCD and LCM is that int.
+    2. One of the ints is a multiple of the other. Their GCD is the smaller int and their LCM is
+       the other.
+    3. The 2 ints have some common factors in their PFs so their GCD is > 1 and < the smaller int
+       and their LCM is > the bigger int and < the product of the 2 ints.
+    4. The 2 ints have no common prime factors so their GCD is 1 and their LCM is the product of
+       the 2 ints. The term for 2 ints like this is coprime.
      */
 
     @ParameterizedTest
@@ -64,9 +61,9 @@ class GcdAndLcmTests {
     }
     
     /**
-     * 2 integers are coprime if their GCD is 1, so if a PrimeFactorizationAnswer object is
-     * created with coprime inputs, then the getGcdPf method of that object should return an
-     * empty Optional.
+     * As mentioned in the comment at the start of this class, 2 ints are coprime if their GCD
+     * is 1, so if a PrimeFactorizationAnswer object is created with coprime inputs, then the
+     * getGcdPf method of that object should return an empty Optional.
      */
     @Test
     void pfAnswerForCoprimeInputs() {
@@ -107,7 +104,7 @@ class GcdAndLcmTests {
     }
     
     static Stream<Arguments> getArgsForGcdAndLcmAnswerForNonCoprimeInputs() {
-        List<PrimeFactorization.FactorAndPower> fpsFor10 = List.of(fp(2, 1), fp(5, 1));
+        List<FactorAndPower> fpsFor10 = List.of(fp(2, 1), fp(5, 1));
         
         return Stream.of(
             arguments(10, 10, fpsFor10, 10, fpsFor10, 10),

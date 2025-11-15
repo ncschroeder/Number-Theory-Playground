@@ -12,6 +12,9 @@ const getElementById = (id) => document.getElementById(id);
  */
 
 /**
+ * This is similar to creating an HTML element in the Elm language. Elm has functions for creating different
+ * types of elements and one of the params of each function is a list of child elements for the new element.
+ * 
  * @param {string} elementType 
  * @param {...Appendable} objectsToAppend 
  * @returns {HTMLElement}
@@ -249,11 +252,11 @@ const numPairToString = (a, b) => `${createNumStringWithCommas(a)} & ${createNum
 let curSection;
 
 /**
- * @param {HTMLInputElement} inputField 
+ * @param {HTMLInputElement} textField 
  * @returns {?number}
  */
-function getNum(inputField) {
-    const modifiedValue = inputField.value.trim().replaceAll(',', '');
+function getNum(textField) {
+    const modifiedValue = textField.value.trim().replaceAll(',', '');
     if (modifiedValue.length === 0) return null;
     const containsNonDigit = /\D/.test(modifiedValue);
     if (containsNonDigit) return null;
@@ -262,61 +265,65 @@ function getNum(inputField) {
 }
 
 /**
- * @returns {{ inputDiv: HTMLDivElement, inputField: HTMLInputElement }}
- * The input field is a child of the input div.
+ * @returns {{ inputDiv: HTMLDivElement, textField: HTMLInputElement }}
+ * The text field is a child of the input div.
  */
 function createInputDiv() {
-    const inputField = createElement('input');
-    inputField.className = 'input-field';
+    const textField = createElement('input');
+    textField.className = 'text-field';
 
     const randomizeBtn = createBtn('Randomize');
     randomizeBtn.className = 'randomize-btn';
-    randomizeBtn.onclick = () => inputField.value = curSection.getRandomInput();
+    randomizeBtn.onclick = () => textField.value = curSection.getRandomInput();
+    
+    /**
+     * @returns {boolean}
+     */
+    const textFieldIsBlank = () => !/\S/.test(textField.value);
 
     const plusBtn = createBtn('+');
     plusBtn.className = 'plus-btn';
     plusBtn.onclick = () => {
         const { minInput, maxInput, needsEvenInput } = curSection;
-
-        let inputNum = getNum(inputField);
-        if (inputNum === null) {
-            if (inputField.value.length === 0) {
-                inputField.value = minInput;
-            }
+        
+        if (textFieldIsBlank()) {
+            textField.value = minInput;
             return;
         }
+        
+        let inputNum = getNum(textField);
+        if (inputNum === null) return;
 
         inputNum =
             inputNum < minInput || inputNum >= maxInput
             ? minInput
             : inputNum + (needsEvenInput && isEven(inputNum) ? 2 : 1);
-        inputField.value = inputNum;
+        textField.value = inputNum;
     };
 
     const minusBtn = createBtn('−');
     minusBtn.className = 'minus-btn';
     minusBtn.onclick = () => {
         const { minInput, maxInput, needsEvenInput } = curSection;
-
-        let inputNum = getNum(inputField);
-        if (inputNum === null) {
-            if (inputField.value.length === 0) {
-                inputField.value = maxInput;
-            }
+        
+        if (textFieldIsBlank()) {
+            textField.value = maxInput;
             return;
         }
 
+        let inputNum = getNum(textField);
+        if (inputNum === null) return;
         inputNum =
             inputNum <= minInput || inputNum > maxInput
             ? maxInput
             : inputNum - (needsEvenInput && isEven(inputNum) ? 2 : 1);
-        inputField.value = inputNum;
+        textField.value = inputNum;
     };
 
-    const inputDiv = createDiv(inputField, randomizeBtn, plusBtn, minusBtn);
+    const inputDiv = createDiv(textField, randomizeBtn, plusBtn, minusBtn);
     inputDiv.className = 'input-div';
 
-    return { inputDiv, inputField };
+    return { inputDiv, textField };
 }
 
 const sectionHeading = getElementById('section-heading');
@@ -332,8 +339,8 @@ sectionInfoDiv.className = 'non-answer-info-div';
  */
 const sectionInfoDetails = createElement('details', sectionInfoDetailsSummary, sectionInfoDiv);
 
-const { inputDiv: inputDiv1, inputField: inputField1 } = createInputDiv();
-const { inputDiv: inputDiv2, inputField: inputField2 } = createInputDiv();
+const { inputDiv: inputDiv1, textField: textField1 } = createInputDiv();
+const { inputDiv: inputDiv2, textField: textField2 } = createInputDiv();
 const inputDivDiv = createDiv(inputDiv1, inputDiv2);
 inputDivDiv.id = 'input-div-div';
 
@@ -348,7 +355,7 @@ const sectionContentDiv =
 sectionContentDiv.id = 'section-content-div';
 
 getElementById('home-btn').onclick = () => {
-    if (Object.is(document.body.lastElementChild, sectionContentDiv)) {
+    if (document.body.lastElementChild === sectionContentDiv) {
         sectionHeading.textContent = homeHeadingText;
         document.body.replaceChild(homeContentDiv, sectionContentDiv);
     }
@@ -368,7 +375,7 @@ class Section {
 
     #minInput;
     #maxInput;
-    #apiEndpoint;
+    #apiEndpointEnd;
 
     /** 
      * @typedef {Object} SectionParams
@@ -379,9 +386,9 @@ class Section {
      * @property {string} actionSentenceEnding
      * @property {number} minInput
      * @property {number} maxInput
-     * @property {string} apiEndpoint
-     * The endpoint to make an HTTP request to that does the calculation(s) for this section. The full request
-     * URL is the website URL followed by "/calculate/" followed by this endpoint.
+     * @property {string} apiEndpointEnd
+     * The end of the endpoint to make an HTTP request to for the server to do the calculation(s) for this
+     * section. The full endpoint is the website URL followed by "/calculate/" followed by this endpoint end.
      */
 
     /**
@@ -389,12 +396,12 @@ class Section {
      */
     constructor(params) {
         const { 
-            btnIdStart, infoHtmlStringOrArr, actionSentenceEnding, minInput, maxInput, apiEndpoint
+            btnIdStart, infoHtmlStringOrArr, actionSentenceEnding, minInput, maxInput, apiEndpointEnd
         } = params;
         
         this.#minInput = minInput;
         this.#maxInput = maxInput;
-        this.#apiEndpoint = apiEndpoint;
+        this.#apiEndpointEnd = apiEndpointEnd;
         
         const sectionBtn = getElementById(btnIdStart + '-btn');
         const heading = sectionBtn.textContent;
@@ -428,19 +435,19 @@ class Section {
             sectionInfoDetails.open = false;
             sectionInfoDiv.replaceChildren(...infoHtmlElements);
             sectionDirectionsDiv.textContent = directions;
-            inputField1.value = '';
-            inputField2.value = '';
+            textField1.value = '';
+            textField2.value = '';
             answerDiv.innerHTML = '';
 
             if (this.isSingleInputSection) {
-                if (Object.is(inputDivDiv.lastElementChild, inputDiv2)) {
+                if (inputDivDiv.lastElementChild === inputDiv2) {
                     inputDivDiv.removeChild(inputDiv2);
                 }
-            } else if (Object.is(inputDivDiv.lastElementChild, inputDiv1)) {
+            } else if (inputDivDiv.lastElementChild === inputDiv1) {
                 inputDivDiv.appendChild(inputDiv2);
             }
 
-            if (Object.is(document.body.lastElementChild, homeContentDiv)) {
+            if (document.body.lastElementChild === homeContentDiv) {
                 document.body.replaceChild(sectionContentDiv, homeContentDiv);
             }
         }
@@ -457,8 +464,8 @@ class Section {
         return this.#maxInput;
     }
 
-    get apiEndpoint() {
-        return this.#apiEndpoint;
+    get apiEndpointEnd() {
+        return this.#apiEndpointEnd;
     }
 
     /**
@@ -494,8 +501,7 @@ class Section {
         Math.floor(Math.random() * (upperBound - lowerBound)) + lowerBound;
 
     /**
-     * First, a random number of digits will be generated for a random number. The min number of random digits
-     * is 1 since all sections have a single digit integer for their min input. If the max input is a power of
+     * First, a random number of digits will be generated for a random number. If the max input is a power of
      * 10, then the max number of digits for the random number is the number of digits of the max input - 1.
      * Otherwise, the max number of random digits is the number of digits of the max input.
      * 
@@ -505,17 +511,17 @@ class Section {
      * @returns {number}
      */
     getRandomInput() {
+        const numMinInputDigits = this.minInput === 0 ? 1 : Math.floor(Math.log10(this.minInput)) + 1;
         const log10MaxInput = Math.log10(this.maxInput);
         const log10MaxInputFloor = Math.floor(log10MaxInput);
         // If the above 2 numbers are equal, then the max input is a power of 10.
         const numMaxInputDigits = log10MaxInputFloor + 1;
         const numMaxRandomInputDigits =
-            log10MaxInputFloor == log10MaxInput ? numMaxInputDigits - 1 : numMaxInputDigits;
-        const numRandomInputDigits = Section.#getRandomNum(1, numMaxRandomInputDigits + 1);
+            log10MaxInputFloor === log10MaxInput ? numMaxInputDigits - 1 : numMaxInputDigits;
+        const numRandomInputDigits = Section.#getRandomNum(numMinInputDigits, numMaxRandomInputDigits + 1);
         const lowerBound =
-            numRandomInputDigits === 1 ? this.minInput : Math.pow(10, numRandomInputDigits - 1);
-        const upperBound =
-            numRandomInputDigits === numMaxInputDigits ? this.maxInput + 1 : Math.pow(10, numRandomInputDigits);
+            numRandomInputDigits === numMinInputDigits ? this.minInput : Math.pow(10, numRandomInputDigits - 1);
+        const upperBound = Math.pow(10, numRandomInputDigits);
         return Section.#getRandomNum(lowerBound, upperBound);
     }
 }
@@ -585,7 +591,7 @@ class DoubleInputSection extends Section {
 
     /**
      * @param {SectionParams} sectionParams 
-     * @param {(responseObj: any, inputString1: string, inputString2: string) => HTMLElement[]} createAnswerElements 
+     * @param {(responseObj: any, input1String: string, input2String: string) => HTMLElement[]} createAnswerElements 
      * responseObj is the object from the response of an HTTP request that does the calculation(s) for this
      * section. The input strings contain the input numbers with commas.
      */
@@ -600,10 +606,20 @@ class DoubleInputSection extends Section {
 }
 
 
+const invalidInputDiv = createNarrowTextDiv('Invalid input');
+invalidInputDiv.id = 'invalid-input-div';
+
+function showInvalidInputMessage() {
+    answerDiv.replaceChildren(invalidInputDiv);
+}
+
 calculateBtn.onclick = () => {
-    const inputNum1 = getNum(inputField1);
-    if (inputNum1 === null || curSection.isInvalidInput(inputNum1)) return;
-    const inputString1 = createNumStringWithCommas(inputNum1);
+    const input1Num = getNum(textField1);
+    if (input1Num === null || curSection.isInvalidInput(input1Num)) {
+        showInvalidInputMessage();
+        return;
+    }
+    const input1String = createNumStringWithCommas(input1Num);
     const urlParams = new URLSearchParams();
     /**
      * @type {(responseObj: any) => HTMLElement[]}
@@ -612,22 +628,25 @@ calculateBtn.onclick = () => {
     let createAnswerElements;
 
     if (curSection.isSingleInputSection) {
-        urlParams.append('input', inputNum1);
+        urlParams.append('input', input1Num);
         createAnswerElements = (responseObj) =>
-            curSection.createAnswerElements(responseObj, inputString1, inputNum1);
+            curSection.createAnswerElements(responseObj, input1String, input1Num);
     } else {
-        const inputNum2 = getNum(inputField2);
-        if (inputNum2 === null || curSection.isInvalidInput(inputNum2)) return;
-        urlParams.append('input1', inputNum1);
-        urlParams.append('input2', inputNum2);
-        const inputString2 = createNumStringWithCommas(inputNum2);
+        const input2Num = getNum(textField2);
+        if (input2Num === null || curSection.isInvalidInput(input2Num)) {
+            showInvalidInputMessage();
+            return;
+        }
+        urlParams.append('input1', input1Num);
+        urlParams.append('input2', input2Num);
+        const input2String = createNumStringWithCommas(input2Num);
         createAnswerElements = (responseObj) =>
-            curSection.createAnswerElements(responseObj, inputString1, inputString2);
+            curSection.createAnswerElements(responseObj, input1String, input2String);
     }
     
     const errorMessage = 'Error with request.';
 
-    fetch(`calculate/${curSection.apiEndpoint}?${urlParams}`)
+    fetch(`calculate/${curSection.apiEndpointEnd}?${urlParams}`)
     .then(response => response.ok ? response.json().then(createAnswerElements) : [errorMessage])
     .then(elementsOrErrorMessageArr => answerDiv.replaceChildren(...elementsOrErrorMessageArr))
     .catch(reason => {
@@ -674,7 +693,7 @@ new SingleInputSection(
         actionSentenceEnding: 'the first 30 prime numbers ≥ that number',
         minInput: 0,
         maxInput: tenThousand,
-        apiEndpoint: 'primes'
+        apiEndpointEnd: 'primes'
     },
     createPrimesAnswerElements
 );
@@ -698,6 +717,7 @@ const twinPrimePairsInfoHtml =
  * @param {number[]} pairStarts
  * @param {string} inputString
  * @returns {HTMLElement[]}
+ * An array with a heading and an ordered list that shows twin prime pairs.
  */
 function createTwinPrimePairsAnswerElements(pairStarts, inputString) {
     const headingText = `The first ${pairStarts.length} twin prime pairs ≥ ${inputString} are:`;
@@ -712,7 +732,7 @@ new SingleInputSection(
         actionSentenceEnding: 'the first 20 twin prime pairs ≥ that number',
         minInput: 0,
         maxInput: tenThousand,
-        apiEndpoint: 'twinPrimePairStarts'
+        apiEndpointEnd: 'twin-prime-pair-starts'
     },
     createTwinPrimePairsAnswerElements
 );
@@ -722,9 +742,9 @@ const pfInfoHtml =
     `The Fundamental Theorem of Arithmetic says that every whole number > 1 can be expressed as the product of
     prime numbers in 1 way if you ignore the order of those prime numbers. The <i>prime factorization</i> (PF)
     of a whole number > 1 is an expression of the prime numbers whose product is that number. For example; the
-    PF of 5 is just 5, the PF of 25 is 5<sup>2</sup>, and the PF of 12,250 is 2 × 5<sup>3</sup> × 7<sup>2</sup>
-    if the prime numbers are in ascending order. 12,250 could also be expressed as
-    5<sup>3</sup> × 2 × 7<sup>2</sup> but that's the same expression as the previous one if you ignore the order
+    PF of 5 is just 5, the PF of 25 is 5<sup>2</sup>, and the PF of 4,725 is 3<sup>3</sup> × 5<sup>2</sup> × 7
+    if the prime numbers are in ascending order. 4,725 could also be expressed as
+    5<sup>2</sup> × 3<sup>3</sup> × 7 but that's the same expression as the previous one if you ignore the order
     of the prime numbers. The Number Theory Playground displays PFs with the prime numbers in ascending order.
     There are some interesting applications for PFs. See the info for the "Divisibility" or "GCD and LCM"
     sections for some applications.
@@ -748,7 +768,8 @@ const pfInfoHtml =
  * @param {FactorAndPower[]} fps
  * @returns {HTMLSpanElement}
  * A span that shows the prime factorization (PF) of a number. This PF consists of the factors and powers in
- * fpArr. Each factor and power is separated by " × ."
+ * fps. Each factor and power group is separated by " × ." A span is returned so it can be placed in the ol for
+ * GCD and LCM PF answers without any problems.
  */
 function createPfSpan(fps) {
     const pfSpan = createSpan();
@@ -791,7 +812,7 @@ new SingleInputSection(
         actionSentenceEnding: 'the prime factorization of that number',
         minInput: pfMinInput,
         maxInput: tenThousand,
-        apiEndpoint: 'primeFactorization'
+        apiEndpointEnd: 'prime-factorization'
     },
     createPfAnswerElements
 );
@@ -922,13 +943,14 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
      * that calculation is divisible by a certain number, then the input number is also divisible by that number.
      * 
      * @param {number} possibleFactor 
-     * @param {number} numFromCalculation 
+     * @param {number} numFromCalculation
+     * Since the max input is 10,000, this number will be at most 3 digits so it'll never require a comma.
      * @param {boolean} isDivisible 
      */
     function getDivisSentence(possibleFactor, numFromCalculation, isDivisible) {
         const isOrIsnt = isDivisible ? 'is' : `isn't`;
-        return `${createNumStringWithCommas(numFromCalculation)} ${isOrIsnt} divisible by ${possibleFactor} \
-            so ${inputString} ${isOrIsnt} divisible by ${possibleFactor}.`;
+        return `${numFromCalculation} ${isOrIsnt} divisible by ${possibleFactor} so ${inputString} \
+            ${isOrIsnt} divisible by ${possibleFactor}.`;
     }
 
     const { last2Digits, last3Digits, sumOfDigits } = rulesData;
@@ -951,7 +973,7 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
             if (inputNum >= 1_000) {
                 const isDivisibleBy8 = isDivisible(last3Digits, 8);
                 sentences.push(
-                    `The last 3 digits form the number ${last3Digits}`,
+                    `The last 3 digits form the number ${last3Digits}.`,
                     getDivisSentence(8, last3Digits, isDivisibleBy8)
                 );
             }
@@ -992,10 +1014,11 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
     const { blocksAltSumAndExpression, digitsAltSumAndExpression } = rulesData;
     
     if (blocksAltSumAndExpression) {
+        // Since the max input is 10,000, this sum will be at most 3 digits long so it'll never require a comma.
         const { sum, expression } = blocksAltSumAndExpression;
         const isDivisibleBy7 = isDivisible(sum, 7);
         sentences.push(
-            `The alternating sum of blocks of 3 from right to left is ${expression} = ${sum}.`,
+            `The alternating sum of 3-digit blocks from right to left is ${expression} = ${sum}.`,
             getDivisSentence(7, sum, isDivisibleBy7)
         );
     }
@@ -1027,7 +1050,7 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
 
     if (!pfAnswer) {
         pfInfoTextDiv.append(
-            `${inputString}. ${inputString} is prime and doesn't have any factors other than itself and 1.`
+            `${inputString}. ${inputString} is prime and doesn't have any whole number factors other than 1 and itself.`
         );
         return pfDiv;
     }
@@ -1043,8 +1066,8 @@ function createDivisPfAnswerDiv(pfAnswer, inputString) {
         );
 
     const numFactorsInfo =
-        `By looking at the powers, we can see that there are ${numFactorsExpression} = \
-        ${createNumStringWithCommas(numFactors)} factors. If 1 and ${inputString} are excluded, then ${numFactorsInfoEnd}.`;
+        `By looking at the powers, we can see that there are ${numFactorsExpression} = ${numFactors} factors. \
+        If 1 and ${inputString} are excluded, then ${numFactorsInfoEnd}.`;
 
     pfInfoTextDiv.append(numFactorsInfo, ' The factors and their PFs are:');
 
@@ -1070,7 +1093,7 @@ new SingleInputSection(
         actionSentenceEnding: 'divisbility info for that number',
         minInput: 10,
         maxInput: tenThousand,
-        apiEndpoint: 'divisibilityAnswer'
+        apiEndpointEnd: 'divisibility-answer'
     },
     createDivisAnswerElements
 );
@@ -1212,32 +1235,31 @@ const gcdAndLcmInfoElements =
 
 /**
  * @param {{ euclideanIterations: EuclideanIteration[], pfAnswer: GcdAndLcmPrimeFactorizationAnswer }}
- * @param {string} inputString1
- * @param {string} inputString2
+ * @param {string} input1String
+ * @param {string} input2String
  * @returns {HTMLElement[]}
  */
-function createGcdAndLcmAnswerElements({ euclideanIterations, pfAnswer }, inputString1, inputString2) {
-    const mainHeading = createH3(`GCD and LCM Info for ${inputString1} and ${inputString2}`);
+function createGcdAndLcmAnswerElements({ euclideanIterations, pfAnswer }, input1String, input2String) {
+    const mainHeading = createH3(`GCD and LCM Info for ${input1String} and ${input2String}`);
     const euclideanDiv =
         createEuclideanTableDiv(
             createH4('Euclidean Algorithm Iterations'),
             euclideanIterations
         );
     euclideanDiv.querySelector('table').id = 'euclidean-answer-table';
-    const pfDiv = createGcdAndLcmPfAnswerDiv(pfAnswer, inputString1, inputString2);
+    const pfDiv = createGcdAndLcmPfAnswerDiv(pfAnswer, input1String, input2String);
     return [mainHeading, euclideanDiv, pfDiv];
 }
 
-
 /**
  * @param {GcdAndLcmPrimeFactorizationAnswer} answer 
- * @param {string} inputString1 
- * @param {string} inputString2 
+ * @param {string} input1String 
+ * @param {string} input2String 
  * @returns {HTMLDivElement}
  * A div with a heading and an ordered list that shows the PFs of the input numbers, the PF of the GCD if it's 
  * not 1, and the PF of the LCM.
  */
-function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
+function createGcdAndLcmPfAnswerDiv(answer, input1String, input2String) {
     const heading = createH4('Prime Factorizations Info');
 
     /**
@@ -1274,8 +1296,8 @@ function createGcdAndLcmPfAnswerDiv(answer, inputString1, inputString2) {
 
     const pfsOl =
         createOl(
-            createInputPfLi(inputString1, input1Fps),
-            createInputPfLi(inputString2, input2Fps),
+            createInputPfLi(input1String, input1Fps),
+            createInputPfLi(input2String, input2Fps),
             gcdInfoAppendable,
             createGcdOrLcmPfLi('LCM', lcmPf)
         );
@@ -1292,7 +1314,7 @@ new DoubleInputSection(
         actionSentenceEnding: 'GCD and LCM info for those numbers',
         minInput: pfMinInput,
         maxInput: tenThousand,
-        apiEndpoint: 'gcdAndLcmAnswer'
+        apiEndpointEnd: 'gcd-and-lcm-answer'
     },
     createGcdAndLcmAnswerElements
 );
@@ -1326,7 +1348,7 @@ new GoldbachConjectureSection(
         actionSentenceEnding: 'the pairs of prime numbers that sum to that number',
         minInput: 4,
         maxInput: 1_000,
-        apiEndpoint: 'goldbachPrimePairStarts'
+        apiEndpointEnd: 'goldbach-prime-pair-starts'
     },
     createGoldbachConjectureAnswerElements
 );
@@ -1386,7 +1408,7 @@ new SingleInputSection(
         actionSentenceEnding: 'the first 10 Pythagorean triples ≥ that number',
         minInput: 0,
         maxInput: 100,
-        apiEndpoint: 'pythagoreanTriples'
+        apiEndpointEnd: 'pythagorean-triples'
     },
     createPythagTriplesAnswerElements
 );
@@ -1425,7 +1447,7 @@ new SingleInputSection(
         actionSentenceEnding: twoSquareTheoremActionSentenceEnding,
         minInput: 0,
         maxInput: tenThousand,
-        apiEndpoint: 'twoSquareTheoremAnswer'
+        apiEndpointEnd: 'two-square-theorem-answer'
     },
     createTwoSquareTheoremAnswerElements
 );
@@ -1467,17 +1489,17 @@ const fiboLikeSequencesActionSentenceEnding =
  */
 
 /**
- * @param {{ fiboLikeSequence: string[], ratioDataArray: RatioData[] }}
- * @param {string} inputString1
- * @param {string} inputString2
+ * @param {{ fiboLikeSequence: string[], ratioDataArr: RatioData[] }}
+ * @param {string} input1String
+ * @param {string} input2String
  * @returns {HTMLElement[]}
  * An array with a div that shows the Fibonacci-like sequence and another div that shows ratios between some
  * consecutive numbers in the sequence.
  */
-function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratioDataArray }, inputString1, inputString2) {
+function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratioDataArr }, input1String, input2String) {
     const sequenceHeadingText =
         `The first ${fiboLikeSequence.length} numbers in the Fibonacci-like sequence that starts with \
-        ${inputString1} and ${inputString2} are:`;
+        ${input1String} and ${input2String} are:`;
     const sequenceOl = arrToAnswerFlexOl(fiboLikeSequence, createNumStringWithCommas);
     const sequenceDiv = createDiv(createNonBoldAnswerH3(sequenceHeadingText), sequenceOl);
 
@@ -1496,7 +1518,7 @@ function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratioDataArra
         return `${num2StringWithCommas} / ${num1StringWithCommas} ${isRounded ? '≈' : '='} ${ratio}`;
     }
 
-    const ratiosOl = arrToAnswerNormalOl(ratioDataArray, ratioDataToString);
+    const ratiosOl = arrToAnswerNormalOl(ratioDataArr, ratioDataToString);
     ratiosOl.append(createLi(`${phiLetter} ≈ ${phiNumString}`));
     const ratiosDiv = createDiv(ratiosHeading, ratiosOl);
     ratiosDiv.id = 'fibo-like-sequence-ratios-div';
@@ -1511,7 +1533,7 @@ new DoubleInputSection(
         actionSentenceEnding: fiboLikeSequencesActionSentenceEnding,
         minInput: 1,
         maxInput: oneQuadrillion,
-        apiEndpoint: 'fibonacciLikeSequencesAnswer'
+        apiEndpointEnd: 'fibonacci-like-sequences-answer'
     },
     createFiboLikeSequencesAnswerElements
 );
@@ -1581,18 +1603,18 @@ const ancientMultInfoElements =
 
 /**
  * @param {{ table1Rows: AncientMultiplicationTableRow[], table2Rows: AncientMultiplicationTableRow[], productString: string }}
- * @param {string} inputString1
- * @param {string} inputString2
+ * @param {string} input1String
+ * @param {string} input2String
  * @returns {HTMLElement[]}
  * An array with a heading, a div with tables made using the data from the arrays in the param object, and a div
  * with text about the product of the 2 input numbers.
  */
-function createAncientMultAnswerElements({ table1Rows, table2Rows, productString }, inputString1, inputString2) {
-    const mainHeadingText = `Ancient Egyptian Multiplication Info for ${inputString1} and ${inputString2}`;
+function createAncientMultAnswerElements({ table1Rows, table2Rows, productString }, input1String, input2String) {
+    const mainHeadingText = `Ancient Egyptian Multiplication Info for ${input1String} and ${input2String}`;
     
-    const correspondingMultiplesColHeading = `Corresponding Multiples of ${inputString2}`;
-    const table1ColHeadings = [`Powers of 2 ≤ ${inputString1}`, correspondingMultiplesColHeading];
-    const table2ColHeadings = [`Powers of 2 That Sum to ${inputString1}`, correspondingMultiplesColHeading];
+    const correspondingMultiplesColHeading = `Corresponding Multiples of ${input2String}`;
+    const table1ColHeadings = [`Powers of 2 ≤ ${input1String}`, correspondingMultiplesColHeading];
+    const table2ColHeadings = [`Powers of 2 That Sum to ${input1String}`, correspondingMultiplesColHeading];
     /**
      * @param {AncientMultiplicationTableRow} row 
      * @returns {string[]}
@@ -1608,7 +1630,7 @@ function createAncientMultAnswerElements({ table1Rows, table2Rows, productString
     const productSentenceDiv = createNarrowTextDiv();
     productSentenceDiv.innerHTML =
         `The sum of the right column of the 2<sup>nd</sup> table is ${createNumStringWithCommas(productString)}, \
-        which is the product of ${inputString1} and ${inputString2}.`;
+        which is the product of ${input1String} and ${input2String}.`;
 
     return [createH3(mainHeadingText), tableDiv, productSentenceDiv];
 }
@@ -1620,7 +1642,8 @@ new DoubleInputSection(
         actionSentenceEnding: 'ancient Egyptian multiplication info for those numbers',
         minInput: 2,
         maxInput: oneQuadrillion,
-        apiEndpoint: 'ancientMultiplicationAnswer'
+        apiEndpointEnd: 'ancient-multiplication-answer'
     },
     createAncientMultAnswerElements
 );
+

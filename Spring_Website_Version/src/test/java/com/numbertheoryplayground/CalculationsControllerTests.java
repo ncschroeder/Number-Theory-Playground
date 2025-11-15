@@ -13,16 +13,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.numbertheoryplayground.CalculationsController.*;
 
 @WebMvcTest(CalculationsController.class)
-public class CalculationsControllerTests {
+class CalculationsControllerTests {
     @Autowired
     private MockMvc mockMvc;
     
-    void testBadRequest(String endpoint, String queryString) {
-        String url = String.format("/calculate%s?%s", endpoint, queryString);
+    void testBadRequest(String endpointEnd, String queryString) {
+        String endpoint = String.format("/calculate/%s?%s", endpointEnd, queryString);
         
         try {
             mockMvc
-            .perform(get(url))
+            .perform(get(endpoint))
             .andDo(print())
             .andExpect(status().isBadRequest());
         } catch (Exception e) {
@@ -32,30 +32,34 @@ public class CalculationsControllerTests {
     
     
     @ParameterizedTest
-    @FieldSource("singleInputEndpoints")
-    void badRequestForSingleInputEndpoints(String endpoint) {
-        testBadRequest(endpoint, "input=-1");
+    @FieldSource("singleInputEndpointEnds")
+    void badRequestForSingleInputEndpoints(String endpointEnd) {
+        testBadRequest(endpointEnd, "input=-1");
     }
     
-    static final List<String> singleInputEndpoints =
+    static final List<String> singleInputEndpointEnds =
         List.of(
-            PRIMES_ENDPOINT, TWIN_PRIME_PAIR_STARTS_ENDPOINT, PF_ENDPOINT,
-            DIVIS_ANSWER_ENDPOINT, GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT,
-            PYTHAG_TRIPLES_ENDPOINT, TWO_SQUARE_THEOREM_ANSWER_ENDPOINT
+            PRIMES_ENDPOINT_END,
+            TWIN_PRIME_PAIR_STARTS_ENDPOINT_END,
+            PF_ENDPOINT_END,
+            DIVIS_ANSWER_ENDPOINT_END,
+            GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT_END,
+            PYTHAG_TRIPLES_ENDPOINT_END,
+            TWO_SQUARE_THEOREM_ANSWER_ENDPOINT_END
         );
     
     
     @ParameterizedTest
-    @FieldSource("doubleInputEndpoints")
-    void badRequestForDoubleInputEndpoints(String endpoint) {
-        testBadRequest(endpoint, "input1=-1&input2=10");
-        testBadRequest(endpoint, "input1=10&input2=-1");
+    @FieldSource("doubleInputEndpointEnds")
+    void badRequestForDoubleInputEndpoints(String endpointEnd) {
+        testBadRequest(endpointEnd, "input1=-1&input2=10");
+        testBadRequest(endpointEnd, "input1=10&input2=-1");
     }
     
-    static final List<String> doubleInputEndpoints =
+    static final List<String> doubleInputEndpointEnds =
         List.of(
-            GCD_AND_LCM_ANSWER_ENDPOINT,
-            FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT,
-            ANCIENT_MULT_ANSWER_ENDPOINT
+            GCD_AND_LCM_ANSWER_ENDPOINT_END,
+            FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT_END,
+            ANCIENT_MULT_ANSWER_ENDPOINT_END
         );
 }

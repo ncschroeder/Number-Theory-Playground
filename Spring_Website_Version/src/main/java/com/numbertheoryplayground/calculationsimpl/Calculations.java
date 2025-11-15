@@ -24,7 +24,6 @@ public class Calculations {
     }
     
     static boolean isPrime(int input) {
-        // All integers < 2 are not prime.
         if (input < 2) return false;
         
         /*
@@ -32,7 +31,6 @@ public class Calculations {
         square root of the input. If it is, then the input isn't prime. First, 2 will be
         checked and then odd numbers will be checked since all primes besides 2 are odd.
          */
-        
         var maxPossibleFactor = (int) Math.sqrt(input);
         return
             IntStream.concat(
@@ -53,12 +51,12 @@ public class Calculations {
     public static int[] getPrimes(int input) {
         assertIsInRange(input, 0, TEN_THOUSAND);
         
+        // Create a stream of odd primes since all primes besides 2 are odd.
         int iterationStart = isOdd(input) ? input : input + 1;
         IntStream oddPrimes =
             IntStream.iterate(iterationStart, i -> i + 2)
             .filter(Calculations::isPrime);
         
-        // 2 is the only even prime number.
         return
             (input <= 2 ? IntStream.concat(IntStream.of(2), oddPrimes) : oddPrimes)
             .limit(30)
@@ -66,30 +64,26 @@ public class Calculations {
     }
     
     /**
-     * Finds the first 20 twin prime pairs where the lower of the numbers in the pair is ≥
-     * the input. For example, if the input is 3, then the pair 3 and 5 will be the first
-     * one found since the lower number in that pair is 3. If the input is 4, then the pair
-     * 5 and 7 will be the first one found. An array that contains the lower ints of those
-     * pairs gets returned.
+     * Finds the first 20 twin prime pairs where the lowest number in the pair is ≥ the input.
+     * For example, if the input is 3, then the pair 3 and 5 will be the first one found since
+     * the lowest number in that pair is 3. If the input is 4, then the pair 5 and 7 will be the
+     * first one found. An array that contains the lowest numbers of those pairs gets returned.
      */
     public static int[] getTwinPrimePairStarts(int input) {
         assertIsInRange(input, 0, TEN_THOUSAND);
         
         /*
-        Set iterationStart to the first int ≥ the input that is 1 below a multiple of 6 so
-        that we'll be able to iterate through ints that are 1 below a multiple of 6.
+        All twin prime pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6
+        and another number that's 1 above that same multiple of 6. Set iterationStart to the
+        first int ≥ the input that's 1 below a multiple of 6 so that we'll be able to iterate
+        through ints that are 1 below a multiple of 6.
          */
         int iterationStart = input;
         while (iterationStart % 6 != 5) iterationStart++;
-        
         IntStream pairStarts =
-            IntStream.iterate(iterationStart, l -> l + 6)
-            .filter(l -> bothArePrime(l, l + 2));
-
-        /*
-        All twin prime pairs besides 3 and 5 consist of 1 number that is 1 below a
-        multiple of 6 and another number that is 1 above that same multiple of 6.
-         */
+            IntStream.iterate(iterationStart, i -> i + 6)
+            .filter(i -> bothArePrime(i, i + 2));
+        
         return
             (input <= 3 ? IntStream.concat(IntStream.of(3), pairStarts) : pairStarts)
             .limit(20)
@@ -98,12 +92,12 @@ public class Calculations {
     
     /**
      * Find the pairs of primes that sum to the input and returns an array that contains the
-     * lower ints of those pairs.
+     * lowest ints of those pairs.
      */
     public static int[] getGoldbachPrimePairStarts(int input) {
         assertIsInRange(input, 4, 1_000);
         if (isOdd(input)) {
-            throw new InvalidInputNumberException();
+            throw InvalidInputNumberException.getInstance();
         }
         
         /*
@@ -119,7 +113,6 @@ public class Calculations {
         needs to go up to the floor of half of the input. After that point, checks for
         primality will be done on pairs of numbers that have already been checked for primality.
          */
-        
         int maxPossiblePairStart = input / 2;
         return
             IntStream.iterate(3, i -> i <= maxPossiblePairStart, i -> i + 2)
@@ -153,7 +146,7 @@ public class Calculations {
     /**
      * Returns a list of triple objects for the first 10 Pythagorean triples where the lowest
      * number in the triple is ≥ the input. For example, if the input is 3, then an object for
-     * the triple 3, 4, and 5 will be the first one since the lowest int in that triple is 3.
+     * the triple 3, 4, and 5 will be the first one since the lowest number in that triple is 3.
      * If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
      */
     public static List<PythagoreanTriple> getPythagTriples(int input) {

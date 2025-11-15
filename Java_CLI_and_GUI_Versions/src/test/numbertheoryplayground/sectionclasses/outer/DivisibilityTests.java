@@ -12,9 +12,6 @@ import static numbertheoryplayground.Misc.createStringWithCommas;
 import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
 import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndPower;
 
-/**
- * Has tests for code in the Divisibility class.
- */
 class DivisibilityTests {
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """

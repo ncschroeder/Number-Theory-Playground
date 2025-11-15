@@ -9,9 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndPower;
 
-/**
- * Has tests for code in the PrimeFactorization class.
- */
 class PrimeFactorizationTests {
     static FactorAndPower fp(long factor, int power) {
         return new FactorAndPower(factor, power);

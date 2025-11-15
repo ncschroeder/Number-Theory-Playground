@@ -79,8 +79,7 @@ than "natural number.\"""";
         /**
          * This is thrown by assertIsInRange below and by GoldbachConjecture.getPrimePairStarts.
          */
-        private static final InvalidInputNumberException instance =
-            new InvalidInputNumberException();
+        private static final InvalidInputNumberException instance = new InvalidInputNumberException();
         
         public static InvalidInputNumberException getInstance() {
             return instance;
@@ -90,8 +89,8 @@ than "natural number.\"""";
     /**
      * Used to assert that a long argument is in a valid range for an algorithm.
      */
-    public static void assertIsInRange(long longToCheck, long rangeMin, long rangeMax) {
-        if (longToCheck < rangeMin || longToCheck > rangeMax) {
+    public static void assertIsInRange(long input, long minInput, long maxInput) {
+        if (input < minInput || input > maxInput) {
             throw InvalidInputNumberException.instance;
         }
     }

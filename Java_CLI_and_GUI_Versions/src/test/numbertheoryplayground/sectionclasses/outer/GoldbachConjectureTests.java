@@ -9,9 +9,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-/**
- * Has tests for code in the GoldbachConjecture class.
- */
 class GoldbachConjectureTests {
     @BeforeAll
     static void setMaxInput() {

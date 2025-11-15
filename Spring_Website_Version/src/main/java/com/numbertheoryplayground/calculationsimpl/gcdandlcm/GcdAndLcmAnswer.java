@@ -6,6 +6,9 @@ import com.numbertheoryplayground.calculationsimpl.PrimeFactorization;
 
 import static com.numbertheoryplayground.InputValidation.*;
 
+/**
+ * GCD stands for greatest common divisor and LCM stands for least common multiple.
+ */
 public final class GcdAndLcmAnswer {
     static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
     static final long MAX_INPUT = TEN_THOUSAND;
@@ -28,8 +31,15 @@ public final class GcdAndLcmAnswer {
     }
     
     
+    /**
+     * Record with data for an iteration of the Euclidean algorithm.
+     */
     public record EuclideanIteration(int max, int min, int remainder) {}
     
+    /**
+     * Returns a list of iteration objects for all iterations of the Euclidean algorithm performed
+     * on input1 and input2.
+     */
     static List<EuclideanIteration> getEuclideanIterations(int input1, int input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
         assertIsInRange(input2, MIN_INPUT, MAX_INPUT);

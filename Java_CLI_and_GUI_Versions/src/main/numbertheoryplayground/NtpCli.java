@@ -9,13 +9,13 @@ import numbertheoryplayground.sectionclasses.outer.GoldbachConjecture;
 import static numbertheoryplayground.Misc.*;
 
 /**
- * Class with code related to the Number Theory Playground Command Line Interface, including the
- * code for running the application and some static methods. The static methods are used in this
- * class and by nested Section classes for implementing getCliAnswer.
+ * Utility class with code related to the Number Theory Playground command line interface,
+ * including the code for running the application and some static methods. The static methods
+ * are used in this class and by nested section classes for implementing getCliAnswer.
  */
 public class NtpCli {
-    private static Scanner inputReader;
-
+    private static final Scanner inputReader = new Scanner(System.in);
+    
     private static String getFormattedInput() {
         return inputReader.nextLine().strip().toLowerCase();
     }
@@ -37,8 +37,8 @@ public class NtpCli {
     }
     
     public static void main(String[] args) {
-        inputReader = new Scanner(System.in);
         GoldbachConjecture.setMaxInputForCli();
+        
         String ntpInfo =
             buildStringWithHeadingAndInfoParagraphs(
                 "Number Theory Playground",
@@ -175,8 +175,6 @@ public class NtpCli {
         }
     }
     
-    /**
-     */
     private static String buildSectionChoicesString(
         Section section,
         String randomValue,
@@ -233,12 +231,12 @@ public class NtpCli {
     
     /**
      * Returns a new string that's mostly the same as the param string, but with new line chars
-     * possibly replacing some space chars. If the indent param is true then 4 indentation spaces
+     * possibly replacing some space chars. If the indent param is true, then 4 indentation spaces
      * will be inserted after each new line char. Each portion of the returned string between new
      * line chars will be at most 90 chars long.
      *
-     * If there are any "words" that are longer than 90 characters then an IndexOutOfBoundsException
-     * will be thrown when calling `lines.add(s.subSequence(lineStartIndex, spaceIndex));`.
+     * If there are any "words" that are longer than 90 chars, then an IndexOutOfBoundsException
+     * will be thrown when running `lines.add(s.subSequence(lineStartIndex, spaceIndex));`.
      */
     public static String putNewLineChars(String s, boolean indent) {
         final int maxLineLength = 90;
@@ -332,9 +330,10 @@ public class NtpCli {
         String heading,
         Stream<String> stream
     ) {
+        heading = heading != null ? putNewLineChars(heading) : null;
+        stream = stream.map(s -> putNewLineChars(s, true));
         return
             Stream.concat(Stream.ofNullable(heading), stream)
-            .map(s -> putNewLineChars(s, true))
             .collect(Collectors.joining("\n"));
     }
     

@@ -8,9 +8,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-/**
- * Has tests for code in the TwinPrimePairs class.
- */
 class TwinPrimePairsTests {
     @ParameterizedTest
     @MethodSource("getArgs")

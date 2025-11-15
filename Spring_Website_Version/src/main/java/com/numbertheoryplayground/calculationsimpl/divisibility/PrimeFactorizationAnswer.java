@@ -7,23 +7,25 @@ import com.numbertheoryplayground.calculationsimpl.PrimeFactorization;
 import static com.numbertheoryplayground.InputValidation.assertIsInRange;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
 
-/**
- * For the input number with a prime factorization (PF) of 5^2 × 7^3, numFactorsExpression
- * would be "(2 + 1) × (3 + 1)" and numFactors would be 12.
- */
 public final class PrimeFactorizationAnswer {
     /**
      * Contains the factors and powers of the PF of the input number.
      */
     private final List<FactorAndPower> inputFps;
     
-    private final String numFactorsExpression;
-    
+    /**
+     * The number of factors of the corresponding int of the input PF, or the input int for the
+     * createIfNotPrime method.
+     */
     private int numFactors;
     
     /**
-     * Contains the PFs of the factors of the input number, excluding 1 and the input number.
+     * A mathematical expression that shows how the number of factors was calculated. For the
+     * input int 8,575, which has a PF of 5^2 × 7^3, this would be "(2 + 1) × (3 + 1)" and
+     * numFactors would be 12.
      */
+    private final String numFactorsExpression;
+    
     private final List<PrimeFactorization> factorPfs;
     
     private PrimeFactorizationAnswer(PrimeFactorization inputPf) {
@@ -50,7 +52,7 @@ public final class PrimeFactorizationAnswer {
         return pf.isForAPrimeNumber() ? null : new PrimeFactorizationAnswer(pf);
     }
     
-    public List<PrimeFactorization.FactorAndPower> getInputFps() {
+    public List<FactorAndPower> getInputFps() {
         return inputFps;
     }
     

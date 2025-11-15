@@ -155,14 +155,15 @@ public abstract sealed class Section
      * returned. The random number will be > the min input & < the max input of this section.
      */
     public long getRandomInput() {
+        int numMinInputDigits = minInput == 0 ? 1 : (int) Math.log10(minInput) + 1;
         double log10MaxInput = Math.log10(maxInput);
         int numMaxInputDigits = (int) log10MaxInput + 1;
         // If the floor of log10MaxInput == log10MaxInput, then the max input is a power of 10.
         int numMaxRandomInputDigits =
             Math.floor(log10MaxInput) == log10MaxInput ? numMaxInputDigits - 1 : numMaxInputDigits;
-        int numRandomInputDigits = random.nextInt(1, numMaxRandomInputDigits + 1);
+        int numRandomInputDigits = random.nextInt(numMinInputDigits, numMaxRandomInputDigits + 1);
         long lowerBound =
-            numRandomInputDigits == 1 ? minInput : (long) Math.pow(10, numRandomInputDigits - 1);
+            numRandomInputDigits == numMinInputDigits ? minInput : (long) Math.pow(10, numRandomInputDigits - 1);
         long upperBound =
             numRandomInputDigits == numMaxInputDigits ? maxInput + 1 : (long) Math.pow(10, numRandomInputDigits);
         return random.nextLong(lowerBound, upperBound);

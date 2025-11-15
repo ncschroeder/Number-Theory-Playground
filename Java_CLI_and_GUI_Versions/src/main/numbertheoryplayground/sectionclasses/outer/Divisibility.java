@@ -97,15 +97,15 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
         private final int sumOfDigits;
         
         /**
-         * Contains text for an expression of the alternating sum of 3-digit blocks from right
-         * to left. For 4,695,768, from the example in the info above, this would be
-         * "768 - 695 + 4 = 77."
+         * Contains text for a mathematical expression of the alternating sum of 3-digit
+         * blocks from right to left. For 4,695,768, from the example in the info above, this
+         * would be "768 - 695 + 4 = 77."
          */
         private final StringBuilder blocksAltSumExpressionBuilder;
         
         /**
-         * Contains text for an expression of the alternating sum of digits from left to right.
-         * For 4,695,768, from the example in the info above, this would be
+         * Contains text for a mathematical expression of the alternating sum of digits from
+         * left to right. For 4,695,768, from the example in the info above, this would be
          * "4 - 6 + 9 - 5 + 7 - 6 + 8 = 11."
          */
         private final StringBuilder digitsAltSumExpressionBuilder;
@@ -333,8 +333,8 @@ factors!""";
         
         /**
          * A mathematical expression that shows how the number of factors was calculated.
-         * For the input long with a PF of 5^2 × 7^3, this would be "(2 + 1) × (3 + 1)" and
-         * numFactors would be 12.
+         * For the input long 8,575, which has a PF of 5^2 × 7^3, this would be
+         * "(2 + 1) × (3 + 1)" and numFactors would be 12.
          */
         private final String expression;
         

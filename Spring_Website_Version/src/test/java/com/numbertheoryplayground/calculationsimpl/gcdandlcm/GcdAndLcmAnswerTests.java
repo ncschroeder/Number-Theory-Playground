@@ -9,6 +9,17 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static com.numbertheoryplayground.calculationsimpl.gcdandlcm.GcdAndLcmAnswer.EuclideanIteration;
 
 class GcdAndLcmAnswerTests {
+    /*
+    There are 4 situations I can think of for calculating the GCD and LCM of 2 ints:
+    1. Both ints are the same so their GCD and LCM is that int.
+    2. One of the ints is a multiple of the other. Their GCD is the smaller int and their LCM is
+       the other.
+    3. The 2 ints have some common factors in their PFs so their GCD is > 1 and < the smaller int
+       and their LCM is > the bigger int and < the product of the 2 ints.
+    4. The 2 ints have no common prime factors so their GCD is 1 and their LCM is the product of
+       the 2 ints. The term for 2 ints like this is coprime.
+     */
+    
     @ParameterizedTest
     @FieldSource("args")
     void getEuclideanIterations(int input1, int input2, List<EuclideanIteration> expectedIterations) {

@@ -13,9 +13,9 @@ import java.awt.Font;
 import numbertheoryplayground.sectionclasses.outer.GoldbachConjecture;
 
 /**
- * Utility class with a little code related to the Number Theory Playground Graphical User Interface,
- * including the main method to launch the application and some static fields and methods used by other
- * GUI-related classes and by some Section classes for implementations of getGuiComponents.
+ * Utility class with a little code related to the Number Theory Playground graphical user interface,
+ * including the main method to launch the application and some static fields and methods used by
+ * other GUI-related classes and by nested section classes for implementing getGuiComponents.
  */
 public class NtpGui {
     public static void main(String[] args) {

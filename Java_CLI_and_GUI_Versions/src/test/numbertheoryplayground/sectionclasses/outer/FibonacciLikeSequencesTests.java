@@ -9,9 +9,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Has tests for code in the FibonacciLikeSequences class.
- */
 class FibonacciLikeSequencesTests {
     @ParameterizedTest
     @MethodSource("getIntFiboLikeSequences")

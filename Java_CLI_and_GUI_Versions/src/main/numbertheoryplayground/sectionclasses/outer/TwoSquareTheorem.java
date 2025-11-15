@@ -87,6 +87,7 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
         }
     }
     
+    
     public static final class Section extends SingleInputSection {
         public Section() {
             super(

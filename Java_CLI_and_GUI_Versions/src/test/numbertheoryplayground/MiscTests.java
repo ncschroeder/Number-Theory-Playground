@@ -6,9 +6,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Has tests for code in the Misc class.
- */
 class MiscTests {
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """

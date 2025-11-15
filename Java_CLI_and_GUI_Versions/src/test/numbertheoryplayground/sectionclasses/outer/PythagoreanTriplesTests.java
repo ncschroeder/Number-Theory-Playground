@@ -9,9 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static numbertheoryplayground.sectionclasses.outer.PythagoreanTriples.Triple;
 
-/**
- * Has tests for code in the PythagoreanTriples class.
- */
 class PythagoreanTriplesTests {
     @ParameterizedTest
     @MethodSource("getArgsForGetTriples")

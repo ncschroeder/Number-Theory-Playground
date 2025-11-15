@@ -14,9 +14,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static numbertheoryplayground.Misc.getSpace;
 import static numbertheoryplayground.NtpCli.*;
 
-/**
- * Has tests for code in the NtpCli class.
- */
 class NtpCliTests {
     @Test
     void testPutNewLineChars() {

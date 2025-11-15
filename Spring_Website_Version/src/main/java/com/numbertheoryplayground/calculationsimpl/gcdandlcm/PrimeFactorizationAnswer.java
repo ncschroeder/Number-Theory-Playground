@@ -42,16 +42,16 @@ public final class PrimeFactorizationAnswer {
             .findPowerOf(factor)
             .ifPresentOrElse(
                 power2 -> {
-                    gcdFps.add(new PrimeFactorization.FactorAndPower(factor, Math.min(power1, power2)));
-                    lcmFps.add(new PrimeFactorization.FactorAndPower(factor, Math.max(power1, power2)));
+                    gcdFps.add(new FactorAndPower(factor, Math.min(power1, power2)));
+                    lcmFps.add(new FactorAndPower(factor, Math.max(power1, power2)));
                 },
-                () -> lcmFps.add(new PrimeFactorization.FactorAndPower(factor, power1))
+                () -> lcmFps.add(new FactorAndPower(factor, power1))
             );
         }
         
-        for (PrimeFactorization.FactorAndPower fp : input2Pf.getFps()) {
+        for (FactorAndPower fp : input2Pf.getFps()) {
             if (!input1Pf.containsFactor(fp.factor())) {
-                lcmFps.add(new PrimeFactorization.FactorAndPower(fp.factor(), fp.power()));
+                lcmFps.add(new FactorAndPower(fp.factor(), fp.power()));
             }
         }
         
@@ -59,11 +59,11 @@ public final class PrimeFactorizationAnswer {
         lcmPf = new PrimeFactorization(lcmFps);
     }
     
-    public List<PrimeFactorization.FactorAndPower> getInput1Fps() {
+    public List<FactorAndPower> getInput1Fps() {
         return input1Fps;
     }
     
-    public List<PrimeFactorization.FactorAndPower> getInput2Fps() {
+    public List<FactorAndPower> getInput2Fps() {
         return input2Fps;
     }
     

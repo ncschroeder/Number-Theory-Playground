@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
 
-public class PrimeFactorizationAnswerTests {
+class PrimeFactorizationAnswerTests {
     @ParameterizedTest
     @FieldSource("argsForNumFactorsMethods")
     void numFactorsMethods(int input, String expectedNumFactorsExpression, int expectedNumFactors) {
@@ -26,8 +26,8 @@ public class PrimeFactorizationAnswerTests {
     
     static final List<Arguments> argsForNumFactorsMethods =
         List.of(
-            arguments(2 * 2, "(2 + 1)", 3),
-            arguments(2 * 3, "(1 + 1) × (1 + 1)", 2 * 2),
+            arguments(5 * 5, "(2 + 1)", 3),
+            arguments(3 * 5, "(1 + 1) × (1 + 1)", 4),
             arguments(2 * 3 * 3 * 5 * 5 * 5, "(1 + 1) × (2 + 1) × (3 + 1)", 2 * 3 * 4)
         );
     

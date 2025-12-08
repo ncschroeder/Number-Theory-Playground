@@ -84,7 +84,7 @@ Clicking the "−" button will have one of these effects:
 
 Some input and a calculation:
 
-![Website input and calculation](/Spring_Website_Version/screenshots/app_overview/calculation.JPG)
+![Website input and calculation](/Spring_Website_Version/screenshots/app_overview/input_and_calculation.JPG)
 
 More example calculations screenshots can be seen in the ["All Sections" section](#all-sections) below.
 
@@ -111,7 +111,7 @@ Leading and trailing whitespace is ignored for all input. Letter inputs are case
 
 Number Theory Playground info:
 
-![CLI NTP info](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/ntp_info.JPG)
+![CLI NTP info](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/NTP_info.JPG)
 
 Any time info, calculations, or an invalid input message is displayed, the options for the menu or section get redisplayed.
 
@@ -129,7 +129,7 @@ Info about a section:
 
 Typed input and calculations:
 
-![CLI typed input and calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/typed_input_and_calculations.JPG)
+![CLI typed input and calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/app_overview/double_input_section_typed_input_and_calculations.JPG)
 
 For the double input sections, the input numbers can be separated by any amount of whitespace.
 

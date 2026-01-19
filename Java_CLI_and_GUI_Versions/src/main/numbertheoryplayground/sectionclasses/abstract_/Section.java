@@ -14,6 +14,7 @@ public abstract sealed class Section
     public static List<Section> createInstances() {
         return List.of(
             new PrimeNumbers.Section(),
+            new Semiprimes.Section(),
             new TwinPrimePairs.Section(),
             new PrimeFactorization.Section(),
             new Divisibility.Section(),
@@ -101,6 +102,7 @@ public abstract sealed class Section
                 ONE_POINT_FIVE_MILLION, "1.5 million",
                 FIVE_HUNDRED_BILLION, "500 billion",
                 TEN_TRILLION, "10 trillion",
+                FIFTY_TRILLION, "50 trillion",
                 ONE_QUADRILLION, "1 quadrillion",
                 FIVE_QUADRILLION, "5 quadrillion",
                 TEN_QUADRILLION, "10 quadrillion",

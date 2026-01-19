@@ -37,23 +37,31 @@ root of that number. This is called trial division. Let's determine if 29 and 33
 and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     
     // The calculation for this section is: find the first 30 primes that are ≥ an input number.
-    static boolean isPrime(long input) {
-        if (input < 2) return false;
-        
-        /*
-        We only need to check if the input is divisible by any primes ≤ the floor of the square
-        root of the input. If it is, then the input is not prime. 2 and odd numbers will be
-        checked since all primes besides 2 are odd.
-         */
-        
+    
+    /**
+     * Returns a stream of possible factors of the input ≤ the floor of the square root of
+     * the input. These consist of 2 and odd numbers ≥ 3.
+     */
+    static LongStream getPossibleFactors(long input) {
         var maxPossibleFactor = (long) Math.sqrt(input);
         return
             LongStream.concat(
                 LongStream.of(2),
                 LongStream.iterate(3, l -> l + 2)
             )
-            .takeWhile(l -> l <= maxPossibleFactor)
-            .noneMatch(l -> isDivisible(input, l));
+            .takeWhile(l -> l <= maxPossibleFactor);
+    }
+    
+    static boolean isPrime(long input) {
+        /*
+        We only need to check if the input is divisible by any primes ≤ the floor of the square
+        root of the input. If it is, then the input is not prime. 2 and odd numbers will be
+        checked since all primes besides 2 are odd.
+         */
+        
+        return
+            input > 1 &&
+            getPossibleFactors(input).noneMatch(l -> isDivisible(input, l));
     }
     
     static boolean bothArePrime(long a, long b) {

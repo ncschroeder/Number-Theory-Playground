@@ -36,6 +36,7 @@ than "natural number.\"""";
     public static final long ONE_POINT_FIVE_MILLION = 1_500_000;
     public static final long FIVE_HUNDRED_BILLION = 500_000_000_000L;
     public static final long TEN_TRILLION = 10_000_000_000_000L;
+    public static final long FIFTY_TRILLION = TEN_TRILLION * 5;
     public static final long ONE_QUADRILLION = 1_000_000_000_000_000L;
     public static final long FIVE_QUADRILLION = ONE_QUADRILLION * 5;
     public static final long TEN_QUADRILLION = ONE_QUADRILLION * 10;

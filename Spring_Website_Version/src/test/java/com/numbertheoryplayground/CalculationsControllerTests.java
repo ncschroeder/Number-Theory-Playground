@@ -40,6 +40,7 @@ class CalculationsControllerTests {
     static final List<String> singleInputEndpointEnds =
         List.of(
             PRIMES_ENDPOINT_END,
+            SEMIPRIMES_ENDPOINT_END,
             TWIN_PRIME_PAIR_STARTS_ENDPOINT_END,
             PF_ENDPOINT_END,
             DIVIS_ANSWER_ENDPOINT_END,

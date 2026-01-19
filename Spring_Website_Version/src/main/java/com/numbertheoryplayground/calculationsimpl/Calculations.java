@@ -1,7 +1,6 @@
 package com.numbertheoryplayground.calculationsimpl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -23,22 +22,24 @@ public class Calculations {
         return !isEven(i);
     }
     
-    static boolean isPrime(int input) {
-        if (input < 2) return false;
-        
-        /*
-        We only need to check if the input is divisible by any primes ≤ the floor of the
-        square root of the input. If it is, then the input isn't prime. First, 2 will be
-        checked and then odd numbers will be checked since all primes besides 2 are odd.
-         */
+    /**
+     * Returns a stream of possible factors of the input ≤ the floor of the square root of
+     * the input. These consist of 2 and odd numbers ≥ 3.
+     */
+    private static IntStream getPossibleFactors(int input) {
         var maxPossibleFactor = (int) Math.sqrt(input);
         return
             IntStream.concat(
                 IntStream.of(2),
                 IntStream.iterate(3, i -> i + 2)
             )
-            .takeWhile(i -> i <= maxPossibleFactor)
-            .noneMatch(i -> isDivisible(input, i));
+            .takeWhile(i -> i <= maxPossibleFactor);
+    }
+    
+    static boolean isPrime(int input) {
+        return
+            input > 1 &&
+            getPossibleFactors(input).noneMatch(i -> isDivisible(input, i));
     }
     
     private static boolean bothArePrime(int a, int b) {
@@ -62,6 +63,50 @@ public class Calculations {
             .limit(30)
             .toArray();
     }
+    
+    
+    public record SemiprimeData(int semiprime, int factor1, int factor2) {}
+    
+    /**
+     * If the input is a semiprime, a SemiprimeData for it gets returned.
+     * Otherwise, null gets returned.
+     */
+    private static SemiprimeData checkIfSemiprime(int input) {
+        /*
+        Just like with the algorithm for determining if an int is prime, to find the 1st
+        factor of the input, we only need to check primes ≤ the square root of the input.
+        If we don't find a factor, then that means the input is prime and not semiprime.
+         */
+        OptionalInt optionalFactor1 =
+            getPossibleFactors(input)
+            .filter(i -> isDivisible(input, i))
+            .findFirst();
+        
+        if (optionalFactor1.isPresent()) {
+            int factor1 = optionalFactor1.getAsInt();
+            int factor2 = input / factor1;
+            if (factor1 == factor2 || isPrime(factor2)) {
+                return new SemiprimeData(input, factor1, factor2);
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Returns a list of SemiprimeDatas for the first 20 semiprimes ≥ the input.
+     */
+    public static List<SemiprimeData> getSemiprimeDatas(int input) {
+        assertIsInRange(input, 0, TEN_THOUSAND);
+        
+        return
+            IntStream.iterate(input, i -> i + 1)
+            .mapToObj(Calculations::checkIfSemiprime)
+            .filter(sd -> sd != null)
+            .limit(20)
+            .toList();
+    }
+    
     
     /**
      * Finds the first 20 twin prime pairs where the lowest number in the pair is ≥ the input.

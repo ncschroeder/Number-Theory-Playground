@@ -699,6 +699,49 @@ new SingleInputSection(
 );
 
 
+const semiprimesInfoHtml =
+    ``;
+
+/**
+ * @typedef {{ semiprime: number, factor1: number, factor2: number }} SemiprimeData
+ */
+
+/**
+ * @param {SemiprimeData[]} semiprimeDatas
+ * @param {string} inputString
+ */
+function createSemiprimesAnswerElements(semiprimeDatas, inputString) {
+    const headingText = `The first ${semiprimeDatas.length} ≥ ${inputString} are:`;
+    
+    /**
+     * @param {SemiprimeData} sd
+     * @returns {string}
+     */
+    function semiprimeDataToString(sd) {
+        const [semiprimeString, factor1String, factor2String] =
+            [sd.semiprime, sd.factor1, sd.factor2]
+            .map(createNumStringWithCommas);
+            
+        return `${semiprimeString} (${factor1String} × ${factor2String})`;
+    }
+    
+    const semiprimesOl = arrToAnswerFlexOl(semiprimeDatas, semiprimeDataToString);
+    return [createNonBoldAnswerH3(headingText), semiprimesOl]
+}
+
+new SingleInputSection(
+    {
+        btnIdStart: 'semiprimes',
+        infoHtmlStringOrArr: semiprimesInfoHtml,
+        actionSentenceEnding: 'the first 20 semiprimes ≥ that number',
+        minInput: 0,
+        maxInput: tenThousand,
+        apiEndpointEnd: 'semiprimes-answer'
+    },
+    createSemiprimesAnswerElements
+);
+
+
 const conjectureDefinitionHtml =
     `A <i>conjecture</i> is a statement that's believed to be true but hasn't been proven to be`;
 

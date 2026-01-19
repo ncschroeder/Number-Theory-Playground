@@ -47,7 +47,7 @@ public class NtpCli {
         
         /*
         Setup and show main menu. There'll be options to exit, get info about the NTP, and go to
-        the sections. There are currently 10 sections so the ints 1-10 will be what the user can
+        the sections. There are currently 11 sections so the ints 1-11 will be what the user can
         enter to go to a section. These ints will be at the start of the lines for the section
         options. There'll be a 1-space indent for the lines that start with a single digit.
 

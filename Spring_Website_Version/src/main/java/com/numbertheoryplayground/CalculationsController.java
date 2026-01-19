@@ -6,6 +6,7 @@ import com.numbertheoryplayground.calculationsimpl.*;
 import com.numbertheoryplayground.calculationsimpl.divisibility.DivisibilityAnswer;
 import com.numbertheoryplayground.calculationsimpl.gcdandlcm.GcdAndLcmAnswer;
 
+import static com.numbertheoryplayground.calculationsimpl.Calculations.*;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
 
 @RestController
@@ -21,6 +22,14 @@ public class CalculationsController {
     @GetMapping(PRIMES_ENDPOINT_END)
     public int[] getPrimes(@RequestParam int input) {
         return Calculations.getPrimes(input);
+    }
+    
+    
+    static final String SEMIPRIMES_ENDPOINT_END = "semiprimes-answer";
+    
+    @GetMapping(SEMIPRIMES_ENDPOINT_END)
+    public List<SemiprimeData> getSemiprimeDatas(@RequestParam int input) {
+        return Calculations.getSemiprimeDatas(input);
     }
     
     

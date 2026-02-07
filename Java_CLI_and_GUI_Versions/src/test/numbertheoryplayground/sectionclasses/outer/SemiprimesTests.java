@@ -23,7 +23,7 @@ public class SemiprimesTests {
     
     static Stream<Arguments> getArgsForGetSemiprimeDatas() {
         /*
-        For the data below, I got the semiprimes from OEIS sequence A001358 at
+        For this data, I got the semiprimes from OEIS sequence A001358 at
         https://oeis.org/A001358 and found the factors myself.
          */
         

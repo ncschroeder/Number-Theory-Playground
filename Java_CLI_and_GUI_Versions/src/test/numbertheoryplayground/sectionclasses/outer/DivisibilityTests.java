@@ -83,34 +83,34 @@ INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_ALT_SUM_EXPRE
     static Stream<Arguments> getArgsForGetFactorPfs() {
         List<FactorAndPower> input1 = List.of(fp(2, 2), fp(3, 1));
         List<List<FactorAndPower>> expectedFactorFpLists1 =
-        List.of(
-            List.of(fp(2, 1)),
-            List.of(fp(3, 1)),
-            List.of(fp(2, 2)),
-            List.of(fp(2, 1), fp(3, 1))
-        );
+            List.of(
+                List.of(fp(2, 1)),
+                List.of(fp(3, 1)),
+                List.of(fp(2, 2)),
+                List.of(fp(2, 1), fp(3, 1))
+            );
 
         List<FactorAndPower> input2 = List.of(fp(2, 1), fp(3, 2), fp(5, 2));
         List<List<FactorAndPower>> expectedFactorFpLists2 =
-        List.of(
-            // The comments say the corresponding factor.
-            List.of(fp(2, 1)), // 2
-            List.of(fp(3, 1)), // 3
-            List.of(fp(5, 1)), // 5
-            List.of(fp(2, 1), fp(3, 1)), // 6
-            List.of(fp(3, 2)), // 9
-            List.of(fp(2, 1), fp(5, 1)), // 10
-            List.of(fp(3, 1), fp(5, 1)), // 15
-            List.of(fp(2, 1), fp(3, 2)), // 18
-            List.of(fp(5, 2)), // 25
-            List.of(fp(2, 1), fp(3, 1), fp(5, 1)), // 30
-            List.of(fp(3, 2), fp(5, 1)), // 45
-            List.of(fp(2, 1), fp(5, 2)), // 50
-            List.of(fp(3, 1), fp(5, 2)), // 75
-            List.of(fp(2, 1), fp(3, 2), fp(5, 1)), // 90
-            List.of(fp(2, 1), fp(3, 1), fp(5, 2)), // 150
-            List.of(fp(3, 2), fp(5, 2)) // 225
-        );
+            List.of(
+                // The comments say the corresponding factor.
+                List.of(fp(2, 1)), // 2
+                List.of(fp(3, 1)), // 3
+                List.of(fp(5, 1)), // 5
+                List.of(fp(2, 1), fp(3, 1)), // 6
+                List.of(fp(3, 2)), // 9
+                List.of(fp(2, 1), fp(5, 1)), // 10
+                List.of(fp(3, 1), fp(5, 1)), // 15
+                List.of(fp(2, 1), fp(3, 2)), // 18
+                List.of(fp(5, 2)), // 25
+                List.of(fp(2, 1), fp(3, 1), fp(5, 1)), // 30
+                List.of(fp(3, 2), fp(5, 1)), // 45
+                List.of(fp(2, 1), fp(5, 2)), // 50
+                List.of(fp(3, 1), fp(5, 2)), // 75
+                List.of(fp(2, 1), fp(3, 2), fp(5, 1)), // 90
+                List.of(fp(2, 1), fp(3, 1), fp(5, 2)), // 150
+                List.of(fp(3, 2), fp(5, 2)) // 225
+            );
         
         return Stream.of(
             arguments(input1, expectedFactorFpLists1),

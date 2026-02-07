@@ -7,7 +7,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FibonacciLikeSequencesTests {
     @ParameterizedTest

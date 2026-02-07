@@ -5,7 +5,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class TwinPrimePairsTests {
@@ -14,23 +14,25 @@ class TwinPrimePairsTests {
     void getPairStarts(long input, long[] expectedPairStarts) {
         assertArrayEquals(expectedPairStarts, TwinPrimePairs.getPairStarts(input).toArray());
     }
-
+    
     static Stream<Arguments> getArgs() {
+        // I got these pair starts from OEIS sequence A001359 at https://oeis.org/A001359.
+        
         var first20PairStarts =
             new long[] {
                 3, 5, 11, 17, 29, 41, 59, 71, 101, 107, 137,
                 149, 179, 191, 197, 227, 239, 269, 281, 311
             };
-
-        var first20PairStartsAfter1000 =
+        
+        var first20PairStartsAfter500 =
             new long[] {
-                1_019, 1_031, 1_049, 1_061, 1_091, 1_151, 1_229, 1_277, 1_289, 1_301,
-                1_319, 1_427, 1_451, 1_481, 1_487, 1_607, 1_619, 1_667, 1_697, 1_721
+                521, 569, 599, 617, 641, 659, 809, 821, 827, 857, 881, 1_019,
+                1_031, 1_049, 1_061, 1_091, 1_151, 1_229, 1_277, 1_289
             };
-
+        
         return Stream.of(
             arguments(0, first20PairStarts),
-            arguments(1_000, first20PairStartsAfter1000)
+            arguments(first20PairStartsAfter500[0], first20PairStartsAfter500)
         );
     }
 }

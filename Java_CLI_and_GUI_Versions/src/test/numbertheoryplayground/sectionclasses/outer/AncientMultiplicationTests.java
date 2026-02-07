@@ -7,7 +7,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static numbertheoryplayground.sectionclasses.outer.AncientMultiplication.*;
 
@@ -46,29 +46,38 @@ class AncientMultiplicationTests {
     }
 
     static Stream<Arguments> getArgs() {
-        List<TableRow> rowsFor255And300 =
-            List.of(
-                tr(1, 300), tr(2, 600), tr(4, 1_200), tr(8, 2_400), tr(16, 4_800), tr(32, 9_600),
-                tr(64, 19_200), tr(128, 38_400)
-            );
-
-        return Stream.of(
-            // 32 is a power of 2 so expectedTable2Rows has a single row.
+        // 32 is a power of 2 so expectedTable2Rows has a single row.
+        var args1 =
             arguments(
-                32, 33,
+                32,
+                33,
                 List.of(tr(1, 33), tr(2, 66), tr(4, 132), tr(8, 264), tr(16, 528), tr(32, 1_056)),
                 List.of(tr(32, 1_056))
-            ),
-            // 255 is 1 below a power of 2 so expectedTable1Rows and expectedTable2Rows are the same.
-            arguments(255, 300, rowsFor255And300, rowsFor255And300),
+            );
+        
+        
+        // 255 is 1 below a power of 2 so this is used for expectedTable1Rows and expectedTable2Rows.
+        List<TableRow> rowsFor255And300 =
+            List.of(
+                tr(1, 300), tr(2, 600), tr(4, 1_200), tr(8, 2_400), tr(16, 4_800),
+                tr(32, 9_600), tr(64, 19_200), tr(128, 38_400)
+            );
+        
+        var args2 = arguments(255, 300, rowsFor255And300, rowsFor255And300);
+        
+        
+        var args3 =
             arguments(
-                800, 971,
+                800,
+                971,
                 List.of(
-                    tr(1, 971), tr(2, 1_942), tr(4, 3_884), tr(8, 7_768), tr(16, 15_536), tr(32, 31_072),
-                    tr(64, 62_144), tr(128, 124_288), tr(256, 248_576), tr(512, 497_152)
+                    tr(1, 971), tr(2, 1_942), tr(4, 3_884), tr(8, 7_768), tr(16, 15_536),
+                    tr(32, 31_072), tr(64, 62_144), tr(128, 124_288), tr(256, 248_576),
+                    tr(512, 497_152)
                 ),
                 List.of(tr(32, 31_072), tr(256, 248_576), tr(512, 497_152))
-            )
-        );
+            );
+        
+        return Stream.of(args1, args2, args3);
     }
 }

@@ -17,6 +17,8 @@ class CalculationsTests {
     }
     
     static Stream<Arguments> getArgsForGetPrimes() {
+        // I got these primes from https://en.wikipedia.org/wiki/List_of_prime_numbers.
+        
         var first30Primes =
             new int[] {
                 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,
@@ -25,9 +27,9 @@ class CalculationsTests {
         
         var first30PrimesAfter1000 =
             new int[] {
-                1_009, 1_013, 1_019, 1_021, 1_031, 1_033, 1_039, 1_049, 1_051, 1_061, 1_063,
-                1_069, 1_087, 1_091, 1_093, 1_097, 1_103, 1_109, 1_117, 1_123, 1_129, 1_151,
-                1_153, 1_163, 1_171, 1_181, 1_187, 1_193, 1_201, 1_213
+                1_009, 1_013, 1_019, 1_021, 1_031, 1_033, 1_039, 1_049, 1_051, 1_061,
+                1_063, 1_069, 1_087, 1_091, 1_093, 1_097, 1_103, 1_109, 1_117, 1_123,
+                1_129, 1_151, 1_153, 1_163, 1_171, 1_181, 1_187, 1_193, 1_201, 1_213
             };
         
         return Stream.of(
@@ -49,7 +51,7 @@ class CalculationsTests {
     
     static Stream<Arguments> getArgsForGetSemiprimeDatas() {
         /*
-        For the data below, I got the semiprimes from OEIS sequence A001358 at
+        For this data, I got the semiprimes from OEIS sequence A001358 at
         https://oeis.org/A001358 and found the factors myself.
          */
         
@@ -118,21 +120,23 @@ class CalculationsTests {
     }
     
     static Stream<Arguments> getArgsForGetTwinPrimePairStarts() {
+        // I got these pair starts from OEIS sequence A001359 at https://oeis.org/A001359.
+        
         var first20PairStarts =
             new int[] {
                 3, 5, 11, 17, 29, 41, 59, 71, 101, 107, 137,
                 149, 179, 191, 197, 227, 239, 269, 281, 311
             };
         
-        var first20PairStartsAfter1000 =
+        var first20PairStartsAfter500 =
             new int[] {
-                1_019, 1_031, 1_049, 1_061, 1_091, 1_151, 1_229, 1_277, 1_289, 1_301,
-                1_319, 1_427, 1_451, 1_481, 1_487, 1_607, 1_619, 1_667, 1_697, 1_721
+                521, 569, 599, 617, 641, 659, 809, 821, 827, 857, 881, 1_019,
+                1_031, 1_049, 1_061, 1_091, 1_151, 1_229, 1_277, 1_289
             };
         
         return Stream.of(
             arguments(0, first20PairStarts),
-            arguments(1_000, first20PairStartsAfter1000)
+            arguments(first20PairStartsAfter500[0], first20PairStartsAfter500)
         );
     }
     
@@ -165,60 +169,63 @@ class CalculationsTests {
     
     static Stream<Arguments> getArgsForGetPythagTriples() {
         /*
-        Primitive Pythagorean triples are ones where the 3 numbers have a GCD of 1.
-        Each non-primitive triple in the lists is followed by a comment of the primitive
-        triple that it derives from.
+        For these triples, I got the values of a, or the short leg lengths, from OEIS sequence
+        A009004 at https://oeis.org/A009004. I got the values of b and c by running the
+        NTP CLI and having it do a Pythagorean Triples section calculation but I verified that
+        a^2 + b^2 = c^2.
          */
         
-        List<PythagoreanTriple> first10Triples =
+        List<PythagoreanTriple> expectedTriples1 =
             List.of(
                 pt(3, 4, 5),
                 pt(5, 12, 13),
-                pt(6, 8, 10), // 3, 4, 5
+                pt(6, 8, 10),
                 pt(7, 24, 25),
                 pt(8, 15, 17),
-                pt(9, 12, 15), // 3, 4, 5
+                pt(9, 12, 15),
                 pt(9, 40, 41),
-                pt(10, 24, 26), // 5, 12, 13
+                pt(10, 24, 26),
                 pt(11, 60, 61),
-                pt(12, 16, 20) // 3, 4, 5
+                pt(12, 16, 20)
             );
-
-        List<PythagoreanTriple> first10TriplesAfter100 =
+        
+        List<PythagoreanTriple> expectedTriples2 =
             List.of(
-                pt(100, 105, 145), // 20, 21, 29
-                pt(100, 240, 260), // 5, 12, 13
-                pt(100, 495, 505), // 20, 99, 101
-                pt(100, 621, 629),
-                pt(100, 1_248, 1_252), // 25, 312, 313
-                pt(100, 2_499, 2_501),
-                pt(101, 5_100, 5_101),
-                pt(102, 136, 170), // 3, 4, 5
-                pt(102, 280, 298), // 51, 140, 149
-                pt(102, 864, 870) // 17, 144, 145
+                pt(30, 40, 50),
+                pt(30, 72, 78),
+                pt(30, 224, 226),
+                pt(31, 480, 481),
+                pt(32, 60, 68),
+                pt(32, 126, 130),
+                pt(32, 255, 257),
+                pt(33, 44, 55),
+                pt(33, 56, 65),
+                pt(33, 180, 183)
             );
         
         return Stream.of(
-            arguments(0, first10Triples),
-            arguments(100, first10TriplesAfter100)
+            arguments(0, expectedTriples1),
+            arguments(expectedTriples2.getFirst().a(), expectedTriples2)
         );
     }
     
     /**
-     * a, b, and c will form a primitive triple but a triple formed by multiplying those by
-     * the multiplicand won't be primitive.
+     * a, b, and c are a primitive triple but a triple formed by multiplying those by the
+     * multiplicand won't be primitive.
      */
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
         A,    B,    C,    MULTIPLICAND
-        3,    4,    5,    2
-        11,   60,   61,   5
-        100,  621,  629,  11
+        3,    4,    5,         2
+        11,   60,   61,        5
+        33,   56,   65,        11
         """)
     void pythagTripleIsPrimitive(int a, int b, int c, int multiplicand) {
         assertAll(
             () -> assertTrue(pt(a, b, c).isPrimitive()),
-            () -> assertFalse(pt(a * multiplicand, b * multiplicand, c * multiplicand).isPrimitive())
+            () -> assertFalse(
+                pt(a * multiplicand, b * multiplicand, c * multiplicand).isPrimitive()
+            )
         );
     }
 }

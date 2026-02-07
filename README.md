@@ -1085,7 +1085,82 @@ Input validation for a calculation is implemented by having a method or class co
 
 ## Unit Testing
 
-The JUnit framework was used. There are tests for the website, CLI, and GUI versions. The location of the test classes is the `src/test` directory. For the website, CLI, and GUI versions, there are tests for methods and classes that do calculations. For just the website version, there are also [a couple tests for the calculations controller](https://github.com/ncschroeder/Number-Theory-Playground/blob/master/Spring_Website_Version/src/test/java/com/numbertheoryplayground/CalculationsControllerTests.java). For just the CLI and GUI versions, there are also tests for methods in the `NtpCli` and `Misc` classes. Almost all tests are parameterized and the ones that aren't are ones that use the `@Test` annotation. For the website version, there are 18 tests, all but 1 of which are parameterized. For the CLI and GUI versions, there are 22 tests, all but 4 of which are parameterized.
+The JUnit framework was used. There are tests for the website, CLI, and GUI versions. The location of the test classes is the `src/test` directory. For the website, CLI, and GUI versions, there are tests for methods and classes that do calculations. For just the website version, there are also [a couple tests for the calculations controller](https://github.com/ncschroeder/Number-Theory-Playground/blob/master/Spring_Website_Version/src/test/java/com/numbertheoryplayground/CalculationsControllerTests.java). For just the CLI and GUI versions, there are also tests for methods in the `NtpCli` and `Misc` classes. Almost all tests are parameterized and the ones that aren't are ones that use the `@Test` annotation. For the website version, there are 19 tests, all but 1 of which are parameterized. For the CLI and GUI versions, there are 23 tests, all but 4 of which are parameterized.
+
+
+### Expected Results
+
+The examples below are for the website version.
+
+
+For some tests, I was able to come up with expected results.
+
+<details>
+<summary>Example</summary>
+<br/>
+
+The `FibonacciLikeSequencesAnswer.getBigIntFiboLikeSequence` method returns a `List<BigInteger>`. In the `FibonacciLikeSequencesAnswerTests.getIntFiboLikeSequences` method, this is a `List<Integer>` with the numbers that are expected to be in the list returned by calling `getBigIntFiboLikeSequence(304, 5)`:
+
+```java
+var anotherSequence =
+    List.of(
+        304, 5, 309, 314, 623, 937, 1_560, 2_497, 4_057, 6_554, 10_611, 17_165,
+        27_776, 44_941, 72_717, 117_658, 190_375, 308_033, 498_408, 806_441
+    );
+```
+
+I was able to come up with this list by starting with 304 and 5 and then calculating the following numbers by summing the 2 numbers prior to it. $309 = 304 + 5$, $314 = 5 + 309$, and so on.
+
+</details>
+
+<br/>
+
+For some tests, I got expected results from Wikipedia and The [On-Line Encyclopedia of Integer Sequences (OEIS)](https://oeis.org/).
+
+<details>
+<summary>Example</summary>
+<br/>
+
+The `Calculations.getPrimes` method returns an `int[]` of the first 30 prime numbers ≥ an input number. In the `CalculationsTests.getArgsForGetPrimes` method, this `int[]` is expected to be equal to the `int[]` returned by calling `getPrimes(0)`:
+
+```java
+var first30Primes =
+    new int[] {
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,
+        59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113
+    };
+```
+
+I got these from [Wikipedia's list of prime numbers](https://en.wikipedia.org/wiki/List_of_prime_numbers).
+
+</details>
+
+<br/>
+
+For 2 tests, I got expected results partially from Wikipedia or the OEIS and partially by running the NTP CLI and having it do a calculation and then I verify the result. This is done for the test in the example below and the test for calculating Pythagorean triples.
+
+<details>
+<summary>Example</summary>
+<br/>
+
+The `TwoSquareTheoremAnswer` class has `primeNum`, `a`, and `b` `int` fields. `primeNum` is the first prime number ≥ an input number that's 1 above a multiple of 4. `a` and `b` are the ints whoses squares sum to `primeNum`. The `TwoSquareTheoremAnswerTests.allMethods` test method is parameterized and the source of the  parameters is this CSV data:
+
+```
+INPUT,  EXPECTED_PRIME_NUM,  EXPECTED_A,  EXPECTED_B
+5,             5,                1,           2
+45,            53,               2,           7
+275,           277,              9,           14
+5_090,         5_101,            50,          51
+```
+
+I got the expected prime nums from [Wikipedia's list of prime numbers](https://en.wikipedia.org/wiki/List_of_prime_numbers). I got the expected a's and b's by running the NTP CLI and having it do a Two Square Theorem section calculation but I verified that the sum of the squares of a and b equals the expected prime num.
+
+</details>
+
+<br/>
+
+In test classes, I mention where I got expected results if I got them using one of the last 2 methods above. If nothing is mentioned, then that means I came up with the results.
+
 
 ### Methods and Classes that Exist for Unit Testing
 

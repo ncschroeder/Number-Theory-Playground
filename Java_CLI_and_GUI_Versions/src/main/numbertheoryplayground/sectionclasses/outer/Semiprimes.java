@@ -14,24 +14,35 @@ import static numbertheoryplayground.Misc.*;
 import static numbertheoryplayground.sectionclasses.outer.Divisibility.isDivisible;
 import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.*;
 
+/**
+ * Utility class related to semiprimes and the section for it.
+ */
 public class Semiprimes {
     private final static String INFO = """
-    """;
+A semiprime, also known as a biprime, is a number made by multiplying 2, possibly equal,
+prime numbers. The first 5 semiprimes and their prime number factors are 4 (2 × 2), 6 (2 × 3),
+9 (3 × 3), 10 (2 × 5), and 14 (2 × 7). Since there are an infinite amount of prime numbers,
+there are also an infinite amount of semiprimes. The largest known semiprime is the square of
+the largest known prime number, which is (2^136,279,841) − 1.""";
+    
+    /*
+    The calculation for this section is: find the first 20 semiprimes that are ≥ an input
+    number, as well as their prime number factors.
+     */
     
     private static final long MIN_INPUT = 0;
     private static final long MAX_INPUT = FIFTY_TRILLION;
-    private static final int NUM_TO_FIND = 20;
+    private static final int NUM_SEMIPRIMES_TO_FIND = 20;
     
-    record SemiprimeData(long semiprime, long factor1, long factor2) {
+    record SemiprimeData(long semiprime, long primeFactor1, long primeFactor2) {
         @Override
         public String toString() {
-            return
-                String.format(
-                    "%s (%s × %s)",
-                    createStringWithCommas(semiprime),
-                    createStringWithCommas(factor1),
-                    createStringWithCommas(factor2)
-                );
+            return String.format(
+                "%s (%s × %s)",
+                createStringWithCommas(semiprime),
+                createStringWithCommas(primeFactor1),
+                createStringWithCommas(primeFactor2)
+            );
         }
     }
     
@@ -41,20 +52,20 @@ public class Semiprimes {
      */
     private static SemiprimeData checkIfSemiprime(long input) {
         /*
-        Just like with the algorithm for determining if a long is prime, to find the 1st
+        Just like with the algorithm for determining if a long is prime, to find the first
         factor of the input, we only need to check primes ≤ the square root of the input.
         If we don't find a factor, then that means the input is prime and not semiprime.
          */
-        OptionalLong optionalFactor1 =
+        OptionalLong optionalPrimeFactor1 =
             getPossibleFactors(input)
             .filter(l -> isDivisible(input, l))
             .findFirst();
         
-        if (optionalFactor1.isPresent()) {
-            long factor1 = optionalFactor1.getAsLong();
-            long factor2 = input / factor1;
-            if (factor1 == factor2 || isPrime(factor2)) {
-                return new SemiprimeData(input, factor1, factor2);
+        if (optionalPrimeFactor1.isPresent()) {
+            long primeFactor1 = optionalPrimeFactor1.getAsLong();
+            long factor2 = input / primeFactor1;
+            if (primeFactor1 == factor2 || isPrime(factor2)) {
+                return new SemiprimeData(input, primeFactor1, factor2);
             }
         }
         
@@ -62,26 +73,26 @@ public class Semiprimes {
     }
     
     /**
-     * Returns a list of SemiprimeDatas for the first 20 semiprimes ≥ the input.
+     * Returns a stream of SemiprimeDatas for the first 20 semiprimes ≥ the input.
      */
-    static Stream<SemiprimeData> getSemiprimeDatas(long input) {
+    static Stream<SemiprimeData> getSemiprimesData(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         return
             LongStream.iterate(input, l -> l + 1)
             .mapToObj(Semiprimes::checkIfSemiprime)
             .filter(sd -> sd != null)
-            .limit(NUM_TO_FIND);
+            .limit(NUM_SEMIPRIMES_TO_FIND);
     }
     
-    private static Stream<String> getSemiprimeDataStrings(long input) {
-        return getSemiprimeDatas(input).map(SemiprimeData::toString);
+    private static Stream<String> getSemiprimesDataStrings(long input) {
+        return getSemiprimesData(input).map(SemiprimeData::toString);
     }
     
     private static String getSemiprimesHeading(String inputString) {
         return String.format(
             "The first %d semiprimes ≥ %s are:",
-            NUM_TO_FIND, inputString
+            NUM_SEMIPRIMES_TO_FIND, inputString
         );
     }
     
@@ -93,24 +104,27 @@ public class Semiprimes {
                 INFO,
                 MIN_INPUT,
                 MAX_INPUT,
-                String.format("the first %d semiprimes ≥ that number", NUM_TO_FIND),
+                String.format(
+                    "the first %d semiprimes ≥ that number, as well as their prime number factors",
+                    NUM_SEMIPRIMES_TO_FIND
+                ),
                 "semiprimes"
             );
         }
         
         @Override
         public String getCliAnswer(long inputLong, String inputString) {
-            Stream<String> semiprimeDataStrings = getSemiprimeDataStrings(inputLong);
+            Stream<String> semiprimesDataStrings = getSemiprimesDataStrings(inputLong);
             return NtpCli.buildStringWithStreamElementsOnShortLines(
                 getSemiprimesHeading(inputString),
-                semiprimeDataStrings
+                semiprimesDataStrings
             );
         }
         
         @Override
         public List<Component> getGuiComponents(long inputLong, String inputString) {
             var textArea =
-                NtpTextArea.createNarrowOneWithStreamElements(getSemiprimeDataStrings(inputLong));
+                NtpTextArea.createNarrowOneWithStreamElements(getSemiprimesDataStrings(inputLong));
             return List.of(
                 NtpGui.createListHeadingLabel(getSemiprimesHeading(inputString)),
                 textArea

@@ -12,16 +12,16 @@ import static numbertheoryplayground.sectionclasses.outer.Semiprimes.SemiprimeDa
 
 public class SemiprimesTests {
     @ParameterizedTest
-    @MethodSource("getArgsForGetSemiprimeDatas")
-    void getSemiprimeDatas(long input, List<SemiprimeData> expectedSemiprimeDatas) {
-        assertEquals(expectedSemiprimeDatas, Semiprimes.getSemiprimeDatas(input).toList());
+    @MethodSource("getArgsForGetSemiprimesData")
+    void getSemiprimesData(long input, List<SemiprimeData> expectedSemiprimesData) {
+        assertEquals(expectedSemiprimesData, Semiprimes.getSemiprimesData(input).toList());
     }
     
     static SemiprimeData sd(int semiprime, int factor1, int factor2) {
         return new SemiprimeData(semiprime, factor1, factor2);
     }
     
-    static Stream<Arguments> getArgsForGetSemiprimeDatas() {
+    static Stream<Arguments> getArgsForGetSemiprimesData() {
         /*
         For this data, I got the semiprimes from OEIS sequence A001358 at
         https://oeis.org/A001358 and found the factors myself.

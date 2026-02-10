@@ -25,11 +25,11 @@ public class CalculationsController {
     }
     
     
-    static final String SEMIPRIMES_ENDPOINT_END = "semiprimes-answer";
+    static final String SEMIPRIMES_DATA_ENDPOINT_END = "semiprimes-data";
     
-    @GetMapping(SEMIPRIMES_ENDPOINT_END)
-    public List<SemiprimeData> getSemiprimeDatas(@RequestParam int input) {
-        return Calculations.getSemiprimeDatas(input);
+    @GetMapping(SEMIPRIMES_DATA_ENDPOINT_END)
+    public List<SemiprimeData> getSemiprimesData(@RequestParam int input) {
+        return Calculations.getSemiprimesData(input);
     }
     
     

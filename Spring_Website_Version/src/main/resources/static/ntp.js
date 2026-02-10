@@ -661,7 +661,7 @@ const primesInfoHtml =
     other than 1 and itself. A <i>composite number</i> is a whole number > 1 that is divisible by a whole number
     other than 1 and itself. The first 10 primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, and 29. There are an
     infinite amount of primes. The largest known one is 2<sup>136,279,841</sup> − 1. It has 41,024,320 digits!
-    Primes are used in 7 of the 10 sections in the Number Theory Playground.
+    Primes are used in 8 of the 11 sections in the Number Theory Playground.
     
     With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To show why this
     is the case, let's have a variable <var>n</var> and let it represent a whole number ≥ 6 that's a multiple of
@@ -700,18 +700,24 @@ new SingleInputSection(
 
 
 const semiprimesInfoHtml =
-    ``;
+    `A <i>semiprime</i>, also known as a <i>biprime</i>, is a number made by multiplying 2, possibly equal,
+    prime numbers. The first 5 semiprimes and their prime number factors are 4 (2 × 2), 6 (2 × 3), 9 (3 × 3),
+    10 (2 × 5), and 14 (2 × 7). Since there are an infinite amount of prime numbers, there are also an infinite
+    amount of semiprimes. The largest known semiprime is the square of the largest known prime number, which is
+    2<sup>136,279,841</sup> − 1.`;
 
 /**
- * @typedef {{ semiprime: number, factor1: number, factor2: number }} SemiprimeData
+ * @typedef {{ semiprime: number, primeFactor1: number, primeFactor2: number }} SemiprimeData
  */
 
 /**
- * @param {SemiprimeData[]} semiprimeDatas
+ * @param {SemiprimeData[]} semiprimesData
  * @param {string} inputString
+ * @returns {HTMLElement[]}
+ * An array with a heading and an ordered list that shows semiprimes and their prime number factors.
  */
-function createSemiprimesAnswerElements(semiprimeDatas, inputString) {
-    const headingText = `The first ${semiprimeDatas.length} ≥ ${inputString} are:`;
+function createSemiprimesAnswerElements(semiprimesData, inputString) {
+    const headingText = `The first ${semiprimesData.length} semiprimes ≥ ${inputString} are:`;
     
     /**
      * @param {SemiprimeData} sd
@@ -719,13 +725,13 @@ function createSemiprimesAnswerElements(semiprimeDatas, inputString) {
      */
     function semiprimeDataToString(sd) {
         const [semiprimeString, factor1String, factor2String] =
-            [sd.semiprime, sd.factor1, sd.factor2]
+            [sd.semiprime, sd.primeFactor1, sd.primeFactor2]
             .map(createNumStringWithCommas);
             
         return `${semiprimeString} (${factor1String} × ${factor2String})`;
     }
     
-    const semiprimesOl = arrToAnswerFlexOl(semiprimeDatas, semiprimeDataToString);
+    const semiprimesOl = arrToAnswerFlexOl(semiprimesData, semiprimeDataToString);
     return [createNonBoldAnswerH3(headingText), semiprimesOl]
 }
 
@@ -733,10 +739,10 @@ new SingleInputSection(
     {
         btnIdStart: 'semiprimes',
         infoHtmlStringOrArr: semiprimesInfoHtml,
-        actionSentenceEnding: 'the first 20 semiprimes ≥ that number',
+        actionSentenceEnding: 'the first 20 semiprimes ≥ that number, as well as their prime number factors',
         minInput: 0,
         maxInput: tenThousand,
-        apiEndpointEnd: 'semiprimes-answer'
+        apiEndpointEnd: 'semiprimes-data'
     },
     createSemiprimesAnswerElements
 );

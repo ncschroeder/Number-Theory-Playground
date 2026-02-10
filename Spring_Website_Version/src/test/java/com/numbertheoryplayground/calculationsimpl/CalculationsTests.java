@@ -40,16 +40,16 @@ class CalculationsTests {
     
     
     @ParameterizedTest
-    @MethodSource("getArgsForGetSemiprimeDatas")
-    void getSemiprimeDatas(int input, List<SemiprimeData> expectedSemiprimeDatas) {
-        assertEquals(expectedSemiprimeDatas, Calculations.getSemiprimeDatas(input));
+    @MethodSource("getArgsForGetSemiprimesData")
+    void getSemiprimesData(int input, List<SemiprimeData> expectedSemiprimesData) {
+        assertEquals(expectedSemiprimesData, Calculations.getSemiprimesData(input));
     }
     
     static SemiprimeData sd(int semiprime, int factor1, int factor2) {
         return new SemiprimeData(semiprime, factor1, factor2);
     }
     
-    static Stream<Arguments> getArgsForGetSemiprimeDatas() {
+    static Stream<Arguments> getArgsForGetSemiprimesData() {
         /*
         For this data, I got the semiprimes from OEIS sequence A001358 at
         https://oeis.org/A001358 and found the factors myself.

@@ -22,7 +22,7 @@ A prime number, or a prime, is a whole number > 1 that isn't divisible by any wh
 other than 1 and itself. A composite number is a whole number > 1 that is divisible by a whole
 number other than 1 and itself. The first 10 primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, and 29.
 There are an infinite amount of primes. The largest known prime is (2^136,279,841) − 1. It has
-41,024,320 digits! Primes are used in 7 of the 10 sections in the Number Theory Playground.
+41,024,320 digits! Primes are used in 8 of the 11 sections in the Number Theory Playground.
 
 With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To
 show why this is the case, let's have a variable n and let it represent a whole number ≥ 6

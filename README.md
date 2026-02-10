@@ -186,7 +186,7 @@ The max inputs for the website version are proportional to the max inputs for th
 A *prime number*, or a *prime*, is a whole number > 1 that isn't divisible by any whole numbers other than 1 and
 itself. A *composite number* is a whole number > 1 that is divisible by a whole number other than 1 and itself.
 The first 10 primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, and 29. There are an infinite amount of primes. The
-largest known one is $2^{136,279,841} - 1$. It has 41,024,320 digits! Primes are used in 7 of the 10 sections in
+largest known one is $2^{136,279,841} - 1$. It has 41,024,320 digits! Primes are used in 8 of the 11 sections in
 the Number Theory Playground.
 
 With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To show why this is the
@@ -220,6 +220,40 @@ CLI and GUI max: 10 trillion (10,000,000,000)
 ##### CLI
 
 ![CLI primes calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/primes_calculation.JPG)
+
+<br/>
+</details>
+
+
+### Semiprimes
+
+<details>
+<summary>Info</summary>
+<br/>
+
+A *semiprime*, also known as a *biprime*, is a number made by multiplying 2, possibly equal, prime numbers. The first 5 semiprimes and their prime number factors are 4 (2 × 2), 6 (2 × 3), 9 (3 × 3), 10 (2 × 5), and 14 (2 × 7). Since there are an infinite amount of prime numbers, there are also an infinite amount of semiprimes. The largest known semiprime is the square of the largest known prime number, which is $2^{136,279,841} - 1$.
+
+#### Calculations
+
+Find the first 20 semiprimes that are ≥ an input number, as well as their prime number factors.
+
+#### Input Constraints
+
+Min: 0
+<br/>
+Website max: 10,000
+<br/>
+CLI and GUI max: 50 trillion (50,000,000,000)
+
+#### Example Calculation Screenshots
+
+##### Website
+
+![Website semiprimes calculation](/Spring_Website_Version/screenshots/section_calculations/semiprimes_calculation.JPG)
+
+##### CLI
+
+![CLI semiprimes calculation](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/semiprimes_calculation.JPG)
 
 <br/>
 </details>
@@ -848,6 +882,24 @@ Type: `number[]`
 An array of the first 30 primes ≥ the input.
 
 <br/>
+
+
+##### Semiprimes Data
+
+Endpoint end: `semiprimes-data`
+<br/>
+Query param: `input`
+<br/>
+Input Range: 0 - 10,000
+
+###### Response
+
+Type: `{ semiprime: number, primeFactor1: number, primeFactor2: number }[]`
+
+An array of objects with data about the first 20 semiprimes ≥ the input.
+
+<br/>
+
 
 ##### Twin Prime Pair Starts
 

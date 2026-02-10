@@ -65,7 +65,7 @@ public class Calculations {
     }
     
     
-    public record SemiprimeData(int semiprime, int factor1, int factor2) {}
+    public record SemiprimeData(int semiprime, int primeFactor1, int primeFactor2) {}
     
     /**
      * If the input is a semiprime, a SemiprimeData for it gets returned.
@@ -73,20 +73,20 @@ public class Calculations {
      */
     private static SemiprimeData checkIfSemiprime(int input) {
         /*
-        Just like with the algorithm for determining if an int is prime, to find the 1st
+        Just like with the algorithm for determining if an int is prime, to find the first
         factor of the input, we only need to check primes ≤ the square root of the input.
         If we don't find a factor, then that means the input is prime and not semiprime.
          */
-        OptionalInt optionalFactor1 =
+        OptionalInt optionalPrimeFactor1 =
             getPossibleFactors(input)
             .filter(i -> isDivisible(input, i))
             .findFirst();
         
-        if (optionalFactor1.isPresent()) {
-            int factor1 = optionalFactor1.getAsInt();
-            int factor2 = input / factor1;
-            if (factor1 == factor2 || isPrime(factor2)) {
-                return new SemiprimeData(input, factor1, factor2);
+        if (optionalPrimeFactor1.isPresent()) {
+            int primeFactor1 = optionalPrimeFactor1.getAsInt();
+            int factor2 = input / primeFactor1;
+            if (primeFactor1 == factor2 || isPrime(factor2)) {
+                return new SemiprimeData(input, primeFactor1, factor2);
             }
         }
         
@@ -96,7 +96,7 @@ public class Calculations {
     /**
      * Returns a list of SemiprimeDatas for the first 20 semiprimes ≥ the input.
      */
-    public static List<SemiprimeData> getSemiprimeDatas(int input) {
+    public static List<SemiprimeData> getSemiprimesData(int input) {
         assertIsInRange(input, 0, TEN_THOUSAND);
         
         return

@@ -47,14 +47,15 @@ the largest known prime number, which is (2^136,279,841) − 1.""";
     }
     
     /**
-     * If the input is a semiprime, a SemiprimeData for it gets returned.
+     * If the input is a semiprime, then a SemiprimeData for it gets returned.
      * Otherwise, null gets returned.
      */
     private static SemiprimeData checkIfSemiprime(long input) {
         /*
-        Just like with the algorithm for determining if a long is prime, to find the first
-        factor of the input, we only need to check primes ≤ the square root of the input.
-        If we don't find a factor, then that means the input is prime and not semiprime.
+        First, we need to find the first int factor of the input that's > 1 and < the input.
+        Just like with the algorithm for determining if a long is prime, we only need to check
+        primes ≤ the square root of the input. If we don't find a factor, then that means that
+        the input is prime and not semiprime.
          */
         OptionalLong optionalPrimeFactor1 =
             getPossibleFactors(input)

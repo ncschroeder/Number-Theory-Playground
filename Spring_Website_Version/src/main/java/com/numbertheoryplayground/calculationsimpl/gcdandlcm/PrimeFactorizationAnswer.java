@@ -28,8 +28,15 @@ public final class PrimeFactorizationAnswer {
         assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
         
         var input1Pf = new PrimeFactorization(input1);
-        var input2Pf = new PrimeFactorization(input2);
         input1Fps = input1Pf.getFps();
+        
+        if (input1 == input2) {
+            input2Fps = input1Fps;
+            lcmPf = gcdPf = input1Pf;
+            return;
+        }
+        
+        var input2Pf = new PrimeFactorization(input2);
         input2Fps = input2Pf.getFps();
         var gcdFps = new ArrayList<FactorAndPower>();
         var lcmFps = new ArrayList<FactorAndPower>();

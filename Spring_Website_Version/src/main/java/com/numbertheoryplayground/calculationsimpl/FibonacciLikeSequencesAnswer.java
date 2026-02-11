@@ -22,7 +22,7 @@ public final class FibonacciLikeSequencesAnswer {
      * Contains RatioDatas for the 4th and 5th, 9th and 10th, 14th and 15th, and
      * 19th and 20th numbers in the Fibonacci-like sequence that gets created.
      */
-    private final List<RatioData> ratioDataList;
+    private final List<RatioData> ratiosData;
     
     public FibonacciLikeSequencesAnswer(long input1, long input2) {
         List<BigInteger> bigIntFiboLikeSequence = getBigIntFiboLikeSequence(input1, input2);
@@ -33,7 +33,7 @@ public final class FibonacciLikeSequencesAnswer {
             .map(BigInteger::toString)
             .toList();
         
-        ratioDataList =
+        ratiosData =
             IntStream.of(3, 8, 13, 18)
             .mapToObj(i ->
                 new RatioData(bigIntFiboLikeSequence.get(i), bigIntFiboLikeSequence.get(i + 1))
@@ -46,9 +46,8 @@ public final class FibonacciLikeSequencesAnswer {
         return stringFiboLikeSequence;
     }
     
-    @JsonProperty("ratioDataArr")
-    public List<RatioData> getRatioDataList() {
-        return ratioDataList;
+    public List<RatioData> getRatiosData() {
+        return ratiosData;
     }
     
     
@@ -126,6 +125,10 @@ public final class FibonacciLikeSequencesAnswer {
             return ratio;
         }
         
+        /*
+        I want the JSON property to be "isRounded" but the Jackson JSON mapper
+        removes "is" by default.
+         */
         @JsonProperty("isRounded")
         public boolean isRounded() {
             return isRounded;

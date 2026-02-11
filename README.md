@@ -277,7 +277,7 @@ same multiple of 6. 5 is the only number to be in 2 twin prime pairs, the first 
 
 #### Calculation
 
-Find the first 20 twin prime pairs where the lowest number in the pair is ≥ an input number. For example, if the input number is 3, then the pair 3 and 5 will be the first one found since the lowest number in that pair is 3. If the input number is 4, then the pair 5 and 7 will be the first one found.
+Find the first 20 twin prime pairs where the lowest number in the pair is ≥ an input number. For example, if the input number is 3, then the pair 3 and 5 will be the first one found. If the input number is 4, then the pair 5 and 7 will be the first one found.
 
 #### Input Constraints
 
@@ -307,7 +307,7 @@ CLI and GUI max: 500 billion (500,000,000,000)
 <summary>Info</summary>
 <br/>
 
-The Fundamental Theorem of Arithmetic says that every whole number > 1 can be expressed as the product of
+The fundamental theorem of arithmetic says that every whole number > 1 can be expressed as the product of
 prime numbers in 1 way if you ignore the order of those prime numbers. The *prime factorization* (PF) of a whole
 number > 1 is an expression of the prime numbers whose product is that number. For example, the PF of 5 is just
 $5$, the PF of 25 is $5^2$, and the PF of 4,725 is $3^3 \times 5^2 \times 7$ if the prime numbers are in
@@ -621,8 +621,8 @@ Why are there separate max inputs for the CLI and GUI? See the comment by the st
 <summary>Info</summary>
 <br/>
 
-The Pythagorean Theorem says that for a right triangle, the sum of the squares of the lengths of the 2 short sides
-equals the square of the long side (hypotenuse) length, or $a^2 + b^2 = c^2$. This theorem was named after the
+The Pythagorean theorem says that for a right triangle, the sum of the squares of the lengths of the 2 shortest sides (legs)
+equals the square of the longest side (hypotenuse) length, or $a^2 + b^2 = c^2$. This was named after the
 ancient Greek mathematician Pythagoras. A *Pythagorean triple* is a triple of whole numbers that $a$, $b$, and $c$
 can be. For example; 3, 4, and 5 is a Pythagorean triple since
 $3^2 \text{ } (9) + 4^2 \text{ } (16) = 5^2 \text{ } (25)$ and 11, 60, and 61 is another one since
@@ -640,7 +640,9 @@ $55^2 \text{ } (3,025) + 300^2 \text{ } (90,000) = 305^2 \text{ } (93,025)$.
 
 #### Calculation
 
-Find the first 10 Pythagorean triples where the lowest number in the triple is ≥ an input number. For example, if the input number is 3, then the triple 3, 4, and 5 will be the first one found since the lowest number in that triple is 3. If the input number is 4, then the triple 5, 12, and 13 will be the first one found. These triples will be displayed like the examples at the end of the paragraphs in the info above are displayed. If a triple is primitive, then it'll be followed by "(primitive)".
+Find the first 10 Pythagorean triples where the short leg length, the lowest number in the triple, is ≥ an input number. For example, if the input number is 3, then the triple 3, 4, and 5 will be the first one found. If the input number is 4, then the triple 5, 12, and 13 will be the first one found. The algorithm I came up with first tries to find triples where the short leg length equals the input number and then tries to find triples where the short leg equals the input number + 1, and so on until 10 are found.
+
+These triples will be displayed like the examples at the end of the paragraphs in the info above are displayed. If a triple is primitive, then it'll be followed by "(primitive)".
 
 #### Input Constraints
 
@@ -670,16 +672,11 @@ CLI and GUI max: 10,000
 <summary>Info</summary>
 <br/>
 
-The Two Square Theorem says that every prime number that's 1 above a multiple of 4 can be expressed as the sum of
-2 square numbers. A *square number*, also known as a *perfect square*, is a number that can be formed by taking an
-integer and multiplying it by itself, or squaring it. The first 4 square numbers are $0 \text{ } (0^2)$,
-$1 \text{ } (1^2 \text{ or } (-1)^2)$, $4 \text{ } (2^2 \text{ or } (-2)^2)$, and $9 \text{ } (3^2 \text{ or } (-3)^2)$.
-An example of a number that's prime and is 1 above a multiple of 4 is 29 and it can be expressed as
-$2^2 \text{ } (4) + 5^2 \text{ } (25)$.
+Fermat's two square theorem says that every prime number that's 1 above a multiple of 4 can be expressed as the sum of 2 squares in 1 way. This was named after 1600s French mathematician Pierre de Fermat. In the context of this theorem, *square* is a shortening of *square number* or *perfect square* and is a number that can be formed by taking an integer and multiplying it by itself, or squaring it. The first 4 squares are $0 \text{ } (0^2)$, $1 \text{ } (1^2 \text{ or } (-1)^2)$, $4 \text{ } (2^2 \text{ or } (-2)^2)$, and $9 \text{ } (3^2 \text{ or } (-3)^2)$. Because of this theorem, a prime number that's 1 above a multiple of 4 is known as a *Pythagorean prime*. An example of a Pythagorean prime is 29 and it can be expressed as $2^2 \text{ } (4) + 5^2 \text{ } (25)$.
 
 #### Calculations
 
-Find the 1<sup>st</sup> prime number ≥ an input number that's 1 above a multiple of 4, as well as the whole numbers whose squares sum to that prime number.
+Find the 1<sup>st</sup> Pythagorean prime ≥ an input number, as well as the whole numbers whose squares sum to that prime.
 
 #### Input Constraints
 
@@ -693,11 +690,11 @@ CLI and GUI max: 1 quadrillion (1,000,000,000,000,000)
 
 ##### Website
 
-![Website Two Square Theorem calculations](/Spring_Website_Version/screenshots/section_calculations/two_square_theorem_calculations.JPG)
+![Website two square theorem calculations](/Spring_Website_Version/screenshots/section_calculations/two_square_theorem_calculations.JPG)
 
 ##### CLI
 
-![CLI Two Square Theorem calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/two_square_theorem_calculations.JPG)
+![CLI two square theorem calculations](/Java_CLI_and_GUI_Versions/CLI_screenshots/section_calculations/two_square_theorem_calculations.JPG)
 
 <br/>
 </details>
@@ -713,7 +710,7 @@ I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers 
 the sum of the 2 previous numbers. The Fibonacci sequence does this and the first 8 numbers of it are
 1, 1, 2, 3, 5, 8, 13, and 21. Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy. Another
 Fibonacci-like sequence is the Lucas sequence and the first 8 numbers of it are 2, 1, 3, 4, 7, 11, 18, and 29.
-This sequence was named after 1800s French mathematician Francois Edouard Anatole Lucas
+This sequence was named after 1800s French mathematician François Édouard Anatole Lucas
 
 The *Golden Ratio* is an irrational number symbolized by the Greek letter 𝚽 (Phi).
 𝚽 $= \frac{1 + \sqrt{5}}{2} \approx 1.618033988749895$. As we advance further and further into a Fibonacci-like
@@ -793,7 +790,7 @@ Given 2 input numbers:
 2. Find the powers of 2 that sum to the 1<sup>st</sup> input number and the corresponding multiples of the
    2<sup>nd</sup> input number. Display these in another table.
 
-This process will be done faster than you can say "ancient Egyptian multiplication". :slightly_smiling_face:
+This process will be done faster than you can say "ancient Egyptian multiplication." :slightly_smiling_face:
 
 #### Input Constraints
 
@@ -913,7 +910,7 @@ Input Range: 0 - 10,000
 
 Type: `number[]`
 
-Finds the first 20 twin prime pairs where the lowest of the numbers in the pair is ≥ the input. For example, if the input is 3, then the pair 3 and 5 will be the first one found since the lowest number in that pair is 3. If the input is 4, then the pair 5 and 7 will be the first one found. The response is an array that contains the lowest numbers of those pairs.
+Finds the first 20 twin prime pairs where the lowest of the numbers in the pair is ≥ the input. For example, if the input is 3, then the pair 3 and 5 will be the first one found. If the input is 4, then the pair 5 and 7 will be the first one found. The response is an array that contains the lowest numbers of those pairs.
 
 <br/>
 
@@ -1042,7 +1039,7 @@ Input Range: 0 - 100
 
 Type: `{ a: number, b: number, c: number, isPrimitive: number }[]`
 
-An array of objects for the first 10 Pythagorean triples where the lowest number in the triple is ≥ the input. For example, if the input is 3, then an object for the triple 3, 4, and 5 will be the first one since the lowest number in that triple is 3. If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
+An array of objects for the first 10 Pythagorean triples where the short leg length, the lowest number in the triple, is ≥ the input. For example, if the input is 3, then an object for the triple 3, 4, and 5 will be the first one. If the input is 4, then an object for the triple 5, 12, and 13 will be the first one. The algorithm I came up with first tries to find triples where the short leg length equals the input and then tries to find triples where the short leg equals the input + 1, and so on until 10 are found.
 
 <br/>
 
@@ -1056,9 +1053,9 @@ Input Range: 0 - 10,000
 
 ###### Response
 
-Type: `{ primeNum: number, a: number, b: number }`
+Type: `{ pythagPrime: number, a: number, b: number }`
 
-`primeNum` is the first prime number ≥ the input that's 1 above a multiple of 4. `a` and `b` are the numbers whose squares sum to `primeNum`.
+`pythagPrime` is the first Pythagorean prime ≥ the input. `a` and `b` are the whole numbers whose squares sum to `pythagPrime`.
 
 <br/>
 
@@ -1076,11 +1073,11 @@ Type:
 ```
 {
     fiboLikeSequence: string[],
-    ratioDataArr: { num1String: string, num2String: string, ratio: number, isRounded: boolean }[]
+    ratiosData: { num1String: string, num2String: string, ratio: number, isRounded: boolean }[]
 }
 ```
 
-`fiboLikeSequence` contains strings of the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. `ratioDataArr` contains ratio data objects for the ratios of the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in the sequence. Strings are used for the sequence and the numbers in the ratio data objects since these numbers might be too big for a safe JavaScript integer.
+`fiboLikeSequence` contains strings of the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. `ratiosData` contains objects with data about the ratios of the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in the sequence. Strings are used for the sequence and the numbers in the ratio data objects since these numbers might be too big for a safe JavaScript integer.
 
 <br/>
 
@@ -1195,17 +1192,17 @@ For 2 tests, I got expected results partially from Wikipedia or the OEIS and par
 <summary>Example</summary>
 <br/>
 
-The `TwoSquareTheoremAnswer` class has `primeNum`, `a`, and `b` `int` fields. `primeNum` is the first prime number ≥ an input number that's 1 above a multiple of 4. `a` and `b` are the ints whoses squares sum to `primeNum`. The `TwoSquareTheoremAnswerTests.allMethods` test method is parameterized and the source of the  parameters is this CSV data:
+The `TwoSquareTheoremAnswer` class has `pythagPrime`, `a`, and `b` `int` fields. `pythagPrime` is the first Pythagorean prime ≥ an input number. `a` and `b` are the ints whoses squares sum to `pythagPrime`. The `TwoSquareTheoremAnswerTests.allMethods` test method is parameterized and the source of the parameters is this CSV data:
 
 ```
-INPUT,  EXPECTED_PRIME_NUM,  EXPECTED_A,  EXPECTED_B
-5,             5,                1,           2
-45,            53,               2,           7
-275,           277,              9,           14
-5_090,         5_101,            50,          51
+INPUT,  EXPECTED_PYTHAG_PRIME,  EXPECTED_A,  EXPECTED_B
+5,               5,                 1,           2
+45,              53,                2,           7
+275,             277,               9,           14
+5_090,           5_101,             50,          51
 ```
 
-I got the expected prime nums from [Wikipedia's list of prime numbers](https://en.wikipedia.org/wiki/List_of_prime_numbers). I got the expected a's and b's by running the NTP CLI and having it do a Two Square Theorem section calculation but I verified that the sum of the squares of a and b equals the expected prime num.
+I got the expected Pythagorean primes from [Wikipedia's list of prime numbers](https://en.wikipedia.org/wiki/List_of_prime_numbers). I got the expected a's and b's by running the NTP CLI and having it do a Two Square Theorem section calculation but I verified that the sum of the squares of a and b equals the expected Pythagorean prime.
 
 </details>
 
@@ -1252,7 +1249,7 @@ An example of a class is `TwoSquareTheorem.Answer`:
 
 ```java
 static final class Answer {
-    private long primeNum;
+    private long pythagPrime;
     
     private long a;
     

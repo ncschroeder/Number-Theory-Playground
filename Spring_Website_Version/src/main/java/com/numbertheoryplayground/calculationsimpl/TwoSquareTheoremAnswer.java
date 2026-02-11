@@ -8,12 +8,12 @@ public final class TwoSquareTheoremAnswer {
     private static final long MAX_INPUT = TEN_THOUSAND;
     
     /**
-     * The first prime number ≥ the input that's 1 above a multiple of 4.
+     * The first Pythagorean prime ≥ the input.
      */
-    private int primeNum;
+    private int pythagPrime;
     
     /**
-     * a and b are the ints whose squares sum to primeNum.
+     * a and b are the ints whose squares sum to pythagPrime.
      */
     private int a;
     
@@ -22,14 +22,14 @@ public final class TwoSquareTheoremAnswer {
     public TwoSquareTheoremAnswer(int input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        primeNum = input;
-        while (primeNum % 4 != 1) primeNum++;
-        while (!isPrime(primeNum)) primeNum += 4;
+        pythagPrime = input;
+        while (pythagPrime % 4 != 1) pythagPrime++;
+        while (!isPrime(pythagPrime)) pythagPrime += 4;
         
         b = 0;
-        for (a = 1; a < primeNum; a++) {
+        for (a = 1; a < pythagPrime; a++) {
             int aSquared = a * a;
-            int bSquared = primeNum - aSquared;
+            int bSquared = pythagPrime - aSquared;
             var bDouble = Math.sqrt(bSquared);
             var bInt = (int) bDouble;
             if (bDouble == bInt) {
@@ -39,8 +39,8 @@ public final class TwoSquareTheoremAnswer {
         }
     }
     
-    public int getPrimeNum() {
-        return primeNum;
+    public int getPythagPrime() {
+        return pythagPrime;
     }
     
     public int getA() {

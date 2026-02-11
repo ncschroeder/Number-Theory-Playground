@@ -3,6 +3,7 @@ package numbertheoryplayground;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -68,6 +69,15 @@ than "natural number.\"""";
     
     public static String createLongAndSquareString(long l) {
         return String.format("%s^2 (%s)", createStringWithCommas(l), createStringWithCommas(l * l));
+    }
+    
+    public static LongStream getStreamOf2AndOddNums(long max) {
+        return
+            LongStream.concat(
+                LongStream.of(2),
+                LongStream.iterate(3, l -> l + 2)
+            )
+            .takeWhile(l -> l <= max);
     }
     
     public static String getSpace(int length) {

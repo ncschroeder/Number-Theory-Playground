@@ -31,6 +31,10 @@ manually do some division but there are other ways to find them.""";
        sub-factorizations of the PF.
      */
     
+    // This section uses prime factorizations so the max input for those will be used.
+    private static final long MIN_INPUT = 10;
+    private static final long MAX_INPUT = PrimeFactorization.MAX_INPUT;
+    
     static boolean isDivisible(long a, long b) {
         return a % b == 0;
     }
@@ -42,10 +46,6 @@ manually do some division but there are other ways to find them.""";
     static boolean isOdd(long l) {
         return !isEven(l);
     }
-    
-    // This section uses prime factorizations so the max input for those will be used.
-    private static final long MIN_INPUT = 10;
-    private static final long MAX_INPUT = PrimeFactorization.MAX_INPUT;
     
     
     private static final String RULES_INFO = """

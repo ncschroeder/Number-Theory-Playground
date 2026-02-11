@@ -10,20 +10,22 @@ import static numbertheoryplayground.Misc.*;
 import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.isPrime;
 
 /**
- * Utility class related to the Two Square Theorem and the section for it.
+ * Utility class related to the two square theorem and the section for it.
  */
 public class TwoSquareTheorem {
     private static final String INFO = """
-The Two Square Theorem says that every prime number that's 1 above a multiple of 4 can be
-expressed as the sum of 2 square numbers. A square number, also known as a perfect square, is
-a number that can be formed by taking an integer and multiplying it by itself, or squaring it.
-The first 4 square numbers are 0 (0^2), 1 (1^2 or (-1)^2), 4 (2^2 or (-2)^2), and
-9 (3^2 or (-3)^2). An example of a number that's prime and is 1 above a multiple of 4 is 29
-and it can be expressed as 2^2 (4) + 5^2 (25).""";
+Fermat's two square theorem says that every prime number that's 1 above a multiple of 4 can be
+expressed as the sum of 2 squares in 1 way. This was named after 1600s French mathematician
+Pierre de Fermat. In the context of this theorem, square is a shortening of square number or
+perfect square and is a number that can be formed by taking an integer and multiplying it by
+itself, or squaring it. The first 4 squares are 0 (0^2), 1 (1^2 or (-1)^2), 4 (2^2 or (-2)^2),
+and 9 (3^2 or (-3)^2). Because of this theorem, a prime number that's 1 above a multiple of 4
+is known as a Pythagorean prime. An example of a Pythagorean prime is 29 and it can be expressed
+as 2^2 (4) + 5^2 (25).""";
     
     /*
-    The calculations for this section are: find the first prime number ≥ an input number that's
-    1 above a multiple of 4, as well as the whole numbers whose squares sum to that prime number.
+    The calculations for this section are: find the first Pythagorean prime ≥ an input number,
+    as well as the whole numbers whose squares sum to that prime.
      */
 
     private static final long MIN_INPUT = 0;
@@ -31,12 +33,12 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
     
     static final class Answer {
         /**
-         * The first prime number ≥ the input that's 1 above a multiple of 4.
+         * The first Pythagorean prime ≥ the input.
          */
-        private long primeNum;
+        private long pythagPrime;
         
         /**
-         * a and b are the longs whose squares sum to primeNum.
+         * a and b are the longs whose squares sum to pythagPrime.
          */
         private long a;
         
@@ -47,14 +49,14 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
         Answer(long inputLong, String inputString) {
             assertIsInRange(inputLong, MIN_INPUT, MAX_INPUT);
             
-            primeNum = inputLong;
-            while (primeNum % 4 != 1) primeNum++;
-            while (!isPrime(primeNum)) primeNum += 4;
+            pythagPrime = inputLong;
+            while (pythagPrime % 4 != 1) pythagPrime++;
+            while (!isPrime(pythagPrime)) pythagPrime += 4;
             
             b = 0;
-            for (a = 1; a < primeNum; a++) {
+            for (a = 1; a < pythagPrime; a++) {
                 long aSquared = a * a;
-                long bSquared = primeNum - aSquared;
+                long bSquared = pythagPrime - aSquared;
                 var bDouble = Math.sqrt(bSquared);
                 var bLong = (long) bDouble;
                 if (bDouble == bLong) {
@@ -65,17 +67,16 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
             
             infoSentence =
                 String.format(
-                    "The first number ≥ %s that's prime and is 1 above a multiple of 4 is %s, " +
-                        "which is %s + %s.",
+                    "The first Pythagorean prime ≥ %s is %s, which is %s + %s.",
                     inputString,
-                    createStringWithCommas(primeNum),
+                    createStringWithCommas(pythagPrime),
                     createLongAndSquareString(a),
                     createLongAndSquareString(b)
                 );
         }
 
-        long getPrimeNum() {
-            return primeNum;
+        long getPythagPrime() {
+            return pythagPrime;
         }
         
         long getA() {
@@ -95,9 +96,9 @@ and it can be expressed as 2^2 (4) + 5^2 (25).""";
                 INFO,
                 MIN_INPUT,
                 MAX_INPUT,
-                "the first prime number that's ≥ that number and is 1 above a multiple " +
-                    "of 4, as well as the whole numbers whose squares sum to that prime number",
-                "the Two Square Theorem"
+                "the first Pythagorean prime ≥ that number, as well as the " +
+                    "whole numbers whose squares sum to that prime",
+                "the two square theorem"
             );
         }
         

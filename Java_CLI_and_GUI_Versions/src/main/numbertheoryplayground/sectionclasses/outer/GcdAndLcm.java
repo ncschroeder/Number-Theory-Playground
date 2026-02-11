@@ -130,10 +130,7 @@ prime factors and its PF is
      * The table has columns for the max number, min number, and remainder for each iteration of the
      * Euclidean algorithm performed on input1Long and input2Long.
      */
-    private static String getEuclideanCliAnswer(
-        long input1Long, long input2Long,
-        String input1String, String input2String
-    ) {
+    private static String getEuclideanCliAnswer(long input1Long, long input2Long) {
         List<EuclideanIteration> iterations = getEuclideanIterations(input1Long, input2Long);
         
         // The gap between the end of the longest item in a column and the item in the next column.
@@ -179,10 +176,7 @@ prime factors and its PF is
      * input1Long and input2Long is. The table has columns for the max number, min number, and remainder
      * for each iteration of the Euclidean algorithm performed on input1Long and input2Long.
      */
-    private static NtpPanel getEuclideanPanel(
-        long input1Long, long input2Long,
-        String input1String, String input2String
-    ) {
+    private static NtpPanel getEuclideanPanel(long input1Long, long input2Long) {
         List<EuclideanIteration> iterations = getEuclideanIterations(input1Long, input2Long);
         
         Function<EuclideanIteration, Stream<String>> getIterationRowStrings =
@@ -266,6 +260,12 @@ the second input number multiplied by 2.""";
             assertIsInRange(input2Long, MIN_INPUT, MAX_INPUT);
             
             input1Pf = new PrimeFactorization(input1Long, input1String);
+            
+            if (input1Long == input2Long) {
+                lcmPf = gcdPf = input2Pf = input1Pf;
+                return;
+            }
+            
             input2Pf = new PrimeFactorization(input2Long, input2String);
             var gcdPfFps = new ArrayList<FactorAndPower>();
             var lcmPfFps = new ArrayList<FactorAndPower>();
@@ -351,8 +351,7 @@ the second input number multiplied by 2.""";
             long input1Long, long input2Long,
             String input1String, String input2String
         ) {
-            String euclideanAnswer =
-                getEuclideanCliAnswer(input1Long, input2Long, input1String, input2String);
+            String euclideanAnswer = getEuclideanCliAnswer(input1Long, input2Long);
             
             Stream<String> pfInfoSentences =
                 new PrimeFactorizationAnswer(input1Long, input2Long, input1String, input2String)
@@ -374,8 +373,7 @@ the second input number multiplied by 2.""";
             long input1Long, long input2Long,
             String input1String, String input2String
         ) {
-            NtpPanel euclideanPanel =
-                getEuclideanPanel(input1Long, input2Long, input1String, input2String);
+            NtpPanel euclideanPanel = getEuclideanPanel(input1Long, input2Long);
             
             Stream<String> pfInfoSentences =
                 new PrimeFactorizationAnswer(input1Long, input2Long, input1String, input2String)

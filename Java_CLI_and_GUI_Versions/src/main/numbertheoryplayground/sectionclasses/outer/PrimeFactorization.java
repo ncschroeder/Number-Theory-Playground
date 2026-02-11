@@ -18,7 +18,7 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
  */
 public final class PrimeFactorization {
     private static final String INFO = """
-The Fundamental Theorem of Arithmetic says that every whole number > 1 can be expressed as the
+The fundamental theorem of arithmetic says that every whole number > 1 can be expressed as the
 product of prime numbers in 1 way if you ignore the order of those prime numbers. The prime
 factorization (PF) of a whole number > 1 is an expression of the prime numbers whose product is
 that number. For example; the PF of 5 is just 5, the PF of 25 is 5^2, and the PF of 12,250 is
@@ -205,7 +205,7 @@ by 2 or 3 and those numbers are ≤ the max input and have the same amount of un
                 INFO,
                 MIN_INPUT,
                 MAX_INPUT,
-                "the prime factorization of that number",
+                "the PF of that number",
                 "prime factorizations"
             );
         }

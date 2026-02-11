@@ -50,7 +50,7 @@ following number be the sum of the 2 previous numbers. The Fibonacci sequence do
 first 8 numbers of it are 1, 1, 2, 3, 5, 8, 13, and 21. Fibonacci was a mathematician from the
 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence is the Lucas sequence and
 the first 8 numbers of it are 2, 1, 3, 4, 7, 11, 18, and 29. This sequence was named after
-1800s French mathematician Francois Edouard Anatole Lucas.
+1800s French mathematician François Édouard Anatole Lucas.
 
 The Golden Ratio is an irrational number symbolized by the Greek letter Phi.
 Phi = (1 + the square root of 5) / 2 ≈ %s. As we advance further and further into a
@@ -159,8 +159,7 @@ involve numbers other than natural numbers."""
         );
     }
     
-    private static final String RATIOS_HEADING = """
-The ratios between the 5th and 4th, 10th and 9th, 15th and 14th, and 20th and 19th numbers are:""";
+    private static final String RATIOS_HEADING = "The ratios are:";
     
     
     public static final class Section extends DoubleInputSection {
@@ -172,7 +171,8 @@ The ratios between the 5th and 4th, 10th and 9th, 15th and 14th, and 20th and 19
                 MAX_INPUT,
                 String.format(
                     "the first %d numbers in the Fibonacci-like sequence that starts with those numbers, " +
-                        "as well as the ratios between some consecutive numbers in that sequence",
+                        "as well as the ratios between the 5th and 4th, 10th and 9th, 15th and 14th, and " +
+                        "20th and 19th numbers in that sequence",
                     SEQUENCE_LENGTH
                 ),
                 "Fibonacci-like sequences"

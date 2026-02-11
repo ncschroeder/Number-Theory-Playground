@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
@@ -19,11 +18,11 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.isDivisib
  */
 public class PythagoreanTriples {
     private static final String INFO = """
-The Pythagorean Theorem says that for a right triangle, the sum of the squares of the lengths
-of the 2 short sides equals the square of the long side (hypotenuse) length, or a^2 + b^2 = c^2.
-This theorem was named after the ancient Greek mathematician Pythagoras. A Pythagorean triple is
-a triple of whole numbers that a, b, and c can be. For example; 3, 4, and 5 is a Pythagorean
-triple since 3^2 (9) + 4^2 (16) = 5^2 (25) and 11, 60, and 61 is another one since
+The Pythagorean theorem says that for a right triangle, the sum of the squares of the lengths
+of the 2 shortest sides (legs) equals the square of the longest side (hypotenuse) length, or
+a^2 + b^2 = c^2. This was named after the ancient Greek mathematician Pythagoras. A Pythagorean
+triple is a triple of whole numbers that a, b, and c can be. For example; 3, 4, and 5 is a
+Pythagorean triple since 3^2 (9) + 4^2 (16) = 5^2 (25) and 11, 60, and 61 is another one since
 11^2 (121) + 60^2 (3,600) = 61^2 (3,721).
 
 Once we know a Pythagorean triple, we can form another one by multiplying a, b, and c by the
@@ -33,19 +32,27 @@ a primitive triple can't be formed by taking another triple and multiplying a, b
 same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive.
 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is another triple. 6^2 (36) + 8^2 (64) = 10^2 (100).
 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
-55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025).""";
-    
+55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025).
+
+The algorithm I came up with for calculating triples first tries to find triples where the short
+leg length equals the input number and then tries to find triples where the short leg equals the
+input number + 1, and so on until 10 are found.""";
+
     /*
     The calculation for this section is: find the first 10 Pythagorean triples where the lowest
     number in the triple is ≥ an input number. For example, if the input number is 3, then the
-    triple 3, 4, and 5 will be the first one found since the lowest number in that triple is 3.
-    If the input number is 4, then the triple 5, 12, and 13 will be the first one found. These
-    triples will be displayed similarly to how the examples at the end of the paragraphs in the
-    text block above are displayed. If a triple is primitive, then it'll be followed by "(primitive)".
+    triple 3, 4, and 5 will be the first one found. If the input number is 4, then the triple
+    5, 12, and 13 will be the first one found. These triples will be displayed like the examples
+    at the end of the paragraphs in the text block above are displayed. If a triple is primitive,
+    then it'll be followed by "(primitive)".
      */
     
+    private static final long MIN_INPUT = 0;
+    private static final long MAX_INPUT = 10_000;
+    private static final int NUM_TRIPLES_TO_FIND = 10;
+    
     /**
-     * Record for the 3 numbers of a Pythagorean triple.
+     * a is for the short leg, b is for the long leg, and c is for the hypotenuse.
      */
     record Triple(int a, int b, int c) {
         @Override
@@ -69,29 +76,22 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
              */
             int maxPossibleCommonFactor = Math.min(a, Math.min(b, c)) / 3;
             return
-                IntStream.concat(
-                    IntStream.of(2),
-                    IntStream.iterate(3, i -> i + 2)
-                )
-                .takeWhile(i -> i <= maxPossibleCommonFactor)
-                .noneMatch(i -> isDivisible(a, i) && isDivisible(b, i) && isDivisible(c, i));
+                getStreamOf2AndOddNums(maxPossibleCommonFactor)
+                .noneMatch(l -> isDivisible(a, l) && isDivisible(b, l) && isDivisible(c, l));
         }
     }
     
-    private static final long MIN_INPUT = 0;
-    private static final long MAX_INPUT = 10_000;
-    private static final int NUM_TRIPLES_TO_FIND = 10;
-    
     /**
-     * Returns a list of Triples for the first 10 Pythagorean triples where the lowest int in
-     * the triple is ≥ the input. For example, if the input is 3 then a Triple for the triple
-     * 3, 4, and 5 will be the first one since the lowest int in that triple is 3. If the input
-     * is 4, then a Triple for the triple 5, 12, and 13 will be the first one.
+     * Returns a list of Triples for the first 10 Pythagorean triples where the short leg length,
+     * the lowest number in the triple, is ≥ the input. For example, if the input is 3, then a
+     * Triple for the triple 3, 4, and 5 will be the first one. If the input is 4, then a Triple
+     * for the triple 5, 12, and 13 will be the first one.
      */
     static List<Triple> getTriples(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         var triples = new ArrayList<Triple>(NUM_TRIPLES_TO_FIND);
+        // a and b are for the short and long leg lengths, respectively.
         var a = (int) input;
         var b = a + 1;
         
@@ -137,11 +137,17 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
             });
     }
     
-    private static String getTriplesHeading(String inputString) {
-        return String.format(
-            "The first %d Pythagorean triples ≥ %s are:",
-            NUM_TRIPLES_TO_FIND, inputString
+    private static final String TRIPLES_HEADING_START =
+        String.format(
+            "The first %d Pythagorean triples where the lowest number in the triple is ≥",
+            NUM_TRIPLES_TO_FIND
         );
+    
+    private static final String ACTION_SENTENCES_ENDING =
+        't' + TRIPLES_HEADING_START.substring(1) + " that number";
+    
+    private static String getTriplesHeading(String inputString) {
+        return String.format("%s %s are:", TRIPLES_HEADING_START, inputString);
     }
     
     
@@ -152,7 +158,7 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
                 INFO,
                 MIN_INPUT,
                 MAX_INPUT,
-                String.format("the first %d Pythagorean triples ≥ that number", NUM_TRIPLES_TO_FIND),
+                ACTION_SENTENCES_ENDING,
                 "Pythagorean triples"
             );
         }

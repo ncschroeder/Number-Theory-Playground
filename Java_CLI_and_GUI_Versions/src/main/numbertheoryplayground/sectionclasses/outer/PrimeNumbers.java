@@ -38,27 +38,35 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     
     // The calculation for this section is: find the first 30 primes that are ≥ an input number.
     
+    private static final long MIN_INPUT = 0;
+    private static final long MAX_INPUT = TEN_TRILLION;
+    private static final int NUM_PRIMES_TO_FIND = 30;
+    
     /**
      * Returns a stream of possible factors of the input ≤ the floor of the square root of
      * the input. These consist of 2 and odd numbers ≥ 3.
+     *
+     * The method is used by the isPrime and Semiprimes.checkIfSemiprime methods to find the
+     * first int factor of an input int and that factor must be > 1 and < that input int. In
+     * comments in those methods, I mention that we only need to check primes ≤ the square root
+     * of an input int. 2 is the first prime and all other primes are odd numbers ≥ 3, so the
+     * ints in the stream returned by this method are a superset of primes ≤ the square root of
+     * the input.
+     *
+     * This method will always be called with an input arg that's ≥ 0, so the call to Math.sqrt
+     * below will never return NaN.
      */
     static LongStream getPossibleFactors(long input) {
         var maxPossibleFactor = (long) Math.sqrt(input);
-        return
-            LongStream.concat(
-                LongStream.of(2),
-                LongStream.iterate(3, l -> l + 2)
-            )
-            .takeWhile(l -> l <= maxPossibleFactor);
+        return getStreamOf2AndOddNums(maxPossibleFactor);
     }
     
     static boolean isPrime(long input) {
         /*
-        We only need to check if the input is divisible by any primes ≤ the floor of the square
-        root of the input. If it is, then the input is not prime. 2 and odd numbers will be
-        checked since all primes besides 2 are odd.
+        All ints ≤ 1 aren't prime. To determine if an int > 1 is prime, we only need to check
+        if it's divisible by any primes ≤ the floor of the square root of that int. If it is,
+        then that int isn't prime.
          */
-        
         return
             input > 1 &&
             getPossibleFactors(input).noneMatch(l -> isDivisible(input, l));
@@ -68,10 +76,6 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
         return isPrime(a) && isPrime(b);
     }
     
-    private static final long MIN_INPUT = 0;
-    private static final long MAX_INPUT = TEN_TRILLION;
-    private static final int NUM_PRIMES_TO_FIND = 30;
-
     /**
      * Returns a stream of the first 30 primes ≥ the input.
      */
@@ -95,7 +99,7 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     
     private static String getPrimesHeading(String inputString) {
         return String.format(
-            "The first %d prime numbers ≥ %s are:",
+            "The first %d primes ≥ %s are:",
             NUM_PRIMES_TO_FIND, inputString
         );
     }
@@ -108,7 +112,7 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
                 INFO,
                 MIN_INPUT,
                 MAX_INPUT,
-                String.format("the first %d prime numbers ≥ that number", NUM_PRIMES_TO_FIND),
+                String.format("the first %d primes ≥ that number", NUM_PRIMES_TO_FIND),
                 "prime numbers"
             );
         }

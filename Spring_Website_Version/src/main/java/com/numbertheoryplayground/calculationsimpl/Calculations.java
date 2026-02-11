@@ -22,21 +22,39 @@ public class Calculations {
         return !isEven(i);
     }
     
-    /**
-     * Returns a stream of possible factors of the input ≤ the floor of the square root of
-     * the input. These consist of 2 and odd numbers ≥ 3.
-     */
-    private static IntStream getPossibleFactors(int input) {
-        var maxPossibleFactor = (int) Math.sqrt(input);
+    private static IntStream getStreamOf2AndOddNums(int max) {
         return
             IntStream.concat(
                 IntStream.of(2),
                 IntStream.iterate(3, i -> i + 2)
             )
-            .takeWhile(i -> i <= maxPossibleFactor);
+            .takeWhile(i -> i <= max);
+    }
+    
+    /**
+     * Returns a stream of possible factors of the input ≤ the floor of the square root of
+     * the input. These consist of 2 and odd numbers ≥ 3.
+     *
+     * The method is used by the isPrime and checkIfSemiprime methods to find the first int
+     * factor of an input int and that factor must be > 1 and < that input int. In comments in
+     * those methods, I mention that we only need to check primes ≤ the square root of an input
+     * int. 2 is the first prime and all other primes are odd numbers ≥ 3, so the ints in the
+     * stream returned by this method are a superset of primes ≤ the square root of the input.
+     *
+     * This method will always be called with an input arg that's ≥ 0, so the call to Math.sqrt
+     * below will never return NaN.
+     */
+    private static IntStream getPossibleFactors(int input) {
+        var maxPossibleFactor = (int) Math.sqrt(input);
+        return getStreamOf2AndOddNums(maxPossibleFactor);
     }
     
     static boolean isPrime(int input) {
+        /*
+        All ints ≤ 1 aren't prime. To determine if an int > 1 is prime, we only need to check
+        if it's divisible by any primes ≤ the floor of the square root of that int. If it is,
+        then that int isn't prime.
+         */
         return
             input > 1 &&
             getPossibleFactors(input).noneMatch(i -> isDivisible(input, i));
@@ -68,14 +86,15 @@ public class Calculations {
     public record SemiprimeData(int semiprime, int primeFactor1, int primeFactor2) {}
     
     /**
-     * If the input is a semiprime, a SemiprimeData for it gets returned.
+     * If the input is a semiprime, then a SemiprimeData for it gets returned.
      * Otherwise, null gets returned.
      */
     private static SemiprimeData checkIfSemiprime(int input) {
         /*
-        Just like with the algorithm for determining if an int is prime, to find the first
-        factor of the input, we only need to check primes ≤ the square root of the input.
-        If we don't find a factor, then that means the input is prime and not semiprime.
+        First, we need to find the first int factor of the input that's > 1 and < the input.
+        Just like with the algorithm for determining if an int is prime, we only need to check
+        primes ≤ the square root of the input. If we don't find a factor, then that means that
+        the input is prime and not semiprime.
          */
         OptionalInt optionalPrimeFactor1 =
             getPossibleFactors(input)
@@ -110,9 +129,9 @@ public class Calculations {
     
     /**
      * Finds the first 20 twin prime pairs where the lowest number in the pair is ≥ the input.
-     * For example, if the input is 3, then the pair 3 and 5 will be the first one found since
-     * the lowest number in that pair is 3. If the input is 4, then the pair 5 and 7 will be the
-     * first one found. An array that contains the lowest numbers of those pairs gets returned.
+     * For example, if the input is 3, then the pair 3 and 5 will be the first one found. If
+     * the input is 4, then the pair 5 and 7 will be the first one found. An array that
+     * contains the lowest numbers of those pairs gets returned.
      */
     public static int[] getTwinPrimePairStarts(int input) {
         assertIsInRange(input, 0, TEN_THOUSAND);
@@ -166,6 +185,10 @@ public class Calculations {
     }
     
     public record PythagoreanTriple(int a, int b, int c) {
+        /*
+        I want the JSON property to be "isPrimitive" but the Jackson JSON mapper
+        removes "is" by default.
+         */
         @JsonProperty("isPrimitive")
         public boolean isPrimitive() {
             /*
@@ -179,26 +202,25 @@ public class Calculations {
              */
             int maxPossibleCommonFactor = Math.min(a, Math.min(b, c)) / 3;
             return
-                IntStream.concat(
-                    IntStream.of(2),
-                    IntStream.iterate(3, i -> i + 2)
-                )
-                .takeWhile(i -> i <= maxPossibleCommonFactor)
+                getStreamOf2AndOddNums(maxPossibleCommonFactor)
                 .noneMatch(i -> isDivisible(a, i) && isDivisible(b, i) && isDivisible(c, i));
         }
     }
     
     /**
-     * Returns a list of triple objects for the first 10 Pythagorean triples where the lowest
-     * number in the triple is ≥ the input. For example, if the input is 3, then an object for
-     * the triple 3, 4, and 5 will be the first one since the lowest number in that triple is 3.
-     * If the input is 4, then an object for the triple 5, 12, and 13 will be the first one.
+     * Returns a list of triple objects for the first 10 Pythagorean triples where the short leg
+     * length, the lowest number in the triple, is ≥ the input. For example, if the input is 3,
+     * then an object for the triple 3, 4, and 5 will be the first one. If the input is 4, then
+     * an object for the triple 5, 12, and 13 will be the first one. The algorithm I came up with
+     * first tries to find triples where the short leg length equals the input and then tries to
+     * find triples where the short leg equals the input + 1, and so on until 10 are found.
      */
     public static List<PythagoreanTriple> getPythagTriples(int input) {
         assertIsInRange(input, 0, 100);
         
         final int numTriplesToFind = 10;
         var triples = new ArrayList<PythagoreanTriple>(numTriplesToFind);
+        // a and b and for the short and long leg lengths, respectively.
         int a = input;
         int b = a + 1;
         

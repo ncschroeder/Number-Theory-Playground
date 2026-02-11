@@ -34,8 +34,8 @@ twin prime pairs, the first 2 mentioned above."""
     /*
     The calculation for this section is: find the first 20 twin prime pairs where the lowest
     number in the pair is ≥ an input number. For example, if the input number is 3, then the
-    pair 3 and 5 will be the first one found since the lowest number in that pair is 3. If the
-    input number is 4, then the pair 5 and 7 will be the first one found.
+    pair 3 and 5 will be the first one found. If the input number is 4, then the pair 5 and 7
+    will be the first one found.
      */
     
     private static final long MIN_INPUT = 0;
@@ -43,10 +43,8 @@ twin prime pairs, the first 2 mentioned above."""
     private static final int NUM_PAIRS_TO_FIND = 20;
     
     /**
-     * Returns a stream that can find the first 20 twin prime pairs where the lower of the 2 numbers in
-     * the pair is ≥ the input. For example, if the input is 3, then the pair 3 and 5 will be the first
-     * one found since the lower number in that pair is 3. If the input is 4, then the pair 5 and 7 will
-     * be the first one found. The elements of this stream are the lower numbers in each pair.
+     * Returns a stream that can find the first 20 twin prime pairs where the lowest number in
+     * the pair is ≥ the input. The elements of this stream are the lowest numbers of those pairs.
      */
     static LongStream getPairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
@@ -70,19 +68,23 @@ twin prime pairs, the first 2 mentioned above."""
     
     /**
      * Returns a stream of the string representations of the first 20 twin prime pairs where the
-     * lower of the 2 numbers in the pair is ≥ the input.
+     * lowest number in the pair is ≥ the input.
      */
     private static Stream<String> getPairStrings(long input) {
-        return
-            getPairStarts(input)
-            .mapToObj(l -> longPairToString(l, l + 2));
+        return getPairStarts(input).mapToObj(l -> longPairToString(l, l + 2));
     }
     
-    private static String getPairsHeading(String inputString) {
-        return String.format(
-            "The first %d twin prime pairs ≥ %s are:",
-            NUM_PAIRS_TO_FIND, inputString
+    private static final String PAIRS_HEADING_START =
+        String.format(
+            "The first %d twin prime pairs where the lowest number in the pair is ≥",
+            NUM_PAIRS_TO_FIND
         );
+    
+    private static final String ACTION_SENTENCES_ENDING =
+        PAIRS_HEADING_START.toLowerCase() + " that number";
+    
+    private static String getPairsHeading(String inputString) {
+        return String.format("%s %s are:", PAIRS_HEADING_START, inputString);
     }
     
     
@@ -93,7 +95,7 @@ twin prime pairs, the first 2 mentioned above."""
                 INFO,
                 MIN_INPUT,
                 MAX_INPUT,
-                String.format("the first %d twin prime pairs ≥ that number", NUM_PAIRS_TO_FIND),
+                ACTION_SENTENCES_ENDING,
                 "twin prime pairs"
             );
         }

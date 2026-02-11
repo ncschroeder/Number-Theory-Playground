@@ -383,7 +383,7 @@ class Section {
      * The ID of the button for this section in section-btns-div.
      * @property {string | HTMLElement[]} infoHtmlStringOrArr
      * If this is a string, it'll contain paragraphs of info with each one separated by a blank line.
-     * @property {string} actionSentenceEnding
+     * @property {string} actionSentenceEndingHtml
      * @property {number} minInput
      * @property {number} maxInput
      * @property {string} apiEndpointEnd
@@ -396,7 +396,7 @@ class Section {
      */
     constructor(params) {
         const { 
-            btnIdStart, infoHtmlStringOrArr, actionSentenceEnding, minInput, maxInput, apiEndpointEnd
+            btnIdStart, infoHtmlStringOrArr, actionSentenceEndingHtml, minInput, maxInput, apiEndpointEnd
         } = params;
         
         this.#minInput = minInput;
@@ -418,9 +418,9 @@ class Section {
         const maxInputSentencePart =
             maxInput === oneQuadrillion ? `1 quadrillion (${maxInputString})` : maxInputString;
 
-        const directions =
+        const directionsHtml =
             `Enter or generate ${this.isSingleInputSection ? 'a whole number' : '2 whole numbers'} and click
-            the "Calculate" button to get ${actionSentenceEnding}.
+            the "Calculate" button to get ${actionSentenceEndingHtml}.
             Have ${this.isSingleInputSection ? 'this number' : 'these numbers'} be ${
                 this.needsEvenInput
                 ? `even, ≥ ${minInput}, and ≤ ${maxInputSentencePart}`
@@ -434,7 +434,7 @@ class Section {
             sectionHeading.textContent = heading;
             sectionInfoDetails.open = false;
             sectionInfoDiv.replaceChildren(...infoHtmlElements);
-            sectionDirectionsDiv.textContent = directions;
+            sectionDirectionsDiv.innerHTML = directionsHtml;
             textField1.value = '';
             textField2.value = '';
             answerDiv.innerHTML = '';
@@ -690,7 +690,7 @@ new SingleInputSection(
     {
         btnIdStart: 'prime-nums',
         infoHtmlStringOrArr: primesInfoHtml,
-        actionSentenceEnding: 'the first 30 prime numbers ≥ that number',
+        actionSentenceEndingHtml: 'the first 30 primes ≥ that number',
         minInput: 0,
         maxInput: tenThousand,
         apiEndpointEnd: 'primes'
@@ -739,7 +739,7 @@ new SingleInputSection(
     {
         btnIdStart: 'semiprimes',
         infoHtmlStringOrArr: semiprimesInfoHtml,
-        actionSentenceEnding: 'the first 20 semiprimes ≥ that number, as well as their prime number factors',
+        actionSentenceEndingHtml: 'the first 20 semiprimes ≥ that number, as well as their prime number factors',
         minInput: 0,
         maxInput: tenThousand,
         apiEndpointEnd: 'semiprimes-data'
@@ -762,6 +762,9 @@ const twinPrimePairsInfoHtml =
     prime pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6 and another number that's 1
     above that same multiple of 6. 5 is the only number to be in 2 twin prime pairs, the first 2 mentioned above.`;
 
+const twinPrimePairsHeadingStart = 'The first 20 twin prime pairs where the lowest number in the pair is ≥';
+const twinPrimePairsActionSentenceEnding = twinPrimePairsHeadingStart.toLowerCase() + ' that number';
+    
 /**
  * @param {number[]} pairStarts
  * @param {string} inputString
@@ -769,7 +772,7 @@ const twinPrimePairsInfoHtml =
  * An array with a heading and an ordered list that shows twin prime pairs.
  */
 function createTwinPrimePairsAnswerElements(pairStarts, inputString) {
-    const headingText = `The first ${pairStarts.length} twin prime pairs ≥ ${inputString} are:`;
+    const headingText = `${twinPrimePairsHeadingStart} ${inputString} are:`;
     const pairsOl = arrToAnswerFlexOl(pairStarts, (start) => numPairToString(start, start + 2));
     return [createNonBoldAnswerH3(headingText), pairsOl];
 }
@@ -778,7 +781,7 @@ new SingleInputSection(
     {
         btnIdStart: 'twin-prime-pairs',
         infoHtmlStringOrArr: twinPrimePairsInfoHtml,
-        actionSentenceEnding: 'the first 20 twin prime pairs ≥ that number',
+        actionSentenceEndingHtml: twinPrimePairsActionSentenceEnding,
         minInput: 0,
         maxInput: tenThousand,
         apiEndpointEnd: 'twin-prime-pair-starts'
@@ -788,7 +791,7 @@ new SingleInputSection(
 
 
 const pfInfoHtml =
-    `The Fundamental Theorem of Arithmetic says that every whole number > 1 can be expressed as the product of
+    `The fundamental theorem of arithmetic says that every whole number > 1 can be expressed as the product of
     prime numbers in 1 way if you ignore the order of those prime numbers. The <i>prime factorization</i> (PF)
     of a whole number > 1 is an expression of the prime numbers whose product is that number. For example; the
     PF of 5 is just 5, the PF of 25 is 5<sup>2</sup>, and the PF of 4,725 is 3<sup>3</sup> × 5<sup>2</sup> × 7
@@ -817,7 +820,7 @@ const pfInfoHtml =
  * @param {FactorAndPower[]} fps
  * @returns {HTMLSpanElement}
  * A span that shows the prime factorization (PF) of a number. This PF consists of the factors and powers in
- * fps. Each factor and power group is separated by " × ." A span is returned so it can be placed in the ol for
+ * fps. Each factor and power group is separated by " × ". A span is returned so it can be placed in the ol for
  * GCD and LCM PF answers without any problems.
  */
 function createPfSpan(fps) {
@@ -858,7 +861,7 @@ new SingleInputSection(
     {
         btnIdStart: 'pf',
         infoHtmlStringOrArr: pfInfoHtml,
-        actionSentenceEnding: 'the prime factorization of that number',
+        actionSentenceEndingHtml: 'the PF of that number',
         minInput: pfMinInput,
         maxInput: tenThousand,
         apiEndpointEnd: 'prime-factorization'
@@ -1139,7 +1142,7 @@ new SingleInputSection(
     {
         btnIdStart: 'divis',
         infoHtmlStringOrArr: divisInfoElements,
-        actionSentenceEnding: 'divisbility info for that number',
+        actionSentenceEndingHtml: 'divisbility info for that number',
         minInput: 10,
         maxInput: tenThousand,
         apiEndpointEnd: 'divisibility-answer'
@@ -1360,7 +1363,7 @@ new DoubleInputSection(
     {
         btnIdStart: 'gcd-and-lcm',
         infoHtmlStringOrArr: gcdAndLcmInfoElements,
-        actionSentenceEnding: 'GCD and LCM info for those numbers',
+        actionSentenceEndingHtml: 'GCD and LCM info for those numbers',
         minInput: pfMinInput,
         maxInput: tenThousand,
         apiEndpointEnd: 'gcd-and-lcm-answer'
@@ -1394,7 +1397,7 @@ new GoldbachConjectureSection(
     {
         btnIdStart: 'goldbach-conjecture',
         infoHtmlStringOrArr: goldbachConjectureInfoHtml,
-        actionSentenceEnding: 'the pairs of prime numbers that sum to that number',
+        actionSentenceEndingHtml: 'the pairs of prime numbers that sum to that number',
         minInput: 4,
         maxInput: 1_000,
         apiEndpointEnd: 'goldbach-prime-pair-starts'
@@ -1404,9 +1407,9 @@ new GoldbachConjectureSection(
 
 
 const pythagTriplesInfoHtml =
-    `The Pythagorean Theorem says that for a right triangle, the sum of the squares of the lengths of the 2
-    short sides equals the square of the long side (hypotenuse) length, or
-    <var>a</var><sup>2</sup> + <var>b</var><sup>2</sup> = <var>c</var><sup>2</sup>. This theorem was named after
+    `The Pythagorean theorem says that for a right triangle, the sum of the squares of the lengths of the 2
+    shortest sides (legs) equals the square of the longest side (hypotenuse) length, or
+    <var>a</var><sup>2</sup> + <var>b</var><sup>2</sup> = <var>c</var><sup>2</sup>. This was named after
     the ancient Greek mathematician Pythagoras. A <i>Pythagorean triple</i> is a triple of whole numbers that
     <var>a</var>, <var>b</var>, and <var>c</var> can be. For example; 3, 4, and 5 is a Pythagorean triple since
     3<sup>2</sup> (9) + 4<sup>2</sup> (16) = 5<sup>2</sup> (25). 11, 60, and 61 is another one since
@@ -1419,7 +1422,14 @@ const pythagTriplesInfoHtml =
     <var>a</var>, <var>b</var>, and <var>c</var> by the same whole number. The triples mentioned above;
     3, 4, and 5, and 11, 60, and 61; are primitive. 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is another triple.
     6<sup>2</sup> (36) + 8<sup>2</sup> (64) = 10<sup>2</sup> (100). 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5)
-    is another one. 55<sup>2</sup> (3,025) + 300<sup>2</sup> (90,000) = 305<sup>2</sup> (93,025).`;
+    is another one. 55<sup>2</sup> (3,025) + 300<sup>2</sup> (90,000) = 305<sup>2</sup> (93,025).
+    
+    The algorithm I came up with for calculating triples first tries to find triples where the short leg length
+    equals the input number and then tries to find triples where the short leg equals the input number + 1, and
+    so on until 10 are found.`;
+    
+const pythagTriplesHeadingStart = 'The first 10 Pythagorean triples where the lowest number in the triple is ≥';
+const pythagTriplesActionSentenceEnding = 't' + pythagTriplesHeadingStart.substring(1) + ' that number';
 
 /**
  * @typedef {{ a: number, b: number, c: number, isPrimitive: boolean }} PythagoreanTriple
@@ -1433,7 +1443,7 @@ const pythagTriplesInfoHtml =
  * the numbers and squares of the triple. If the triple is primitive, then that'll be mentioned.
  */
 function createPythagTriplesAnswerElements(triples, inputString) {
-    const headingText = `The first ${triples.length} Pythagorean triples ≥ ${inputString} are:`;
+    const headingText = `${pythagTriplesHeadingStart} ${inputString} are:`;
 
     /**
      * @param {PythagoreanTriple}
@@ -1454,7 +1464,7 @@ new SingleInputSection(
     {
         btnIdStart: 'pythag-triples',
         infoHtmlStringOrArr: pythagTriplesInfoHtml,
-        actionSentenceEnding: 'the first 10 Pythagorean triples ≥ that number',
+        actionSentenceEndingHtml: pythagTriplesActionSentenceEnding,
         minInput: 0,
         maxInput: 100,
         apiEndpointEnd: 'pythagorean-triples'
@@ -1463,28 +1473,26 @@ new SingleInputSection(
 );
 
 
-const twoSquareTheoremInfoHtml =
-    `The Two Square Theorem says that every prime number that's 1 above a multiple of 4 can be expressed as the
-    sum of 2 square numbers. A <i>square number</i>, also known as a <i>perfect square</i>, is a number that can
-    be formed by taking an integer and multiplying it by itself, or squaring it. The first 4 square numbers are
-    0 (0<sup>2</sup>), 1 (1<sup>2</sup> or (-1)<sup>2</sup>), 4 (2<sup>2</sup> or (-2)<sup>2</sup>), and
-    9 (3<sup>2</sup> or (-3)<sup>2</sup>). An example of a number that's prime and is 1 above a multiple of 4 is
-    29 and it can be expressed as 2<sup>2</sup> (4) + 5<sup>2</sup> (25).`;
 
-const twoSquareTheoremActionSentenceEnding =
-    `the first number ≥ that number that's prime and is 1 above a multiple of 4, \
-    as well as the whole numbers whose squares sum to that prime number`;
+const twoSquareTheoremInfoHtml =
+    `Fermat's two square theorem says that every prime number that's 1 above a multiple of 4 can be expressed as
+    the sum of 2 squares in 1 way. This was named after 1600s French mathematician Pierre de Fermat. In the
+    context of this theorem, <i>square</i> is a shortening of <i>square number</i> or <i>perfect square</i> and
+    is a number that can be formed by taking an integer and multiplying it by itself, or squaring it. The first 4
+    squares are 0 (0<sup>2</sup>), 1 (1<sup>2</sup> or (-1)<sup>2</sup>), 4 (2<sup>2</sup> or (-2)<sup>2</sup>),
+    and 9 (3<sup>2</sup> or (-3)<sup>2</sup>). Because of this theorem, a prime number that's 1 above a multiple
+    of 4 is known as a <i>Pythagorean prime</i>. An example of a Pythagorean prime is 29 and it can be expressed
+    as 2<sup>2</sup> (4) + 5<sup>2</sup> (25).`;
 
 /**
- * @param {{ primeNum: number, a: number, b: number }}
+ * @param {{ pythagPrime: number, a: number, b: number }}
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function createTwoSquareTheoremAnswerElements({ primeNum, a, b }, inputString) {
-    const headingText =
-        `The first number ≥ ${inputString} that's prime and is 1 above a multiple of 4 is:`;
+function createTwoSquareTheoremAnswerElements({ pythagPrime, a, b }, inputString) {
+    const headingText = `The first Pythagorean prime ≥ ${inputString} is:`;
     const answerDiv =
-        createDiv(createNumStringWithCommas(primeNum), ', which is ', createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b));
+        createDiv(createNumStringWithCommas(pythagPrime), ', which is ', createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b));
     answerDiv.id = 'two-square-theorem-answer-div';
     return [createNonBoldAnswerH3(headingText), answerDiv];
 }
@@ -1493,7 +1501,7 @@ new SingleInputSection(
     {
         btnIdStart: 'two-square-theorem',
         infoHtmlStringOrArr: twoSquareTheoremInfoHtml,
-        actionSentenceEnding: twoSquareTheoremActionSentenceEnding,
+        actionSentenceEndingHtml: 'the first Pythagorean prime ≥ that number, as well as the whole numbers whose squares sum to that prime',
         minInput: 0,
         maxInput: tenThousand,
         apiEndpointEnd: 'two-square-theorem-answer'
@@ -1517,7 +1525,7 @@ const fiboLikeSequencesInfoHtml =
     number be the sum of the 2 previous numbers. The Fibonacci sequence does this and the first 8 numbers of it
     are 1, 1, 2, 3, 5, 8, 13, and 21. Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy.
     Another Fibonacci-like sequence is the Lucas sequence and the first 8 numbers of it are
-    2, 1, 3, 4, 7, 11, 18, and 29. This sequence was named after 1800s French mathematician Francois Edouard Anatole Lucas.
+    2, 1, 3, 4, 7, 11, 18, and 29. This sequence was named after 1800s French mathematician François Édouard Anatole Lucas.
     
     The <i>Golden Ratio</i> is an irrational number symbolized by the Greek letter ${phiLetter} (Phi).
     ${phiLetter} = (1 + <math><msqrt><mn>5</mn></msqrt></math>) / 2 ≈ ${phiNumString}. As we advance further
@@ -1529,33 +1537,29 @@ const fiboLikeSequencesInfoHtml =
     calculations are some of the few calculations done by the Number Theory Playground that involve numbers other
     than natural numbers.`;
 
-const fiboLikeSequencesActionSentenceEnding =
-    'the first 20 numbers in the Fibonacci-like sequence that starts with those numbers, \
-    as well as the ratios between some consecutive numbers in that sequence';
+const fiboLikeSequencesActionSentenceEndingHtml =
+    `the first 20 numbers in the Fibonacci-like sequence that starts with those numbers, as well as the ratios
+    between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>,
+    15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in that sequence`;
 
 /**
  * @typedef {{ num1String: string, num2String: string, ratio: number, isRounded: boolean }} RatioData
  */
 
 /**
- * @param {{ fiboLikeSequence: string[], ratioDataArr: RatioData[] }}
+ * @param {{ fiboLikeSequence: string[], ratiosData: RatioData[] }}
  * @param {string} input1String
  * @param {string} input2String
  * @returns {HTMLElement[]}
  * An array with a div that shows the Fibonacci-like sequence and another div that shows ratios between some
  * consecutive numbers in the sequence.
  */
-function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratioDataArr }, input1String, input2String) {
+function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratiosData }, input1String, input2String) {
     const sequenceHeadingText =
         `The first ${fiboLikeSequence.length} numbers in the Fibonacci-like sequence that starts with \
         ${input1String} and ${input2String} are:`;
     const sequenceOl = arrToAnswerFlexOl(fiboLikeSequence, createNumStringWithCommas);
     const sequenceDiv = createDiv(createNonBoldAnswerH3(sequenceHeadingText), sequenceOl);
-
-    const ratiosHeading = createNonBoldAnswerH3();
-    ratiosHeading.innerHTML =
-        'The ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, \
-        15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers are:';
 
     /**
      * @param {RatioData}
@@ -1567,7 +1571,8 @@ function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratioDataArr 
         return `${num2StringWithCommas} / ${num1StringWithCommas} ${isRounded ? '≈' : '='} ${ratio}`;
     }
 
-    const ratiosOl = arrToAnswerNormalOl(ratioDataArr, ratioDataToString);
+    const ratiosHeading = createNonBoldAnswerH3('The ratios are:');
+    const ratiosOl = arrToAnswerNormalOl(ratiosData, ratioDataToString);
     ratiosOl.append(createLi(`${phiLetter} ≈ ${phiNumString}`));
     const ratiosDiv = createDiv(ratiosHeading, ratiosOl);
     ratiosDiv.id = 'fibo-like-sequence-ratios-div';
@@ -1579,7 +1584,7 @@ new DoubleInputSection(
     {
         btnIdStart: 'fibo-like-sequences',
         infoHtmlStringOrArr: fiboLikeSequencesInfoHtml,
-        actionSentenceEnding: fiboLikeSequencesActionSentenceEnding,
+        actionSentenceEndingHtml: fiboLikeSequencesActionSentenceEndingHtml,
         minInput: 1,
         maxInput: oneQuadrillion,
         apiEndpointEnd: 'fibonacci-like-sequences-answer'
@@ -1589,8 +1594,8 @@ new DoubleInputSection(
 
 
 const ancientMultAlgorithmInfoStart =
-    'The ancient Egyptians had an interesting algorithm for multiplication of 2 whole numbers. My way of \
-    explaining the algorithm goes like this:';
+    `The ancient Egyptians had an interesting algorithm for multiplication of 2 whole numbers. My way of
+    explaining the algorithm goes like this:`;
 
 const ancientMultStepsArr = [
     'Let variable <var>a</var> represent one of the numbers and variable <var>b</var> represent the other one.',
@@ -1688,7 +1693,7 @@ new DoubleInputSection(
     {
         btnIdStart: 'ancient-mult',
         infoHtmlStringOrArr: ancientMultInfoElements,
-        actionSentenceEnding: 'ancient Egyptian multiplication info for those numbers',
+        actionSentenceEndingHtml: 'ancient Egyptian multiplication info for those numbers',
         minInput: 2,
         maxInput: oneQuadrillion,
         apiEndpointEnd: 'ancient-multiplication-answer'

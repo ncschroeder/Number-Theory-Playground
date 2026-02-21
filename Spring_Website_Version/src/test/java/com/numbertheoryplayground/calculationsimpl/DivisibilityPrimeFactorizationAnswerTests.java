@@ -1,37 +1,17 @@
-package com.numbertheoryplayground.calculationsimpl.divisibility;
+package com.numbertheoryplayground.calculationsimpl;
 
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.*;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
-import com.numbertheoryplayground.calculationsimpl.PrimeFactorization;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
 
-class PrimeFactorizationAnswerTests {
-    @ParameterizedTest
-    @FieldSource("argsForNumFactorsMethods")
-    void numFactorsMethods(int input, String expectedNumFactorsExpression, int expectedNumFactors) {
-        var answer = PrimeFactorizationAnswer.createIfNotPrime(input);
-        // None of the inputs are prime.
-        assertNotNull(answer);
-        assertAll(
-            () -> assertEquals(expectedNumFactorsExpression, answer.getNumFactorsExpression()),
-            () -> assertEquals(expectedNumFactors, answer.getNumFactors())
-        );
-    }
-    
-    static final List<Arguments> argsForNumFactorsMethods =
-        List.of(
-            arguments(5 * 5, "(2 + 1)", 3),
-            arguments(3 * 5, "(1 + 1) × (1 + 1)", 4),
-            arguments(2 * 3 * 3 * 5 * 5 * 5, "(1 + 1) × (2 + 1) × (3 + 1)", 2 * 3 * 4)
-        );
-    
-    
+class DivisibilityPrimeFactorizationAnswerTests {
     @ParameterizedTest
     @MethodSource("getArgsForGetFactorPfs")
     void getFactorPfs(
@@ -39,7 +19,7 @@ class PrimeFactorizationAnswerTests {
         List<List<FactorAndPower>> expectedFactorFpLists
     ) {
         List<List<FactorAndPower>> actualFactorFpLists =
-            PrimeFactorizationAnswer.getFactorPfs(new PrimeFactorization(input))
+            DivisibilityPrimeFactorizationAnswer.getFactorPfs(new PrimeFactorization(input))
             .stream()
             .map(PrimeFactorization::getFps)
             .toList();

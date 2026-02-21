@@ -930,9 +930,10 @@ An array of objects that represents the PF of the input. Each object in the arra
 
 <br/>
 
-##### Divisibility Answer Data
 
-Endpoint end: `divisibility-answer`
+##### Divisibility Prime Factorization Answer Data
+
+Endpoint end: `divisibility-pf-answer`
 <br/>
 Query param: `input`
 <br/>
@@ -942,39 +943,23 @@ Input Range: 10 - 10,000
 
 Type:
 ```
-{
-    rulesData: {
-        last2Digits: number,
-        last3Digits: number,
-        sumOfDigits: number,
-        blocksAltSumAndExpression: ?{ sum: number, expression: string },
-        digitsAltSumAndExpression: { sum: number, expression: string }
-    },
-    pfAnswer: {
-        inputFps: { factor: number, power: number }[],
-        numFactorsExpression: string,
-        numFactors: number,
-        factorPfs: {
-            fps: ?{ factor: number, power: number }[],
-            correspondingNum: number
-        }[]
-    }
+?{
+    inputFps: { factor: number, power: number }[],
+    factorPfs: {
+        fps: ?({ factor: number, power: number }[]),
+        correspondingNum: number
+    }[]
 }
 ```
 
-`AltSumAndExpression` is a shortening of "alternating sum and expression."
+If the input is prime, then the response will be `null`. Otherwise, the response will be an object.
 
-`rulesData.blocksAltSumAndExpression` contains a sum and mathematical expression for the alternating sum of 3-digit blocks from right to left. If the input is < 1,000, then this'll be `null`, since the input must have at least 4 digits for this calculation to be useful. An example of this is that for the input 5,544, the expression would be "544 - 5" and the sum would be 539.
-<br/>
-`rulesData.digitsAltSumAndExpression` contains a sum and mathematical expression for the alternating sum of digits from left to right. An example of this is that for the input 5,544, the expression would be "5 - 5 + 4 - 4" and the sum would be 0.
+`inputFps` contains the factors and powers of the PF of the input.
 
-`pfAnswer.inputFps` contains the factors and powers of the PF of the input.
-<br/>
-`pfAnswer.numFactorsExpression` is a mathematical expression that shows how the number of factors was calculated. An example of this is that for the input 8,575, which has a PF of $5^2 \times 7^3$, this would be "(2 + 1) × (3 + 1)" and `pfAnswer.numFactors` would be 12.
-<br/>
-`pfAnswer.factorPfs` contains the PFs of the factors of the input, excluding 1 and the input.
+`factorPfs` contains objects for the PFs of the factors of the input, excluding 1 and the input. For these objects, if `fps` is null, then that means that the corresponding number is prime and therefore the PF just consists of 1 factor with 1 as its power.
 
 <br/>
+
 
 ##### GCD and LCM Answer Data
 
@@ -1134,7 +1119,7 @@ Input validation for a calculation is implemented by having a method or class co
 
 ## Unit Testing
 
-The JUnit framework was used. There are tests for the website, CLI, and GUI versions. The location of the test classes is the `src/test` directory. For the website, CLI, and GUI versions, there are tests for methods and classes that do calculations. For just the website version, there are also [a couple tests for the calculations controller](https://github.com/ncschroeder/Number-Theory-Playground/blob/master/Spring_Website_Version/src/test/java/com/numbertheoryplayground/CalculationsControllerTests.java). For just the CLI and GUI versions, there are also tests for methods in the `NtpCli` and `Misc` classes. Almost all tests are parameterized and the ones that aren't are ones that use the `@Test` annotation. For the website version, there are 19 tests, all but 1 of which are parameterized. For the CLI and GUI versions, there are 23 tests, all but 4 of which are parameterized.
+The JUnit framework was used. There are tests for the website, CLI, and GUI versions. The location of the test classes is the `src/test` directory. For the website, CLI, and GUI versions, there are tests for methods and classes that do calculations. For just the website version, there are also [a couple tests for the calculations controller](https://github.com/ncschroeder/Number-Theory-Playground/blob/master/Spring_Website_Version/src/test/java/com/numbertheoryplayground/CalculationsControllerTests.java). For just the CLI and GUI versions, there are also tests for methods in the `NtpCli` and `Misc` classes. Almost all tests are parameterized and the ones that aren't are ones that use the `@Test` annotation. For the website version, there are 17 tests, all but 1 of which are parameterized. For the CLI and GUI versions, there are 23 tests, all but 4 of which are parameterized.
 
 
 ### Expected Results

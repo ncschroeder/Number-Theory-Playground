@@ -1,67 +1,38 @@
-package com.numbertheoryplayground.calculationsimpl.divisibility;
+package com.numbertheoryplayground.calculationsimpl;
 
 import java.util.*;
 import java.util.stream.IntStream;
-import com.numbertheoryplayground.calculationsimpl.PrimeFactorization;
 
-import static com.numbertheoryplayground.InputValidation.assertIsInRange;
+import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
 
-public final class PrimeFactorizationAnswer {
+public final class DivisibilityPrimeFactorizationAnswer {
+    private static final long MIN_INPUT = 10;
+    private static final long MAX_INPUT = TEN_THOUSAND;
+    
     /**
      * Contains the factors and powers of the PF of the input number.
      */
     private final List<FactorAndPower> inputFps;
     
-    /**
-     * The number of factors of the corresponding int of the input PF, or the input int for the
-     * createIfNotPrime method.
-     */
-    private int numFactors;
-    
-    /**
-     * A mathematical expression that shows how the number of factors was calculated. For the
-     * input int 8,575, which has a PF of 5^2 × 7^3, this would be "(2 + 1) × (3 + 1)" and
-     * numFactors would be 12.
-     */
-    private final String numFactorsExpression;
-    
     private final List<PrimeFactorization> factorPfs;
     
-    private PrimeFactorizationAnswer(PrimeFactorization inputPf) {
+    private DivisibilityPrimeFactorizationAnswer(PrimeFactorization inputPf) {
         inputFps = inputPf.getFps();
-        
-        var numFactorsExpressionParts = new ArrayList<String>(inputFps.size());
-        numFactors = 1;
-        for (FactorAndPower fp : inputFps) {
-            int power = fp.power();
-            numFactors *= power + 1;
-            numFactorsExpressionParts.add(String.format("(%d + 1)", power));
-        }
-        numFactorsExpression = String.join(" × ", numFactorsExpressionParts);
-        
         factorPfs = getFactorPfs(inputPf);
     }
     
     /**
      * None of the fields matter if the input is prime.
      */
-    static PrimeFactorizationAnswer createIfNotPrime(int input) {
-        assertIsInRange(input, DivisibilityAnswer.MIN_INPUT, DivisibilityAnswer.MAX_INPUT);
+    public static DivisibilityPrimeFactorizationAnswer createIfNotPrime(int input) {
+        assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         var pf = new PrimeFactorization(input);
-        return pf.isForAPrimeNumber() ? null : new PrimeFactorizationAnswer(pf);
+        return pf.isForAPrimeNumber() ? null : new DivisibilityPrimeFactorizationAnswer(pf);
     }
     
     public List<FactorAndPower> getInputFps() {
         return inputFps;
-    }
-    
-    public int getNumFactors() {
-        return numFactors;
-    }
-    
-    public String getNumFactorsExpression() {
-        return numFactorsExpression;
     }
     
     public List<PrimeFactorization> getFactorPfs() {
@@ -96,7 +67,6 @@ public final class PrimeFactorizationAnswer {
                     var newFp = new FactorAndPower(factor, factorPfPower);
                     List<FactorAndPower> factorPfFps = new ArrayList<>(factorPfs.get(i).getFps());
                     
-                    // If the factor is already...
                     findIndexOfFactor(factorPfFps, factor)
                     .ifPresentOrElse(
                         indexToUpdate -> factorPfFps.set(indexToUpdate, newFp),

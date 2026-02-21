@@ -3,7 +3,6 @@ package com.numbertheoryplayground;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.numbertheoryplayground.calculationsimpl.*;
-import com.numbertheoryplayground.calculationsimpl.divisibility.DivisibilityAnswer;
 import com.numbertheoryplayground.calculationsimpl.gcdandlcm.GcdAndLcmAnswer;
 
 import static com.numbertheoryplayground.calculationsimpl.Calculations.*;
@@ -49,11 +48,11 @@ public class CalculationsController {
     }
     
     
-    static final String DIVIS_ANSWER_ENDPOINT_END = "divisibility-answer";
+    static final String DIVIS_PF_ANSWER_ENDPOINT_END = "divisibility-pf-answer";
     
-    @GetMapping(DIVIS_ANSWER_ENDPOINT_END)
-    public DivisibilityAnswer getDivisAnswer(@RequestParam int input) {
-        return new DivisibilityAnswer(input);
+    @GetMapping(DIVIS_PF_ANSWER_ENDPOINT_END)
+    public DivisibilityPrimeFactorizationAnswer getDivisPfAnswer(@RequestParam int input) {
+        return DivisibilityPrimeFactorizationAnswer.createIfNotPrime(input);
     }
     
     

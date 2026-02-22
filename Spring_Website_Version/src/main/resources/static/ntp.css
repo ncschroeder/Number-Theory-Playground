@@ -5,7 +5,7 @@ body {
     color: var(--default-color);
 }
 
-body, button {
+body, button, mtext:not(.math-font) {
     font-family: Verdana;
 }
 
@@ -75,6 +75,10 @@ h3, h4, p, .narrow-text-div, ol:not(.answer-normal-ol) {
 /* Since h3s and h4s get a max width, they need this rule as well to have a center alignment. */
 h3, h4, p, ol, table, .narrow-text-div {
     margin: 0 auto;
+}
+
+math {
+    font-size: 1.1rem;
 }
 
 table {
@@ -194,7 +198,8 @@ Some things that this rule does:
     min-height: 25rem;
 }
 
-#answer-div > div:not(#two-square-theorem-answer-div, #fibo-like-sequence-ratios-div, #ancient-mult-table-div) {
+#answer-div >
+div:not(#pf-section-answer-div, #two-square-theorem-answer-div, #fibo-like-sequence-ratios-div, #ancient-mult-table-div) {
     margin-top: 0.7rem;
 }
 
@@ -241,11 +246,7 @@ and Fibonacci-like sequence numbers.
     padding: 0;
 }
 
-#pf-section-pf-span {
-    display: block;
-}
-
-#pf-section-pf-span, #two-square-theorem-answer-div {
+#pf-section-answer-div, #two-square-theorem-answer-div {
     margin-top: 0.3rem;
     text-align: center;
 }

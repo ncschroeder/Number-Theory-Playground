@@ -15,12 +15,12 @@ const getElementById = (id) => document.getElementById(id);
  * This is similar to creating an HTML element in the Elm language. Elm has functions for creating different
  * types of elements and one of the params of each function is a list of child elements for the new element.
  * 
- * @param {string} elementType 
+ * @param {string} elementName 
  * @param {...Appendable} objectsToAppend 
  * @returns {HTMLElement}
  */
-function createElement(elementType, ...objectsToAppend) {
-    const element = document.createElement(elementType);
+function createHtmlElement(elementName, ...objectsToAppend) {
+    const element = document.createElement(elementName);
     element.append(...objectsToAppend);
     return element;
 }
@@ -29,7 +29,7 @@ function createElement(elementType, ...objectsToAppend) {
  * @param {string} [text]
  * @returns {HTMLHeadingElement}
  */
-const createH3 = (text) => createElement('h3', text);
+const createH3 = (text) => createHtmlElement('h3', text);
 
 /**
  * @param {string} [text] 
@@ -45,13 +45,13 @@ function createNonBoldAnswerH3(text) {
  * @param {string} text
  * @returns {HTMLHeadingElement}
  */
-const createH4 = (text) => createElement('h4', text);
+const createH4 = (text) => createHtmlElement('h4', text);
 
 /**
  * @param {...Appendable} objectsToAppend
  * @returns {HTMLDivElement}
  */
-const createDiv = (...objectsToAppend) => createElement('div', ...objectsToAppend);
+const createDiv = (...objectsToAppend) => createHtmlElement('div', ...objectsToAppend);
 
 /**
  * @param {string} text 
@@ -67,7 +67,7 @@ function createNarrowTextDiv(text) {
  * @param {...Appendable} objectsToAppend
  * @returns {HTMLParagraphElement}
  */
-const createP = (...objectsToAppend) => createElement('p', ...objectsToAppend);
+const createP = (...objectsToAppend) => createHtmlElement('p', ...objectsToAppend);
 
 /**
  * @param {string} innerHtml 
@@ -95,7 +95,7 @@ function createBtn(text) {
     /**
      * @type {HTMLButtonElement}
      */
-    const btn = createElement('button', text);
+    const btn = createHtmlElement('button', text);
     btn.type = 'button';
     return btn;
 }
@@ -104,37 +104,13 @@ function createBtn(text) {
  * @param  {...HTMLLIElement} lis 
  * @returns {HTMLOListElement}
  */
-const createOl = (...lis) => createElement('ol', ...lis);
+const createOl = (...lis) => createHtmlElement('ol', ...lis);
 
 /**
  * @param  {...Appendable} objectsToAppend 
  * @returns {HTMLLIElement}
  */
-const createLi = (...objectsToAppend) => createElement('li', ...objectsToAppend);
-
-/**
- * @param {string} text
- * @returns {HTMLElement}
- */
-const createSuperscript = (text) => createElement('sup', text);
-
-/**
- * @returns {HTMLElement}
- */
-const createSuperscriptWith2 = () => createSuperscript('2');
-
-/**
- * @param {...Appendable} objectsToAppend
- * @returns {HTMLSpanElement}
- */
-const createSpan = (...objectsToAppend) => createElement('span', ...objectsToAppend);
-
-/**
- * @param {number} num
- * @returns {HTMLSpanElement}
- */
-const createNumAndSquareSpan = (num) =>
-    createSpan(createNumStringWithCommas(num), createSuperscriptWith2(), ` (${createNumStringWithCommas(num * num)})`);
+const createLi = (...objectsToAppend) => createHtmlElement('li', ...objectsToAppend);
 
 /**
  * @typedef {(obj: any) => Appendable | HTMLLIElement} ArrayElementToListItem
@@ -187,22 +163,22 @@ const arrToAnswerFlexOl = (arr, arrElementTransform) =>
  * @returns {HTMLTableElement}
  */
 function createTable(colHeadings, rowsDataSourceArr, rowsDataSourceTransform) {
-    const table = createElement('table');
-    const createTr = () => createElement('tr');
+    const table = createHtmlElement('table');
+    const createTr = () => createHtmlElement('tr');
     
-    const tHead = createElement('thead');
+    const tHead = createHtmlElement('thead');
     let tr = createTr();
     for (const heading of colHeadings) {
-        tr.appendChild(createElement('th', heading));
+        tr.appendChild(createHtmlElement('th', heading));
     }
     tHead.appendChild(tr);
     table.append(tHead);
     
-    const tBody = createElement('tbody');
+    const tBody = createHtmlElement('tbody');
     for (const element of rowsDataSourceArr) {
         tr = createTr();
         for (const numOrNumString of rowsDataSourceTransform(element)) {
-            tr.appendChild(createElement('td', createNumStringWithCommas(numOrNumString)));
+            tr.appendChild(createHtmlElement('td', createNumStringWithCommas(numOrNumString)));
         }
         tBody.appendChild(tr);
     }
@@ -210,6 +186,126 @@ function createTable(colHeadings, rowsDataSourceArr, rowsDataSourceTransform) {
     
     return table;
 }
+
+
+const mathMlNamespaceUri = 'http://www.w3.org/1998/Math/MathML';
+
+/**
+ * @param {string} elementName
+ * @param {...Appendable} objectsToAppend
+ * @returns {MathMLElement}
+ */
+function createMathMlElement(elementName, ...objectsToAppend) {
+    const element = document.createElementNS(mathMlNamespaceUri, elementName);
+    element.append(...objectsToAppend);
+    return element;
+}
+
+/**
+ * @param  {...Appendable} objectsToAppend
+ * @returns {MathMLElement}
+ */
+const createMathElement = (...objectsToAppend) => createMathMlElement('math', ...objectsToAppend);
+
+/**
+ * Creates a math row element, which is used to group related elements together, like a div.
+ * @param  {...Appendable} objectsToAppend
+ * @returns {MathMLElement}
+ */
+const createMrow = (...objectsToAppend) => createMathMlElement('mrow', ...objectsToAppend);
+
+/**
+ * Creates a math number element.
+ * @param {number | string} value
+ * A number or unformatted number string.
+ * @returns {MathMLElement}
+ */
+const createMn = (value) => createMathMlElement('mn', createNumStringWithCommas(value));
+
+/**
+ * Creates a math superscript element.
+ * @param {number} base
+ * @param {number} power
+ */
+const createMsup = (base, power) => createMathMlElement('msup', createMn(base), createMn(power));
+
+/**
+ * Creates a math operator (e.g. +) element.
+ * @param {string} operator
+ * @returns {MathMLElement}
+ */
+const createMo = (operator) => createMathMlElement('mo', operator);
+
+/**
+ * Creates a math text element.
+ * @param {string} text
+ * @param {boolean} [putSpaceAtStart]
+ * @returns {MathMLElement}
+ */
+function createMtext(text, putSpaceAtStart = false) {
+    const mtext = createMathMlElement('mtext', text);
+    if (putSpaceAtStart) {
+        mtext.insertAdjacentHTML('afterbegin', '&nbsp;');
+    }
+    return mtext;
+}
+
+/**
+ * @param {string} text
+ * @param {boolean} [putSpaceAtStart]
+ * @returns {MathMLElement}
+ */
+function createMtextWithMathFont(text, putSpaceAtStart = false) {
+    const mtext = createMtext(text, putSpaceAtStart);
+    mtext.className = 'math-font';
+    return mtext;
+}
+
+/**
+ * @param {string} identifier
+ * @param {string} [endText]
+ */
+const createMiMl = (identifier, endText) =>
+    `<math><mi>${identifier}</mi>${endText ? `<mtext>${endText}</mtext>` : ''}</math>`;
+
+const [aVarMl, bVarMl, cVarMl, nVarMl] = ['a', 'b', 'c', 'n'].map(letter => createMiMl(letter));
+const aVarAndPeriodMl = createMiMl('a', '.');
+const aVarAndCommaMl = createMiMl('a', ',');
+const bVarAndPeriodMl = createMiMl('b', '.');
+const bVarAndCommaMl = createMiMl('b', ',');
+
+/**
+ * Creates a math identifier (e.g. letter for variable) element.
+ * @param {string} identifier
+ * @returns {MathMLElement}
+ */
+const createMi = (identifier) => createMathMlElement('mi', identifier);
+
+/**
+ * @param {number} num
+ */
+const createNumAndSquareMl = (num) =>
+    `<mrow>
+        <msup><mn>${num}</mn><mn>2</mn></msup>
+        <mrow>
+            <mtext class="math-font">&nbsp;(</mtext>
+            <mn>${createNumStringWithCommas(num * num)}</mn>
+            <mtext class="math-font">)</mtext>
+        </mrow>
+    </mrow>`;
+
+/**
+ * @param {number} num
+ * @returns {MathMLElement}
+ */
+const createNumAndSquareMrow = (num) =>
+    createMrow(
+        createMsup(num, 2),
+        createMtextWithMathFont('(', true),
+        createMn(num * num),
+        createMtextWithMathFont(')')
+    );
+
 
 /**
  * @param {number} a 
@@ -269,7 +365,7 @@ function getNum(textField) {
  * The text field is a child of the input div.
  */
 function createInputDiv() {
-    const textField = createElement('input');
+    const textField = createHtmlElement('input');
     textField.className = 'text-field';
 
     const randomizeBtn = createBtn('Randomize');
@@ -330,14 +426,14 @@ const sectionHeading = getElementById('section-heading');
 const homeHeadingText = sectionHeading.textContent;
 const homeContentDiv = getElementById('home-content-div');
 
-const sectionInfoDetailsSummary = createElement('summary', 'Info');
+const sectionInfoDetailsSummary = createHtmlElement('summary', 'Info');
 const sectionInfoDiv = createDiv();
 sectionInfoDiv.id = 'section-info-div';
 sectionInfoDiv.className = 'non-answer-info-div';
 /**
  * @type {HTMLDetailsElement}
  */
-const sectionInfoDetails = createElement('details', sectionInfoDetailsSummary, sectionInfoDiv);
+const sectionInfoDetails = createHtmlElement('details', sectionInfoDetailsSummary, sectionInfoDiv);
 
 const { inputDiv: inputDiv1, textField: textField1 } = createInputDiv();
 const { inputDiv: inputDiv2, textField: textField2 } = createInputDiv();
@@ -656,23 +752,44 @@ calculateBtn.onclick = () => {
 };
 
 
+const largestKnownPrimeAndPeriodMl =
+    `<math>
+        <msup><mn>2</mn><mn>136,279,841</mn></msup>
+        <mo>−</mo>
+        <mn>1</mn>
+        <mtext>.</mtext>
+    </math>`;
+
 const primesInfoHtml =
     `A <i>prime number</i>, or a <i>prime</i>, is a whole number > 1 that isn't divisible by any whole numbers
     other than 1 and itself. A <i>composite number</i> is a whole number > 1 that is divisible by a whole number
     other than 1 and itself. The first 10 primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, and 29. There are an
-    infinite amount of primes. The largest known one is 2<sup>136,279,841</sup> − 1. It has 41,024,320 digits!
+    infinite amount of primes. The largest known one is ${largestKnownPrimeAndPeriodMl} It has 41,024,320 digits!
     Primes are used in 8 of the 11 sections in the Number Theory Playground.
     
     With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To show why this
-    is the case, let's have a variable <var>n</var> and let it represent a whole number ≥ 6 that's a multiple of
-    6. We know that <var>n</var> is divisible by 2 and 3 so <var>n</var> + 2 and <var>n</var> + 4 are divisible
-    by 2 and <var>n</var> + 3 is divisible by 3 but we don't have any guarantees about what <var>n</var> + 1 and
-    <var>n</var> + 5 are divisible by. Therefore, that's where primes can be.
+    is the case, let's have a variable ${nVarMl} and let it represent a whole number ≥ 6 that's a multiple of
+    6. We know that ${nVarMl} is divisible by 2 and 3 so ${nVarMl} + 2 and ${nVarMl} + 4 are divisible
+    by 2 and ${nVarMl} + 3 is divisible by 3 but we don't have any guarantees about what ${nVarMl} + 1 and
+    ${nVarMl} + 5 are divisible by. Therefore, that's where primes can be.
     
     A whole number can be determined to be prime if it's not divisible by any primes ≤ the square root of that
-    number. This is called <i>trial division</i>. Let's determine if 29 and 33 are prime. 5<sup>2</sup> = 25
-    and 6<sup>2</sup> = 36 so 5 < <math><msqrt><mn>29</mn></msqrt></math> < <math><msqrt><mn>33</mn></msqrt></math>
-    < 6. We check if 29 and 33 are divisible by 2, 3, or 5; which are the primes ≤ 5. 29 isn't divisible by any
+    number. This is called <i>trial division</i>. Let's determine if 29 and 33 are prime.
+    <math><msup><mn>5</mn><mn>2</mn></msup> <mo>=</mo> <mn>25</mn></math>
+    and
+    <math><msup><mn>6</mn><mn>2</mn></msup> <mo>=</mo> <mn>36</mn></math>
+    so
+    <math>
+        <mn>5</mn>
+        <mo><</mo>
+        <msqrt><mn>29</mn></msqrt>
+        <mo><</mo>
+        <msqrt><mn>33</mn></msqrt>
+        <mo><</mo>
+        <mn>6</mn>
+        <mtext>.</mtext>
+    </math>
+    We check if 29 and 33 are divisible by 2, 3, or 5; which are the primes ≤ 5. 29 isn't divisible by any
     of those and 33 is divisible by 3 so 29 is prime and 33 isn't.`;
 
 /**
@@ -704,7 +821,7 @@ const semiprimesInfoHtml =
     prime numbers. The first 5 semiprimes and their prime number factors are 4 (2 × 2), 6 (2 × 3), 9 (3 × 3),
     10 (2 × 5), and 14 (2 × 7). Since there are an infinite amount of prime numbers, there are also an infinite
     amount of semiprimes. The largest known semiprime is the square of the largest known prime number, which is
-    2<sup>136,279,841</sup> − 1.`;
+    ${largestKnownPrimeAndPeriodMl}`;
 
 /**
  * @typedef {{ semiprime: number, primeFactor1: number, primeFactor2: number }} SemiprimeData
@@ -755,8 +872,20 @@ const conjectureDefinitionHtml =
 const twinPrimePairsInfoHtml =
     `A <i>twin prime pair</i> is a pair of prime numbers that differ by 2. The first 5 twin prime pairs are
     3 & 5, 5 & 7, 11 & 13, 17 & 19, and 27 & 29. The largest known twin prime pair is
-    (2,996,863,034,895 × 2<sup>1,290,000</sup>) ± 1. They have 388,342 digits! The <i>twin prime conjecture</i>
-    says that there are an infinite amount of twin prime pairs. ${conjectureDefinitionHtml}.
+    <math>
+        <mrow>
+            <mo>(</mo>
+            <mn>2,996,863,034,895</mn>
+            <mo>×</mo>
+            <msup><mn>2</mn><mn>1,290,000</mn></msup>
+            <mo>)</mo>
+        </mrow>
+        <mo>±</mo>
+        <mn>1</mn>
+        <mtext>.</mtext>
+    </math>
+    They have 388,342 digits! The <i>twin prime conjecture</i> says that there are an infinite amount of twin
+    prime pairs. ${conjectureDefinitionHtml}.
     
     All prime numbers besides 2 and 3 are either 1 above or 1 below a multiple of 6 so this means that all twin
     prime pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6 and another number that's 1
@@ -790,21 +919,38 @@ new SingleInputSection(
 );
 
 
+/**
+ * Creates a Math ML string for the prime factorization whose factors and powers are in factorsAndPowers.
+ * @param {number[][]} factorsAndPowers
+ * For each inner array, the first number is the factor and the second is the power.
+ */
+const createPfMl = (factorsAndPowers) =>
+    factorsAndPowers
+    .map(([factor, power]) => power === 1 ? `<mn>${factor}</mn>` : `<msup><mn>${factor}</mn><mn>${power}</mn></msup>`)
+    .join('<mo>×</mo>');
+
+/**
+ * @param {number[][]} factorsAndPowers
+ * @param {string} [endText]
+ */
+const createPfMathElementMl = (factorsAndPowers, endText) =>
+    `<math>${createPfMl(factorsAndPowers)}${endText ? `<mtext>${endText}</mtext>`: ''}</math>`;
+
 const pfInfoHtml =
     `The fundamental theorem of arithmetic says that every whole number > 1 can be expressed as the product of
     prime numbers in 1 way if you ignore the order of those prime numbers. The <i>prime factorization</i> (PF)
     of a whole number > 1 is an expression of the prime numbers whose product is that number. For example; the
-    PF of 5 is just 5, the PF of 25 is 5<sup>2</sup>, and the PF of 4,725 is 3<sup>3</sup> × 5<sup>2</sup> × 7
-    if the prime numbers are in ascending order. 4,725 could also be expressed as
-    5<sup>2</sup> × 3<sup>3</sup> × 7 but that's the same expression as the previous one if you ignore the order
-    of the prime numbers. The Number Theory Playground displays PFs with the prime numbers in ascending order.
-    There are some interesting applications for PFs. See the info for the "Divisibility" or "GCD and LCM"
-    sections for some applications.
+    PF of 5 is just <math><mn>5</mn><mtext>,</mtext></math> the PF of 25 is ${createPfMathElementMl([[5, 2]], ',')}
+    and the PF of 4,725 is ${createPfMathElementMl([[3, 3], [5, 2], [7, 1]])} if the prime numbers are in
+    ascending order. 4,725 could also be expressed as ${createPfMathElementMl([[5, 2], [3, 3], [7, 1]])} but
+    that's the same expression as the previous one if you ignore the order of the prime numbers. The Number
+    Theory Playground displays PFs with the prime numbers in ascending order. There are some interesting
+    applications for PFs. See the info for the "Divisibility" or "GCD and LCM" sections for some applications.
     
     The input number with the highest amount of prime factors is 8,192 (2<sup>13</sup>). An input number with
-    the highest amount of <em>unique</em> prime factors is 2,310. This number has a PF of 2 × 3 × 5 × 7 × 11.
-    You could also multiply that number by 2, 3, or 4 and those numbers are ≤ the max input and have the same
-    amount of unique prime factors.`;
+    the highest amount of <em>unique</em> prime factors is 2,310. This number has a PF of
+    ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1], [11, 1]], '.')} You could also multiply that number
+    by 2, 3, or 4 and those numbers are ≤ the max input and have the same amount of unique prime factors.`;
 
 /** 
  * @typedef {{ factor: number, power: number }} FactorAndPower
@@ -818,29 +964,25 @@ const pfInfoHtml =
 
 /**
  * @param {FactorAndPower[]} fps
- * @returns {HTMLSpanElement}
- * A span that shows the prime factorization (PF) of a number. This PF consists of the factors and powers in
- * fps. Each factor and power group is separated by " × ". A span is returned so it can be placed in the ol for
- * GCD and LCM PF answers without any problems.
+ * @param {string} [endText]
+ * @returns {MathMLElement}
+ * A math element for the prime factorization whose factors and powers are in fps.
  */
-function createPfSpan(fps) {
-    const pfSpan = createSpan();
+function createPfMathElement(fps, endText) {
+    const pfEl = createMathElement();
     
-    for (let i = 0; i < fps.length; i++) {
-        if (i !== 0) {
-            pfSpan.append(' × ');
-        }
-        
-        const { factor, power } = fps[i];
-        const fpSpan = createSpan(createNumStringWithCommas(factor));
-        if (power > 1) {
-            fpSpan.appendChild(createSuperscript(power));
-        }
-        
-        pfSpan.appendChild(fpSpan);
+    for (const [index, { factor, power }] of fps.entries()) {
+        pfEl.append(
+            index !== 0 ? createMo('×') : '',
+            power === 1 ? createMn(factor) : createMsup(factor, power)
+        )
     }
     
-    return pfSpan;
+    if (endText) {
+        pfEl.appendChild(createMtext(endText))
+    }
+    
+    return pfEl;
 }
 
 /**
@@ -850,9 +992,9 @@ function createPfSpan(fps) {
  */
 function createPfAnswerElements(fps, inputString) {
     const headingText = `The PF of ${inputString} is:`;
-    const pfSpan = createPfSpan(fps);
-    pfSpan.id = 'pf-section-pf-span';
-    return [createNonBoldAnswerH3(headingText), pfSpan];
+    const pfDiv = createDiv(createPfMathElement(fps));
+    pfDiv.id = 'pf-section-answer-div';
+    return [createNonBoldAnswerH3(headingText), pfDiv];
 }
 
 const pfMinInput = 2;
@@ -871,63 +1013,105 @@ new SingleInputSection(
 
 
 const divisInfoStartHtml =
-    `Say we have 2 whole numbers that we'll represent with the variables <var>a</var> and <var>b</var>. If we
-    divide <var>a</var> by <var>b</var> and get no remainder, then <var>a</var> is said to be <i>divisible</i>
-    by <var>b</var> and <var>b</var> is said to be a <i>factor</i> or <i>divisor</i> of <var>a</var>. If you
-    want to find some whole number factors of a whole number, you could manually do some division but there are
-    other ways to find them.`;
+    `Say we have 2 whole numbers that we'll represent with the variables ${aVarMl} and ${bVarAndPeriodMl}
+    If we divide ${aVarMl} by ${bVarMl} and get no remainder, then ${aVarMl} is said to be <i>divisible</i> by
+    ${bVarMl} and ${bVarMl} is said to be a <i>factor</i> or <i>divisor</i> of ${aVarMl}. If you want to find
+    some whole number factors of a whole number, you could manually do some division but there are other ways to
+    find them.`;
+
+/**
+ * @param {number[][]} factorsAndPowers
+ * For each inner array, the first number is the factor and the second is the power.
+ * @param {number} num
+ * @param {string} [endText]
+ */
+const createSubfactorizationMl = (factorsAndPowers, num, endText = ',') =>
+    `<math>
+        <mrow>${createPfMl(factorsAndPowers)}</mrow>
+        <mrow>
+            <mtext class="math-font">&nbsp;(</mtext>
+            <mn>${num}</mn>
+            <mtext class="math-font">)</mtext>
+        </mrow>
+        <mtext>${endText}</mtext>
+    </math>`;
+
+const nVarAndSMl = createMiMl('n', `'s`);
+const pfOf36FactorsAndPowers = [[2, 2], [3, 2]];
 
 const divisPfInfoHtml = 
     `The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a
-    variable <var>n</var> and let it represent a whole number > 1. First, you can find how many factors
-    <var>n</var> has by looking at <var>n</var>'s PF, taking all the powers of the factors, adding 1 to each,
-    and then multiplying all these together. For example, the PF of 36 is 2<sup>2</sup> × 3<sup>2</sup>. The
-    powers are 2 and 2, so there are 3 × 3 = 9 factors. However, that count includes 1 and the number that the
-    PF is for (36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors.
-    You can find the factors of <var>n</var> by finding all the PFs within <var>n</var>'s PF, or the
-    "sub-factorizations", as I like to call them. For 2<sup>2</sup> × 3<sup>2</sup>, the sub-factorizations are
-    2, 3, 2<sup>2</sup> (4), 2 × 3 (6), 3<sup>2</sup> (9), 2<sup>2</sup> × 3 (12), and 2 × 3<sup>2</sup> (18).
+    variable ${nVarMl} and let it represent a whole number > 1. First, you can find how many factors ${nVarMl}
+    has by looking at ${nVarAndSMl} PF, taking all the powers of the factors, adding 1 to each, and then
+    multiplying all these together. For example, the PF of 36 is ${createPfMathElementMl(pfOf36FactorsAndPowers, '.')}
+    The powers are 2 and 2, so there are <math><mn>3</mn><mo>×</mo><mn>3</mn><mo>=</mo><mn>9</mn></math> factors.
+    However, that count includes 1 and the number that the PF is for (36 in this case). If you want to exclude
+    those, then subtract 2. That would give us 7 factors. You can find the factors of ${nVarMl} by finding all
+    the PFs within ${nVarAndSMl} PF, or the "sub-factorizations," as I like to call them. For
+    ${createPfMathElementMl(pfOf36FactorsAndPowers, ',')} the sub-factorizations are
+    <math><mn>2</mn><mtext>,</mtext></math>
+    <math><mn>3</mn><mtext>,</mtext></math>
+    ${createSubfactorizationMl([[2, 2]], 4)}
+    ${createSubfactorizationMl([[2, 1], [3, 1]], 6)}
+    ${createSubfactorizationMl([[3, 2]], 9)}
+    ${createSubfactorizationMl([[2, 2], [3, 1]], 12)}
+    and
+    ${createSubfactorizationMl([[2, 1], [3, 2]], 18, '.')}
     
     Whole numbers that are ≤ the max input of this section generally have a pretty small amount of factors, like
     < 20. An example of an input number with a high number of factors is 9,240. This number has a PF of
-    2<sup>3</sup> × 3 × 5 × 7 × 11. It has 4 × 2<sup>4</sup> = 2<sup>6</sup> = 64 total factors!`;
+    ${createPfMathElementMl([[2, 3], [3, 1], [5, 1], [7, 1], [11, 1]], '.')} It has
+    <math>
+        <mrow>
+            <mn>4</mn>
+            <mo>×</mo>
+            <msup><mn>2</mn><mn>4</mn></msup>
+        </mrow>
+        <mo>=</mo>
+        <msup><mn>2</mn><mn>6</mn></msup>
+        <mo>=</mo>
+        <mn>64</mn>
+    </math>
+    total factors!`;
 
 const divisPfInfoDiv =
     createDiv(createH3('Prime Factorization'), ...createPsWithParagraphs(divisPfInfoHtml));
     
 const divisRulesInfoHtml =
     `Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1
-    rule for each number in the range of 3 to 12, excluding 5 and 10, though there are rules for more numbers
-    and many numbers have multiple rules. I'll go over an example of using these rules to find the factors of a
-    number in the "Example" section below. Let's have a variable <var>n</var> and let it represent a whole
-    number. If the last 2 digits of <var>n</var> is divisible by 4, then <var>n</var> is divisible by 4. If the
-    last 3 digits of <var>n</var> is divisible by 8, then <var>n</var> is divisible by 8. If the sum of the
-    digits of <var>n</var> is divisible by 3, then <var>n</var> is divisible by 3. If the sum of the digits of
-    <var>n</var> is divisible by 9, then <var>n</var> is divisible by 9. If <var>n</var> is even and divisible
-    by 3, then it's also divisible by 6. If <var>n</var> is divisible by both 3 and 4, then it's also divisible
-    by 12.
+    rule for each number in the range of 3 to 12, excluding 5 and 10, though there are rules for more numbers and
+    many numbers have multiple rules. I'll go over an example of using these rules to find the factors of a number
+    in the "Example" section below. Let's have a variable ${nVarMl} and let it represent a whole number. If the
+    last 2 digits of ${nVarMl} is divisible by 4, then ${nVarMl} is divisible by 4. If the last 3 digits of
+    ${nVarMl} is divisible by 8, then ${nVarMl} is divisible by 8. If the sum of the digits of ${nVarMl} is
+    divisible by 3, then ${nVarMl} is divisible by 3. If the sum of the digits of ${nVarMl} is divisible by 9,
+    then ${nVarMl} is divisible by 9. If ${nVarMl} is even and divisible by 3, then it's also divisible by 6. If
+    ${nVarMl} is divisible by both 3 and 4, then it's also divisible by 12.
     
-    For 7, we split <var>n</var> into 3-digit blocks from right to left, though the leftmost block can contain
-    1 or 2 digits. Coincidentally, these are the blocks separated by commas if we write <var>n</var> with
-    commas. We do an alternating sum of the blocks from right to left. We start with 0, add the rightmost block,
-    subtract the block to the left of that, add the block to the left of that, and so on for all the blocks. If
-    this sum is divisible by 7, then <var>n</var> is divisible by 7.
+    For 7, we split ${nVarMl} into 3-digit blocks from right to left, though the leftmost block can contain 1 or
+    2 digits. Coincidentally, these are the blocks separated by commas if we write ${nVarMl} with commas. We do
+    an alternating sum of the blocks from right to left. We start with 0, add the rightmost block, subtract the
+    block to the left of that, add the block to the left of that, and so on for all the blocks. If this sum is
+    divisible by 7, then ${nVarMl} is divisible by 7.
     
-    For 11, we do an alternating sum of the digits of <var>n</var> from left to right. We start with 0, add the
-    1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all
-    the digits. If this sum is divisible by 11, then <var>n</var> is divisible by 11. These alternating sums
-    might involve negative integers or 0, so that makes them some of the few calculations done by the Number
-    Theory Playground that involve numbers other than natural numbers.`;
+    For 11, we do an alternating sum of the digits of ${nVarMl} from left to right. We start with 0, add the
+    1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all the
+    digits. If this sum is divisible by 11, then ${nVarMl} is divisible by 11. These alternating sums might
+    involve negative integers or 0, so that makes them some of the few calculations done by the Number Theory
+    Playground that involve numbers other than natural numbers.`;
 
 const divisRulesExampleHtml =
-    `Let <var>n</var> be 5,544. Its PF is 2<sup>3</sup> × 3<sup>2</sup> × 7 × 11. We can tell from that PF that
-    <var>n</var> is divisible by all the numbers that had rules mentioned about them above. Let's check if
-    <var>n</var> is divisible by those numbers using those rules. The last 2 digits are 44, which is divisible
-    by 4. The last 3 digits are 544, which is divisible by 8. The sum of the digits is 5 + 5 + 4 + 4 = 18, which
-    is divisible by both 3 and 9. Since <var>n</var> is even and divisible by 3, it's also divisible by 6. Since
-    <var>n</var> is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of 3-digit blocks
-    from right to left is 544 − 5 = 539, which is divisible by 7. The alternating sum of digits from left to
-    right is 8 − 7 + 1 − 2 = 0, which is divisible by 11.`;
+    `Let ${nVarMl} be 5,544. Its PF is ${createPfMathElementMl([[2, 3], [3, 2], [7, 1]], '.')} We can tell from
+    that PF that ${nVarMl} is divisible by all the numbers that had rules mentioned about them above. Let's check
+    if ${nVarMl} is divisible by those numbers using those rules. The last 2 digits are 44, which is divisible by
+    4. The last 3 digits are 544, which is divisible by 8. The sum of the digits is
+    <math><mn>5</mn><mo>+</mo><mn>5</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>4</mn><mo>=</mo><mn>18</mn><mtext>,</mtext></math>
+    which is divisible by both 3 and 9. Since ${nVarMl} is even and divisible by 3, it's also divisible by 6.
+    Since ${nVarMl} is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of 3-digit
+    blocks from right to left is <math><mn>544</mn><mo>−</mo><mn>5</mn><mo>=</mo><mn>539</mn><mtext>,</mtext></math>
+    which is divisible by 7. The alternating sum of digits from left to right is
+    <math><mn>5</mn><mo>−</mo><mn>5</mn><mo>+</mo><mn>4</mn><mo>−</mo><mn>4</mn><mo>=</mo><mn>0</mn><mtext>,</mtext></math>
+    which is divisible by 11.`;
     
 const divisRulesExampleP = createPWithInnerHtml(divisRulesExampleHtml);
 divisRulesExampleP.id = 'divis-rules-example-p';
@@ -943,51 +1127,35 @@ const divisInfoElements =
     [createPWithInnerHtml(divisInfoStartHtml), divisPfInfoDiv, divisRulesInfoDiv];
 
 /**
- * @typedef {{ sum: number, expression: string }} AlternatingSumAndExpression
- * 
- * @typedef {Object} DivisibilityRulesData
- * For the input number 5,544, blocksAltSumAndExpression would have an expression of "544 - 5" and a sum of 539.
- * digitsAltSumAndExpression would have an expression of "5 - 5 + 4 - 5" and a sum of 0.
- * @property {number} last2Digits
- * @property {number} last3Digits
- * @property {number} sumOfDigits
- * @property {?AlternatingSumAndExpression} blocksAltSumAndExpression
- * @property {AlternatingSumAndExpression} digitsAltSumAndExpression
- * 
  * @typedef {Object} DivisibilityPrimeFactorizationAnswer
- * For the input number with a PF of 5^2 × 7^3, numFactorsExpression would be "(2 + 1) × (3 + 1)" and numFactors
- * would be 12.
  * @property {FactorAndPower[]} inputFps
- * @property {string} numFactorsExpression
- * @property {number} numFactors
  * @property {PrimeFactorization[]} factorPfs
  */
 
 /** 
- * @param {{ rulesData: DivisibilityRulesData, pfAnswer: ?DivisibilityPrimeFactorizationAnswer }}
  * If pfAnswer is null, then that means the input number is prime.
+ * @param {DivisibilityPrimeFactorizationAnswer} pfAnswer
  * @param {string} inputString
  * @param {number} inputNum 
  * @returns {HTMLElement[]}
  */
-const createDivisAnswerElements = ({ rulesData, pfAnswer }, inputString, inputNum) =>
+const createDivisAnswerElements = (pfAnswer, inputString, inputNum) =>
     [
         createH3(`Divisibility Info for ${inputString}`),
-        createDivisRulesAnswerDiv(rulesData, inputString, inputNum),
-        createDivisPfAnswerDiv(pfAnswer, inputString)
+        createDivisRulesAnswerDiv(inputString, inputNum),
+        createDivisPfAnswerDiv(pfAnswer, inputString, inputNum)
     ];
 
 /**
  * This function does the only non-trivial calculations that are done on the front end.
  * 
- * @param {DivisibilityRulesData} rulesData 
- * @param {string} inputString 
- * @param {number} inputNum 
+ * @param {string} inputStringWithCommas
+ * @param {number} inputNum
  * @returns {HTMLDivElement}
  * A div with a heading and a paragraph element with info about factors of the input number that are found
  * using divisibility rules.
  */
-function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
+function createDivisRulesAnswerDiv(inputStringWithCommas, inputNum) {
     const heading = createH4('Rules Info');
 
     /**
@@ -998,138 +1166,198 @@ function createDivisRulesAnswerDiv(rulesData, inputString, inputNum) {
      * @param {number} numFromCalculation
      * Since the max input is 10,000, this number will be at most 3 digits so it'll never require a comma.
      * @param {boolean} isDivisible 
+     * @returns {string}
+     * This has a space at the end to separate the sentence in this string from the next sentence in the created paragraph.
      */
     function getDivisSentence(possibleFactor, numFromCalculation, isDivisible) {
         const isOrIsnt = isDivisible ? 'is' : `isn't`;
-        return `${numFromCalculation} ${isOrIsnt} divisible by ${possibleFactor} so ${inputString} \
-            ${isOrIsnt} divisible by ${possibleFactor}.`;
+        return `${numFromCalculation} ${isOrIsnt} divisible by ${possibleFactor} so ${inputStringWithCommas}
+            ${isOrIsnt} divisible by ${possibleFactor}. `;
     }
-
-    const { last2Digits, last3Digits, sumOfDigits } = rulesData;
-    /**
-     * @type {string[]}
-     */
-    const sentences = [];
+    
+    const answerP = createP();
     const isEvenVar = isEven(inputNum);
+    const last2Digits = inputNum % 100;
     const isDivisibleBy4 = isDivisible(last2Digits, 4);
 
     if (!isEvenVar) {
-        sentences.push(`${inputString} isn't even so it isn't divisible by any even numbers.`);
+        answerP.append(`${inputStringWithCommas} isn't even so it isn't divisible by any even numbers. `);
     } else if (inputNum >= 100) {
-        sentences.push(
-            `The last 2 digits form the number ${last2Digits}.`,
+        answerP.append(
+            `The last 2 digits form the number ${last2Digits}. `,
             getDivisSentence(4, last2Digits, isDivisibleBy4)
         );
 
         if (isDivisibleBy4) {
             if (inputNum >= 1_000) {
+                const last3Digits = inputNum % 1_000;
                 const isDivisibleBy8 = isDivisible(last3Digits, 8);
-                sentences.push(
-                    `The last 3 digits form the number ${last3Digits}.`,
+                answerP.append(
+                    `The last 3 digits form the number ${last3Digits}. `,
                     getDivisSentence(8, last3Digits, isDivisibleBy8)
                 );
             }
         } else {
-            sentences.push(
-                `Since ${inputString} isn't divisible by 4, it's also not divisible by 8, 12, and any other \
-                multiples of 4.`
+            answerP.append(
+                `Since ${inputStringWithCommas} isn't divisible by 4, it's also not divisible by 8, 12, and any
+                other multiples of 4. `
             );
         }
     }
 
+    const inputStringWithoutCommas = inputNum.toString();
+    const inputNumDigits = Array.from(inputStringWithoutCommas);
+    const sumOfDigitsEl = createMathElement();
+    let sumOfDigits = 0;
+    const digitsAltSumEl = createMathElement();
+    let digitsAltSum = 0;
+    let addForAltSum = true;
+    
+    for (const [index, digitString] of inputNumDigits.entries()) {
+        if (index !== 0) {
+            sumOfDigitsEl.appendChild(createMo('+'));
+            digitsAltSumEl.appendChild(createMo(addForAltSum ? '+' : '−'));
+        }
+        
+        const digitNum = Number(digitString);
+        sumOfDigitsEl.appendChild(createMn(digitString));
+        sumOfDigits += digitNum;
+        digitsAltSumEl.appendChild(createMn(digitString));
+        digitsAltSum += addForAltSum ? digitNum : -digitNum;
+        addForAltSum = !addForAltSum;
+    }
+    
+    sumOfDigitsEl.append(createMo('='), createMn(sumOfDigits), createMtext('.'));
+    digitsAltSumEl.append(createMo('='), createMn(digitsAltSum), createMtext('.'));
+    
     const isDivisibleBy3 = isDivisible(sumOfDigits, 3);
-    sentences.push(
-        `The sum of the digits is ${sumOfDigits}.`,
+    answerP.append(
+        'The sum of the digits is ',
+        sumOfDigitsEl,
+        ' ',
         getDivisSentence(3, sumOfDigits, isDivisibleBy3)
     );
 
     if (isDivisibleBy3) {
         const isDivisibleBy9 = isDivisible(sumOfDigits, 9);
-        sentences.push(getDivisSentence(9, sumOfDigits, isDivisibleBy9));
+        answerP.append(getDivisSentence(9, sumOfDigits, isDivisibleBy9));
 
         if (isEvenVar) {
-            sentences.push(`${inputString} is even and divisible by 3 so it's also divisible by 6.`);
+            answerP.append(`${inputStringWithCommas} is even and divisible by 3 so it's also divisible by 6. `);
 
             if (isDivisibleBy4) {
-                sentences.push(`${inputString} is divisible by both 3 and 4 so it's also divisible by 12.`);
+                answerP.append(`${inputStringWithCommas} is divisible by both 3 and 4 so it's also divisible by 12. `);
             } else if (inputNum < 100) {
-                sentences.push(`${inputString} isn't divisible by 4 so it isn't divisible by 12.`)
+                answerP.append(`${inputStringWithCommas} isn't divisible by 4 so it isn't divisible by 12. `)
             }
         }
     } else {
-        sentences.push(
-            `Since ${inputString} isn't divisible by 3, it's also not divisible by 6, 9, 12, and any \
-            other multiples of 3.`
+        answerP.append(
+            `Since ${inputStringWithCommas} isn't divisible by 3, it's also not divisible by 6, 9, 12, and any
+            other multiples of 3. `
         );
     }
     
-    const { blocksAltSumAndExpression, digitsAltSumAndExpression } = rulesData;
-    
-    if (blocksAltSumAndExpression) {
-        // Since the max input is 10,000, this sum will be at most 3 digits long so it'll never require a comma.
-        const { sum, expression } = blocksAltSumAndExpression;
-        const isDivisibleBy7 = isDivisible(sum, 7);
-        sentences.push(
-            `The alternating sum of 3-digit blocks from right to left is ${expression} = ${sum}.`,
-            getDivisSentence(7, sum, isDivisibleBy7)
+    if (inputNum >= 1_000) {
+        const blocksAltSumEl = createMathElement();
+        let blocksAltSum = 0;
+        addForAltSum = true;
+        
+        for (let i = inputStringWithoutCommas.length - 3; i >= -2; i -= 3) {
+            if (blocksAltSumEl.firstChild) {
+                blocksAltSumEl.append(createMo(addForAltSum ? '+' : '−'));
+            }
+            
+            const blockString = inputStringWithoutCommas.substring(Math.max(i, 0), i + 3);
+            blocksAltSumEl.append(createMn(blockString));
+            const blockNum = Number(blockString);
+            blocksAltSum += addForAltSum ? blockNum : -blockNum;
+            addForAltSum = !addForAltSum;
+        }
+        
+        blocksAltSumEl.append(createMo('='), createMn(blocksAltSum), createMtext('.'));
+        const isDivisibleBy7 = isDivisible(blocksAltSum, 7);
+        answerP.append(
+            'The alternating sum of 3-digit blocks from right to left is ',
+            blocksAltSumEl,
+            ' ',
+            getDivisSentence(7, blocksAltSum, isDivisibleBy7)
         );
     }
-
-    const { sum, expression } = digitsAltSumAndExpression;
-    const isDivisibleBy11 = isDivisible(sum, 11);
-    sentences.push(
-        `The alternating sum of digits from left to right is ${expression} = ${sum}.`,
-        getDivisSentence(11, sum, isDivisibleBy11)
+    
+    const isDivisibleBy11 = isDivisible(digitsAltSum, 11);
+    answerP.append(
+        'The alternating sum of digits from left to right is ',
+        digitsAltSumEl,
+        ' ',
+        getDivisSentence(11, digitsAltSum, isDivisibleBy11)
     );
 
-    return createDiv(heading, createP(sentences.join(' ')));
+    return createDiv(heading, answerP);
 }
 
 /**
  * @param {?DivisibilityPrimeFactorizationAnswer} pfAnswer
  * If this is null, then that means the input number is prime.
  * @param {string} inputString 
+ * @param {number} inputNum
  * @returns {HTMLDivElement}
  * A div with at least a heading and an inner div with text that shows the PF of the input number. If pfAnswer
  * is null, then the inner div will only contain a little more info. Otherwise, the inner div will contain more
  * info about the number of factors the input number has. Also, the returned div will also contain an ordered
  * list that shows the factors of the input number and the PFs of those factors.
  */
-function createDivisPfAnswerDiv(pfAnswer, inputString) {
+function createDivisPfAnswerDiv(pfAnswer, inputString, inputNum) {
     const heading = createH4('Prime Factorization Info');
     const pfInfoTextDiv = createNarrowTextDiv(`The PF of ${inputString} is `);
     const pfDiv = createDiv(heading, pfInfoTextDiv);
 
     if (!pfAnswer) {
         pfInfoTextDiv.append(
-            `${inputString}. ${inputString} is prime and doesn't have any whole number factors other than 1 and itself.`
+            createMathElement(createMn(inputNum), createMtext('.')),
+            ` ${inputString} is prime and doesn't have any whole number factors other than 1 and itself.`
         );
         return pfDiv;
     }
 
-    const { inputFps, numFactorsExpression, numFactors, factorPfs } = pfAnswer;
-    pfInfoTextDiv.append(createPfSpan(inputFps), '. ');
+    const { inputFps, factorPfs } = pfAnswer;
+    pfInfoTextDiv.append(createPfMathElement(inputFps, '.'), ' ');
+    
+    const numFactorsEl = createMathElement();
+    let numFactors = 1;
+    for (const [index, { power }] of inputFps.entries()) {
+        numFactorsEl.append(
+            index !== 0 ? createMo('×') : '',
+            createMrow(createMo('('), createMn(power), createMo('+'), createMn(1), createMo(')'))
+        );
+        numFactors *= power + 1;
+    }
+    numFactorsEl.append(createMo('='), createMn(numFactors));
 
-    const numFactorsInfoEnd =
+    pfInfoTextDiv.append(
+        'By looking at the powers, we can see that there are ',
+        numFactorsEl,
+        ` factors. If 1 and ${inputString} are excluded, then `,
         'there' + (
             numFactors === 3
             ? `'s 1 factor`
             : ` are ${createNumStringWithCommas(numFactors - 2)} factors`
-        );
-
-    const numFactorsInfo =
-        `By looking at the powers, we can see that there are ${numFactorsExpression} = ${numFactors} factors. \
-        If 1 and ${inputString} are excluded, then ${numFactorsInfoEnd}.`;
-
-    pfInfoTextDiv.append(numFactorsInfo, ' The factors and their PFs are:');
+        ),
+        '. The factors and their PFs are:'
+    );
 
     /**
      * @param {PrimeFactorization} 
      * @returns {HTMLLIElement}
      */
     function pfToLi({ fps, correspondingNum }) {
-        const numStringWithCommas = createNumStringWithCommas(correspondingNum);
-        return fps ? createLi(createPfSpan(fps), ` (${numStringWithCommas})`) : createLi(numStringWithCommas);
+        const corNumMn = createMn(correspondingNum);
+        if (!fps) return createLi(createMathElement(corNumMn));
+        const pfEl = createPfMathElement(fps);
+        pfEl.appendChild(
+            createMrow(createMtextWithMathFont('(', true), corNumMn, createMtextWithMathFont(')'))
+        );
+        return createLi(pfEl);
     }
 
     const factorsOl = arrToAnswerFlexOl(factorPfs, pfToLi);
@@ -1145,7 +1373,7 @@ new SingleInputSection(
         actionSentenceEndingHtml: 'divisbility info for that number',
         minInput: 10,
         maxInput: tenThousand,
-        apiEndpointEnd: 'divisibility-answer'
+        apiEndpointEnd: 'divisibility-pf-answer'
     },
     createDivisAnswerElements
 );
@@ -1249,13 +1477,15 @@ const gcdAndLcmPfInfoHtml =
     If a factor is in both PFs, then the power of that factor in the LCM PF is the max of the powers of that
     factor in the 2 PFs. If a factor is unique to one of the PFs, then that factor and its power are in the LCM PF.
 
-    Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is 2 × 3 and the PF of 35 is 5 × 7.
-    There are no common prime factors so the GCD is 1. The LCM PF is 2 × 3 × 5 × 7, which is 210.
+    Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is ${createPfMathElementMl([[2, 1], [3, 1]])}
+    and the PF of 35 is ${createPfMathElementMl([[5, 1], [7, 1]], '.')} There are no common prime factors so the
+    GCD is 1. The LCM PF is ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1]], ',')} which is 210.
     
-    Let's find the GCD and LCM of 54 and 99 using their PFs. The PF of 54 is 2 × 3<sup>3</sup> and the PF of 99
-    is 3<sup>2</sup> × 11. 3 is the only common prime factor and the min power of it is 2 so the GCD PF is
-    3<sup>2</sup>, which is 9. The max power of 3 is 3 so 3<sup>3</sup> is in the LCM PF. The LCM PF is
-    2 × 3<sup>3</sup> × 11, which is 594.`;
+    Let's find the GCD and LCM of 54 and 99 using their PFs. The PF of 54 is ${createPfMathElementMl([[2, 1], [3, 3]])}
+    and the PF of 99 is ${createPfMathElementMl([[3, 2], [11, 1]], '.')} 3 is the only common prime factor and
+    the min power of it is 2 so the GCD PF is ${createPfMathElementMl([[3, 2]], ',')} which is 9. The max power
+    of 3 is 3 so ${createPfMathElementMl([[3, 3]])} is in the LCM PF. The LCM PF is
+    ${createPfMathElementMl([[2, 1], [3, 3], [11, 1]], ',')} which is 594.`;
 
 const gcdAndLcmPfInfoDiv =
     createDiv(createH3('Prime Factorizations'), ...createPsWithParagraphs(gcdAndLcmPfInfoHtml));
@@ -1267,7 +1497,7 @@ const gcdAndLcmOtherInfo =
     8,192 (2<sup>13</sup>) and 6,561 (3<sup>8</sup>). Their LCM is 53,747,712. A pair of input numbers whose LCM
     might have the highest amount of <em>unique</em> prime factors is 2,310, the product of the first 5 prime
     numbers; and 4,199, the product of the next 3 prime numbers. Their LCM is 9,699,690 and its PF is
-    2 × 3 × 5 × 7 × 11 × 13 × 17 × 19.`
+    ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1], [11, 1], [13, 1], [17, 1], [19, 1]], '.')}`;
 
 const gcdAndLcmOtherInfoDiv =
     createDiv(createH3('Other Info'), createPWithInnerHtml(gcdAndLcmOtherInfo));
@@ -1320,7 +1550,7 @@ function createGcdAndLcmPfAnswerDiv(answer, input1String, input2String) {
      * @returns {HTMLLIElement}
      */
     const createInputPfLi = (inputString, fps) =>
-        createLi(`The PF of ${inputString} is `, createPfSpan(fps), '.');
+        createLi(`The PF of ${inputString} is `, createPfMathElement(fps, '.'));
 
     /**
      * @param {string} gcdOrLcmText 
@@ -1330,7 +1560,7 @@ function createGcdAndLcmPfAnswerDiv(answer, input1String, input2String) {
     function createGcdOrLcmPfLi(gcdOrLcmText, { fps, correspondingNum }) {
         const li = createLi(`The PF of the ${gcdOrLcmText} is `);
         if (fps) {
-            li.append(createPfSpan(fps), ', which is ');
+            li.append(createPfMathElement(fps, ','), ' which is ');
         }
         li.append(createNumStringWithCommas(correspondingNum), '.');
         return li;
@@ -1406,23 +1636,46 @@ new GoldbachConjectureSection(
 );
 
 
+/**
+ * This is used at the ends of sentences so a period is included.
+ * @param {number} a
+ * @param {number} b
+ * @param {number} c
+ */
+const createPythagTripleMl = (a, b, c) =>
+    `<math>
+        ${createNumAndSquareMl(a)}
+        <mo>+</mo>
+        ${createNumAndSquareMl(b)}
+        <mo>=</mo>
+        ${createNumAndSquareMl(c)}
+        <mtext>.</mtext>
+    </math>`;
+
 const pythagTriplesInfoHtml =
     `The Pythagorean theorem says that for a right triangle, the sum of the squares of the lengths of the 2
     shortest sides (legs) equals the square of the longest side (hypotenuse) length, or
-    <var>a</var><sup>2</sup> + <var>b</var><sup>2</sup> = <var>c</var><sup>2</sup>. This was named after
-    the ancient Greek mathematician Pythagoras. A <i>Pythagorean triple</i> is a triple of whole numbers that
-    <var>a</var>, <var>b</var>, and <var>c</var> can be. For example; 3, 4, and 5 is a Pythagorean triple since
-    3<sup>2</sup> (9) + 4<sup>2</sup> (16) = 5<sup>2</sup> (25). 11, 60, and 61 is another one since
-    11<sup>2</sup> (121) + 60<sup>2</sup> (3,600) = 61<sup>2</sup> (3,721).
+    <math>
+        <msup><mi>a</mi><mn>2</mn></msup>
+        <mo>+</mo>
+        <msup><mi>b</mi><mn>2</mn></msup>
+        <mo>=</mo>
+        <msup><mi>c</mi><mn>2</mn></msup>
+        <mtext>.</mtext>
+    </math>
+    This was named after the ancient Greek mathematician Pythagoras. A <i>Pythagorean triple</i> is a triple of
+    whole numbers that ${aVarAndCommaMl} ${bVarAndCommaMl} and ${cVarMl} can be. For example; 3, 4, and 5 is a
+    Pythagorean triple since ${createPythagTripleMl(3, 4, 5)} 11, 60, and 61 is another one since
+    ${createPythagTripleMl(11, 60, 61)}
     
-    Once we know a Pythagorean triple, we can form another one by multiplying <var>a</var>, <var>b</var>, and
-    <var>c</var> by the same whole number > 1, Because of this, there are an infinite amount of Pythagorean
-    triples. A Pythagorean triple is considered to be <i>primitive</i> if the GCD of <var>a</var>, <var>b</var>,
-    and <var>c</var> is 1. Therefore, a primitive triple can't be formed by taking another triple and multiplying
-    <var>a</var>, <var>b</var>, and <var>c</var> by the same whole number. The triples mentioned above;
-    3, 4, and 5, and 11, 60, and 61; are primitive. 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is another triple.
-    6<sup>2</sup> (36) + 8<sup>2</sup> (64) = 10<sup>2</sup> (100). 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5)
-    is another one. 55<sup>2</sup> (3,025) + 300<sup>2</sup> (90,000) = 305<sup>2</sup> (93,025).
+    Once we know a Pythagorean triple, we can form another one by multiplying ${aVarAndCommaMl} ${bVarAndCommaMl}
+    and ${cVarMl} by the same whole number > 1, Because of this, there are an infinite amount of Pythagorean
+    triples. A Pythagorean triple is considered to be <i>primitive</i> if the GCD of ${aVarAndCommaMl}
+    ${bVarAndCommaMl} and ${cVarMl} is 1. Therefore, a primitive triple can't be formed by taking another triple
+    and multiplying ${aVarAndCommaMl} ${bVarAndCommaMl} and ${cVarMl} by the same whole number. The triples
+    mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive. 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is
+    another triple. ${createPythagTripleMl(6, 8, 10)} 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
+    ${createPythagTripleMl(55, 300, 305)}
     
     The algorithm I came up with for calculating triples first tries to find triples where the short leg length
     equals the input number and then tries to find triples where the short leg equals the input number + 1, and
@@ -1450,8 +1703,17 @@ function createPythagTriplesAnswerElements(triples, inputString) {
      * @returns {HTMLLIElement}
      */
     function tripleToLi({ a, b, c, isPrimitive }) {
-        const maybePrimitiveString = isPrimitive ? ' (primitive)' : '';
-        return createLi(createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b), ' = ', createNumAndSquareSpan(c), maybePrimitiveString);
+        const maybePrimitiveText = isPrimitive ? createMtext('(primitive)', true) : '';
+        const tripleEl =
+            createMathElement(
+                createNumAndSquareMrow(a),
+                createMo('+'),
+                createNumAndSquareMrow(b),
+                createMo('='),
+                createNumAndSquareMrow(c),
+                maybePrimitiveText
+            );
+        return createLi(tripleEl);
     }
 
     const triplesOl = arrToAnswerNormalOl(triples, tripleToLi);
@@ -1478,11 +1740,17 @@ const twoSquareTheoremInfoHtml =
     `Fermat's two square theorem says that every prime number that's 1 above a multiple of 4 can be expressed as
     the sum of 2 squares in 1 way. This was named after 1600s French mathematician Pierre de Fermat. In the
     context of this theorem, <i>square</i> is a shortening of <i>square number</i> or <i>perfect square</i> and
-    is a number that can be formed by taking an integer and multiplying it by itself, or squaring it. The first 4
-    squares are 0 (0<sup>2</sup>), 1 (1<sup>2</sup> or (-1)<sup>2</sup>), 4 (2<sup>2</sup> or (-2)<sup>2</sup>),
-    and 9 (3<sup>2</sup> or (-3)<sup>2</sup>). Because of this theorem, a prime number that's 1 above a multiple
-    of 4 is known as a <i>Pythagorean prime</i>. An example of a Pythagorean prime is 29 and it can be expressed
-    as 2<sup>2</sup> (4) + 5<sup>2</sup> (25).`;
+    is a number that can be formed by taking an integer and multiplying it by itself, or <i>squaring</i> it. The
+    first 4 squares are 0 (0<sup>2</sup>), 1 (1<sup>2</sup> or (-1)<sup>2</sup>),
+    4 (2<sup>2</sup> or (-2)<sup>2</sup>), and 9 (3<sup>2</sup> or (-3)<sup>2</sup>). Because of this theorem, a
+    prime number that's 1 above a multiple of 4 is known as a <i>Pythagorean prime</i>. An example of a
+    Pythagorean prime is 29 and it can be expressed as
+    <math>
+        ${createNumAndSquareMl(2)}
+        <mo>+</mo>
+        ${createNumAndSquareMl(5)}
+        <mtext>.</mtext>
+    </math>`;
 
 /**
  * @param {{ pythagPrime: number, a: number, b: number }}
@@ -1491,8 +1759,8 @@ const twoSquareTheoremInfoHtml =
  */
 function createTwoSquareTheoremAnswerElements({ pythagPrime, a, b }, inputString) {
     const headingText = `The first Pythagorean prime ≥ ${inputString} is:`;
-    const answerDiv =
-        createDiv(createNumStringWithCommas(pythagPrime), ', which is ', createNumAndSquareSpan(a), ' + ', createNumAndSquareSpan(b));
+    const aAndBEl = createMathElement(createNumAndSquareMrow(a), createMo('+'), createNumAndSquareMrow(b));
+    const answerDiv = createDiv(createNumStringWithCommas(pythagPrime), ', which is ', aAndBEl);
     answerDiv.id = 'two-square-theorem-answer-div';
     return [createNonBoldAnswerH3(headingText), answerDiv];
 }
@@ -1528,10 +1796,38 @@ const fiboLikeSequencesInfoHtml =
     2, 1, 3, 4, 7, 11, 18, and 29. This sequence was named after 1800s French mathematician François Édouard Anatole Lucas.
     
     The <i>Golden Ratio</i> is an irrational number symbolized by the Greek letter ${phiLetter} (Phi).
-    ${phiLetter} = (1 + <math><msqrt><mn>5</mn></msqrt></math>) / 2 ≈ ${phiNumString}. As we advance further
-    and further into a Fibonacci-like sequence, the ratio between a number and the number before it gets closer
-    and closer to ${phiLetter}. For example, recall that the first 8 numbers of the Fibonacci sequence are
-    1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ 1.615384615384615.
+    <math>
+        <mi>${phiLetter}</mi>
+        <mo>=</mo>
+        <mfrac>
+            <mrow><mn>1</mn><mo>+</mo><msqrt><mn>5</mn></msqrt></mrow>
+            <mn>2</mn>
+        </mfrac>
+        <mo>≈</mo>
+        <mn>${phiNumString}</mn>
+        <mtext>.</mtext>
+    </math>
+    As we advance further and further into a Fibonacci-like sequence, the ratio between a number and the number
+    before it gets closer and closer to ${phiLetter}. For example, recall that the first 8 numbers of the
+    Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21. 
+    <math>
+        <mfrac><mn>2</mn><mn>1</mn></mfrac>
+        <mo>=</mo>
+        <mn>2</mn>
+        <mtext>,</mtext>
+    </math>
+    <math>
+        <mfrac><mn>8</mn><mn>5</mn></mfrac>
+        <mo>=</mo>
+        <mn>1.6</mn>
+        <mtext>, and</mtext>
+    </math>
+    <math>
+        <mfrac><mn>21</mn><mn>13</mn></mfrac>
+        <mo>≈</mo>
+        <mn>1.615384615384615</mn>
+        <mtext>.</mtext>
+    </math>
     
     The ratios that get calculated by this section are floating-point numbers most of the time, so these
     calculations are some of the few calculations done by the Number Theory Playground that involve numbers other
@@ -1563,17 +1859,19 @@ function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratiosData },
 
     /**
      * @param {RatioData}
-     * @returns {string}
+     * @returns {MathMLElement}
      */
-    function ratioDataToString({ num1String, num2String, ratio, isRounded }) {
-        const num1StringWithCommas = createNumStringWithCommas(num1String);
-        const num2StringWithCommas = createNumStringWithCommas(num2String);
-        return `${num2StringWithCommas} / ${num1StringWithCommas} ${isRounded ? '≈' : '='} ${ratio}`;
-    }
-
+    const ratioDataToMathElement = ({ num1String, num2String, ratio, isRounded }) =>
+        createMathElement(
+            createMathMlElement('mfrac', createMn(num1String), createMn(num2String)),
+            createMo(isRounded ? '≈' : '='),
+            createMn(ratio)
+        );
+        
     const ratiosHeading = createNonBoldAnswerH3('The ratios are:');
-    const ratiosOl = arrToAnswerNormalOl(ratiosData, ratioDataToString);
-    ratiosOl.append(createLi(`${phiLetter} ≈ ${phiNumString}`));
+    const ratiosOl = arrToAnswerNormalOl(ratiosData, ratioDataToMathElement);
+    const phiEl = createMathElement(createMi(phiLetter), createMo('≈'), createMn(phiNumString));
+    ratiosOl.append(createLi(phiEl));
     const ratiosDiv = createDiv(ratiosHeading, ratiosOl);
     ratiosDiv.id = 'fibo-like-sequence-ratios-div';
 
@@ -1597,23 +1895,97 @@ const ancientMultAlgorithmInfoStart =
     `The ancient Egyptians had an interesting algorithm for multiplication of 2 whole numbers. My way of
     explaining the algorithm goes like this:`;
 
-const ancientMultStepsArr = [
-    'Let variable <var>a</var> represent one of the numbers and variable <var>b</var> represent the other one.',
 
-    `Find all powers of 2 that are ≤ <var>a</var>. This could be done without modern multiplication by starting
-    with 1, the 1<sup>st</sup> power of 2 or 2<sup>0</sup>, and finding the next power by adding the previous
-    power to itself. This process will look like:
-    1 + 1 = 2 (2<sup>1</sup>), 2 + 2 = 4 (2<sup>2</sup>), 4 + 4 = 8 (2<sup>3</sup>), and so on until we find a
-    power that's > <var>a</var>, which we won't use.`,
     
-    `Find the products of <var>b</var> and these powers of 2. Like with the powers of 2, this could be done by
-    starting with <var>b</var> and finding the next product by adding the previous product to itself. If we let
-    <var>b</var> be 5, this process will look like:
-    5 + 5 = 10 (5 × 2), 10 + 10 = 20 (5 × 4), 20 + 20 = 40 (5 × 8), and so on.`,
     
-    `Find the powers of 2 that sum to <var>a</var>.`,
+const ancientMultStepsArr = [
+    `Let variable ${aVarMl} represent one of the numbers and variable ${bVarMl} represent the other one.`,
+
+    `Find all powers of 2 that are ≤ ${aVarAndPeriodMl} This could be done without modern multiplication by
+    starting with 1, the 1<sup>st</sup> power of 2 or 2<sup>0</sup>, and finding the next power by adding the
+    previous power to itself. This process will look like:
+    <math>
+        <mrow><mn>1</mn><mo>+</mo><mn>1</mn></mrow>
+        <mo>=</mo>
+        <mrow>
+            <mn>2</mn>
+            <mtext class="math-font">&nbsp;(</mtext>
+            <msup><mn>2</mn><mn>1</mn></msup>
+            <mtext class="math-font">)</mtext>
+        </mrow>
+        <mtext>,</mtext>
+    </math>
+    <math>
+        <mrow><mn>2</mn><mo>+</mo><mn>2</mn></mrow>
+        <mo>=</mo>
+        <mrow>
+            <mn>4</mn>
+            <mtext class="math-font">&nbsp;(</mtext>
+            <msup><mn>2</mn><mn>2</mn></msup>
+            <mtext class="math-font">)</mtext>
+        </mrow>
+        <mtext>,</mtext>
+    </math>
+    <math>
+        <mrow><mn>4</mn><mo>+</mo><mn>4</mn></mrow>
+        <mo>=</mo>
+        <mrow>
+            <mn>8</mn>
+            <mtext class="math-font">&nbsp;(</mtext>
+            <msup><mn>2</mn><mn>3</mn></msup>
+            <mtext class="math-font">)</mtext>
+        </mrow>
+        <mtext>,</mtext>
+    </math>
+    and so on until we find a power that's > ${aVarAndCommaMl} which we won't use.`,
     
-    `Add up the products of <var>b</var> and these powers.`
+    `Find the products of ${bVarMl} and these powers of 2. Like with the powers of 2, this could be done by
+    starting with ${bVarMl} and finding the next product by adding the previous product to itself. If we let
+    ${bVarMl} be 5, this process will look like:
+    <math>
+        <mrow><mn>5</mn><mo>+</mo><mn>5</mn></mrow>
+        <mo>=</mo>
+        <mrow>
+            <mn>10</mn>
+            <mtext class="math-font">&nbsp;(</mtext>
+            <mn>5</mn>
+            <mo>×</mo>
+            <mn>2</mn>
+            <mtext class="math-font">)</mtext>
+        </mrow>
+        <mtext>,</mtext>
+    </math>
+    <math>
+        <mrow><mn>10</mn><mo>+</mo><mn>10</mn></mrow>
+        <mo>=</mo>
+        <mrow>
+            <mn>20</mn>
+            <mtext class="math-font">&nbsp;(</mtext>
+            <mn>5</mn>
+            <mo>×</mo>
+            <mn>4</mn>
+            <mtext class="math-font">)</mtext>
+        </mrow>
+        <mtext>,</mtext>
+    </math>
+    <math>
+        <mrow><mn>20</mn><mo>+</mo><mn>20</mn></mrow>
+        <mo>=</mo>
+        <mrow>
+            <mn>40</mn>
+            <mtext class="math-font">&nbsp;(</mtext>
+            <mn>5</mn>
+            <mo>×</mo>
+            <mn>8</mn>
+            <mtext class="math-font">)</mtext>
+        </mrow>
+        <mtext>,</mtext>
+    </math>
+    and so on.`,
+    
+    `Find the powers of 2 that sum to ${aVarAndPeriodMl}`,
+    
+    `Add up the products of ${bVarMl} and these powers.`
 ];
 
 /**
@@ -1639,14 +2011,50 @@ const ancientMultAlgorithmInfoDiv =
 ancientMultAlgorithmInfoDiv.className = 'div-with-p-and-ol';
 
 const ancientMultExampleParagraphs =
-    `Let's find the product of 5 and 12. Let's first use 5 for the number represented by <var>a</var> in the
-    algorithm above and 12 for <var>b</var>. The powers of 2 ≤ 5 are 1, 2, and 4. The products of 12 and these
-    powers are 12, 24, and 48. The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these powers
-    are 12 and 48. 12 + 48 = (12 × 1) + (12 × 4) = 12 × (1 + 4) = 60.
+    `Let's find the product of 5 and 12. Let's first use 5 for the number represented by ${aVarMl} in the
+    algorithm above and 12 for ${bVarAndPeriodMl} The powers of 2 ≤ 5 are 1, 2, and 4. The products of 12 and
+    these powers are 12, 24, and 48. The powers of 2 that sum to 5 are 1 and 4. The products of 12 and these
+    powers are 12 and 48.
+    <math>
+        <mrow><mn>12</mn><mo>+</mo><mn>48</mn></mrow>
+        <mo>=</mo>
+        <mrow>
+            <mrow><mo>(</mo><mn>12</mn><mo>×</mo><mn>1</mn><mo>)</mo></mrow>
+            <mo>+</mo>
+            <mrow><mo>(</mo><mn>12</mn><mo>×</mo><mn>4</mn><mo>)</mo></mrow>
+        </mrow>
+        <mo>=</mo>
+        <mrow>
+            <mn>12</mn>
+            <mo>×</mo>
+            <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mn>4</mn><mo>)</mo></mrow>
+        </mrow>
+        <mo>=</mo>
+        <mn>60</mn>
+        <mtext>.</mtext>
+    </math>
     
-    Now let's use 12 for <var>a</var> and 5 for <var>b</var>. The powers of 2 ≤ 12 are 1, 2, 4, and 8.
-    The products of 5 and these powers are 5, 10, 20, and 40. The powers of 2 that sum to 12 are 4 and 8.
-    The products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 × (4 + 8) = 60.`;
+    Now let's use 12 for ${aVarMl} and 5 for ${bVarAndPeriodMl} The powers of 2 ≤ 12 are 1, 2, 4, and 8. The
+    products of 5 and these powers are 5, 10, 20, and 40. The powers of 2 that sum to 12 are 4 and 8. The
+    products of 5 and these powers are 20 and 40.
+    <math>
+        <mrow><mn>20</mn><mo>+</mo><mn>40</mn></mrow>
+        <mo>=</mo>
+        <mrow>
+            <mrow><mo>(</mo><mn>5</mn><mo>×</mo><mn>4</mn><mo>)</mo></mrow>
+            <mo>+</mo>
+            <mrow><mo>(</mo><mn>5</mn><mo>×</mo><mn>8</mn><mo>)</mo></mrow>
+        </mrow>
+        <mo>=</mo>
+        <mrow>
+            <mn>5</mn>
+            <mo>×</mo>
+            <mrow><mo>(</mo><mn>4</mn><mo>+</mo><mn>8</mn><mo>)</mo></mrow>
+        </mrow>
+        <mo>=</mo>
+        <mn>60</mn>
+        <mtext>.</mtext>
+    </math>`;
 
 const ancientMultInfoElements =
     [ancientMultAlgorithmInfoDiv, ...createPsWithParagraphs(ancientMultExampleParagraphs)];

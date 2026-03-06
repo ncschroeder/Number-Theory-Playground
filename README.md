@@ -374,7 +374,7 @@ taking all the powers of the factors, adding 1 to each, and then multiplying all
 PF of 36 is $2^2 \times 3^2$. The powers are 2 and 2, so there are $3 \times 3 = 9$ factors. However, that count
 includes 1 and the number that the PF is for (36 in this case). If you want to exclude those, then subtract 2.
 That would give us 7 factors. You can find the factors of $n$ by finding all the PFs within $n$'s PF, or the
-"sub-factorizations", as I like to call them. For $2^2 \times 3^2$, the sub-factorizations are
+"sub-factorizations," as I like to call them. For $2^2 \times 3^2$, the sub-factorizations are
 $2$, $3$, $2^2 \text{ } (4)$, $2 \times 3 \text{ } (6)$, $3^2 \text{ } (9)$, $2^2 \times 3 \text{ } (12)$, and
 $2 \times 3^2 \text{ } (18)$.
 
@@ -394,33 +394,29 @@ It has $7 \times 2^12 = 28,672$ total factors!
 Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1 rule
 for each number in the range of 3 to 12, excluding 5 and 10, though there are rules for more numbers and many
 numbers have multiple rules. I'll go over an example of using these rules to find the factors of a
-number in the "Example" section below. Let's have a variable $n$ and let it represent a whole number. If the
-last 2 digits of $n$ is divisible by 4, then $n$ is divisible by 4. If the last 3 digits of $n$ is divisible by
+number in the "Example" section below. Let's have a variable $n$ and let it represent a whole number. If the number formed from the last 2 digits of $n$ is divisible by 4, then $n$ is divisible by 4. If the number formed from the last 3 digits of $n$ is divisible by
 8, then $n$ is divisible by 8. If the sum of the digits of $n$ is divisible by 3, then $n$ is divisible by 3. If
 the sum of the digits of $n$ is divisible by 9, then $n$ is divisible by 9. If $n$ is even and divisible by 3,
 then it's also divisible by 6. If $n$ is divisible by both 3 and 4, then it's also divisible by 12.
+
+For 11, we do an alternating sum of the digits of $n$ from left to right. We start with 0, add the
+1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all the
+digits. If this sum is divisible by 11, then $n$ is divisible by 11.
 
 For 7, we split $n$ into 3-digit blocks from right to left, though the leftmost block can contain 1 or 2 digits.
 Coincidentally, these are the blocks separated by commas if we write $n$ with commas. We do an alternating sum
 of the blocks from right to left. We start with 0, add the rightmost block, subtract the block to the left of
 that, add the block to the left of that, and so on for all the blocks. If this sum is divisible by 7, then $n$
-is divisible by 7.
-
-For 11, we do an alternating sum of the digits of $n$ from left to right. We start with 0, add the
-1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all the
-digits. If this sum is divisible by 11, then $n$ is divisible by 11. These alternating sums might involve
-negative integers or 0, so that makes them some of the few calculations done by the Number Theory Playground
-that involve numbers other than natural numbers.
+is divisible by 7. These alternating sums might involve negative integers or 0, so that makes them some of the few calculations done by the Number Theory Playground that involve numbers other than natural numbers.
 
 ##### Example
 
 Let $n$ be 5,544. Its PF is $2^3 \times 3^2 \times 7 \times 11$. We can tell from that PF that $n$ is divisible
 by all the numbers that had rules mentioned about them above. Let's check if $n$ is divisible by those numbers
-using those rules. The last 2 digits are 44, which is divisible by 4. The last 3 digits are 544, which is
+using those rules. The last 2 digits form the number 44, which is divisible by 4. The last 3 digits form the number 544, which is
 divisible by 8. The sum of the digits is $5 + 5 + 4 + 4 = 18$, which is divisible by both 3 and 9. Since $n$ is
 even and divisible by 3, it's also divisible by 6. Since $n$ is divisible by both 3 and 4, it's also divisible
-by 12. The alternating sum of 3-digit blocks from right to left is $544 - 4 = 539$, which is divisible by 7.
-The alternating sum of digits from left to right is $5 - 5 + 4 - 4 = 0$, which is divisible by 11.
+by 12. The alternating sum of digits from left to right is $5 - 5 + 4 - 4 = 0$, which is divisible by 11. The alternating sum of 3-digit blocks from right to left is $544 - 4 = 539$, which is divisible by 7.
 
 
 #### Calculations

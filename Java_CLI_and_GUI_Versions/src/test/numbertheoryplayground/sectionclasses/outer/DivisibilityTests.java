@@ -15,28 +15,28 @@ import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.Fac
 class DivisibilityTests {
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
-INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS,  BLOCKS_ALT_SUM_EXPRESSION,  DIGITS_ALT_SUM_EXPRESSION
-1_000,           0,              0,              1,             000 − 1 = -1,             1 − 0 + 0 − 0 = 1
-60_060,          60,             60,             12,            060 − 60 = 0,             6 − 0 + 0 − 6 + 0 = 0
-200_008,         8,              8,              10,            008 − 200 = -192,         2 − 0 + 0 − 0 + 0 − 8 = -6
-4_695_768,       68,             768,            45,            768 − 695 + 4 = 77,       4 − 6 + 9 − 5 + 7 − 6 + 8 = 11
+INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS_EXPRESSION,        DIGITS_ALT_SUM_EXPRESSION,       BLOCKS_ALT_SUM_EXPRESSION
+1_000,           0,              0,         1 + 0 + 0 + 0 = 1,               1 − 0 + 0 − 0 = 1,                   000 − 1 = -1
+60_060,          60,             60,        6 + 0 + 0 + 6 + 0 = 12,          6 − 0 + 0 − 6 + 0 = 0,               060 − 60 = 0
+200_008,         8,              8,         2 + 0 + 0 + 0 + 0 + 8 = 10,      2 − 0 + 0 − 0 + 0 − 8 = -6,          008 − 200 = -192
+4_695_768,       68,             768,       4 + 6 + 9 + 5 + 7 + 6 + 8 = 45,  4 − 6 + 9 − 5 + 7 − 6 + 8 = 11,      768 − 695 + 4 = 77
 """)
     void rulesAnswer(
         int input,
         int expectedLast2Digits,
         int expectedLast3Digits,
-        int expectedSumOfDigits,
-        String expectedBlocksAltSumExpression,
-        String expectedDigitsAltSumExpression
+        String expectedSumOfDigitsExpression,
+        String expectedDigitsAltSumExpression,
+        String expectedBlocksAltSumExpression
     ) {
         var answer = new RulesAnswer(input, createStringWithCommas(input));
         
         assertAll(
             () -> assertEquals(expectedLast2Digits, answer.getLast2Digits()),
             () -> assertEquals(expectedLast3Digits, answer.getLast3Digits()),
-            () -> assertEquals(expectedSumOfDigits, answer.getSumOfDigits()),
-            () -> assertEquals(expectedBlocksAltSumExpression, answer.getBlocksAltSumExpression()),
-            () -> assertEquals(expectedDigitsAltSumExpression, answer.getDigitsAltSumExpression())
+            () -> assertEquals(expectedSumOfDigitsExpression, answer.getSumOfDigitsExpression()),
+            () -> assertEquals(expectedDigitsAltSumExpression, answer.getDigitsAltSumExpression()),
+            () -> assertEquals(expectedBlocksAltSumExpression, answer.getBlocksAltSumExpression())
         );
     }
     

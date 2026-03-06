@@ -2,6 +2,7 @@ package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
@@ -53,32 +54,34 @@ Some rules can be used to determine if a whole number is divisible by another wh
 I'll go over 1 rule for each number in the range of 3 to 12, excluding 5 and 10, though there
 are rules for more numbers and many numbers have multiple rules. I'll go over an example of
 using these rules to find the factors of a number in a few paragraphs. Let's have a variable n
-and let it represent an whole number. If the last 2 digits of n is divisible by 4, then n is
-divisible by 4. If the last 3 digits of n is divisible by 8, then n is divisible by 8. If the
-sum of the digits of n is divisible by 3, then n is divisible by 3. If the sum of the digits of
-n is divisible by 9, then n is divisible by 9. If n is even and divisible by 3, then it's also
-divisible by 6. If n is divisible by both 3 and 4, then it's also divisible by 12.
+and let it represent an whole number. If the number formed from the last 2 digits of n is
+divisible by 4, then n is divisible by 4. If the number formed from the last 3 digits of n is
+divisible by 8, then n is divisible by 8. If the sum of the digits of n is divisible by 3,
+then n is divisible by 3. If the sum of the digits of n is divisible by 9, then n is divisible
+by 9. If n is even and divisible by 3, then it's also divisible by 6. If n is divisible by
+both 3 and 4, then it's also divisible by 12.
+
+For 11, we do an alternating sum of the digits of n from left to right. We start with 0, add
+the first digit, subtract the second digit, add the third digit, and so on for all digits. If
+this sum is divisible by 11, then n is divisible by 11.
 
 For 7, we split n into 3-digit blocks of 3 from right to left, though the leftmost block can
 contain 1 or 2 digits. Coincidentally, these are the blocks separated by commas if we write n
 with commas. We do an alternating sum of the blocks from right to left. We start with 0, add
 the rightmost block, subtract the block to the left of that, add the block to the left of that,
-and so on for all the blocks. If this sum is divisible by 7, then n is divisible by 7.
-
-For 11, we do an alternating sum of the digits of n from left to right. We start with 0, add
-the first digit, subtract the second digit, add the third digit, and so on for all digits. If
-this sum is divisible by 11, then n is divisible by 11. These alternating sums might involve
-negative integers or 0, so that makes them some of the few calculations done by the Number
-Theory Playground that involve numbers other than natural numbers.
+and so on for all the blocks. If this sum is divisible by 7, then n is divisible by 7. These
+alternating sums might involve negative integers or 0, so that makes them some of the few
+calculations done by the Number Theory Playground that involve numbers other than natural numbers.
 
 Here's an example. Let n be 4,695,768. The PF of n is 2^3 × 3^2 × 7^2 × 11^3. We can tell from
 that PF that n is divisible by all the numbers that had rules mentioned about them above. Let's
 check using the rules. The last 2 digits are 68, which is divisible by 4. The last 3 digits are
-768, which is divisible by 8. The sum of the digits is 45, which is divisible by both 3 and 9.
-Since n is even and divisible by 3, it's also divisible by 6. Since n is divisible by both 3
-and 4, it's also divisible by 12. The alternating sum of 3-digit blocks from right to left is
-768 - 695 + 4 = 77, which is divisible by 7. The alternating sum of digits from left to right
-is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
+768, which is divisible by 8. The sum of the digits is 4 + 6 + 9 + 5 + 7 + 6 + 8 = 45, which is
+divisible by both 3 and 9. Since n is even and divisible by 3, it's also divisible by 6. Since
+n is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of digits from
+left to right is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11. The
+alternating sum of 3-digit blocks from right to left is 768 - 695 + 4 = 77, which is divisible
+by 7.""";
     
     /**
      * Class with data related to rules that can be used to determine if the input long is
@@ -94,21 +97,25 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
         
         private final long last3Digits;
         
-        private final int sumOfDigits;
+        // 4,695,768 is the number used in the example above and the doc comments below.
         
         /**
-         * Contains text for a mathematical expression of the alternating sum of 3-digit
-         * blocks from right to left. For 4,695,768, from the example in the info above, this
-         * would be "768 - 695 + 4 = 77."
+         * Contains text for a mathematical expression of the sum of digits from left to right.
+         * For 4,695,768, this would be "4 + 6 + 9 + 5 + 7 + 6 + 8 = 45".
          */
-        private final StringBuilder blocksAltSumExpressionBuilder;
+        private final StringBuilder sumOfDigitsExpressionBuilder;
         
         /**
          * Contains text for a mathematical expression of the alternating sum of digits from
-         * left to right. For 4,695,768, from the example in the info above, this would be
-         * "4 - 6 + 9 - 5 + 7 - 6 + 8 = 11."
+         * left to right. For 4,695,768, this would be "4 - 6 + 9 - 5 + 7 - 6 + 8 = 11".
          */
         private final StringBuilder digitsAltSumExpressionBuilder;
+        
+        /**
+         * Contains text for a mathematical expression of the alternating sum of 3-digit
+         * blocks from right to left. For 4,695,768, this would be "768 - 695 + 4 = 77".
+         */
+        private final StringBuilder blocksAltSumExpressionBuilder;
         
         RulesAnswer(long inputLong, String inputStringWithCommas) {
             assertIsInRange(inputLong, MIN_INPUT, MAX_INPUT);
@@ -118,44 +125,37 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
             and if the result of that calculation is divisible by a certain integer, then the input
             long is also divisible by that integer.
              */
-            @FunctionalInterface
-            interface DivisibilitySentenceFunction {
-                String apply(int possibleFactor, long longFromCalculation, boolean isDivisible);
-            }
-            
-            DivisibilitySentenceFunction getDivisSentence =
-                (possibleFactor, longFromCalculation, isDivisible) ->
+            BiFunction<Integer, Boolean, String> getDivisSentenceEnd =
+                (possibleFactor, isDivisible) ->
                     String.format(
-                        "%1$s %2$s divisible by %3$s so %4$s %2$s divisible by %3$s",
-                        createStringWithCommas(longFromCalculation),
+                        ", which %1$s divisible by %2$s so %3$s %1$s divisible by %2$s",
                         isDivisible ? "is" : "isn't",
                         possibleFactor,
                         inputStringWithCommas
                     );
             
-            var inputStringWithoutCommas = Long.toString(inputLong);
             var infoSentencesJoiner = new StringJoiner(". ", "", ".");
             last2Digits = inputLong % 100;
             last3Digits = inputLong % 1_000;
             boolean isDivisibleBy4 = isDivisible(last2Digits, 4);
-            boolean isEven = isEven(inputLong);
             
-            if (!isEven) {
+            if (!isEven(inputLong)) {
                 infoSentencesJoiner.add(
                     inputStringWithCommas + " isn't even so it isn't divisible by any even numbers"
                 );
             } else if (inputLong >= 100) {
-                infoSentencesJoiner
-                .add("The last 2 digits form the number " + last2Digits)
-                .add(getDivisSentence.apply(4, last2Digits, isDivisibleBy4));
+                infoSentencesJoiner.add(
+                    "The last 2 digits form the number " + last2Digits +
+                    getDivisSentenceEnd.apply(4, isDivisibleBy4)
+                );
                 
                 if (isDivisibleBy4) {
                     if (inputLong >= 1_000) {
                         boolean isDivisibleBy8 = isDivisible(last3Digits, 8);
-                        
-                        infoSentencesJoiner
-                        .add("The last 3 digits form the number " + last3Digits)
-                        .add(getDivisSentence.apply(8, last3Digits, isDivisibleBy8));
+                        infoSentencesJoiner.add(
+                            "The last 3 digits form the number " + last3Digits +
+                            getDivisSentenceEnd.apply(8, isDivisibleBy8)
+                        );
                     }
                 } else {
                     infoSentencesJoiner.add(
@@ -168,36 +168,63 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
                 }
             }
             
-            sumOfDigits =
-                inputStringWithoutCommas
-                .chars()
-                .map(Character::getNumericValue)
-                .sum();
+            var inputStringWithoutCommas = Long.toString(inputLong);
+            sumOfDigitsExpressionBuilder = new StringBuilder();
+            var sumOfDigits = 0;
+            digitsAltSumExpressionBuilder = new StringBuilder();
+            var digitsAltSum = 0;
+            var addForAltSum = true;
+            
+            for (var i = 0; i < inputStringWithoutCommas.length(); i++) {
+                if (!sumOfDigitsExpressionBuilder.isEmpty()) {
+                    sumOfDigitsExpressionBuilder.append(" + ");
+                    digitsAltSumExpressionBuilder.append(addForAltSum ? " + " : " − ");
+                }
+                
+                var digitChar = inputStringWithoutCommas.charAt(i);
+                sumOfDigitsExpressionBuilder.append(digitChar);
+                digitsAltSumExpressionBuilder.append(digitChar);
+                var digitInt = Character.getNumericValue(digitChar);
+                sumOfDigits += digitInt;
+                digitsAltSum += addForAltSum ? digitInt : -digitInt;
+                addForAltSum = !addForAltSum;
+            }
+            
+            sumOfDigitsExpressionBuilder.append(" = ").append(sumOfDigits);
+            digitsAltSumExpressionBuilder.append(" = ").append(digitsAltSum);
             
             boolean isDivisibleBy3 = isDivisible(sumOfDigits, 3);
-            
-            infoSentencesJoiner
-            .add("The sum of the digits is " + sumOfDigits)
-            .add(getDivisSentence.apply(3, sumOfDigits, isDivisibleBy3));
+            infoSentencesJoiner.add(
+                "The sum of the digits is " + sumOfDigitsExpressionBuilder +
+                getDivisSentenceEnd.apply(3, isDivisibleBy3)
+            );
             
             if (isDivisibleBy3) {
                 boolean isDivisibleBy9 = isDivisible(sumOfDigits, 9);
-                infoSentencesJoiner.add(getDivisSentence.apply(9, sumOfDigits, isDivisibleBy9));
+                infoSentencesJoiner.add(
+                    String.format(
+                        "%1$d %2$s divisible by 9 so %3$s %2$s divisible by 9",
+                        sumOfDigits,
+                        isDivisibleBy9 ? "is" : "isn't",
+                        inputStringWithCommas
+                    )
+                );
                 
-                if (isEven) {
+                if (isEven(inputLong)) {
                     infoSentencesJoiner.add(
-                        inputStringWithCommas + " is even and divisible by 3 so it's also " +
-                        "divisible by 6"
+                        inputStringWithCommas +
+                        " is even and divisible by 3 so it's also divisible by 6"
                     );
                     
                     if (isDivisibleBy4) {
                         infoSentencesJoiner.add(
-                            inputStringWithCommas + " is divisible by both 3 and 4 so it's also " +
-                            "divisible by 12"
+                            inputStringWithCommas +
+                            " is divisible by both 3 and 4 so it's also divisible by 12"
                         );
                     } else if (inputLong < 100) {
                         infoSentencesJoiner.add(
-                            inputStringWithCommas + " isn't divisible by 4 so it's not divisible by 12"
+                            inputStringWithCommas +
+                            " isn't divisible by 4 so isn't divisible by 12"
                         );
                     }
                 }
@@ -211,33 +238,30 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
                 );
             }
             
-            /*
-            This is a special minus sign in the Mathematical Operators Unicode block and has a
-            Unicode value of U+2212. Depending on the font, it might look like a hyphen.
-             */
-            final char minusSign = '−';
+            boolean isDivisibleBy11 = isDivisible(digitsAltSum, 11);
+            infoSentencesJoiner.add(
+                "The alternating sum of digits from left to right is " +
+                digitsAltSumExpressionBuilder + getDivisSentenceEnd.apply(11, isDivisibleBy11)
+            );
             
             if (inputLong < 1_000) {
                 blocksAltSumExpressionBuilder = null;
             } else {
-                String[] threeDigitBlocks = inputStringWithCommas.split(",");
-                var blocksAltSum = 0;
                 blocksAltSumExpressionBuilder = new StringBuilder();
-                var add = true;
+                var blocksAltSum = 0;
+                String[] threeDigitBlocks = inputStringWithCommas.split(",");
+                addForAltSum = true;
                 
-                for (var i = threeDigitBlocks.length - 1; i >= 0; i--) {
+                for (int i = threeDigitBlocks.length - 1; i >= 0; i--) {
                     if (!blocksAltSumExpressionBuilder.isEmpty()) {
-                        blocksAltSumExpressionBuilder
-                        .append(' ')
-                        .append(add ? '+' : minusSign)
-                        .append(' ');
+                        blocksAltSumExpressionBuilder.append(addForAltSum ? " + " : " − ");
                     }
                     
                     var blockString = threeDigitBlocks[i];
                     blocksAltSumExpressionBuilder.append(blockString);
                     var blockInt = Integer.parseInt(blockString);
-                    blocksAltSum += add ? blockInt : -blockInt;
-                    add = !add;
+                    blocksAltSum += addForAltSum ? blockInt : -blockInt;
+                    addForAltSum = !addForAltSum;
                 }
                 
                 blocksAltSumExpressionBuilder
@@ -245,43 +269,13 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
                 .append(createStringWithCommas(blocksAltSum));
                 
                 boolean isDivisibleBy7 = isDivisible(blocksAltSum, 7);
-                
-                infoSentencesJoiner
-                .add("The alternating sum of 3-digit blocks from right to left is " + blocksAltSumExpressionBuilder)
-                .add(getDivisSentence.apply(7, blocksAltSum, isDivisibleBy7));
+                infoSentencesJoiner.add(
+                    "The alternating sum of 3-digit blocks from right to left is " +
+                    blocksAltSumExpressionBuilder + getDivisSentenceEnd.apply(7, isDivisibleBy7)
+                );
             }
-            
-            var digitsAltSum = 0;
-            digitsAltSumExpressionBuilder = new StringBuilder();
-            var add = true;
-            
-            for (var i = 0; i < inputStringWithoutCommas.length(); i++) {
-                if (!digitsAltSumExpressionBuilder.isEmpty()) {
-                    digitsAltSumExpressionBuilder
-                    .append(' ')
-                    .append(add ? '+' : minusSign)
-                    .append(' ');
-                }
-                
-                var digitChar = inputStringWithoutCommas.charAt(i);
-                digitsAltSumExpressionBuilder.append(digitChar);
-                var digitInt = Character.getNumericValue(digitChar);
-                digitsAltSum += add ? digitInt : -digitInt;
-                add = !add;
-            }
-            
-            digitsAltSumExpressionBuilder.append(" = ").append(digitsAltSum);
-            boolean isDivisibleBy11 = isDivisible(digitsAltSum, 11);
-            
-            infoSentencesJoiner
-            .add("The alternating sum of digits from left to right is " + digitsAltSumExpressionBuilder)
-            .add(getDivisSentence.apply(11, digitsAltSum, isDivisibleBy11));
             
             infoParagraph = infoSentencesJoiner.toString();
-        }
-        
-        int getSumOfDigits() {
-            return sumOfDigits;
         }
         
         long getLast2Digits() {
@@ -292,15 +286,19 @@ is 4 - 6 + 9 - 5 + 7 - 6 + 8 = 11, which, of course, is divisible by 11.""";
             return last3Digits;
         }
         
+        String getSumOfDigitsExpression() {
+            return sumOfDigitsExpressionBuilder.toString();
+        }
+        
+        String getDigitsAltSumExpression() {
+            return digitsAltSumExpressionBuilder.toString();
+        }
+        
         /**
          * Throws NullPointerException if blocksAltSumExpressionBuilder is null.
          */
         String getBlocksAltSumExpression() {
             return blocksAltSumExpressionBuilder.toString();
-        }
-        
-        String getDigitsAltSumExpression() {
-            return digitsAltSumExpressionBuilder.toString();
         }
     }
     
@@ -312,7 +310,7 @@ n has by looking at n's PF, taking all the powers of the factors, adding 1 to ea
 multiplying all these together. For example, the PF of 36 is 2^2 × 3^2. The powers are 2 and 2,
 so there are 3 × 3 = 9 factors. However, that count includes 1 and the number that the PF is for
 (36 in this case). If you want to exclude those, then subtract 2. That would give us 7 factors.
-You can find the factors of n by finding all the PFs within n's PF, or the "sub-factorizations",
+You can find the factors of n by finding all the PFs within n's PF, or the "sub-factorizations,"
 as I like to call them. For 2^2 × 3^2, the sub-factorizations are
 2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).
 

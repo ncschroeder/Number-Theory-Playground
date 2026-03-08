@@ -43,7 +43,7 @@ button {
     margin: 1.1rem auto 0;
     display: flex;
     justify-content: center;
-    gap: 1.2rem;
+    gap: 1.1rem 1.2rem;
     flex-wrap: wrap;
 }
 
@@ -58,6 +58,10 @@ button {
     cursor: pointer;
 }
 
+ol {
+    padding-left: 2rem;
+}
+
 a {
     color: #90c2ff;
 }
@@ -68,12 +72,11 @@ summary {
     margin: 0 auto 0.6rem;
 }
 
-h3, h4, p, .narrow-text-div, ol:not(.answer-normal-ol) {
+h3, h4, p, .non-answer-info-div, .narrow-text-div, .answer-flex-ol {
     max-width: 40rem;
 }
 
-/* Since h3s and h4s get a max width, they need this rule as well to have a center alignment. */
-h3, h4, p, ol, table, .narrow-text-div {
+h3, h4, p, ol, table, .non-answer-info-div, .narrow-text-div {
     margin: 0 auto;
 }
 
@@ -95,39 +98,32 @@ table, th, td {
 }
 
 .non-answer-info-div > :not(:first-child) {
-    margin-top: 0.8rem;
+    margin-top: 0.7rem;
 }
 
-/*
-.div-with-p-and-ol is used for divs with at least 1 p and an ol that relates to the p(s) and is used for the
-second child of home-content-div and the first child of the ancient Egyptian multiplication info div.
-*/
-.non-answer-info-div > .div-with-p-and-ol > :not(:first-child) {
+.div-with-info-and-ol > ol {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+
+.div-with-info-and-ol li:not(:first-child) {
     margin-top: 0.3rem;
 }
 
-.div-with-p-and-ol li:not(:first-child) {
-    margin-top: 0.2rem;
-}
-
-/* For other divs within a non-answer-info-div, the first child is a heading. */
-
-.non-answer-info-div > div > :nth-child(2) {
-    margin-top: 0.3rem;
-}
-
-.non-answer-info-div > div > :nth-child(n + 3) {
+.non-answer-info-div > div > h3 {
     margin-top: 0.8rem;
 }
 
-/*
-Some things that this rule does:
-1. Make the section directions appear 0.8 rem below the section info details summary element when that details
-   element is closed.
-2. Make the section info div appear 0.8 rem below the details summary element when that details element is open.
-*/
+.non-answer-info-div > div:not(.div-with-info-and-ol) > :nth-child(2) {
+    margin-top: 0.3rem;
+}
+
+.non-answer-info-div > div:not(.div-with-info-and-ol) > :nth-child(n + 3) {
+    margin-top: 0.7rem
+}
+
 #section-content-div > :nth-child(n + 3):not(#answer-div) {
-    margin-top: 0.8rem;
+    margin-top: 1rem;
 }
 
 #divis-rules-example-p {
@@ -198,12 +194,7 @@ Some things that this rule does:
     min-height: 25rem;
 }
 
-#answer-div >
-div:not(#pf-section-answer-div, #two-square-theorem-answer-div, #fibo-like-sequence-ratios-div, #ancient-mult-table-div) {
-    margin-top: 0.7rem;
-}
-
-#invalid-input-div {
+.answer-error-div {
     text-align: center;
 }
 
@@ -217,11 +208,8 @@ div:not(#pf-section-answer-div, #two-square-theorem-answer-div, #fibo-like-seque
 
 /* For GCD and LCM PFs info, Pythagorean triples, and Fibonacci-like sequence ratios info. */
 .answer-normal-ol {
-    width: max-content;
-}
-
-.answer-normal-ol:not(#gcd-and-lcm-pf-answer-ol) {
     margin-top: 0.4rem;
+    width: max-content;
 }
 
 .answer-normal-ol > li:not(:first-child) {
@@ -229,15 +217,14 @@ div:not(#pf-section-answer-div, #two-square-theorem-answer-div, #fibo-like-seque
 }
 
 /*
-For primes, twin prime pairs, divisibility info factors and PFs, Goldbach Conjecture prime pairs,
+For primes, semiprimes, twin prime pairs, divisibility info factors and PFs, Goldbach prime pairs,
 and Fibonacci-like sequence numbers.
 */
 .answer-flex-ol {
-    margin-top: 0.9rem;
+    margin-top: 0.7rem;
     display: flex;
     justify-content: center;
-    --answer-flex-ol-row-gap: 0.8rem;
-    gap: var(--answer-flex-ol-row-gap) 1.3rem;
+    gap: 0.7rem 1.3rem;
     flex-wrap: wrap;
 }
 
@@ -247,40 +234,48 @@ and Fibonacci-like sequence numbers.
 }
 
 #pf-section-answer-div, #two-square-theorem-answer-div {
-    margin-top: 0.3rem;
+    margin-top: 0.4rem;
     text-align: center;
 }
 
-#divis-answer-factors-ol {
-    margin-top: var(--answer-flex-ol-row-gap);
+/* For the divisibility and GCD and LCM sections, the answer elements are an h3 and 2 divs, each of which have an h4. */
+
+#divis-rules-answer-div, .euclidean-answer-table-div {
+    margin-top: 0.7rem;
+}
+
+#divis-pf-answer-div, #gcd-and-lcm-pf-answer-div {
+    margin-top: 0.9rem;
+}
+
+:is(.euclidean-example-table-div, .euclidean-answer-table-div) > table, .gcd-message-div {
+    margin-top: 0.5rem;
 }
 
 .gcd-message-div {
     text-align: center;
 }
 
-.euclidean-example-table, #euclidean-answer-table, .gcd-message-div {
-    margin-top: 0.5rem;
-}
-
 #fibo-like-sequence-ratios-div {
-    margin-top: 1.1rem;
+    margin-top: 1.2rem;
 }
 
-/* The ratio is the last part of the text in each li in this ol. Align them. */
-#fibo-like-sequence-ratios-div > ol {
+#fibo-like-sequence-ratios-div li {
+    margin-top: 0.7rem;
+    
+    /* The ratio is the last part of the text in each li. Align the ratios. */
     text-align: right;
 }
 
-#ancient-mult-table-div {
-    margin: 1rem 0;
+#ancient-mult-tables-div {
+    margin: 1rem 0 0.8rem;
     display: flex;
     justify-content: center;
     gap: 1.4rem;
     flex-wrap: wrap;
 }
 
-#ancient-mult-table-div > table {
+#ancient-mult-tables-div > table {
     /* Margin needs to be this to make tables always be 1.4 rem from each other when they're in 1 row. */
     margin: 0;
     
@@ -288,7 +283,7 @@ and Fibonacci-like sequence numbers.
     height: max-content;
 }
 
-#ancient-mult-table-div th {
+#ancient-mult-tables-div th {
     width: 10rem;
 }
 

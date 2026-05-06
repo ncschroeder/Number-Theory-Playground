@@ -1,9 +1,8 @@
 package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalLong;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
@@ -11,7 +10,7 @@ import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
-import static numbertheoryplayground.sectionclasses.outer.Divisibility.isDivisible;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
 import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.*;
 
 /**
@@ -57,16 +56,18 @@ the largest known prime number, which is (2^136,279,841) − 1.""";
         primes ≤ the square root of the input. If we don't find a factor, then that means that
         the input is prime and not semiprime.
          */
-        OptionalLong optionalPrimeFactor1 =
-            getPossibleFactors(input)
-            .filter(l -> isDivisible(input, l))
-            .findFirst();
+        if (isEven(input)) {
+            return isPrime(input / 2) ? new SemiprimeData(input, 2, input / 2) : null;
+        }
         
-        if (optionalPrimeFactor1.isPresent()) {
-            long primeFactor1 = optionalPrimeFactor1.getAsLong();
-            long factor2 = input / primeFactor1;
-            if (primeFactor1 == factor2 || isPrime(factor2)) {
-                return new SemiprimeData(input, primeFactor1, factor2);
+        var maxPossibleFactorToCheck = (long) Math.sqrt(input);
+        for (var possibleFactor1 = 3L; possibleFactor1 <= maxPossibleFactorToCheck; possibleFactor1 += 2) {
+            if (isDivisible(input, possibleFactor1)) {
+                long factor2 = input / possibleFactor1;
+                return
+                    possibleFactor1 == factor2 || isPrime(factor2)
+                    ? new SemiprimeData(input, possibleFactor1, factor2)
+                    : null;
             }
         }
         
@@ -74,20 +75,27 @@ the largest known prime number, which is (2^136,279,841) − 1.""";
     }
     
     /**
-     * Returns a stream of SemiprimeDatas for the first 20 semiprimes ≥ the input.
+     * Returns a list of SemiprimeDatas for the first 20 semiprimes ≥ the input.
      */
-    static Stream<SemiprimeData> getSemiprimesData(long input) {
+    static List<SemiprimeData> getSemiprimesData(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        return
-            LongStream.iterate(input, l -> l + 1)
-            .mapToObj(Semiprimes::checkIfSemiprime)
-            .filter(sd -> sd != null)
-            .limit(NUM_SEMIPRIMES_TO_FIND);
+        final int numSemiprimesToFind = 20;
+        var semiprimesData = new ArrayList<SemiprimeData>(numSemiprimesToFind);
+        
+        for (var l = input; ; l++) {
+            var possibleSemiprimeData = checkIfSemiprime(l);
+            if (possibleSemiprimeData != null) {
+                semiprimesData.add(possibleSemiprimeData);
+                if (semiprimesData.size() == numSemiprimesToFind) {
+                    return semiprimesData;
+                }
+            }
+        }
     }
     
     private static Stream<String> getSemiprimesDataStrings(long input) {
-        return getSemiprimesData(input).map(SemiprimeData::toString);
+        return getSemiprimesData(input).stream().map(SemiprimeData::toString);
     }
     
     private static String getSemiprimesHeading(String inputString) {

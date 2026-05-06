@@ -19,7 +19,7 @@ public class CalculationsController {
     static final String PRIMES_ENDPOINT_END = "primes";
     
     @GetMapping(PRIMES_ENDPOINT_END)
-    public int[] getPrimes(@RequestParam int input) {
+    public List<Integer> getPrimes(@RequestParam int input) {
         return Calculations.getPrimes(input);
     }
     
@@ -35,7 +35,7 @@ public class CalculationsController {
     static final String TWIN_PRIME_PAIR_STARTS_ENDPOINT_END = "twin-prime-pair-starts";
     
     @GetMapping(TWIN_PRIME_PAIR_STARTS_ENDPOINT_END)
-    public int[] getTwinPrimePairStarts(@RequestParam int input) {
+    public List<Integer> getTwinPrimePairStarts(@RequestParam int input) {
         return Calculations.getTwinPrimePairStarts(input);
     }
     
@@ -70,7 +70,7 @@ public class CalculationsController {
     static final String GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT_END = "goldbach-prime-pair-starts";
     
     @GetMapping(GOLDBACH_PRIME_PAIR_STARTS_ENDPOINT_END)
-    public int[] getGoldbachPrimePairStarts(@RequestParam int input) {
+    public List<Integer> getGoldbachPrimePairStarts(@RequestParam int input) {
         return Calculations.getGoldbachPrimePairStarts(input);
     }
     

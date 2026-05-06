@@ -1,8 +1,8 @@
 package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
@@ -10,7 +10,7 @@ import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
-import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePrime;
+import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.isPrime;
 
 /**
  * Utility class related to twin prime pairs and the section for it.
@@ -43,27 +43,32 @@ twin prime pairs, the first 2 mentioned above."""
     private static final int NUM_PAIRS_TO_FIND = 20;
     
     /**
-     * Returns a stream that can find the first 20 twin prime pairs where the lowest number in
-     * the pair is ≥ the input. The elements of this stream are the lowest numbers of those pairs.
+     * Finds the first 20 twin prime pairs where the lowest number in the pair is ≥ the input
+     * and returns a list that contains the lowest numbers of those pairs.
      */
-    static LongStream getPairStarts(long input) {
+    static List<Long> getPairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
+        var pairStarts = new ArrayList<Long>(NUM_PAIRS_TO_FIND);
         /*
         As mentioned in the INFO string, all twin prime pairs besides 3 and 5 consist of 1 number
         that's 1 below a multiple of 6 and another number that's 1 above that same multiple of 6.
         Set iterationStart to the first long ≥ the input that's 1 below a multiple of 6 so that
         we'll be able to iterate through longs that are 1 below a multiple of 6.
          */
-        long iterationStart = input;
-        while (iterationStart % 6 != 5) iterationStart++;
-        LongStream pairStarts =
-            LongStream.iterate(iterationStart, l -> l + 6)
-            .filter(l -> bothArePrime(l, l + 2));
-        
-        return
-            (input <= 3 ? LongStream.concat(LongStream.of(3), pairStarts) : pairStarts)
-            .limit(NUM_PAIRS_TO_FIND);
+        if (input <= 3) pairStarts.add(3L);
+        long possiblePairStart = input;
+        while (possiblePairStart % 6 != 5) possiblePairStart++;
+
+        while (true) {
+            if (isPrime(possiblePairStart) && isPrime(possiblePairStart + 2)) {
+                pairStarts.add(possiblePairStart);
+                if (pairStarts.size() == NUM_PAIRS_TO_FIND) {
+                    return pairStarts;
+                }
+            }
+            possiblePairStart += 6;
+        }
     }
     
     /**
@@ -71,7 +76,7 @@ twin prime pairs, the first 2 mentioned above."""
      * lowest number in the pair is ≥ the input.
      */
     private static Stream<String> getPairStrings(long input) {
-        return getPairStarts(input).mapToObj(l -> longPairToString(l, l + 2));
+        return getPairStarts(input).stream().map(start -> longPairToString(start, start + 2));
     }
     
     private static final String PAIRS_HEADING_START =

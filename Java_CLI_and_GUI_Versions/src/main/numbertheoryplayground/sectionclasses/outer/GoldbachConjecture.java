@@ -1,9 +1,8 @@
 package numbertheoryplayground.sectionclasses.outer;
 
 import java.awt.Component;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
@@ -12,7 +11,7 @@ import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
 import static numbertheoryplayground.sectionclasses.outer.Divisibility.isOdd;
-import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.bothArePrime;
+import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.isPrime;
 
 /**
  * Utility class related to the Goldbach conjecture and the section for it.
@@ -58,14 +57,16 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
      */
     
     /**
-     * Find the pairs of primes that sum to the input and returns an array that contains the lower numbers
-     * of each pair.
+     * Find the pairs of primes that sum to the input and returns a list that contains the
+     * lowest numbers of those pairs.
      */
-    static int[] getPrimePairStarts(long input) {
+    static List<Integer> getPrimePairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         if (isOdd(input)) {
             throw InvalidInputNumberException.getInstance();
         }
+        
+        if (input == 4) return List.of(2);
         
         /*
         Check if the input is 4 since 4 is the only even number ≥ 4 that has 2 in a pair of
@@ -74,24 +75,24 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
         input. After that point, checks for primality will be done on pairs of numbers that have
         already been checked for primality.
          */
+        var pairStarts = new ArrayList<Integer>();
+        var maxPossiblePairStart = (int) input / 2;
         
-        if (input == 4) {
-            return new int[] { 2 };
+        for (var i = 3; i <= maxPossiblePairStart; i += 2) {
+            if (isPrime(i) && isPrime(input - i)) {
+                pairStarts.add(i);
+            }
         }
         
-        var maxPossiblePairStart = (int) input / 2;
-        return
-            IntStream.iterate(3, i -> i <= maxPossiblePairStart, i -> i + 2)
-            .filter(i -> bothArePrime(i, input - i))
-            .toArray();
+        return pairStarts;
     }
     
     /**
      * Returns a stream of the string representations of the pairs of primes that sum to the input.
-     * pairStarts should be an int array returned from calling getPrimePairStarts using the input.
+     * pairStarts should be a list returned from calling getPrimePairStarts using the input.
      */
-    private static Stream<String> getPrimePairStrings(int[] pairStarts, long input) {
-        return Arrays.stream(pairStarts).mapToObj(i -> longPairToString(i, input - i));
+    private static Stream<String> getPrimePairStrings(List<Integer> pairStarts, long input) {
+        return pairStarts.stream().map(start -> longPairToString(start, input - start));
     }
     
     private static String getNumPairsSentence(int numPairs, String inputString) {
@@ -129,16 +130,16 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
         
         @Override
         public String getCliAnswer(long inputLong, String inputString) {
-            int[] pairStarts = getPrimePairStarts(inputLong);
+            List<Integer> pairStarts = getPrimePairStarts(inputLong);
             return NtpCli.buildStringWithStreamElementsOnLongLines(
-                getPairsHeading(pairStarts.length, inputString),
+                getPairsHeading(pairStarts.size(), inputString),
                 getPrimePairStrings(pairStarts, inputLong)
             );
         }
         
         @Override
         public List<Component> getGuiComponents(long inputLong, String inputString) {
-            int[] pairStarts = getPrimePairStarts(inputLong);
+            List<Integer> pairStarts = getPrimePairStarts(inputLong);
             
             /*
             Check if the string formed when trying to create pairsTextArea is deemed too long.
@@ -148,12 +149,12 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
                 var pairsTextArea =
                     NtpTextArea.createWideOneWithStreamElements(getPrimePairStrings(pairStarts, inputLong));
                 return List.of(
-                    NtpGui.createListHeadingLabel(getPairsHeading(pairStarts.length, inputString)),
+                    NtpGui.createListHeadingLabel(getPairsHeading(pairStarts.size(), inputString)),
                     pairsTextArea
                 );
             } catch (NtpTextArea.StringTooLongException ex) {
                 String textToDisplay =
-                    getNumPairsSentence(pairStarts.length, inputString) + ' ' +
+                    getNumPairsSentence(pairStarts.size(), inputString) + ' ' +
                     NtpTextArea.StringTooLongException.ERROR_MESSAGE;
                 return List.of(new NtpTextArea(textToDisplay));
             }

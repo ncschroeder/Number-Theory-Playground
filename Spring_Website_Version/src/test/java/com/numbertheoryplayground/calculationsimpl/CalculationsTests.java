@@ -12,29 +12,29 @@ import static com.numbertheoryplayground.calculationsimpl.Calculations.*;
 class CalculationsTests {
     @ParameterizedTest
     @MethodSource("getArgsForGetPrimes")
-    void getPrimes(int input, int[] expectedPrimes) {
-        assertArrayEquals(expectedPrimes, Calculations.getPrimes(input));
+    void getPrimes(int input, List<Integer> expectedPrimes) {
+        assertEquals(expectedPrimes, Calculations.getPrimes(input));
     }
     
     static Stream<Arguments> getArgsForGetPrimes() {
         // I got these primes from https://en.wikipedia.org/wiki/List_of_prime_numbers.
         
         var first30Primes =
-            new int[] {
+            List.of(
                 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,
                 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113
-            };
+            );
         
         var first30PrimesAfter1000 =
-            new int[] {
+            List.of(
                 1_009, 1_013, 1_019, 1_021, 1_031, 1_033, 1_039, 1_049, 1_051, 1_061,
                 1_063, 1_069, 1_087, 1_091, 1_093, 1_097, 1_103, 1_109, 1_117, 1_123,
                 1_129, 1_151, 1_153, 1_163, 1_171, 1_181, 1_187, 1_193, 1_201, 1_213
-            };
+            );
         
         return Stream.of(
             arguments(0, first30Primes),
-            arguments(first30PrimesAfter1000[0], first30PrimesAfter1000)
+            arguments(first30PrimesAfter1000.getFirst(), first30PrimesAfter1000)
         );
     }
     
@@ -115,45 +115,45 @@ class CalculationsTests {
     
     @ParameterizedTest
     @MethodSource("getArgsForGetTwinPrimePairStarts")
-    void getTwinPrimePairStarts(int input, int[] expectedPairStarts) {
-        assertArrayEquals(expectedPairStarts, Calculations.getTwinPrimePairStarts(input));
+    void getTwinPrimePairStarts(int input, List<Integer> expectedPairStarts) {
+        assertEquals(expectedPairStarts, Calculations.getTwinPrimePairStarts(input));
     }
     
     static Stream<Arguments> getArgsForGetTwinPrimePairStarts() {
         // I got these pair starts from OEIS sequence A001359 at https://oeis.org/A001359.
         
         var first20PairStarts =
-            new int[] {
+            List.of(
                 3, 5, 11, 17, 29, 41, 59, 71, 101, 107, 137,
                 149, 179, 191, 197, 227, 239, 269, 281, 311
-            };
+            );
         
         var first20PairStartsAfter500 =
-            new int[] {
+            List.of(
                 521, 569, 599, 617, 641, 659, 809, 821, 827, 857, 881, 1_019,
                 1_031, 1_049, 1_061, 1_091, 1_151, 1_229, 1_277, 1_289
-            };
+            );
         
         return Stream.of(
             arguments(0, first20PairStarts),
-            arguments(first20PairStartsAfter500[0], first20PairStartsAfter500)
+            arguments(first20PairStartsAfter500.getFirst(), first20PairStartsAfter500)
         );
     }
     
     
     @ParameterizedTest
     @FieldSource("argsForGetGoldbachPrimePairStarts")
-    void getGoldbachPrimePairStarts(int input, int[] expectedPairStarts) {
-        assertArrayEquals(expectedPairStarts, Calculations.getGoldbachPrimePairStarts(input));
+    void getGoldbachPrimePairStarts(int input, List<Integer> expectedPairStarts) {
+        assertEquals(expectedPairStarts, Calculations.getGoldbachPrimePairStarts(input));
     }
     
     static final List<Arguments> argsForGetGoldbachPrimePairStarts =
         List.of(
-            arguments(6, new int[] { 3 }),
-            arguments(10, new int[] { 3, 5 }),
-            arguments(32, new int[] { 3, 13 }),
-            arguments(58, new int[] { 5, 11, 17, 29 }),
-            arguments(100, new int[] { 3, 11, 17, 29, 41, 47 })
+            arguments(6, List.of(3)),
+            arguments(10, List.of(3, 5)),
+            arguments(32, List.of(3, 13)),
+            arguments(58, List.of(5, 11, 17, 29)),
+            arguments(100, List.of(3, 11, 17, 29, 41, 47))
         );
     
     

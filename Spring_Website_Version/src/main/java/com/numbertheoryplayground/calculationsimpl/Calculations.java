@@ -22,64 +22,38 @@ public class Calculations {
         return !isEven(i);
     }
     
-    private static IntStream getStreamOf2AndOddNums(int max) {
-        return
-            IntStream.concat(
-                IntStream.of(2),
-                IntStream.iterate(3, i -> i + 2)
-            )
-            .takeWhile(i -> i <= max);
-    }
-    
-    /**
-     * Returns a stream of possible factors of the input ≤ the floor of the square root of
-     * the input. These consist of 2 and odd numbers ≥ 3.
-     *
-     * The method is used by the isPrime and checkIfSemiprime methods to find the first int
-     * factor of an input int and that factor must be > 1 and < that input int. In comments in
-     * those methods, I mention that we only need to check primes ≤ the square root of an input
-     * int. 2 is the first prime and all other primes are odd numbers ≥ 3, so the ints in the
-     * stream returned by this method are a superset of primes ≤ the square root of the input.
-     *
-     * This method will always be called with an input arg that's ≥ 0, so the call to Math.sqrt
-     * below will never return NaN.
-     */
-    private static IntStream getPossibleFactors(int input) {
-        var maxPossibleFactor = (int) Math.sqrt(input);
-        return getStreamOf2AndOddNums(maxPossibleFactor);
-    }
-    
     static boolean isPrime(int input) {
-        /*
-        All ints ≤ 1 aren't prime. To determine if an int > 1 is prime, we only need to check
-        if it's divisible by any primes ≤ the floor of the square root of that int. If it is,
-        then that int isn't prime.
-         */
-        return
-            input > 1 &&
-            getPossibleFactors(input).noneMatch(i -> isDivisible(input, i));
-    }
-    
-    private static boolean bothArePrime(int a, int b) {
-        return isPrime(a) && isPrime(b);
+        if (input <= 1) return false;
+        if (input <= 3) return true;
+        if (isEven(input)) return false;
+        
+        var maxPossibleFactorToCheck = (int) Math.sqrt(input);
+        for (var i = 3; i <= maxPossibleFactorToCheck; i += 2) {
+            if (isDivisible(input, i)) return false;
+        }
+        return true;
     }
     
     /**
-     * Returns an array of the first 30 primes ≥ the input.
+     * Returns a list of the first 30 primes ≥ the input.
      */
-    public static int[] getPrimes(int input) {
         assertIsInRange(input, 0, TEN_THOUSAND);
+    public static List<Integer> getPrimes(int input) {
         
-        // Create a stream of odd primes since all primes besides 2 are odd.
-        int iterationStart = isOdd(input) ? input : input + 1;
-        IntStream oddPrimes =
-            IntStream.iterate(iterationStart, i -> i + 2)
-            .filter(Calculations::isPrime);
+        final int numPrimesToFind = 30;
+        var primes = new ArrayList<Integer>(numPrimesToFind);
+        if (input < 2) primes.add(2);
         
-        return
-            (input <= 2 ? IntStream.concat(IntStream.of(2), oddPrimes) : oddPrimes)
-            .limit(30)
-            .toArray();
+        int possiblePrime = isOdd(input) ? input : input + 1;
+        while (true) {
+            if (isPrime(possiblePrime)) {
+                primes.add(possiblePrime);
+                if (primes.size() == numPrimesToFind) {
+                    return primes;
+                }
+            }
+            possiblePrime += 2;
+        }
     }
     
     
@@ -96,16 +70,18 @@ public class Calculations {
         primes ≤ the square root of the input. If we don't find a factor, then that means that
         the input is prime and not semiprime.
          */
-        OptionalInt optionalPrimeFactor1 =
-            getPossibleFactors(input)
-            .filter(i -> isDivisible(input, i))
-            .findFirst();
+        if (isEven(input)) {
+            return isPrime(input / 2) ? new SemiprimeData(input, 2, input / 2) : null;
+        }
         
-        if (optionalPrimeFactor1.isPresent()) {
-            int primeFactor1 = optionalPrimeFactor1.getAsInt();
-            int factor2 = input / primeFactor1;
-            if (primeFactor1 == factor2 || isPrime(factor2)) {
-                return new SemiprimeData(input, primeFactor1, factor2);
+        var maxPossibleFactorToCheck = (int) Math.sqrt(input);
+        for (var possibleFactor1 = 3; possibleFactor1 <= maxPossibleFactorToCheck; possibleFactor1 += 2) {
+            if (isDivisible(input, possibleFactor1)) {
+                int factor2 = input / possibleFactor1;
+                return
+                    possibleFactor1 == factor2 || isPrime(factor2)
+                    ? new SemiprimeData(input, possibleFactor1, factor2)
+                    : null;
             }
         }
         
@@ -118,48 +94,59 @@ public class Calculations {
     public static List<SemiprimeData> getSemiprimesData(int input) {
         assertIsInRange(input, 0, TEN_THOUSAND);
         
-        return
-            IntStream.iterate(input, i -> i + 1)
-            .mapToObj(Calculations::checkIfSemiprime)
-            .filter(sd -> sd != null)
-            .limit(20)
-            .toList();
+        final int numSemiprimesToFind = 20;
+        var semiprimesData = new ArrayList<SemiprimeData>(numSemiprimesToFind);
+        
+        for (var i = input; ; i++) {
+            var possibleSemiprimeData = checkIfSemiprime(i);
+            if (possibleSemiprimeData != null) {
+                semiprimesData.add(possibleSemiprimeData);
+                if (semiprimesData.size() == numSemiprimesToFind) {
+                    return semiprimesData;
+                }
+            }
+        }
     }
     
     
     /**
      * Finds the first 20 twin prime pairs where the lowest number in the pair is ≥ the input.
      * For example, if the input is 3, then the pair 3 and 5 will be the first one found. If
-     * the input is 4, then the pair 5 and 7 will be the first one found. An array that
-     * contains the lowest numbers of those pairs gets returned.
+     * the input is 4, then the pair 5 and 7 will be the first one found. A list that contains
+     * the lowest numbers of those pairs gets returned.
      */
-    public static int[] getTwinPrimePairStarts(int input) {
         assertIsInRange(input, 0, TEN_THOUSAND);
+    public static List<Integer> getTwinPrimePairStarts(int input) {
         
+        final int numPairsToFind = 20;
+        var pairStarts = new ArrayList<Integer>(numPairsToFind);
         /*
         All twin prime pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6
-        and another number that's 1 above that same multiple of 6. Set iterationStart to the
+        and another number that's 1 above that same multiple of 6. Set possiblePairStart to the
         first int ≥ the input that's 1 below a multiple of 6 so that we'll be able to iterate
         through ints that are 1 below a multiple of 6.
          */
-        int iterationStart = input;
-        while (iterationStart % 6 != 5) iterationStart++;
-        IntStream pairStarts =
-            IntStream.iterate(iterationStart, i -> i + 6)
-            .filter(i -> bothArePrime(i, i + 2));
+        if (input <= 3) pairStarts.add(3);
+        int possiblePairStart = input;
+        while (possiblePairStart % 6 != 5) possiblePairStart++;
         
-        return
-            (input <= 3 ? IntStream.concat(IntStream.of(3), pairStarts) : pairStarts)
-            .limit(20)
-            .toArray();
+        while (true) {
+            if (isPrime(possiblePairStart) && isPrime(possiblePairStart + 2)) {
+                pairStarts.add(possiblePairStart);
+                if (pairStarts.size() == numPairsToFind) {
+                    return pairStarts;
+                }
+            }
+            possiblePairStart += 6;
+        }
     }
     
     /**
-     * Find the pairs of primes that sum to the input and returns an array that contains the
      * lowest ints of those pairs.
+     * Find the pairs of primes that sum to the input and returns a list that contains the
      */
-    public static int[] getGoldbachPrimePairStarts(int input) {
-        assertIsInRange(input, 4, 1_000);
+    public static List<Integer> getGoldbachPrimePairStarts(int input) {
+        assertIsInRange(input, 4, 10_000);
         if (isOdd(input)) {
             throw InvalidInputNumberException.getInstance();
         }
@@ -168,20 +155,23 @@ public class Calculations {
         Check if the input is 4 since 4 is the only even number ≥ 4 that has 2 in a pair of
         primes that sum to it.
          */
-        if (input == 4) {
-            return new int[] { 2 };
-        }
+        if (input == 4) return List.of(2);
         
         /*
         Check pairs of odd numbers that sum to the input for primality. The iterating only
         needs to go up to the floor of half of the input. After that point, checks for
         primality will be done on pairs of numbers that have already been checked for primality.
          */
+        var pairStarts = new ArrayList<Integer>();
         int maxPossiblePairStart = input / 2;
-        return
-            IntStream.iterate(3, i -> i <= maxPossiblePairStart, i -> i + 2)
-            .filter(i -> bothArePrime(i, input - i))
-            .toArray();
+        
+        for (var i = 3; i <= maxPossiblePairStart; i += 2) {
+            if (isPrime(i) && isPrime(input - i)) {
+                pairStarts.add(i);
+            }
+        }
+        
+        return pairStarts;
     }
     
     public record PythagoreanTriple(int a, int b, int c) {
@@ -202,7 +192,11 @@ public class Calculations {
              */
             int maxPossibleCommonFactor = Math.min(a, Math.min(b, c)) / 3;
             return
-                getStreamOf2AndOddNums(maxPossibleCommonFactor)
+                IntStream.concat(
+                    IntStream.of(2),
+                    IntStream.iterate(3, i -> i + 2)
+                )
+                .takeWhile(i -> i <= maxPossibleCommonFactor)
                 .noneMatch(i -> isDivisible(a, i) && isDivisible(b, i) && isDivisible(c, i));
         }
     }

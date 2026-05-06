@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import numbertheoryplayground.NtpCli;
 import numbertheoryplayground.gui.NtpGui;
@@ -76,8 +77,12 @@ input number + 1, and so on until 10 are found.""";
              */
             int maxPossibleCommonFactor = Math.min(a, Math.min(b, c)) / 3;
             return
-                getStreamOf2AndOddNums(maxPossibleCommonFactor)
-                .noneMatch(l -> isDivisible(a, l) && isDivisible(b, l) && isDivisible(c, l));
+                IntStream.concat(
+                    IntStream.of(2),
+                    IntStream.iterate(3, i -> i + 2)
+                )
+                .takeWhile(i -> i <= maxPossibleCommonFactor)
+                .noneMatch(i -> isDivisible(a, i) && isDivisible(b, i) && isDivisible(c, i));
         }
     }
     

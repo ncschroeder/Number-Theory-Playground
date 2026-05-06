@@ -14,7 +14,7 @@ public class SemiprimesTests {
     @ParameterizedTest
     @MethodSource("getArgsForGetSemiprimesData")
     void getSemiprimesData(long input, List<SemiprimeData> expectedSemiprimesData) {
-        assertEquals(expectedSemiprimesData, Semiprimes.getSemiprimesData(input).toList());
+        assertEquals(expectedSemiprimesData, Semiprimes.getSemiprimesData(input));
     }
     
     static SemiprimeData sd(int semiprime, int factor1, int factor2) {

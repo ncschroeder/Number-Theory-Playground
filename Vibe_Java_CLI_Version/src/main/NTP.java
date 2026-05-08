@@ -59,24 +59,33 @@ public class NTP {
     private static String fmt(BigInteger n) { return String.format("%,d", n); }
 
     private static void printSectionHeader(String name) {
-        println(String.format("\n=== %s ===", name));
+        println(String.format("=== %s ===", name));
     }
     
-    // Prompts for an integer within [min, max]. Accepts 'random' or 'back'. Returns null on 'back'.
-    private static Long readInput(String prompt, long min, long max) {
+    // Prompts for an integer within [min, max]. Accepts 'r' (random), 'i' (info), or 'm' for menu (returns null).
+    private static Long readInput(String info, long min, long max) {
+        return readInput("Enter a number", info, min, max, () -> randomInput(min, max));
+    }
+
+    private static Long readInput(String prompt, String info, long min, long max, LongSupplier randomGen) {
         while (true) {
-            System.out.printf("\n%s (%s–%s), 'random', or 'back': ", prompt, fmt(min), fmt(max));
+            System.out.printf("%s (%s–%s), 'r' for random, 'i' for info, or 'm' for menu: ", prompt, formatWithCommas(min), formatWithCommas(max));
             String input = scanner.nextLine().trim();
-            if (input.equalsIgnoreCase("back")) return null;
-            if (input.equalsIgnoreCase("random")) {
-                long n = randomInput(min, max);
-                println("Random number: " + fmt(n));
+            if (input.equalsIgnoreCase("m")) return null;
+            if (input.equalsIgnoreCase("i")) {
+                println();
+                println(wrapped(info));
+                continue;
+            }
+            if (input.equalsIgnoreCase("r")) {
+                long n = randomGen.getAsLong();
+                println("Random number: " + formatWithCommas(n));
                 return n;
             }
             try {
                 long n = Long.parseLong(input);
                 if (n < min || n > max) {
-                    println(String.format("Number must be between %s and %s.", fmt(min), fmt(max)));
+                    println(String.format("Number must be between %s and %s.", formatWithCommas(min), formatWithCommas(max)));
                     continue;
                 }
                 return n;
@@ -87,27 +96,69 @@ public class NTP {
     }
 
     // action: called with the validated input number to produce the section's output
-    private static void runSection(String name, String description, long min, long max, LongConsumer action) {
+    private static void runSingleInputSection(String name, String description, String info, long min, long max, LongConsumer action) {
+        println();
         printSectionHeader(name);
         println(description);
         while (true) {
-            Long n = readInput("Enter a number", min, max);
+            println();
+            Long n = readInput(info, min, max);
             if (n == null) return;
             println();
             action.accept(n);
         }
     }
 
-    private static void runSectionTwoInputs(String name, String description, long min, long max, BiConsumer<Long, Long> action) {
+    private static void runDoubleInputSection(String name, String description, String info, long min, long max, BiConsumer<Long, Long> action) {
+        println();
         printSectionHeader(name);
         println(description);
         while (true) {
-            Long a = readInput("Enter first number", min, max);
-            if (a == null) return;
-            Long b = readInput("Enter second number", min, max);
-            if (b == null) return;
             println();
-            action.accept(a, b);
+            long[] inputs = readTwoInputs(info, min, max);
+            if (inputs == null) return;
+            println();
+            action.accept(inputs[0], inputs[1]);
+        }
+    }
+
+    // Prompts for two integers within [min, max] separated by whitespace.
+    // Accepts 'r' (two random), 'i' (info), or 'm' for menu (returns null).
+    private static long[] readTwoInputs(String info, long min, long max) {
+        while (true) {
+            System.out.printf(
+                "Enter two numbers separated by whitespace (each %s–%s), 'r' for random, 'i' for info, or 'm' for menu: ",
+                formatWithCommas(min), formatWithCommas(max)
+            );
+            String input = scanner.nextLine().trim();
+            if (input.equalsIgnoreCase("m")) return null;
+            if (input.equalsIgnoreCase("i")) {
+                println();
+                println(wrapped(info));
+                continue;
+            }
+            if (input.equalsIgnoreCase("r")) {
+                long a = randomInput(min, max);
+                long b = randomInput(min, max);
+                println(String.format("Random numbers: %s, %s", formatWithCommas(a), formatWithCommas(b)));
+                return new long[]{a, b};
+            }
+            String[] parts = input.split("\\s+");
+            if (parts.length != 2) {
+                println("Enter exactly two numbers separated by whitespace.");
+                continue;
+            }
+            try {
+                long a = Long.parseLong(parts[0]);
+                long b = Long.parseLong(parts[1]);
+                if (a < min || a > max || b < min || b > max) {
+                    println(String.format("Each number must be between %s and %s.", formatWithCommas(min), formatWithCommas(max)));
+                    continue;
+                }
+                return new long[]{a, b};
+            } catch (NumberFormatException e) {
+                println("Invalid input — enter two whole numbers.");
+            }
         }
     }
 
@@ -130,10 +181,32 @@ public class NTP {
         return result;
     }
 
-    static String wrapped(Stream<String> pieces) {
-        StringBuilder result = new StringBuilder();
-        StringBuilder line = new StringBuilder();
-        pieces.forEach(piece -> {
+    static String wrapped(String text) {
+        var result = new StringBuilder();
+        int lineLen = 0;
+        
+        for (String word : text.split(" ")) {
+            if (lineLen == 0) {
+                result.append(word);
+                lineLen = word.length();
+            } else if (lineLen + 1 + word.length() > 90) {
+                result.append('\n').append(word);
+                lineLen = word.length();
+            } else {
+                result.append(' ').append(word);
+                lineLen += 1 + word.length();
+            }
+        }
+        
+        return result.toString();
+    }
+
+    static <T> String wrapped(List<T> items, Function<T, String> mapper) {
+        var result = new StringBuilder();
+        var line = new StringBuilder();
+        
+        for (T item : items) {
+            String piece = mapper.apply(item);
             String entry = (line.isEmpty() ? "" : "    ") + piece;
             if (!line.isEmpty() && line.length() + entry.length() > 75) {
                 result.append(line).append('\n');
@@ -142,34 +215,55 @@ public class NTP {
             } else {
                 line.append(entry);
             }
-        });
+        }
+        
         if (!line.isEmpty()) result.append(line);
         return result.toString();
+    }
+    
+    private static boolean isPrime(long n) {
+        if (n < 2) return false;
+        if (n == 2) return true;
+        if (n % 2 == 0) return false;
+        for (long i = 3; i * i <= n; i += 2) {
+            if (n % i == 0) return false;
+        }
+        return true;
     }
 
     // --- Prime Numbers section ---
 
     private static void primeNumbers(String name) {
-        runSection(
+        runSingleInputSection(
             name,
             "Finds the first 30 primes >= a given number.",
+            """
+            A prime is an integer greater than 1 whose only positive divisors are 1 \
+            and itself. The primes begin 2, 3, 5, 7, 11, 13, 17, ..., and 2 is the \
+            only even prime. Euclid proved around 300 BC that there are infinitely \
+            many primes. The Prime Number Theorem says primes near n are spaced \
+            roughly ln(n) apart, so they thin out as numbers grow but never run dry.""",
             0,
             10_000_000_000_000L,
             n -> {
-                println(String.format("First 30 primes >= %s:", fmt(n)));
-                println(wrapped(findPrimesFrom(n).mapToObj(NTP::fmt)));
+                println(String.format("First 30 primes >= %s:", formatWithCommas(n)));
+                println(wrapped(findPrimesFrom(n), NTP::formatWithCommas));
             }
         );
     }
     
-    static LongStream findPrimesFrom(long start) {
-        LongStream evens = start <= 2 ? LongStream.of(2) : LongStream.empty();
-        long firstOdd = start <= 3 ? 3 : (start % 2 == 0 ? start + 1 : start);
-        LongStream odds = LongStream.iterate(firstOdd, n -> n + 2);
-        return
-            LongStream.concat(evens, odds)
-            .filter(NTP::isPrime)
-            .limit(30);
+    static List<Long> findPrimesFrom(long start) {
+        var result = new ArrayList<Long>();
+        if (start <= 2) result.add(2L);
+        long n = start <= 3 ? 3 : (start % 2 == 0 ? start + 1 : start);
+        while (true) {
+            if (isPrime(n)) {
+                result.add(n);
+                if (result.size() == 30) break;
+            }
+            n += 2;
+        }
+        return result;
     }
 
     // --- Semiprimes section ---
@@ -177,29 +271,40 @@ public class NTP {
     record SemiprimeData(long semiprime, long factor1, long factor2) {
         @Override
         public String toString() {
-            return String.format("%s = %s × %s", fmt(semiprime), fmt(factor1), fmt(factor2));
+            return String.format("%s = %s × %s", formatWithCommas(semiprime), formatWithCommas(factor1), formatWithCommas(factor2));
         }
     }
 
     private static void semiprimes(String name) {
-        runSection(
+        runSingleInputSection(
             name,
             "Finds the first 20 semiprimes >= a given number.",
+            """
+            A semiprime is a positive integer that is the product of exactly two \
+            primes; the two primes may be equal, as in 4 = 2 × 2 or 9 = 3 × 3. The \
+            first few semiprimes are 4, 6, 9, 10, 14, 15, 21, 22, 25, 26. Semiprimes \
+            underpin RSA cryptography: factoring a large semiprime n = p × q into \
+            its prime factors is believed to be computationally hard, and the \
+            security of RSA rests on that hardness.""",
             0,
             50_000_000_000_000L,
             n -> {
-                println(String.format("First 20 semiprimes >= %s:", fmt(n)));
-                println(wrapped(findSemiprimesFrom(n).map(Object::toString)));
+                println(String.format("First 20 semiprimes >= %s:", formatWithCommas(n)));
+                println(wrapped(findSemiprimesFrom(n), Object::toString));
             }
         );
     }
 
-    static Stream<SemiprimeData> findSemiprimesFrom(long start) {
-        return
-            LongStream.iterate(Math.max(start, 4), n -> n + 1)
-            .mapToObj(NTP::semiprimeFactors)
-            .filter(Objects::nonNull)
-            .limit(20);
+    static List<SemiprimeData> findSemiprimesFrom(long start) {
+        var result = new ArrayList<SemiprimeData>();
+        for (long n = Math.max(start, 4); ; n++) {
+            SemiprimeData sd = semiprimeFactors(n);
+            if (sd != null) {
+                result.add(sd);
+                if (result.size() == 20) break;
+            }
+        }
+        return result;
     }
 
     private static SemiprimeData semiprimeFactors(long n) {
@@ -214,48 +319,64 @@ public class NTP {
     // --- Twin Prime Pairs section ---
 
     private static void twinPrimePairs(String name) {
-        runSection(
+        runSingleInputSection(
             name,
             "Finds the first 20 twin prime pairs (p, p+2) with p >= a given number.",
+            """
+            A twin prime pair is two primes that differ by 2, such as (3, 5), \
+            (11, 13), or (29, 31). The Twin Prime Conjecture — that infinitely many \
+            such pairs exist — is one of the oldest open problems in number theory. \
+            In 2013, Yitang Zhang proved that infinitely many prime pairs differ by \
+            at most 70 million; that bound has since been reduced to 246. Apart \
+            from (3, 5), every twin prime pair has the form (6k − 1, 6k + 1).""",
             0,
             500_000_000_000L,
             n -> {
-                println(String.format("First 20 twin prime pairs with p >= %s:", fmt(n)));
-                println(wrapped(findTwinPrimesFrom(n).mapToObj(p -> String.format("(%s, %s)", fmt(p), fmt(p + 2)))));
+                println(String.format("First 20 twin prime pairs with p >= %s:", formatWithCommas(n)));
             }
         );
     }
 
-    static LongStream findTwinPrimesFrom(long start) {
-        LongStream special = start <= 3 ? LongStream.of(3) : LongStream.empty();
-        long first = Math.max(start, 5);
-        while (first % 6 != 5) first++;
-        return
-            LongStream.concat(special, LongStream.iterate(first, n -> n + 6))
-            .filter(n -> isPrime(n) && isPrime(n + 2))
-            .limit(20);
+    static List<Long> findTwinPrimesFrom(long start) {
+        var result = new ArrayList<Long>();
+        if (start <= 3) result.add(3L);
+        long n = Math.max(start, 5);
+        while (n % 6 != 5) n++;
+        while (true) {
+            if (isPrime(n) && isPrime(n + 2)) {
+                result.add(n);
+                if (result.size() == 20) break;
+            }
+            n += 6;
+        }
+        return result;
     }
 
     // --- Prime Factorization section ---
 
+    record FactorAndPower(long factor, int power) {}
+
     private static void primeFactorization(String name) {
-        runSection(
+        runSingleInputSection(
             name,
             "Shows the prime factorization of a given number.",
+            """
+            The Fundamental Theorem of Arithmetic states that every integer greater \
+            than 1 has a unique factorization into primes, up to the order of the \
+            factors. For example, 60 = 2² × 3 × 5. This factorization is the \
+            canonical fingerprint of an integer and underlies divisibility, GCD, \
+            LCM, and functions like Euler's totient. No fast classical algorithm \
+            is known for factoring large integers, which is why RSA-style \
+            cryptography remains secure.""",
             2,
             10_000_000_000_000_000L,
-            n -> println(String.format("%s = %s", fmt(n), primeFactorizationOf(n)))
+            n -> println(String.format("%s = %s", formatWithCommas(n), fpsToString(primeFactorsAndPowersOf(n))))
         );
     }
-
-    static String primeFactorizationOf(long n) {
-        return formatPrimeFactors(primeFactorsOf(n));
-    }
-
-    // Returns [prime, exponent] pairs in ascending prime order.
-    static List<long[]> primeFactorsOf(long n) {
-        List<long[]> result = new ArrayList<>();
-        List<FactorAndPower> result = new ArrayList<>();
+    
+    // Returns (factor, power) pairs in ascending prime order.
+    static List<FactorAndPower> primeFactorsAndPowersOf(long n) {
+        var result = new ArrayList<FactorAndPower>();
         long remaining = n;
         
         int count2 = 0;
@@ -280,35 +401,42 @@ public class NTP {
         return result;
     }
 
-    private static String formatPrimeFactors(List<long[]> primeFactors) {
-        if (primeFactors.isEmpty()) return "1";
-        StringBuilder result = new StringBuilder();
-        for (long[] pf : primeFactors) {
-            if (!result.isEmpty()) result.append(" × ");
-            result.append(fmt(pf[0]));
-            if (pf[1] > 1) result.append("^").append(pf[1]);
-        }
-        return result.toString();
+    private static String fpsToString(List<FactorAndPower> fps) {
+        return
+            fps.isEmpty()
+            ? "1"
+            :
+                fps
+                .stream()
+                .map(fp -> fp.power() > 1 ? formatWithCommas(fp.factor()) + "^" + fp.power() : formatWithCommas(fp.factor()))
+                .collect(Collectors.joining(" × "));
     }
 
     // --- Factors section ---
-
-    record Factor(long value, String factorization) {}
-
+    
     private static void factors(String name) {
-        runSection(
+        runSingleInputSection(
             name,
             "Shows each factor of the input number with its prime factorization.",
+            """
+            A factor (or divisor) of n is a positive integer that divides n with \
+            no remainder. The factors of n correspond to choices of exponents \
+            0 ≤ eᵢ ≤ aᵢ in its prime factorization n = p₁^a₁ × ... × pₖ^aₖ, so \
+            the count of factors is (a₁ + 1)(a₂ + 1)...(aₖ + 1). For example, \
+            12 = 2² × 3 has (2+1)(1+1) = 6 factors: 1, 2, 3, 4, 6, 12. Highly \
+            composite numbers are integers with more divisors than any smaller \
+            positive integer.""",
             2,
             10_000_000_000_000_000L,
             n -> {
                 List<FactorAndPower> pfs = primeFactorsAndPowersOf(n);
-                println(String.format("%s = %s", fmt(n), formatPrimeFactors(pfs)));
-                println(String.format("\nFactors of %s:", fmt(n)));
-                println(wrapped(factorsFrom(pfs).stream().map(f -> String.format("%s = %s", fmt(f.value()), f.factorization()))));
+                println(String.format("%s = %s", formatWithCommas(n), fpsToString(pfs)));
+                println(String.format("\nFactors of %s:", formatWithCommas(n)));
             }
         );
     }
+    
+    record Factor(long value, String factorization) {}
 
     static List<Factor> factorsFrom(List<long[]> primeFactors) {
         List<Factor> result = new ArrayList<>();
@@ -343,20 +471,29 @@ public class NTP {
     record EuclideanStep(long max, long min, long remainder) {}
 
     private static void gcdAndLcm(String name) {
-        runSectionTwoInputs(
+        runDoubleInputSection(
             name,
             "Computes the GCD via the Euclidean algorithm, and GCD/LCM via prime factorizations.",
+            """
+            The greatest common divisor (GCD) of a and b is the largest integer \
+            dividing both, and the least common multiple (LCM) is the smallest \
+            positive integer divisible by both. Euclid's algorithm computes the \
+            GCD by repeatedly replacing the larger value with its remainder \
+            modulo the smaller, terminating when the remainder is 0. From the \
+            prime factorizations, the GCD takes the minimum of each shared \
+            prime's exponent and the LCM takes the maximum. They satisfy the \
+            identity GCD(a, b) × LCM(a, b) = a × b.""",
             2,
             5_000_000_000_000_000L,
             (a, b) -> {
                 println("Euclidean algorithm:");
                 printEuclideanTable(euclideanAlgorithm(a, b));
 
-                List<FactorAndPower> aFactors = primeFactorsAndPowersOf(a);
-                List<FactorAndPower> bFactors = primeFactorsAndPowersOf(b);
+                List<FactorAndPower> aFps = primeFactorsAndPowersOf(a);
+                List<FactorAndPower> bFps = primeFactorsAndPowersOf(b);
                 println("\nPrime factorizations:");
-                println(String.format("%s = %s", fmt(a), formatPrimeFactors(aFactors)));
-                println(String.format("%s = %s", fmt(b), formatPrimeFactors(bFactors)));
+                println(String.format("%s = %s", formatWithCommas(a), fpsToString(aFps)));
+                println(String.format("%s = %s", formatWithCommas(b), fpsToString(bFps)));
 
                 GcdLcm gcdLcm = gcdAndLcmFactors(aFactors, bFactors);
                 println(String.format("\nGCD = %s = %s", formatPrimeFactors(gcdLcm.gcd()), fmt(product(gcdLcm.gcd()))));
@@ -366,15 +503,17 @@ public class NTP {
     }
     
     static List<EuclideanStep> euclideanAlgorithm(long a, long b) {
-        List<EuclideanStep> steps = new ArrayList<>();
+        var steps = new ArrayList<EuclideanStep>();
         long max = Math.max(a, b);
         long min = Math.min(a, b);
+        
         while (min > 0) {
             long remainder = max % min;
             steps.add(new EuclideanStep(max, min, remainder));
             max = min;
             min = remainder;
         }
+        
         return steps;
     }
     
@@ -382,49 +521,61 @@ public class NTP {
         int maxW = "max".length();
         int minW = "min".length();
         int remW = "remainder".length();
+        
         for (EuclideanStep step : steps) {
-            maxW = Math.max(maxW, fmt(step.max()).length());
-            minW = Math.max(minW, fmt(step.min()).length());
-            remW = Math.max(remW, fmt(step.remainder()).length());
+            maxW = Math.max(maxW, formatWithCommas(step.max()).length());
+            minW = Math.max(minW, formatWithCommas(step.min()).length());
+            remW = Math.max(remW, formatWithCommas(step.remainder()).length());
         }
+        
         String rowFormat = "%" + maxW + "s  %" + minW + "s  %" + remW + "s";
         println(String.format(rowFormat, "max", "min", "remainder"));
+        
         for (EuclideanStep step : steps) {
-            println(String.format(rowFormat, fmt(step.max()), fmt(step.min()), fmt(step.remainder())));
+            println(String.format(rowFormat, formatWithCommas(step.max()), formatWithCommas(step.min()), formatWithCommas(step.remainder())));
         }
     }
     
-    record GcdLcm(List<FactorAndPower> gcd, List<FactorAndPower> lcm) {}
-    
-    static GcdLcm gcdAndLcmFactors(List<FactorAndPower> a, List<FactorAndPower> b) {
-        List<FactorAndPower> gcd = new ArrayList<>();
-        List<FactorAndPower> lcm = new ArrayList<>();
-        for (FactorAndPower pa : a) {
-            findPrime(b, pa.factor()).ifPresentOrElse(
-                match -> {
-                    gcd.add(new FactorAndPower(pa.factor(), Math.min(pa.power(), match.power())));
-                    lcm.add(new FactorAndPower(pa.factor(), Math.max(pa.power(), match.power())));
-                },
-                () -> lcm.add(pa)
-            );
+    static class GcdAndLcmPrimeFactorizationData {
+        private final List<FactorAndPower> gcdFps;
+        private final List<FactorAndPower> lcmFps;
+
+        GcdAndLcmPrimeFactorizationData(List<FactorAndPower> aFps, List<FactorAndPower> bFps) {
+            var gcdFps = new ArrayList<FactorAndPower>();
+            var lcmFps = new ArrayList<FactorAndPower>();
+            
+            for (FactorAndPower fp : aFps) {
+                findFactor(bFps, fp.factor()).ifPresentOrElse(
+                    match -> {
+                        gcdFps.add(new FactorAndPower(fp.factor(), Math.min(fp.power(), match.power())));
+                        lcmFps.add(new FactorAndPower(fp.factor(), Math.max(fp.power(), match.power())));
+                    },
+                    () -> lcmFps.add(fp)
+                );
+            }
+            
+            for (FactorAndPower fp : bFps) {
+                if (findFactor(aFps, fp.factor()).isEmpty()) lcmFps.add(fp);
+            }
+            
+            lcmFps.sort(Comparator.comparingLong(FactorAndPower::factor));
+            
+            this.gcdFps = List.copyOf(gcdFps);
+            this.lcmFps = List.copyOf(lcmFps);
         }
-        
-        for (FactorAndPower pb : b) {
-            if (findPrime(a, pb.factor()).isEmpty()) lcm.add(pb);
-        }
-        
-        lcm.sort(Comparator.comparingLong(FactorAndPower::factor));
-        return new GcdLcm(gcd, lcm);
+
+        List<FactorAndPower> gcdFps() { return gcdFps; }
+        List<FactorAndPower> lcmFps() { return lcmFps; }
     }
     
-    private static Optional<FactorAndPower> findPrime(List<FactorAndPower> factors, long prime) {
-        return factors.stream().filter(pf -> pf.factor() == prime).findFirst();
+    private static Optional<FactorAndPower> findFactor(List<FactorAndPower> fps, long factor) {
+        return fps.stream().filter(pf -> pf.factor() == factor).findFirst();
     }
     
-    private static BigInteger product(List<FactorAndPower> factors) {
+    private static BigInteger product(List<FactorAndPower> fps) {
         BigInteger result = BigInteger.ONE;
-        for (FactorAndPower pf : factors) {
-            result = result.multiply(BigInteger.valueOf(pf.factor()).pow(pf.power()));
+        for (FactorAndPower fp : fps) {
+            result = result.multiply(BigInteger.valueOf(fp.factor()).pow(fp.power()));
         }
         return result;
     }
@@ -434,24 +585,37 @@ public class NTP {
     private static void goldbachConjecture(String name) {
         final long min = 4;
         final long max = 1_500_000;
+        final String info = """
+            Christian Goldbach conjectured in 1742 that every even integer greater \
+            than 2 is the sum of two primes; for example, 10 = 3 + 7 = 5 + 5. It \
+            has been verified by computer for all even numbers up to roughly \
+            4 × 10¹⁸ but remains unproven. The related "weak" Goldbach conjecture \
+            — that every odd integer greater than 5 is a sum of three primes — \
+            was proven by Harald Helfgott in 2013. The number of representations \
+            tends to grow with n, making counterexamples increasingly unlikely \
+            as n increases.""";
+        
+        println();
         printSectionHeader(name);
         println("Finds all pairs of primes that sum to a given even number.");
         while (true) {
-            Long n = readInput("Enter an even number", min, max);
+            println();
+            Long n = readInput("Enter an even number", info, min, max, () -> 2 * randomInput(min / 2, max / 2));
             if (n == null) return;
             if (n % 2 != 0) {
                 println("Number must be even.");
                 continue;
             }
             List<Long> lowers = goldbachPairs(n);
-            println(String.format("\nPrime pairs summing to %s:", fmt(n)));
             println(wrapped(lowers.stream().map(p -> String.format("(%s, %s)", fmt(p), fmt(n - p)))));
+            println(String.format("\nPrime pairs summing to %s:", formatWithCommas(n)));
         }
     }
 
     static List<Long> goldbachPairs(long n) {
-        List<Long> lowers = new ArrayList<>();
-        for (long p = 2; p <= n / 2; p++) {
+        if (n == 4) return List.of(2L);
+        var lowers = new ArrayList<Long>();
+        for (long p = 3; p <= n / 2; p += 2) {
             if (isPrime(p) && isPrime(n - p)) lowers.add(p);
         }
         return lowers;
@@ -460,31 +624,56 @@ public class NTP {
     // --- Pythagorean Triples section ---
     
     private static void pythagoreanTriples(String name) {
-        runSection(
+        runSingleInputSection(
             name,
             "Finds the first 10 Pythagorean triples with smallest side >= a given number.",
+            """
+            A Pythagorean triple is three positive integers (a, b, c) satisfying \
+            a² + b² = c², corresponding to a right triangle with integer side \
+            lengths. The smallest is (3, 4, 5). Euclid's formula generates all \
+            primitive triples — those with gcdFps(a, b, c) = 1 — as a = m² − n², \
+            b = 2mn, c = m² + n² for coprime m > n of opposite parity. Every \
+            Pythagorean triple is a positive integer multiple of a primitive \
+            one, and there are infinitely many.""",
             0,
             10_000,
             n -> {
                 List<PythagoreanTriple> triples = firstPythagoreanTriples(n);
-                println(String.format("First 10 Pythagorean triples with smallest side >= %s:", fmt(n)));
+                println(String.format("First 10 Pythagorean triples with smallest side >= %s:", formatWithCommas(n)));
                 triples.forEach(NTP::println);
             }
         );
     }
     
     record PythagoreanTriple(long a, long b, long c) {
+        boolean isPrimitive() {
+            long max = b;
+            long min = a;
+            long remainder = max % min;
+            
+            while (remainder != 0) {
+                max = min;
+                min = remainder;
+                remainder = max % min;
+            }
+            
+            // At this point, min is the GCD.
+            return min == 1;
+        }
+
         @Override
         public String toString() {
             return String.format(
-                "%s² + %s² = %s²    (%s + %s = %s)",
-                fmt(a), fmt(b), fmt(c), fmt(a * a), fmt(b * b), fmt(c * c)
+                "%s² + %s² = %s²    (%s + %s = %s)%s",
+                formatWithCommas(a), formatWithCommas(b), formatWithCommas(c),
+                formatWithCommas(a * a), formatWithCommas(b * b), formatWithCommas(c * c),
+                isPrimitive() ? "  primitive" : ""
             );
         }
     }
 
     static List<PythagoreanTriple> firstPythagoreanTriples(long minA) {
-        List<PythagoreanTriple> result = new ArrayList<>();
+        var result = new ArrayList<PythagoreanTriple>();
         long a = minA;
         // (c-b)(c+b) = a². Iterate d1 < a with d1*d2 = a², same parity. Descending d1 yields ascending b.
         while (true) {
@@ -506,58 +695,78 @@ public class NTP {
 
     // --- Two Square Theorem section ---
 
-    record TwoSquareData(long prime, long a, long b) {
+    static class TwoSquareData {
+        final long prime, a, b;
+
+        TwoSquareData(long start) {
+            long candidate = Math.max(start, 5);
+            while (candidate % 4 != 1) candidate++;
+            while (!isPrime(candidate)) candidate += 4;
+            long foundA = 0, foundB = 0;
+            for (long i = 1; 2 * i * i <= candidate; i++) {
+                long bSq = candidate - i * i;
+                long j = (long) Math.sqrt((double) bSq);
+                if (j * j == bSq) { foundA = i; foundB = j; break; }
+                if ((j + 1) * (j + 1) == bSq) { foundA = i; foundB = j + 1; break; }
+            }
+            if (foundA == 0)
+                throw new IllegalStateException(String.format("Prime %d is not a sum of two squares", candidate));
+            prime = candidate;
+            a = foundA;
+            b = foundB;
+        }
+
         @Override
         public String toString() {
             return String.format(
                 "%s = %s² + %s²    (%s = %s + %s)",
-                fmt(prime), fmt(a), fmt(b), fmt(prime), fmt(a * a), fmt(b * b)
+                formatWithCommas(prime), formatWithCommas(a), formatWithCommas(b), formatWithCommas(prime), formatWithCommas(a * a), formatWithCommas(b * b)
             );
         }
     }
 
     private static void twoSquareTheorem(String name) {
-        runSection(
+        runSingleInputSection(
             name,
             "Finds the first Pythagorean prime >= a given number, along with the numbers whose squares sum to it.",
+            """
+            Fermat's Theorem on Sums of Two Squares states that an odd prime p \
+            can be written as a² + b² if and only if p ≡ 1 (mod 4). Such primes \
+            are called Pythagorean primes; the first few are 5, 13, 17, 29, 37, \
+            41. When the representation exists, it is unique up to the order \
+            and signs of a and b. The theorem connects to the Gaussian integers \
+            ℤ[i], in which these primes split as p = (a + bi)(a − bi).""",
             0,
             1_000_000_000_000_000L,
             n -> {
-                TwoSquareData ts = firstPythagoreanPrimeFrom(n);
-                println(String.format("First Pythagorean prime >= %s:", fmt(n)));
+                var ts = new TwoSquareData(n);
+                println(String.format("First Pythagorean prime >= %s:", formatWithCommas(n)));
                 println(ts);
             }
         );
     }
 
-    static TwoSquareData firstPythagoreanPrimeFrom(long start) {
-        // Pythagorean primes are primes ≡ 1 (mod 4). Smallest is 5.
-        long candidate = Math.max(start, 5);
-        while (candidate % 4 != 1) candidate++;
-        while (!isPrime(candidate)) candidate += 4;
-        for (long a = 1; 2 * a * a <= candidate; a++) {
-            long bSq = candidate - a * a;
-            long b = (long) Math.sqrt((double) bSq);
-            if (b * b == bSq) return new TwoSquareData(candidate, a, b);
-            if ((b + 1) * (b + 1) == bSq) return new TwoSquareData(candidate, a, b + 1);
-        }
-        throw new IllegalStateException(String.format("Prime %d is not a sum of two squares", candidate));
-    }
 
     // --- Fibonacci-Like Sequences section ---
 
     private static void fibonacciLikeSequences(String name) {
-        runSectionTwoInputs(
+        runDoubleInputSection(
             name,
             "Builds a 20-term sequence whose first two terms are the inputs; each later term is the sum of the previous two. Shows ratios at positions 5/4, 10/9, 15/14, 20/19.",
+            """
+            A Fibonacci-like sequence starts with two seed values; each subsequent \
+            term is the sum of the previous two: a, b, a+b, a+2b, 2a+3b, .... The \
+            classical Fibonacci sequence uses seeds 1, 1, and the Lucas sequence \
+            uses 2, 1. For any starting pair (with at least one positive value), \
+            the ratio of consecutive terms converges to the golden ratio \
+            φ = (1 + √5) / 2 ≈ 1.618. This convergence reflects the fact that \
+            the dominant eigenvalue of the recurrence's 2×2 transition matrix is φ.""",
             1,
             9_000_000_000_000_000_000L,
             (a, b) -> {
                 List<BigInteger> sequence = fibonacciLikeSequence(a, b);
                 println("Sequence:");
-                for (int i = 0; i < sequence.size(); i++) {
-                    println(String.format("%2d: %s", i + 1, fmt(sequence.get(i))));
-                }
+                println(wrapped(sequence, NTP::formatWithCommas));
 
                 println("\nRatios:");
                 for (int i : new int[]{4, 9, 14, 19}) {
@@ -568,7 +777,7 @@ public class NTP {
     }
 
     static List<BigInteger> fibonacciLikeSequence(long a, long b) {
-        List<BigInteger> result = new ArrayList<>();
+        var result = new ArrayList<BigInteger>();
         result.add(BigInteger.valueOf(a));
         result.add(BigInteger.valueOf(b));
         for (int i = 2; i < 20; i++) {
@@ -586,8 +795,8 @@ public class NTP {
         Ratio(BigInteger numerator, BigInteger denominator) {
             this.numerator = numerator;
             this.denominator = denominator;
-            BigDecimal num = new BigDecimal(numerator);
-            BigDecimal den = new BigDecimal(denominator);
+            var num = new BigDecimal(numerator);
+            var den = new BigDecimal(denominator);
             BigDecimal value;
             boolean exact;
             try {
@@ -610,7 +819,7 @@ public class NTP {
         public String toString() {
             return String.format(
                 "%s / %s %c %s",
-                fmt(numerator), fmt(denominator), exact ? '=' : '≈', value.toPlainString()
+                formatWithCommas(numerator), formatWithCommas(denominator), exact ? '=' : '≈', value.toPlainString()
             );
         }
     }
@@ -620,22 +829,30 @@ public class NTP {
     record PowerAndMultiple(long power, BigInteger multiple) {}
 
     private static void ancientEgyptianMultiplication(String name) {
-        runSectionTwoInputs(
+        runDoubleInputSection(
             name,
             "Multiplies two numbers via powers of 2: shows every power of 2 ≤ the first input paired with its product with the second input, then the subset of powers that sum to the first input.",
+            """
+            Ancient Egyptian (or "peasant") multiplication computes a × b using \
+            only doubling and addition: write a in binary as a sum of distinct \
+            powers of 2, then add the corresponding doublings of b. For example, \
+            13 × 12 = 8 × 12 + 4 × 12 + 1 × 12 = 96 + 48 + 12 = 156. The method \
+            appears in the Rhind Mathematical Papyrus from around 1650 BC. It is \
+            essentially the same algorithm as modern shift-and-add binary \
+            multiplication.""",
             2,
             9_000_000_000_000_000L,
             (a, b) -> {
-                println(String.format("All powers of 2 ≤ %s:", fmt(a)));
+                println(String.format("All powers of 2 ≤ %s:", formatWithCommas(a)));
                 printEgyptianTable(powersOfTwoTable(a, b));
-                println(String.format("\nPowers of 2 summing to %s:", fmt(a)));
+                println(String.format("\nPowers of 2 summing to %s:", formatWithCommas(a)));
                 printEgyptianTable(powersOfTwoSumming(a, b));
             }
         );
     }
 
     static List<PowerAndMultiple> powersOfTwoTable(long a, long b) {
-        List<PowerAndMultiple> result = new ArrayList<>();
+        var result = new ArrayList<PowerAndMultiple>();
         long power = 1;
         BigInteger multiple = BigInteger.valueOf(b);
         
@@ -650,7 +867,7 @@ public class NTP {
     }
 
     static List<PowerAndMultiple> powersOfTwoSumming(long a, long b) {
-        List<PowerAndMultiple> result = new ArrayList<>();
+        var result = new ArrayList<PowerAndMultiple>();
         long power = 1;
         BigInteger multiple = BigInteger.valueOf(b);
         long remaining = a;
@@ -669,13 +886,13 @@ public class NTP {
         int powerW = "power".length();
         int multW = "multiple".length();
         for (PowerAndMultiple row : rows) {
-            powerW = Math.max(powerW, fmt(row.power()).length());
-            multW = Math.max(multW, fmt(row.multiple()).length());
+            powerW = Math.max(powerW, formatWithCommas(row.power()).length());
+            multW = Math.max(multW, formatWithCommas(row.multiple()).length());
         }
         String rowFormat = "%" + powerW + "s  %" + multW + "s";
         println(String.format(rowFormat, "power", "multiple"));
         for (PowerAndMultiple row : rows) {
-            println(String.format(rowFormat, fmt(row.power()), fmt(row.multiple())));
+            println(String.format(rowFormat, formatWithCommas(row.power()), formatWithCommas(row.multiple())));
         }
     }
 }

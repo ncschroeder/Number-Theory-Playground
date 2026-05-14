@@ -16,15 +16,15 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class NTPTests {
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        n,              expected
-        0,              0
-        1,              1
-        999,            999
-        1000,           "1,000"
-        1000000,        "1,000,000"
-        1234567,        "1,234,567"
-        -1000,          "-1,000"
-        9223372036854775807, "9,223,372,036,854,775,807"
+        n,                          expected
+        0,                          0
+        1,                          1
+        999,                        999
+        1_000,                      '1,000'
+        1_000_000,                  '1,000,000'
+        1_234_567,                  '1,234,567'
+        -1_000,                     '-1,000'
+        9_223_372_036_854_775_807,  '9,223,372,036,854,775,807'
         """)
     void formatWithCommasLong(long n, String expected) {
         assertEquals(expected, NTP.formatWithCommas(n));
@@ -32,14 +32,14 @@ public class NTPTests {
 
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        n,                        expected
-        0,                        0
-        999,                      999
-        1000,                     "1,000"
-        1234567,                  "1,234,567"
+        n,                            expected
+        0,                            0
+        999,                          999
+        1000,                         '1,000'
+        1234567,                      '1,234,567'
         # larger than Long.MAX_VALUE
-        99999999999999999999,     "99,999,999,999,999,999,999"
-        12345678901234567890,     "12,345,678,901,234,567,890"
+        99999999999999999999,         '99,999,999,999,999,999,999'
+        12345678901234567890,         '12,345,678,901,234,567,890'
         """)
     void formatWithCommasBigInteger(String n, String expected) {
         assertEquals(expected, NTP.formatWithCommas(new BigInteger(n)));
@@ -94,14 +94,15 @@ public class NTPTests {
     }
     
     
+    private static List<Long> longListOf(long... values) {
+        return Arrays.stream(values).boxed().toList();
+    }
+    
+    
     @ParameterizedTest
     @MethodSource("findPrimesFromCases")
     void findPrimesFrom(long start, List<Long> expected) {
         assertEquals(expected, NTP.findPrimesFrom(start));
-    }
-    
-    private static List<Long> longListOf(long... values) {
-        return Arrays.stream(values).boxed().toList();
     }
 
     static Stream<Arguments> findPrimesFromCases() {
@@ -164,12 +165,12 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("findTwinPrimesFromCases")
-    void findTwinPrimesFrom(long start, List<Long> expected) {
-        assertEquals(expected, NTP.findTwinPrimesFrom(start));
+    @MethodSource("findTwinPrimePairLowersCases")
+    void findTwinPrimePairLowers(long start, List<Long> expected) {
+        assertEquals(expected, NTP.findTwinPrimePairLowers(start));
     }
-    
-    static Stream<Arguments> findTwinPrimesFromCases() {
+
+    static Stream<Arguments> findTwinPrimePairLowersCases() {
         return Stream.of(
             arguments(
                 0,
@@ -186,6 +187,96 @@ public class NTPTests {
                 )
             )
         );
+    }
+    
+    
+    private static NTP.FactorAndPower fp(long factor, int power) {
+        return new NTP.FactorAndPower(factor, power);
+    }
+    
+    
+    @ParameterizedTest
+    @MethodSource("primeFactorsAndPowersCases")
+    void primeFactorsAndPowersOf(long n, List<NTP.FactorAndPower> expected) {
+        assertEquals(expected, NTP.primeFactorsAndPowersOf(n));
+    }
+    
+    static Stream<Arguments> primeFactorsAndPowersCases() {
+        return Stream.of(
+            arguments(1, List.of()),
+            arguments(2, List.of(fp(2, 1))),
+            arguments(4, List.of(fp(2, 2))),
+            arguments(6, List.of(fp(2, 1), fp(3, 1))),
+            arguments(12, List.of(fp(2, 2), fp(3, 1))),
+            arguments(60, List.of(fp(2, 2), fp(3, 1), fp(5, 1))),
+            arguments(49, List.of(fp(7, 2))),
+            arguments(7_919, List.of(fp(7_919, 1))),
+            arguments(2_000_000_014, List.of(fp(2, 1), fp(1_000_000_007, 1)))
+        );
+    }
+    
+    @ParameterizedTest
+    @MethodSource("fpsToStringCases")
+    void fpsToString(List<NTP.FactorAndPower> fps, String expected) {
+        assertEquals(expected, NTP.fpsToString(fps));
+    }
+
+    static Stream<Arguments> fpsToStringCases() {
+        return Stream.of(
+            // empty fps — n=1 has no prime factors
+            arguments(List.of(), "1"),
+            // single prime
+            arguments(List.of(fp(2, 1)), "2"),
+            // powerOf2 > 1
+            arguments(List.of(fp(2, 2)), "2^2"),
+            // two factors
+            arguments(List.of(fp(2, 1), fp(3, 1)), "2 × 3"),
+            // mixed powers
+            arguments(List.of(fp(2, 2), fp(3, 1)), "2^2 × 3"),
+            // large powerOf2
+            arguments(List.of(fp(2, 10)), "2^10"),
+            // three factors
+            arguments(List.of(fp(2, 2), fp(3, 1), fp(5, 1)), "2^2 × 3 × 5"),
+            // factor values are comma-formatted
+            arguments(List.of(fp(7_919, 1)), "7,919"),
+            arguments(List.of(fp(1_000_000_007, 1)), "1,000,000,007"),
+            arguments(List.of(fp(2, 1), fp(1_000_000_007, 1)), "2 × 1,000,000,007")
+        );
+    }
+
+
+    private static NTP.SumAndExpression se(long value, String expression) {
+        return new NTP.SumAndExpression(value, expression);
+    }
+    
+    @ParameterizedTest
+    @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        """)
+    void getDigitSe(long n, long expectedValue, String expectedExpression) {
+        assertEquals(se(expectedValue, expectedExpression), NTP.getDigitSe(n));
+    }
+    
+    @ParameterizedTest
+    @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        """)
+    void getAlternatingDigitSe(long n, long expectedValue, String expectedExpression) {
+        assertEquals(se(expectedValue, expectedExpression), NTP.getAlternatingDigitSe(n));
+    }
+    
+    @ParameterizedTest
+    @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        n,          expectedValue,  expectedExpression
+        0,          0,              0
+        7,          7,              7
+        999,        999,            999
+        1_000,      -1,             0 − 1
+        1_001,      0,              1 − 1
+        1_000_000,  1,              0 − 0 + 1
+        1_234_567,  334,            567 − 234 + 1
+        -1_001,     0,              1 − 1
+        """)
+    void getAlternatingBlockSe(long n, long expectedValue, String expectedExpression) {
+        assertEquals(se(expectedValue, expectedExpression), NTP.getAlternatingBlockSe(n));
     }
     
     
@@ -214,18 +305,14 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("gcdAndLcmFactorsCases")
-    void gcdAndLcmFactorsParameterized(long a, long b, List<NTP.FactorAndPower> expectedGcd, List<NTP.FactorAndPower> expectedLcm) {
+    @MethodSource("gcdAndLcmPrimeFactorizationDataCases")
+    void gcdAndLcmPrimeFactorizationData(long a, long b, List<NTP.FactorAndPower> expectedGcd, List<NTP.FactorAndPower> expectedLcm) {
         var result = new NTP.GcdAndLcmPrimeFactorizationData(NTP.primeFactorsAndPowersOf(a), NTP.primeFactorsAndPowersOf(b));
         assertEquals(expectedGcd, result.gcdFps());
         assertEquals(expectedLcm, result.lcmFps());
     }
     
-    private static NTP.FactorAndPower fp(long factor, int power) {
-        return new NTP.FactorAndPower(factor, power);
-    }
-    
-    static Stream<Arguments> gcdAndLcmFactorsCases() {
+    static Stream<Arguments> gcdAndLcmPrimeFactorizationDataCases() {
         return Stream.of(
             arguments(
                 48,
@@ -244,16 +331,16 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("goldbachPairsCases")
-    void goldbachPairs(long n, List<Long> expected) {
-        assertEquals(expected, NTP.goldbachPairs(n));
+    @MethodSource("findGoldbachPairLowersCases")
+    void findGoldbachPairLowers(long n, List<Long> expected) {
+        assertEquals(expected, NTP.findGoldbachPairLowers(n));
     }
     
-    static Stream<Arguments> goldbachPairsCases() {
+    static Stream<Arguments> findGoldbachPairLowersCases() {
         return Stream.of(
-            arguments(4, List.of(2L)),
-            arguments(10, List.of(3L, 5L)),
-            arguments(100, List.of(3L, 11L, 17L, 29L, 41L, 47L))
+            arguments(4, longListOf(2)),
+            arguments(10, longListOf(3, 5)),
+            arguments(100, longListOf(3, 11, 17, 29, 41, 47))
         );
     }
     
@@ -323,7 +410,7 @@ public class NTPTests {
         """)
     void twoSquareData(long start, long prime, long a, long b) {
         var ts = new NTP.TwoSquareData(start);
-        assertEquals(prime, ts.prime);
+        assertEquals(prime, ts.pythagPrime);
         assertEquals(a, ts.a);
         assertEquals(b, ts.b);
     }
@@ -361,22 +448,19 @@ public class NTPTests {
     }
 
     
+    /**
+     * A fraction in lowest terms has a terminating decimal expansion if and only if its
+     * denominator's prime factorization contains only 2s and 5s — because our number system
+     * is base 10 = 2 × 5, so only those prime factors can be "absorbed" into a finite number
+     * of decimal places. Any other prime factor in the denominator forces infinitely repeating
+     * digits. toString() signals this with ≈ instead of =.
+     */
     @ParameterizedTest
-    @MethodSource("computeRatioExactnessCases")
-    void computeRatioExactness(long numerator, long denominator, boolean expectedExact) {
-        NTP.Ratio ratio = new NTP.Ratio(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
-        assertEquals(expectedExact, ratio.exact());
-    }
-
-    static Stream<Arguments> computeRatioExactnessCases() {
-        return Stream.of(
-            arguments(16L, 10L, true),   // 1.6
-            arguments(10L, 4L, true),    // 2.5
-            arguments(10L, 5L, true),    // 2
-            arguments(5L, 3L, false),    // non-terminating
-            arguments(55L, 34L, false),  // denominator has factor 17
-            arguments(623L, 314L, false) // denominator has factor 157
-        );
+    @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        """)
+    void ratioToString(int numerator, int denominator, String expected) {
+        var ratio = new NTP.Ratio(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
+        assertEquals(expected, ratio.toString());
     }
     
     

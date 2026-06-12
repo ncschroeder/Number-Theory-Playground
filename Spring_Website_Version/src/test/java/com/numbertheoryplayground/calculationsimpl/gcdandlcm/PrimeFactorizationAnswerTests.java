@@ -35,10 +35,10 @@ class PrimeFactorizationAnswerTests {
     void assertPf(
         PrimeFactorization pf,
         List<FactorAndPower> expectedFps,
-        int expectedCorrespondingInt
+        long expectedCorrespondingLong
     ) {
         assertEquals(expectedFps, pf.getFps());
-        assertEquals(expectedCorrespondingInt, pf.getCorrespondingInt());
+        assertEquals(expectedCorrespondingLong, pf.getCorrespondingLong());
     }
 
     /**

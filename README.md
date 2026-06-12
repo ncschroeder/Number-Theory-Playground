@@ -170,11 +170,13 @@ There are also some Unicode chars for math symbols such as ≥ and × that were 
 <summary>Max Input Info</summary>
 <br/>
 
-The calculations for the Fibonacci-like sequences and ancient Egyptian multiplication sections are pretty cheap, like so cheap that I was able to have the input numbers be a googol (10<sup>100</sup>) and the calculations were done instantly. For the max inputs of those sections, I picked 1 quadrillion (1,000,000,000,000,000) for the website version and 9 quintillion (9,000,000,000,000,000,000) for the CLI and GUI versions. 1 quadrillion is a little lower than the max value of a safe integer in JavaScript, which is 2<sup>53</sup> − 1 or 9,007,199,254,740,991 (9 quadrillion 7 trillion ...). 9 quintillion is a little lower than the max value of a Java `long`, which is 2<sup>63</sup> − 1 or 9,223,372,036,854,775,807 (9 quintillion 223 quadrillion ...). I could make the max inputs higher but if I did, I would have to use `BigInt`s for the website version and `BigInteger`s for the CLI and GUI versions for input numbers. I would also have to adjust the generation of random input numbers because of this. I think 1 quadrillion and 9 quintillion are good enough for max inputs so I'll just use them.
+The calculations for the Fibonacci-like sequences and ancient Egyptian multiplication sections are pretty cheap, like so cheap that I was able to have the input numbers be a googol (10<sup>100</sup>) and the calculations were done instantly. For the CLI and GUI versions, I decided to have the max inputs for these sections be 9 quintillion (9,000,000,000,000,000,000), which is a little lower than the max value of a Java `long`, which is 2<sup>63</sup> − 1 or 9,223,372,036,854,775,807 (9 quintillion 223 quadrillion ...). For the website version, I decided to have the max inputs be 1 billion (1,000,000,000), which is a lot lower than the max value of a JavaScript safe integer, which is 2<sup>53</sup> − 1 or 9,007,199,254,740,991 (9 quadrillion ...). 1 billion is pretty high and a benefit to having that be the max inputs is that I can use `long`s to do the calculations on the back end and don't need to use `BigInteger`s.
 
-For other sections in the CLI and GUI versions, I picked the max inputs such that the inputs ≤ the max input that required the most work to be done would take a few seconds or so on my computer. For the prime factorization, divisibility, and GCD and LCM sections, the input that requires the most work is the largest prime number or largest square number ≤ the max input. If both of these numbers have the same square root floor, then either can be used. Otherwise, the larger number must be used. For the GCD and LCM section, both inputs need to be this number. For other sections, there aren't any easy ways to determine the input the requires the most work but it's probably the max input or a number close to it. I generated random large numbers ≤ the max input and tried out the calculations with them.
+For other sections in the CLI and GUI versions, I chose the max inputs such that the input(s) ≤ the max input that required the most work or close to the most work to be done would take a few seconds or so on my computer.
 
-The max inputs for the website version are proportional to the max inputs for the CLI and GUI versions but a lot lower. This is to reduce the amount of work the server has to do since the calculations will be done every time a user enters a valid input number and clicks the "Calculate" button. The max input is 10,000 for 6 sections, 1,000 for a section, 100 for a section, and the other 2 sections were the ones mentioned a couple of paragraphs ago.
+For those other sections in the website version, the max inputs are a lot lower. The calculations are done on a server and I'm not gonna use my computer for that server in production. The server might be less powerful than my computer and might have more things to do than serve this website. Also, I don't expect this website to get many visitors but I still prepared for multiple visitors by carefully choosing max inputs.
+
+I used the [`System.nanoTime` method](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/System.html#nanoTime()) to find out about how long it takes to do calculations with various input number sizes and chose the max inputs based on this. This, of course, is still affected by how powerful my computer is but I studied how much calculation times increased as the input increased. For example, the prime numbers section calculates the first 30 prime numbers that are ≥ an input number. It often takes about 2 milliseconds (ms) if the input is 0 or 1,000, 2.5-3 ms for 10,000 or 100,000, 3-3.5 ms for 1 million, and 3.5-4 ms for 10 million. 100,000 is pretty high and it only takes a little longer to do the calculation with that as the input than how long it takes to do it with 0, so I decided to have 100,000 be the max input.
 
 </details>
 
@@ -209,7 +211,7 @@ Find the first 30 primes that are ≥ an input number.
 
 Min: 0
 <br/>
-Website max: 10,000
+Website max: 100,000
 <br/>
 CLI and GUI max: 10 trillion (10,000,000,000)
 
@@ -243,7 +245,7 @@ Find the first 20 semiprimes that are ≥ an input number, as well as their prim
 
 Min: 0
 <br/>
-Website max: 10,000
+Website max: 100,000
 <br/>
 CLI and GUI max: 50 trillion (50,000,000,000)
 
@@ -285,7 +287,7 @@ Find the first 20 twin prime pairs where the lowest number in the pair is ≥ an
 
 Min: 0
 <br/>
-Website max: 10,000
+Website max: 100,000
 <br/>
 CLI and GUI max: 500 billion (500,000,000,000)
 
@@ -339,7 +341,7 @@ Find the PF of an input number faster than you can say "prime factorization." :s
 
 Min: 2
 <br/>
-Website max: 10,000
+Website max: 1 million (1,000,000)
 <br/>
 CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
 
@@ -433,7 +435,7 @@ Given an input number:
 
 Min: 10
 <br/>
-Website max: 10,000
+Website max: 1 million (1,000,000)
 <br/>
 CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
 
@@ -552,7 +554,7 @@ Given 2 input numbers:
 
 Min: 2
 <br/>
-Website max: 10,000
+Website max: 1 million (1,000,000)
 <br/>
 CLI and GUI max: 5 quadrillion (5,000,000,000,000,000)
 
@@ -591,7 +593,7 @@ Must be even
 <br/>
 Min: 4
 <br/>
-Website max: 1,000
+Website max: 10,000
 <br/>
 CLI max: 1.5 million (1,500,000)
 <br/>
@@ -680,7 +682,7 @@ Find the 1<sup>st</sup> Pythagorean prime ≥ an input number, as well as the wh
 
 Min: 0
 <br/>
-Website max: 10,000
+Website max: 1 million (1,000,000)
 <br/>
 CLI and GUI max: 1 quadrillion (1,000,000,000,000,000)
 
@@ -730,7 +732,7 @@ $\frac{8}{5} = 1.6$, and $\frac{21}{13} \approx 1.615384615384615$.
 
 Min: 1
 <br/>
-Website max: 1 quadrillion (1,000,000,000,000,000)
+Website max: 1 billion (1,000,000,000)
 <br/>
 CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
 
@@ -794,7 +796,7 @@ This process will be done faster than you can say "ancient Egyptian multiplicati
 
 Min: 2
 <br/>
-Website max: 1 quadrillion (1,000,000,000,000,000)
+Website max: 1 billion (1,000,000,000)
 <br/>
 CLI and GUI max: 9 quintillion (9,000,000,000,000,000,000)
 
@@ -868,7 +870,7 @@ Endpoint end: `primes`
 <br/>
 Query param: `input`
 <br/>
-Input Range: 0 - 10,000
+Input Range: 0 - 100,000
 
 ###### Response
 
@@ -885,7 +887,7 @@ Endpoint end: `semiprimes-data`
 <br/>
 Query param: `input`
 <br/>
-Input Range: 0 - 10,000
+Input Range: 0 - 100,000
 
 ###### Response
 
@@ -902,7 +904,7 @@ Endpoint end: `twin-prime-pair-starts`
 <br/>
 Query param: `input`
 <br/>
-Input Range: 0 - 10,000
+Input Range: 0 - 100,000
 
 ###### Response
 
@@ -918,7 +920,7 @@ Endpoint end: `prime-factorization`
 <br/>
 Query param: `input`
 <br/>
-Input Range: 2 - 10,000
+Input Range: 2 - 1 million (1,000,000)
 
 ###### Response
 
@@ -935,7 +937,7 @@ Endpoint end: `divisibility-pf-answer`
 <br/>
 Query param: `input`
 <br/>
-Input Range: 10 - 10,000
+Input Range: 10 - 1 million (1,000,000)
 
 ###### Response
 
@@ -965,7 +967,7 @@ Endpoint end: `gcd-and-lcm-answer`
 <br/>
 Query params: `input1` and `input2`
 <br/>
-Input Range: 2 - 10,000
+Input Range: 2 - 1 million (1,000,000)
 
 ###### Response
 
@@ -1000,7 +1002,7 @@ Endpoint end: `goldbach-prime-pair-starts`
 <br/>
 Query param: `input`
 <br/>
-Input Range: 4 - 1,000
+Input Range: 4 - 10,000
 
 ###### Response
 
@@ -1032,7 +1034,7 @@ Endpoint end: `two-square-theorem-answer`
 <br/>
 Query param: `input`
 <br/>
-Input Range: 0 - 10,000
+Input Range: 0 - 1 million (1,000,000)
 
 ###### Response
 
@@ -1048,19 +1050,18 @@ Endpoint end: `fibonacci-like-sequences-answer`
 <br/>
 Query params: `input1` and `input2`
 <br/>
-Input Range: 1 - 1 quadrillion (1,000,000,000,000,000)
+Input Range: 1 - 1 billion (1,000,000,000)
 
 ###### Response
 
 Type:
 ```
 {
-    fiboLikeSequence: string[],
     ratiosData: { num1String: string, num2String: string, ratio: number, isRounded: boolean }[]
+    fiboLikeSequence: number[],
 }
 ```
 
-`fiboLikeSequence` contains strings of the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. `ratiosData` contains objects with data about the ratios of the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in the sequence. Strings are used for the sequence and the numbers in the ratio data objects since these numbers might be too big for a safe JavaScript integer.
 
 <br/>
 
@@ -1070,7 +1071,7 @@ Endpoint end: `ancient-multiplication-answer`
 <br/>
 Query params: `input1` and `input2`
 <br/>
-Input Range: 2 - 1 quadrillion (1,000,000,000,000,000)
+Input Range: 2 - 1 billion (1,000,000,000)
 
 ###### Response
 

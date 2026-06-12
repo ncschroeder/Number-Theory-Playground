@@ -1,14 +1,13 @@
 package com.numbertheoryplayground.calculationsimpl;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.numbertheoryplayground.InputValidation.*;
 
 public final class AncientMultiplicationAnswer {
-    private static final long MIN_INPUT = 2;
-    private static final long MAX_INPUT = ONE_QUADRILLION;
+    private static final int MIN_INPUT = 2;
+    private static final int MAX_INPUT = ONE_BILLION;
     
     /**
      * This record has data that'll be in rows of tables shown on the web page.
@@ -37,7 +36,7 @@ public final class AncientMultiplicationAnswer {
      */
     private final String productString;
     
-    public AncientMultiplicationAnswer(long input1, long input2) {
+    public AncientMultiplicationAnswer(int input1, int input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
         assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
         
@@ -45,18 +44,13 @@ public final class AncientMultiplicationAnswer {
         Iterate backwards through the binary string of input1 to find the powers of 2 that are
         ≤ input1 and the powers of 2 that sum to input1.
          */
-        var input1BinaryString = Long.toBinaryString(input1);
+        var input1BinaryString = Integer.toBinaryString(input1);
         table1Rows = new ArrayList<>(input1BinaryString.length());
         table2Rows = new ArrayList<>(input1BinaryString.length());
-        var powerOf2 = 1L;
-        var input2BigInt = BigInteger.valueOf(input2);
+        var powerOf2 = 1;
         
         for (int i = input1BinaryString.length() - 1; i >= 0; i--) {
-            var correspondingMultipleString =
-                input2BigInt
-                .multiply(BigInteger.valueOf(powerOf2))
-                .toString();
-            var row = new TableRow(Long.toString(powerOf2), correspondingMultipleString);
+            String correspondingMultiple = Long.toString((long) input2 * powerOf2);
             table1Rows.add(row);
             
             if (input1BinaryString.charAt(i) == '1') {
@@ -67,10 +61,7 @@ public final class AncientMultiplicationAnswer {
             powerOf2 *= 2;
         }
         
-        productString =
-            BigInteger.valueOf(input1)
-            .multiply(BigInteger.valueOf(input2))
-            .toString();
+        product = Long.toString((long) input1 * input2);
     }
     
     public List<TableRow> getTable1Rows() {

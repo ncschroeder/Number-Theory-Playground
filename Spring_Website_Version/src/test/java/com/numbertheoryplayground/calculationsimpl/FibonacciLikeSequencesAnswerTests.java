@@ -3,8 +3,6 @@ package com.numbertheoryplayground.calculationsimpl;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -14,20 +12,18 @@ import static com.numbertheoryplayground.calculationsimpl.FibonacciLikeSequences
 class FibonacciLikeSequencesAnswerTests {
     @ParameterizedTest
     @MethodSource("getIntFiboLikeSequences")
-    void getBigIntFiboLikeSequence(List<Integer> expectedIntSequence) {
-        List<BigInteger> expectedBigIntSequence =
+    void fiboLikeSequence(List<Integer> expectedIntSequence) {
+        List<Long> expectedLongSequence =
             expectedIntSequence
             .stream()
-            .map(BigInteger::valueOf)
+            .map(Integer::longValue)
             .toList();
         
-        List<BigInteger> actualBigIntSequence =
-            FibonacciLikeSequencesAnswer.getBigIntFiboLikeSequence(
-                expectedBigIntSequence.get(0).longValueExact(),
-                expectedBigIntSequence.get(1).longValueExact()
-            );
+        List<Long> actualSequence =
+            new FibonacciLikeSequencesAnswer(expectedIntSequence.get(0), expectedIntSequence.get(1))
+            .getFiboLikeSequence();
         
-        assertEquals(expectedBigIntSequence, actualBigIntSequence);
+        assertEquals(expectedLongSequence, actualSequence);
     }
     
     static Stream<List<Integer>> getIntFiboLikeSequences() {
@@ -54,9 +50,9 @@ class FibonacciLikeSequencesAnswerTests {
            4,        5,          1.25,                false
         """)
     void ratioData(
-        BigInteger input1,
-        BigInteger input2,
         BigDecimal expectedRatio,
+        long input1,
+        long input2,
         boolean expectedIsRounded
     ) {
         var data = new RatioData(input1, input2);

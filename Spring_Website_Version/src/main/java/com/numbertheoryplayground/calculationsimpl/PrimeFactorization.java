@@ -14,8 +14,8 @@ import static com.numbertheoryplayground.calculationsimpl.Calculations.isDivisib
  * request and sometimes, just the factors and powers list of an instance gets marshaled.
  */
 public final class PrimeFactorization {
-    public static final long MIN_INPUT = 2;
-    private static final long MAX_INPUT = TEN_THOUSAND;
+    public static final int MIN_INPUT = 2;
+    public static final int MAX_INPUT = ONE_MILLION;
     
     /**
      * Instances of this class are shortened to fp or its plural fps.
@@ -23,9 +23,9 @@ public final class PrimeFactorization {
     public record FactorAndPower(int factor, int power) {}
     
     /**
-     * The int that this prime factorization is for.
+     * The long that this prime factorization is for.
      */
-    private final int correspondingInt;
+    private final long correspondingLong;
     
     /**
      * An immutable list that's sorted by factors, which is appropriate when marshaling this
@@ -40,7 +40,7 @@ public final class PrimeFactorization {
     public PrimeFactorization(int input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        correspondingInt = input;
+        correspondingLong = input;
         var tempFps = new ArrayList<FactorAndPower>();
         var maxIntToCheck = (int) Math.sqrt(input);
         int remaining = input;
@@ -93,16 +93,16 @@ public final class PrimeFactorization {
             .sorted(Comparator.comparingInt(FactorAndPower::factor))
             .toList();
         
-        var tempCorrespondingInt = 1;
+        var tempCorrespondingLong = 1L;
         for (FactorAndPower fp : fps) {
-            tempCorrespondingInt *= (int) Math.pow(fp.factor, fp.power);
+            tempCorrespondingLong *= (long) Math.pow(fp.factor, fp.power);
         }
-        correspondingInt = tempCorrespondingInt;
+        correspondingLong = tempCorrespondingLong;
     }
     
     @JsonProperty("correspondingNum")
-    public int getCorrespondingInt() {
-        return correspondingInt;
+    public long getCorrespondingLong() {
+        return correspondingLong;
     }
     
     @JsonIgnore

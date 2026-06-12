@@ -10,8 +10,8 @@ import static com.numbertheoryplayground.InputValidation.*;
  * GCD stands for greatest common divisor and LCM stands for least common multiple.
  */
 public final class GcdAndLcmAnswer {
-    static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
-    static final long MAX_INPUT = TEN_THOUSAND;
+    static final int MIN_INPUT = PrimeFactorization.MIN_INPUT;
+    static final int MAX_INPUT = PrimeFactorization.MAX_INPUT;
     
     private final List<EuclideanIteration> euclideanIterations;
     

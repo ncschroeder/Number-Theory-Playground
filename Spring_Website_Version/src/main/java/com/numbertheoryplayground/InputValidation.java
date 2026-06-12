@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 public class InputValidation {
     // Max input constants
-    public static final long TEN_THOUSAND = 10_000;
-    public static final long ONE_QUADRILLION = 1_000_000_000_000_000L;
+    public static final int ONE_MILLION = 1_000_000;
+    public static final int ONE_BILLION = 1_000_000_000;
     
     /**
      * This exception is used for back end validation and isn't supposed to be thrown since
@@ -24,7 +24,7 @@ public class InputValidation {
         }
     }
     
-    public static void assertIsInRange(long input, long minInput, long maxInput) {
+    public static void assertIsInRange(int input, int minInput, int maxInput) {
         if (input < minInput || input > maxInput) {
             throw InvalidInputNumberException.instance;
         }

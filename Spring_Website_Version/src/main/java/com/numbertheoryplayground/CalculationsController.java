@@ -95,8 +95,8 @@ public class CalculationsController {
     
     @GetMapping(FIBO_LIKE_SEQUENCES_ANSWER_ENDPOINT_END)
     public FibonacciLikeSequencesAnswer getFiboLikeSequencesAnswer(
-        @RequestParam long input1,
-        @RequestParam long input2
+        @RequestParam int input1,
+        @RequestParam int input2
     ) {
         return new FibonacciLikeSequencesAnswer(input1, input2);
     }
@@ -106,8 +106,8 @@ public class CalculationsController {
     
     @GetMapping(ANCIENT_MULT_ANSWER_ENDPOINT_END)
     public AncientMultiplicationAnswer getAncientMultAnswer(
-        @RequestParam long input1,
-        @RequestParam long input2
+        @RequestParam int input1,
+        @RequestParam int input2
     ) {
         return new AncientMultiplicationAnswer(input1, input2);
     }

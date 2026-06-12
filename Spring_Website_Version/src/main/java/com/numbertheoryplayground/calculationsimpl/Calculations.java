@@ -37,8 +37,8 @@ public class Calculations {
     /**
      * Returns a list of the first 30 primes ≥ the input.
      */
-        assertIsInRange(input, 0, TEN_THOUSAND);
     public static List<Integer> getPrimes(int input) {
+        assertIsInRange(input, 0, 100_000);
         
         final int numPrimesToFind = 30;
         var primes = new ArrayList<Integer>(numPrimesToFind);
@@ -92,7 +92,7 @@ public class Calculations {
      * Returns a list of SemiprimeDatas for the first 20 semiprimes ≥ the input.
      */
     public static List<SemiprimeData> getSemiprimesData(int input) {
-        assertIsInRange(input, 0, TEN_THOUSAND);
+        assertIsInRange(input, 0, 100_000);
         
         final int numSemiprimesToFind = 20;
         var semiprimesData = new ArrayList<SemiprimeData>(numSemiprimesToFind);
@@ -115,8 +115,8 @@ public class Calculations {
      * the input is 4, then the pair 5 and 7 will be the first one found. A list that contains
      * the lowest numbers of those pairs gets returned.
      */
-        assertIsInRange(input, 0, TEN_THOUSAND);
     public static List<Integer> getTwinPrimePairStarts(int input) {
+        assertIsInRange(input, 0, 100_000);
         
         final int numPairsToFind = 20;
         var pairStarts = new ArrayList<Integer>(numPairsToFind);

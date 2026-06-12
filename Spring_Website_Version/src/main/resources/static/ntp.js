@@ -462,8 +462,8 @@ getElementById('home-btn').onclick = () => {
 
 
 // Max input constants
-const tenThousand = 10_000;
-const oneQuadrillion = 1_000_000_000_000_000;
+const oneMillion = 1_000_000;
+const oneBillion = 1_000_000_000;
 
 
 class Section {
@@ -514,8 +514,10 @@ class Section {
             : createPsWithParagraphs(infoHtmlStringOrArr);
         
         const maxInputString = createNumStringWithCommas(maxInput);
+        const numWithWord =
+            maxInput === oneMillion ? '1 million' : maxInput === oneBillion ? '1 billion' : null;
         const maxInputSentencePart =
-            maxInput === oneQuadrillion ? `1 quadrillion (${maxInputString})` : maxInputString;
+            numWithWord ? `${numWithWord} (${maxInputString})` : maxInputString;
         
         const directionsHtml =
             `Enter or generate ${this.isSingleInputSection ? 'a whole number' : '2 whole numbers'} and click
@@ -822,7 +824,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: primesInfoHtml,
         actionSentenceEndingHtml: 'the first 30 primes ≥ that number',
         minInput: 0,
-        maxInput: tenThousand,
+        maxInput: 100_000,
         apiEndpointEnd: 'primes'
     },
     createPrimesAnswerElements
@@ -869,7 +871,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: semiprimesInfoHtml,
         actionSentenceEndingHtml: 'the first 20 semiprimes ≥ that number, as well as their prime number factors',
         minInput: 0,
-        maxInput: tenThousand,
+        maxInput: 100_000,
         apiEndpointEnd: 'semiprimes-data'
     },
     createSemiprimesAnswerElements
@@ -922,7 +924,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: twinPrimePairsInfoHtml,
         actionSentenceEndingHtml: twinPrimePairsActionSentenceEnding,
         minInput: 0,
-        maxInput: tenThousand,
+        maxInput: 100_000,
         apiEndpointEnd: 'twin-prime-pair-starts'
     },
     createTwinPrimePairsAnswerElements
@@ -1023,7 +1025,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: pfInfoHtml,
         actionSentenceEndingHtml: 'the PF of that number',
         minInput: pfMinInput,
-        maxInput: tenThousand,
+        maxInput: pfMaxInput,
         apiEndpointEnd: 'prime-factorization'
     },
     createPfAnswerElements
@@ -1383,7 +1385,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: divisInfoElements,
         actionSentenceEndingHtml: 'divisbility info for that number',
         minInput: 10,
-        maxInput: tenThousand,
+        maxInput: pfMaxInput,
         apiEndpointEnd: 'divisibility-pf-answer'
     },
     createDivisAnswerElements
@@ -1594,7 +1596,7 @@ new DoubleInputSection(
         infoHtmlStringOrArr: gcdAndLcmInfoElements,
         actionSentenceEndingHtml: 'GCD and LCM info for those numbers',
         minInput: pfMinInput,
-        maxInput: tenThousand,
+        maxInput: pfMaxInput,
         apiEndpointEnd: 'gcd-and-lcm-answer'
     },
     createGcdAndLcmAnswerElements
@@ -1628,7 +1630,7 @@ new GoldbachConjectureSection(
         infoHtmlStringOrArr: goldbachConjectureInfoHtml,
         actionSentenceEndingHtml: 'the pairs of prime numbers that sum to that number',
         minInput: 4,
-        maxInput: 1_000,
+        maxInput: 10_000,
         apiEndpointEnd: 'goldbach-prime-pair-starts'
     },
     createGoldbachConjectureAnswerElements
@@ -1763,7 +1765,7 @@ new SingleInputSection(
         infoHtmlStringOrArr: twoSquareTheoremInfoHtml,
         actionSentenceEndingHtml: 'the first Pythagorean prime ≥ that number, as well as the whole numbers whose squares sum to that prime',
         minInput: 0,
-        maxInput: tenThousand,
+        maxInput: oneMillion,
         apiEndpointEnd: 'two-square-theorem-answer'
     },
     createTwoSquareTheoremAnswerElements
@@ -1832,10 +1834,10 @@ const fiboLikeSequencesActionSentenceEndingHtml =
     between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>,
     15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in that sequence`;
 
-/** @typedef {{ num1: string, num2: string, ratio: string, isRounded: boolean }} RatioData */
+/** @typedef {{ num1: number, num2: number, ratio: string, isRounded: boolean }} RatioData */
 
 /**
- * @param {{ fiboLikeSequence: string[], ratiosData: RatioData[] }}
+ * @param {{ fiboLikeSequence: number[], ratiosData: RatioData[] }}
  * @param {string} input1String
  * @param {string} input2String
  * @returns {HTMLElement[]}
@@ -1876,7 +1878,7 @@ new DoubleInputSection(
         infoHtmlStringOrArr: fiboLikeSequencesInfoHtml,
         actionSentenceEndingHtml: fiboLikeSequencesActionSentenceEndingHtml,
         minInput: 1,
-        maxInput: oneQuadrillion,
+        maxInput: oneBillion,
         apiEndpointEnd: 'fibonacci-like-sequences-answer'
     },
     createFiboLikeSequencesAnswerElements
@@ -2091,7 +2093,7 @@ new DoubleInputSection(
         infoHtmlStringOrArr: ancientMultInfoElements,
         actionSentenceEndingHtml: 'ancient Egyptian multiplication info for those numbers',
         minInput: 2,
-        maxInput: oneQuadrillion,
+        maxInput: oneBillion,
         apiEndpointEnd: 'ancient-multiplication-answer'
     },
     createAncientMultAnswerElements

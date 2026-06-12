@@ -7,8 +7,8 @@ import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
 
 public final class DivisibilityPrimeFactorizationAnswer {
-    private static final long MIN_INPUT = 10;
-    private static final long MAX_INPUT = TEN_THOUSAND;
+    private static final int MIN_INPUT = 10;
+    private static final int MAX_INPUT = PrimeFactorization.MAX_INPUT;
     
     /**
      * Contains the factors and powers of the PF of the input number.
@@ -83,7 +83,7 @@ public final class DivisibilityPrimeFactorizationAnswer {
         this PF, so it's the same as this PF. We don't want to include that as part of the factors.
          */
         factorPfs.removeLast();
-        factorPfs.sort(Comparator.comparingInt(PrimeFactorization::getCorrespondingInt));
+        factorPfs.sort(Comparator.comparingLong(PrimeFactorization::getCorrespondingLong));
         return factorPfs;
     }
     

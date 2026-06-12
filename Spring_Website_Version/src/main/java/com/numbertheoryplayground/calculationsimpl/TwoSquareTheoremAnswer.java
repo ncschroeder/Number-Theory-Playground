@@ -4,8 +4,8 @@ import static com.numbertheoryplayground.InputValidation.*;
 import static com.numbertheoryplayground.calculationsimpl.Calculations.isPrime;
 
 public final class TwoSquareTheoremAnswer {
-    private static final long MIN_INPUT = 0;
-    private static final long MAX_INPUT = TEN_THOUSAND;
+    private static final int MIN_INPUT = 0;
+    private static final int MAX_INPUT = ONE_MILLION;
     
     /**
      * The first Pythagorean prime ≥ the input.

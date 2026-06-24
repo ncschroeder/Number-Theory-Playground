@@ -245,21 +245,38 @@ public class NTPTests {
     }
 
 
-    private static NTP.SumAndExpression se(long value, String expression) {
+    private static NTP.SumAndExpression se(int value, String expression) {
         return new NTP.SumAndExpression(value, expression);
     }
     
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        n,         expectedValue, expectedExpression
+        0,         0,             0
+        5,         5,             5
+        10,        1,             1 + 0
+        123,       6,             1 + 2 + 3
+        999,       27,            9 + 9 + 9
+        1_000,     1,             1 + 0 + 0 + 0
+        9_999,     36,            9 + 9 + 9 + 9
+        -123,      6,             1 + 2 + 3
         """)
-    void getDigitSe(long n, long expectedValue, String expectedExpression) {
+    void getDigitSe(long n, int expectedValue, String expectedExpression) {
         assertEquals(se(expectedValue, expectedExpression), NTP.getDigitSe(n));
     }
     
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        n,         expectedValue, expectedExpression
+        0,         0,             0
+        7,         7,             7
+        11,        0,             1 − 1
+        121,       0,             1 − 2 + 1
+        1_331,     0,             1 − 3 + 3 − 1
+        12_345,    3,             1 − 2 + 3 − 4 + 5
+        -121,      0,             1 − 2 + 1
         """)
-    void getAlternatingDigitSe(long n, long expectedValue, String expectedExpression) {
+    void getAlternatingDigitSe(long n, int expectedValue, String expectedExpression) {
         assertEquals(se(expectedValue, expectedExpression), NTP.getAlternatingDigitSe(n));
     }
     
@@ -269,14 +286,59 @@ public class NTPTests {
         0,          0,              0
         7,          7,              7
         999,        999,            999
-        1_000,      -1,             0 − 1
-        1_001,      0,              1 − 1
-        1_000_000,  1,              0 − 0 + 1
+        1_000,      -1,             000 − 1
+        1_001,      0,              001 − 1
+        1_000_000,  1,              000 − 000 + 1
         1_234_567,  334,            567 − 234 + 1
-        -1_001,     0,              1 − 1
+        -1_001,     0,              001 − 1
         """)
-    void getAlternatingBlockSe(long n, long expectedValue, String expectedExpression) {
+    void getAlternatingBlockSe(long n, int expectedValue, String expectedExpression) {
         assertEquals(se(expectedValue, expectedExpression), NTP.getAlternatingBlockSe(n));
+    }
+    
+    
+    @ParameterizedTest
+    @MethodSource("factorsFromCases")
+    void factorsFrom(long n, List<NTP.Factor> expected) {
+        assertEquals(expected, NTP.factorsFrom(NTP.primeFactorsAndPowersOf(n)));
+    }
+    
+    private static NTP.Factor f(long value, String factorization) {
+        return new NTP.Factor(value, factorization);
+    }
+    
+    static Stream<Arguments> factorsFromCases() {
+        return Stream.of(
+            arguments(
+                6,
+                List.of(f(2, "2"), f(3, "3"))
+            ),
+            arguments(
+                12,
+                List.of(f(2, "2"), f(3, "3"), f(4, "2^2"), f(6, "2 × 3"))
+            ),
+            arguments(
+                49,
+                List.of(f(7, "7"))
+            ),
+            arguments(
+                60,
+                List.of(
+                    f(2, "2"),         f(3, "3"),         f(4, "2^2"),
+                    f(5, "5"),         f(6, "2 × 3"),     f(10, "2 × 5"),
+                    f(12, "2^2 × 3"),  f(15, "3 × 5"),    f(20, "2^2 × 5"),
+                    f(30, "2 × 3 × 5")
+                )
+            ),
+            arguments(
+                1_024,
+                List.of(
+                    f(2, "2"),       f(4, "2^2"),     f(8, "2^3"),
+                    f(16, "2^4"),    f(32, "2^5"),    f(64, "2^6"),
+                    f(128, "2^7"),   f(256, "2^8"),   f(512, "2^9")
+                )
+            )
+        );
     }
     
     
@@ -329,7 +391,7 @@ public class NTPTests {
         );
     }
     
-    
+
     @ParameterizedTest
     @MethodSource("findGoldbachPairLowersCases")
     void findGoldbachPairLowers(long n, List<Long> expected) {
@@ -414,14 +476,14 @@ public class NTPTests {
         assertEquals(a, ts.a);
         assertEquals(b, ts.b);
     }
-
+    
     
     @ParameterizedTest
     @MethodSource("fibonacciLikeSequenceCases")
     void fibonacciLikeSequence(long a, long b, List<BigInteger> expected) {
         assertEquals(expected, NTP.fibonacciLikeSequence(a, b));
     }
-    
+
     private static List<BigInteger> bigIntListOf(int... values) {
         return Arrays.stream(values).mapToObj(BigInteger::valueOf).toList();
     }
@@ -453,14 +515,27 @@ public class NTPTests {
      * denominator's prime factorization contains only 2s and 5s — because our number system
      * is base 10 = 2 × 5, so only those prime factors can be "absorbed" into a finite number
      * of decimal places. Any other prime factor in the denominator forces infinitely repeating
-     * digits. toString() signals this with ≈ instead of =.
+     * digits. ratioExpression signals this with ≈ instead of =.
      */
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
+        numerator, denominator, expected
+        # 1.6
+        16,        10,          16 / 10 = 1.6
+        # 2.5
+        10,        4,           10 / 4 = 2.5
+        # = 2
+        10,        5,           10 / 5 = 2
+        # non-terminating
+        5,         3,           5 / 3 ≈ 1.666666666666667
+        # non-terminating (34 = 2 × 17)
+        55,        34,          55 / 34 ≈ 1.617647058823529
+        # non-terminating (314 = 2 × 157)
+        623,       314,         623 / 314 ≈ 1.984076433121019
         """)
-    void ratioToString(int numerator, int denominator, String expected) {
-        var ratio = new NTP.Ratio(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
-        assertEquals(expected, ratio.toString());
+    void ratioExpression(int numerator, int denominator, String expected) {
+        String actual = NTP.ratioExpression(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
+        assertEquals(expected, actual);
     }
     
     

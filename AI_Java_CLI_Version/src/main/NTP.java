@@ -3,17 +3,37 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class NTP {
-    private static final Scanner scanner = new Scanner(System.in);
-    private static final Random random = new Random();
+class NTP {
+    static final Scanner scanner = new Scanner(System.in);
+    static final Random random = new Random();
 
-    private static final long FIVE_HUNDRED_BILLION   =     500_000_000_000L;
-    private static final long TEN_TRILLION           =  10_000_000_000_000L;
-    private static final long FIFTY_TRILLION         =  50_000_000_000_000L;
-    private static final long ONE_QUADRILLION        =   1_000_000_000_000_000L;
-    private static final long FIVE_QUADRILLION       =   5_000_000_000_000_000L;
-    private static final long TEN_QUADRILLION        =  10_000_000_000_000_000L;
-    private static final long NINE_QUINTILLION       = 9_000_000_000_000_000_000L;
+    // Max input constants
+    static final long FIVE_HUNDRED_BILLION = 500_000_000_000L;
+    static final long TEN_TRILLION = 10_000_000_000_000L;
+    static final long FIFTY_TRILLION = TEN_TRILLION * 5;
+    static final long ONE_QUADRILLION = 1_000_000_000_000_000L;
+    static final long FIVE_QUADRILLION = ONE_QUADRILLION * 5;
+    static final long TEN_QUADRILLION = ONE_QUADRILLION * 10;
+    static final long NINE_QUINTILLION = 9_000_000_000_000_000_000L;
+
+    static final String OVERVIEW =
+        Stream.of("""
+            Number theory is the branch of mathematics concerned with the integers \
+            and the relationships between them: primes, divisibility, factorization, \
+            and the patterns they form. It is one of the oldest parts of \
+            mathematics, studied for its elegance for millennia before it became the \
+            foundation of modern cryptography, computing, and coding theory.""",
+            """
+            The Number Theory Playground is an interactive tour of these ideas. Each \
+            section takes a number or two and works a classic construction out in \
+            full — the primes above a value, a number's prime factorization and \
+            divisors, GCD and LCM, Goldbach pairs, Pythagorean triples, and more. At \
+            any input prompt you can enter 'i' for background on that topic, 'r' for \
+            a random input, or 'm' to return to this menu. Choose an option above to \
+            begin exploring."""
+        )
+        .map(NTP::wrapped)
+        .collect(Collectors.joining("\n\n"));
 
     /**
      * A main-menu entry: {@code run} runs the section. {@code name} is held as a field so it
@@ -22,13 +42,13 @@ public class NTP {
      */
     record Section(String name, Consumer<String> run) {}
 
-    private static final List<Section> SECTIONS =
+    static final List<Section> SECTIONS =
         List.of(
             new Section("Prime Numbers", NTP::primeNumbersSection),
             new Section("Semiprimes", NTP::semiprimesSection),
             new Section("Twin Prime Pairs", NTP::twinPrimePairsSection),
             new Section("Prime Factorization", NTP::primeFactorizationSection),
-            new Section("Factors", NTP::factorsSection),
+            new Section("Divisibility", NTP::divisibilitySection),
             new Section("GCD and LCM", NTP::gcdAndLcmSection),
             new Section("Goldbach Conjecture", NTP::goldbachConjectureSection),
             new Section("Pythagorean Triples", NTP::pythagoreanTriplesSection),
@@ -37,33 +57,55 @@ public class NTP {
             new Section("Ancient Egyptian Multiplication", NTP::ancientEgyptianMultiplicationSection)
         );
     
-    private static void println(Object o) { System.out.println(o); }
-
-    private static void println() { System.out.println(); }
+    static void println() { System.out.println(); }
     
-    private static void printf(String format, Object... args) {
+    static void println(Object o) { System.out.println(o); }
+    
+    static void printf(String format, Object... args) {
         System.out.printf(format, args);
         println();
     }
 
     public static void main(String[] args) {
-        while (true) {
-            println("\n=== Number Theory Playground ===");
-            for (int i = 0; i < SECTIONS.size(); i++) {
-                printf("%d. %s", i + 1, SECTIONS.get(i).name());
-            }
-            println("0. Exit");
-            System.out.print("Select an option: ");
+        String menu;
+        final String infoValue = "i";
+        final String exitValue = "e";
 
+        {
+            var menuLinesJoiner = new StringJoiner("\n").add("=== Number Theory Playground ===");
+            for (int i = 0; i < SECTIONS.size(); i++) {
+                menuLinesJoiner.add(String.format("%2d. %s", i + 1, SECTIONS.get(i).name()));
+            }
+            
+            menu =
+                menuLinesJoiner
+                .add(String.format("%2s. Overview of number theory and this playground", infoValue))
+                .add(String.format("%2s. Exit", exitValue))
+                .add("Select an option: ")
+                .toString();
+        }
+
+        while (true) {
+            println();
+            System.out.print(menu);
             String input = scanner.nextLine().trim();
-            if (input.equals("0")) {
+            
+            if (input.equals(exitValue)) {
                 println("Goodbye!");
                 return;
             }
+
+            if (input.equals(infoValue)) {
+                println();
+                println(OVERVIEW);
+                continue;
+            }
+
             int idx = -1;
             try {
                 idx = Integer.parseInt(input) - 1;
             } catch (NumberFormatException ignored) {}
+            
             if (idx >= 0 && idx < SECTIONS.size()) {
                 Section s = SECTIONS.get(idx);
                 s.run().accept(s.name());
@@ -77,42 +119,40 @@ public class NTP {
 
     static String formatWithCommas(BigInteger n) { return String.format("%,d", n); }
 
-    private static void printSectionHeader(String name) {
-        printf("=== %s ===", name);
-    }
+    static void printSectionHeader(String name) { printf("=== %s ===", name); }
     
     /*
     For runSingleInputSection and runDoubleInputSection, the action consumers are called with
     validated input number(s) to produce the section's output
      */
     
-    private static void runSingleInputSection(String name, String description, String info, long min, long max, LongConsumer action) {
+    static void runSingleInputSection(String name, String description, String info, long min, long max, LongConsumer action) {
         println();
         printSectionHeader(name);
         println(description);
         while (true) {
-            println();
             Long n = readInput(info, min, max);
             if (n == null) return;
             println();
             action.accept(n);
+            println();
         }
     }
 
-    private static void runDoubleInputSection(String name, String description, String info, long min, long max, BiConsumer<Long, Long> action) {
+    static void runDoubleInputSection(String name, String description, String info, long min, long max, BiConsumer<Long, Long> action) {
         println();
         printSectionHeader(name);
         println(description);
         while (true) {
-            println();
             long[] inputs = readTwoInputs(info, min, max);
             if (inputs == null) return;
             println();
             action.accept(inputs[0], inputs[1]);
+            println();
         }
     }
     
-    private static Long readInput(String info, long min, long max) {
+    static Long readInput(String info, long min, long max) {
         return readInput("Enter a number", info, min, max, () -> randomInput(min, max));
     }
     
@@ -122,15 +162,21 @@ public class NTP {
      * {@code randomGen} is a parameter so callers with extra constraints can supply their own
      * generator — e.g. the Goldbach section needs the random value to be even.
      */
-    private static Long readInput(String prompt, String info, long min, long max, LongSupplier randomGen) {
+    static Long readInput(String prompt, String info, long min, long max, LongSupplier randomGen) {
         while (true) {
-            System.out.printf("%s (%s–%s), 'r' for random, 'i' for info, or 'm' for menu: ", prompt, formatWithCommas(min), formatWithCommas(max));
+            System.out.printf(
+                "%s (%s–%s), 'r' for random, 'i' for info, or 'm' for menu: ",
+                prompt,
+                formatWithCommas(min),
+                formatWithCommas(max)
+            );
             String input = scanner.nextLine().trim();
             
             if (input.equalsIgnoreCase("m")) return null;
             if (input.equalsIgnoreCase("i")) {
                 println();
                 println(wrapped(info));
+                println();
                 continue;
             }
             if (input.equalsIgnoreCase("r")) {
@@ -156,7 +202,7 @@ public class NTP {
      * Prompts for two integers within [min, max] separated by whitespace.
      * Accepts 'r' (two random), 'i' (info), or 'm' for menu (returns null).
      */
-    private static long[] readTwoInputs(String info, long min, long max) {
+    static long[] readTwoInputs(String info, long min, long max) {
         while (true) {
             System.out.printf(
                 "Enter two numbers separated by whitespace (each %s–%s), 'r' for random, 'i' for info, or 'm' for menu: ",
@@ -168,6 +214,7 @@ public class NTP {
             if (input.equalsIgnoreCase("i")) {
                 println();
                 println(wrapped(info));
+                println();
                 continue;
             }
             if (input.equalsIgnoreCase("r")) {
@@ -190,7 +237,7 @@ public class NTP {
                     printf("Each number must be between %s and %s.", formatWithCommas(min), formatWithCommas(max));
                     continue;
                 }
-                return new long[]{a, b};
+                return new long[]{ a, b };
             } catch (NumberFormatException e) {
                 println("Invalid input — enter two whole numbers.");
             }
@@ -201,7 +248,7 @@ public class NTP {
      * Picks a random digit count from 1 to the digit count of max, then a random number with that many digits
      * (capped at max so the top-digit-count bucket stays within range). Retries if the random number falls below min.
      */
-    private static long randomInput(long min, long max) {
+    static long randomInput(long min, long max) {
         int maxDigits = String.valueOf(max).length();
         while (true) {
             int digits = 1 + random.nextInt(maxDigits);
@@ -212,7 +259,7 @@ public class NTP {
         }
     }
 
-    private static long pow10(int n) {
+    static long pow10(int n) {
         long result = 1;
         for (int i = 0; i < n; i++) result *= 10;
         return result;
@@ -266,7 +313,7 @@ public class NTP {
         return result.toString();
     }
     
-    private static boolean isPrime(long n) {
+    static boolean isPrime(long n) {
         if (n < 2) return false;
         if (n == 2) return true;
         if (n % 2 == 0) return false;
@@ -276,9 +323,8 @@ public class NTP {
         return true;
     }
 
-    // --- Prime Numbers section ---
 
-    private static void primeNumbersSection(String name) {
+    static void primeNumbersSection(String name) {
         runSingleInputSection(
             name,
             "Finds the first 30 primes ≥ a given number.",
@@ -311,9 +357,8 @@ public class NTP {
         return result;
     }
 
-    // --- Semiprimes section ---
     
-    private static void semiprimesSection(String name) {
+    static void semiprimesSection(String name) {
         runSingleInputSection(
             name,
             "Finds the first 20 semiprimes ≥ a given number.",
@@ -352,7 +397,7 @@ public class NTP {
         return result;
     }
 
-    private static SemiprimeData semiprimeFactors(long n) {
+    static SemiprimeData semiprimeFactors(long n) {
         if (n % 2 == 0) {
             return isPrime(n / 2) ? new SemiprimeData(n, 2, n / 2) : null;
         }
@@ -366,9 +411,8 @@ public class NTP {
         return null;
     }
 
-    // --- Twin Prime Pairs section ---
 
-    private static void twinPrimePairsSection(String name) {
+    static void twinPrimePairsSection(String name) {
         runSingleInputSection(
             name,
             "Finds the first 20 twin prime pairs (p, p+2) with p ≥ a given number.",
@@ -410,9 +454,8 @@ public class NTP {
         return result;
     }
 
-    // --- Prime Factorization section ---
 
-    private static void primeFactorizationSection(String name) {
+    static void primeFactorizationSection(String name) {
         runSingleInputSection(
             name,
             "Shows the prime factorization of a given number.",
@@ -476,10 +519,9 @@ public class NTP {
                 .map(fp -> fp.power() > 1 ? formatWithCommas(fp.factor()) + "^" + fp.power() : formatWithCommas(fp.factor()))
                 .collect(Collectors.joining(" × "));
     }
-
-    // --- Factors section ---
     
-    private static void factors(String name) {
+    
+    static void divisibilitySection(String name) {
         runSingleInputSection(
             name,
             "Tests divisibility by 3, 4, 6, 7, 8, 9, 11, and 12 using divisibility rules, " +
@@ -498,233 +540,196 @@ public class NTP {
             2,
             TEN_QUADRILLION,
             n -> {
-                println("Divisibility:");
+                println("Divisibility:\n");
+                println(divisResults(n));
                 
-                SumAndExpression dse = getDigitSe(n);
-                for (int d : new int[]{3, 4, 6, 7, 8, 9, 11, 12}) {
-                    printf("  %s", checkDivisibility(n, d, dse));
-                }
-                println();
-
+                String nString = formatWithCommas(n);
                 List<FactorAndPower> pfs = primeFactorsAndPowersOf(n);
-                printf("%s = %s", formatWithCommas(n), fpsToString(pfs));
-                printf("\nFactors of %s:", formatWithCommas(n));
-                println(wrapped(factorsFrom(pfs), Object::toString));
+                printf("\n%s = %s", nString, fpsToString(pfs));
+                
+                if (pfs.size() == 1 && pfs.getFirst().power == 1) {
+                    println(nString + " is prime and doesn't have any factors besides 1 and itself.");
+                } else {
+                    printf("\nFactors of %s:", nString);
+                    println(wrapped(factorsFrom(pfs), Object::toString));
+                }
             }
         );
     }
 
     
-    record DivisibilityResult(int divisor, boolean divisible, String explanation) {
-        @Override
-        public String toString() {
-            return String.format("%2d: %s — %s", divisor, explanation, divisible ? "divisible" : "not divisible");
-        }
+    static String divisResult(int divisor, boolean divisible, String explanation) {
+        return String.format("%2d: %s — %s", divisor, explanation, (divisible ? "" : "not ") +  "divisible");
     }
     
     /**
      * Instances of this are often shortened to "se".
      */
-    record SumAndExpression(long sum, String expression) {}
+    record SumAndExpression(int sum, String expression) {}
+
+    /**
+     * The 1st line of the returned string has shows the digit sum. The rest of the lines are for each
+     * of the divisors 3, 4, 6, 7, 8, 9, 11, and 12. Each of these lines states whether it divides
+     * {@code n} and the reasoning from its divisibility rule. The digit sum is used for the rules for
+     * 3 and 9 so that's why it's shown on the 1st line.
+     */
+    static String divisResults(long n) {
+        var lines = new ArrayList<String>();
+        
+        SumAndExpression digitSe = getDigitSe(n);
+        int digitSum = digitSe.sum();
+        lines.add(String.format("The digit sum is %s = %d", digitSe.expression, digitSe.sum));
+        
+        // n is divisible by 3 if the sum of its digits is.
+        boolean divisBy3 = digitSum % 3 == 0;
+        lines.add(
+            divisResult(
+                3,
+                divisBy3,
+                String.format("digit sum %s divisible by 3", divisBy3 ? "is" : "isn't")
+            )
+        );
+        
+        // n is divisible by 4 if the number formed from the last 2 digits is.
+        long lastTwo = n % 100;
+        boolean divisBy4 = lastTwo % 4 == 0;
+        lines.add(
+            divisResult(
+                4,
+                divisBy4,
+                String.format("last two digits are %d, which %s divisible by 4", lastTwo, divisBy4 ? "is" : "isn't")
+            )
+        );
+
+        // n is divisible by 6 if it's divisible by 2 and 3.
+        boolean even = n % 2 == 0;
+        String by6Explanation = (even && divisBy3 ? "" : "not ") + "divisible by 2 and 3";
+        lines.add(divisResult(6, even && divisBy3, by6Explanation));
+
+        // n is divisible by 7 exactly when the alternating 3-digit block sum is.
+        SumAndExpression blockSe = getAlternatingBlockSe(n);
+        boolean divisBy7 = blockSe.sum() % 7 == 0;
+        lines.add(
+            divisResult(
+                7,
+                divisBy7,
+                String.format(
+                    "alternating 3-digit block sum %s = %s, which %s divisible by 7",
+                    blockSe.expression(),
+                    formatWithCommas(blockSe.sum()),
+                    divisBy7 ? "is" : "isn't"
+                )
+            )
+        );
+
+        // n is divisible by 8 if the number formed from the last 3 digits is.
+        long lastThree = n % 1_000;
+        boolean divisBy8 = lastThree % 8 == 0;
+        lines.add(
+            divisResult(
+                8,
+                divisBy8,
+                String.format("last three digits are %d, which %s divisible by 8", lastThree, divisBy8 ? "is" : "isn't")
+            )
+        );
+
+        // n is divisible by 9 if the sum of its digits is.
+        
+        boolean divisBy9 = digitSum % 9 == 0;
+        lines.add(
+            divisResult(
+                9,
+                divisBy9,
+                String.format("digit sum %s divisible by 9", divisBy9 ? "is" : "isn't")
+            )
+        );
+
+        // n is divisible by 11 exactly when the alternating digit sum is.
+        SumAndExpression altDigitSe = getAlternatingDigitSe(n);
+        boolean divisBy11 = altDigitSe.sum() % 11 == 0;
+        lines.add(
+            divisResult(
+                11,
+                divisBy11,
+                String.format(
+                    "alternating digit sum %s = %s, which %s divisible by 11",
+                    altDigitSe.expression(),
+                    formatWithCommas(altDigitSe.sum()),
+                    divisBy11 ? "is" : "isn't"
+                )
+            )
+        );
+
+        // n is divisible by 12 if it's divisible by 3 and 4.
+        String by12Explanation = (divisBy3 && divisBy4 ? "" : "not ") + "divisible by 3 and 4";
+        lines.add(divisResult(12, divisBy3 && divisBy4, by12Explanation));
+
+        return String.join("\n", lines);
+    }
     
     /**
-     * Returns the sum of {@code n}'s digits, paired with a printable expression of that sum
-     * such as {@code "1 + 2 + 3"}.
+     * Sums n's digits.
      */
     static SumAndExpression getDigitSe(long n) {
-        String digits = String.valueOf(Math.abs(n));
-        long sum = 0;
-        var sb = new StringBuilder();
+        String digits = String.valueOf(n);
+        int sum = 0;
+        var expressionBuilder = new StringBuilder();
         
         for (int i = 0; i < digits.length(); i++) {
-            int d = digits.charAt(i) - '0';
-            sum += d;
-            if (i > 0) sb.append(" + ");
-            sb.append(d);
+            int digit = Character.getNumericValue(digits.charAt(i));
+            sum += digit;
+            if (i > 0) expressionBuilder.append(" + ");
+            expressionBuilder.append(digit);
         }
         
-        return new SumAndExpression(sum, sb.toString());
-    }
-
-    private static DivisibilityResult checkDivisibility(long n, int divisor, SumAndExpression digitSe) {
-        return switch (divisor) {
-            case 3  -> divisibilityBy3(digitSe);
-            case 4  -> divisibilityBy4(n);
-            case 6  -> divisibilityBy6(n, digitSe);
-            case 7  -> divisibilityBy7(n);
-            case 8  -> divisibilityBy8(n);
-            case 9  -> divisibilityBy9(digitSe);
-            case 11 -> divisibilityBy11(n);
-            case 12 -> divisibilityBy12(n, digitSe);
-            default -> throw new IllegalArgumentException("No divisibility rule for " + divisor);
-        };
+        return new SumAndExpression(sum, expressionBuilder.toString());
     }
     
     /**
-     * n is divisible by 3 if the sum of its digits is.
-     */
-    private static DivisibilityResult divisibilityBy3(SumAndExpression digitSe) {
-        return new DivisibilityResult(
-            3,
-            digitSe.sum() % 3 == 0,
-            String.format("digit sum %s = %s", digitSe.expression(), formatWithCommas(digitSe.sum()))
-        );
-    }
-    
-    /**
-     * n is divisible by 4 if the number formed from the last 2 digits is.
-     */
-    private static DivisibilityResult divisibilityBy4(long n) {
-        long lastTwo = n % 100;
-        return new DivisibilityResult(4, lastTwo % 4 == 0, String.format("last two digits %d", lastTwo));
-    }
-    
-    /**
-     * n is divisible by 6 if it's divisible by 2 and 3.
-     */
-    private static DivisibilityResult divisibilityBy6(long n, SumAndExpression digitSe) {
-        boolean even = n % 2 == 0;
-        boolean by3 = digitSe.sum() % 3 == 0;
-
-        String explanation;
-        if (!even) {
-            explanation = String.format("%s is odd", formatWithCommas(n));
-        } else if (by3) {
-            explanation =
-                String.format(
-                    "%s is even and digit sum %s is a multiple of 3",
-                    formatWithCommas(n), formatWithCommas(digitSe.sum())
-                );
-        } else {
-            explanation =
-                String.format(
-                    "%s is even but digit sum %s is not a multiple of 3",
-                    formatWithCommas(n), formatWithCommas(digitSe.sum())
-                );
-        }
-
-        return new DivisibilityResult(6, even && by3, explanation);
-    }
-
-    /**
-     * n is divisible by 7 exactly when the alternating block sum is.
-     */
-    private static DivisibilityResult divisibilityBy7(long n) {
-        SumAndExpression bse = getAlternatingBlockSe(n);
-        return new DivisibilityResult(
-            7,
-            bse.sum() % 7 == 0,
-            String.format("alternating 3-digit block sum %s = %s", bse.expression(), formatWithCommas(bse.sum()))
-        );
-    }
-    
-    /**
-     * Splits n into 3-digit groups from right to left and adds them with alternating signs
-     * (first + , next − , next + , ...).
-     */
-    static SumAndExpression getAlternatingBlockSe(long n) {
-        long remaining = Math.abs(n);
-        long sum = 0;
-        var sb = new StringBuilder();
-        int i = 0;
-        
-        do {
-            long block = remaining % 1_000;
-            remaining /= 1_000;
-            int sign = (i % 2 == 0) ? 1 : -1;
-            sum += sign * block;
-            if (i == 0) {
-                sb.append(block);
-            } else {
-                sb.append(sign == 1 ? " + " : " − ").append(block);
-            }
-            i++;
-        } while (remaining > 0);
-        
-        return new SumAndExpression(sum, sb.toString());
-    }
-    
-    /**
-     * n is divisible by 8 if the number formed from the last 3 digits is.
-     */
-    private static DivisibilityResult divisibilityBy8(long n) {
-        long lastThree = n % 1_000;
-        return new DivisibilityResult(8, lastThree % 8 == 0, String.format("last three digits %d", lastThree));
-    }
-    
-    /**
-     * n is divisible by 9 if the sum of its digits is.
-     */
-    private static DivisibilityResult divisibilityBy9(SumAndExpression digitSe) {
-        return new DivisibilityResult(
-            9,
-            digitSe.sum() % 9 == 0,
-            String.format("digit sum %s = %s", digitSe.expression(), formatWithCommas(digitSe.sum()))
-        );
-    }
-    
-    /**
-     * n is divisible by 11 exactly when the alternating digit sum is.
-     */
-    private static DivisibilityResult divisibilityBy11(long n) {
-        SumAndExpression ds = getAlternatingDigitSe(n);
-        return new DivisibilityResult(
-            11,
-            ds.sum() % 11 == 0,
-            String.format("alternating digit sum %s = %s", ds.expression(), formatWithCommas(ds.sum()))
-        );
-    }
-    
-    /**
-     * Adds the digits of n with alternating signs, starting from the rightmost digit
-     * (rightmost + , next − , next + , ...).
+     * Does an alternating sum of n's digits. Adds the 1st digit, subtracts the 2nd digit, and so on.
      */
     static SumAndExpression getAlternatingDigitSe(long n) {
-        String digits = String.valueOf(Math.abs(n));
-        long sum = 0;
-        var sb = new StringBuilder();
-        int len = digits.length();
+        String digits = String.valueOf(n);
+        int sum = 0;
+        var expressionBuilder = new StringBuilder();
         
-        for (int i = 0; i < len; i++) {
-            int d = digits.charAt(len - 1 - i) - '0';
+        for (int i = 0; i < digits.length(); i++) {
+            int digit = Character.getNumericValue(digits.charAt(i));
             int sign = (i % 2 == 0) ? 1 : -1;
-            sum += sign * d;
+            sum += sign * digit;
             if (i == 0) {
-                sb.append(d);
+                expressionBuilder.append(digit);
             } else {
-                sb.append(sign == 1 ? " + " : " − ").append(d);
+                expressionBuilder.append(sign == 1 ? " + " : " − ").append(digit);
             }
         }
         
-        return new SumAndExpression(sum, sb.toString());
+        return new SumAndExpression(sum, expressionBuilder.toString());
     }
     
     /**
-     * n is divisible by 12 if it's divisible by 3 and 4.
+     * Does an alternating sum of 3-digit groups in n from right to left. Adds the rightmost group,
+     * subtracts the group to the left of that, and so on.
      */
-    private static DivisibilityResult divisibilityBy12(long n, SumAndExpression digitSe) {
-        long lastTwo = n % 100;
-        boolean by4 = lastTwo % 4 == 0;
-        boolean by3 = digitSe.sum() % 3 == 0;
+    static SumAndExpression getAlternatingBlockSe(long n) {
+        String digits = String.valueOf(n);
+        int sum = 0;
+        var expressionBuilder = new StringBuilder();
+        int i = 0;
 
-        String explanation;
-        if (!by4) {
-            explanation = String.format("last two digits %d is not a multiple of 4", lastTwo);
-        } else if (by3) {
-            explanation =
-                String.format(
-                    "last two digits %d is a multiple of 4 and digit sum %s is a multiple of 3",
-                    lastTwo, formatWithCommas(digitSe.sum())
-                );
-        } else {
-            explanation =
-                String.format(
-                    "last two digits %d is a multiple of 4 but digit sum %s is not a multiple of 3",
-                    lastTwo, formatWithCommas(digitSe.sum())
-                );
+        for (int end = digits.length(); end > 0; end -= 3) {
+            String block = digits.substring(Math.max(0, end - 3), end);
+            int sign = (i % 2 == 0) ? 1 : -1;
+            sum += sign * Integer.parseInt(block);
+            if (i == 0) {
+                expressionBuilder.append(block);
+            } else {
+                expressionBuilder.append(sign == 1 ? " + " : " − ").append(block);
+            }
+            i++;
         }
-
-        return new DivisibilityResult(12, by4 && by3, explanation);
+        
+        return new SumAndExpression(sum, expressionBuilder.toString());
     }
     
     
@@ -742,24 +747,24 @@ public class NTP {
      */
     static List<Factor> factorsFrom(List<FactorAndPower> fps) {
         var result = new ArrayList<Factor>();
-        result.add(new Factor(1, "1"));
         
-        for (FactorAndPower fp : primeFactors) {
-            long factor = fp.factor();
-            int power = fp.power();
+        for (FactorAndPower fp : fps) {
+            long primeFactor = fp.factor();
+            int inputFpPower = fp.power();
             int startSize = result.size();
-            long pe = 1;
             
-            for (int k = 1; k <= power; k++) {
-                pe *= factor;
-                String pePart = fmt(factor) + (k > 1 ? "^" + k : "");
-                for (int j = 0; j < startSize; j++) {
-                    Factor existing = result.get(j);
-                    long value = existing.value() * pe;
-                    String factorization = existing.value() == 1
-                            ? pePart
-                            : existing.factorization() + " × " + pePart;
-                    result.add(new Factor(value, factorization));
+            for (int newFactorPower = 1; newFactorPower <= inputFpPower; newFactorPower++) {
+                var pow = (long) Math.pow(primeFactor, newFactorPower);
+                var primeFactorAndPowerString =
+                    formatWithCommas(primeFactor) + (newFactorPower > 1 ? "^" + newFactorPower : "");
+                result.add(new Factor(pow, primeFactorAndPowerString));
+                
+                for (int i = 0; i < startSize; i++) {
+                    Factor existingFactor = result.get(i);
+                    long newFactorValue = existingFactor.value() * pow;
+                    String newFactorFactorization =
+                        String.format("%s × %s", existingFactor.factorization(), primeFactorAndPowerString);
+                    result.add(new Factor(newFactorValue, newFactorFactorization));
                 }
             }
         }
@@ -768,9 +773,8 @@ public class NTP {
         return result;
     }
 
-    // --- GCD and LCM section ---
 
-    private static void gcdAndLcmSection(String name) {
+    static void gcdAndLcmSection(String name) {
         runDoubleInputSection(
             name,
             "Computes the GCD via the Euclidean algorithm, and GCD/LCM via prime factorizations.",
@@ -827,7 +831,7 @@ public class NTP {
         return steps;
     }
     
-    private static void printEuclideanTable(List<EuclideanStep> steps) {
+    static void printEuclideanTable(List<EuclideanStep> steps) {
         int maxW = "max".length();
         int minW = "min".length();
         int remW = "remainder".length();
@@ -852,8 +856,8 @@ public class NTP {
      * takes the larger powerOf2 of every prime that appears in either.
      */
     static class GcdAndLcmPrimeFactorizationData {
-        private final List<FactorAndPower> gcdFps;
-        private final List<FactorAndPower> lcmFps;
+        final List<FactorAndPower> gcdFps;
+        final List<FactorAndPower> lcmFps;
         
         List<FactorAndPower> gcdFps() { return gcdFps; }
         List<FactorAndPower> lcmFps() { return lcmFps; }
@@ -863,7 +867,8 @@ public class NTP {
             var lcmFps = new ArrayList<FactorAndPower>();
             
             for (FactorAndPower fp : aFps) {
-                findFactor(bFps, fp.factor()).ifPresentOrElse(
+                findFactor(bFps, fp.factor())
+                .ifPresentOrElse(
                     match -> {
                         gcdFps.add(new FactorAndPower(fp.factor(), Math.min(fp.power(), match.power())));
                         lcmFps.add(new FactorAndPower(fp.factor(), Math.max(fp.power(), match.power())));
@@ -884,7 +889,7 @@ public class NTP {
         }
     }
     
-    private static Optional<FactorAndPower> findFactor(List<FactorAndPower> fps, long factor) {
+    static Optional<FactorAndPower> findFactor(List<FactorAndPower> fps, long factor) {
         return fps.stream().filter(pf -> pf.factor() == factor).findFirst();
     }
     
@@ -893,7 +898,7 @@ public class NTP {
      * The result is a BigInteger because an LCM of two large inputs can exceed the range of
      * a long.
      */
-    private static BigInteger product(List<FactorAndPower> fps) {
+    static BigInteger product(List<FactorAndPower> fps) {
         BigInteger result = BigInteger.ONE;
         for (FactorAndPower fp : fps) {
             result =
@@ -905,9 +910,8 @@ public class NTP {
         return result;
     }
     
-    // --- Goldbach Conjecture section ---
     
-    private static void goldbachConjectureSection(String name) {
+    static void goldbachConjectureSection(String name) {
         final long min = 4;
         final long max = 1_500_000;
         final String info = """
@@ -955,9 +959,8 @@ public class NTP {
         return lowers;
     }
 
-    // --- Pythagorean Triples section ---
     
-    private static void pythagoreanTriplesSection(String name) {
+    static void pythagoreanTriplesSection(String name) {
         runSingleInputSection(
             name,
             "Finds the first 10 Pythagorean triples with smallest side ≥ a given number.",
@@ -1036,9 +1039,8 @@ public class NTP {
         }
     }
 
-    // --- Two Square Theorem section ---
     
-    private static void twoSquareTheoremSection(String name) {
+    static void twoSquareTheoremSection(String name) {
         runSingleInputSection(
             name,
             "Finds the first Pythagorean prime ≥ a given number, along " +
@@ -1097,7 +1099,7 @@ public class NTP {
             a = foundA;
             b = foundB;
         }
-
+        
         @Override
         public String toString() {
             return String.format(
@@ -1107,10 +1109,8 @@ public class NTP {
         }
     }
 
-
-    // --- Fibonacci-Like Sequences section ---
-
-    private static void fibonacciLikeSequencesSection(String name) {
+    
+    static void fibonacciLikeSequencesSection(String name) {
         runDoubleInputSection(
             name,
             "Builds a 20-term sequence whose first two terms are the inputs; each later " +
@@ -1131,8 +1131,8 @@ public class NTP {
                 println(wrapped(sequence, NTP::formatWithCommas));
 
                 println("\nRatios:");
-                for (int i : new int[]{ 4, 9, 14, 19 }) {
-                    println(new Ratio(sequence.get(i), sequence.get(i - 1)));
+                for (int i : new int[] { 4, 9, 14, 19 }) {
+                    println(ratioExpression(sequence.get(i), sequence.get(i - 1)));
                 }
             }
         );
@@ -1147,57 +1147,37 @@ public class NTP {
         }
         return result;
     }
+    
+    static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
+    
+    static final MathContext MATH_CONTEXT_WITHOUT_ROUNDING =
+        new MathContext(MATH_CONTEXT_WITH_ROUNDING.getPrecision(), RoundingMode.UNNECESSARY);
 
-    static class Ratio {
-        private final BigInteger numerator;
-        private final BigInteger denominator;
-        private final BigDecimal value;
-        private final boolean exact;
-        
-        public boolean exact() {
-            return exact;
-        }
-        
-        @Override
-        public String toString() {
-            return String.format(
-                "%s / %s %c %s",
-                formatWithCommas(numerator),
-                formatWithCommas(denominator),
-                exact ? '=' : '≈',
-                value.toPlainString()
-            );
-        }
-        
-        static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
-        
-        static final MathContext MATH_CONTEXT_WITHOUT_ROUNDING =
-            new MathContext(MATH_CONTEXT_WITH_ROUNDING.getPrecision(), RoundingMode.UNNECESSARY);
+    static String ratioExpression(BigInteger numerator, BigInteger denominator) {
+        var num = new BigDecimal(numerator);
+        var den = new BigDecimal(denominator);
+        BigDecimal value;
+        char equalityChar;
 
-        Ratio(BigInteger numerator, BigInteger denominator) {
-            this.numerator = numerator;
-            this.denominator = denominator;
-            var num = new BigDecimal(numerator);
-            var den = new BigDecimal(denominator);
-            BigDecimal value;
-            boolean exact;
-            
-            try {
-                value = num.divide(den, MATH_CONTEXT_WITHOUT_ROUNDING);
-                exact = true;
-            } catch (ArithmeticException e) {
-                value = num.divide(den, MATH_CONTEXT_WITH_ROUNDING);
-                exact = false;
-            }
-            
-            this.value = value;
-            this.exact = exact;
+        try {
+            value = num.divide(den, MATH_CONTEXT_WITHOUT_ROUNDING);
+            equalityChar = '=';
+        } catch (ArithmeticException e) {
+            value = num.divide(den, MATH_CONTEXT_WITH_ROUNDING);
+            equalityChar = '≈';
         }
+        
+        return String.format(
+            "%s / %s %c %s",
+            formatWithCommas(numerator),
+            formatWithCommas(denominator),
+            equalityChar,
+            value.toPlainString()
+        );
     }
 
-    // --- Ancient Egyptian Multiplication section ---
 
-    private static void ancientEgyptianMultiplicationSection(String name) {
+    static void ancientEgyptianMultiplicationSection(String name) {
         runDoubleInputSection(
             name,
             """
@@ -1229,7 +1209,7 @@ public class NTP {
         var result = new ArrayList<PowerAndMultiple>();
         long power = 1;
         BigInteger multiple = BigInteger.valueOf(b);
-        
+
         while (power <= a) {
             result.add(new PowerAndMultiple(power, multiple));
             if (power > a / 2) break;
@@ -1256,7 +1236,7 @@ public class NTP {
         return result;
     }
 
-    private static void printEgyptianTable(List<PowerAndMultiple> rows) {
+    static void printEgyptianTable(List<PowerAndMultiple> rows) {
         final String powerColHeading = "Power of 2";
         final String multipleColHeading = "Multiple";
         int powerColWidth = powerColHeading.length();

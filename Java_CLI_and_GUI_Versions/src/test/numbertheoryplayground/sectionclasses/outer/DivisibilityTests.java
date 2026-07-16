@@ -15,45 +15,42 @@ import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.Fac
 class DivisibilityTests {
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
-INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS_EXPRESSION,        DIGITS_ALT_SUM_EXPRESSION,       BLOCKS_ALT_SUM_EXPRESSION
-1_000,           0,              0,         1 + 0 + 0 + 0 = 1,               1 − 0 + 0 − 0 = 1,                   000 − 1 = -1
-60_060,          60,             60,        6 + 0 + 0 + 6 + 0 = 12,          6 − 0 + 0 − 6 + 0 = 0,               060 − 60 = 0
-200_008,         8,              8,         2 + 0 + 0 + 0 + 0 + 8 = 10,      2 − 0 + 0 − 0 + 0 − 8 = -6,          008 − 200 = -192
-4_695_768,       68,             768,       4 + 6 + 9 + 5 + 7 + 6 + 8 = 45,  4 − 6 + 9 − 5 + 7 − 6 + 8 = 11,      768 − 695 + 4 = 77
+INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS_EXPRESSION,        ALT_SUM_OF_DIGITS_EXPRESSION,    ALT_SUM_OF_BLOCKS_EXPRESSION
+1_000,           0,              0,         1 + 0 + 0 + 0 = 1,               1 − 0 + 0 − 0 = 1,                    000 − 1 = -1
+60_060,          60,             60,        6 + 0 + 0 + 6 + 0 = 12,          6 − 0 + 0 − 6 + 0 = 0,                060 − 60 = 0
+200_008,         8,              8,         2 + 0 + 0 + 0 + 0 + 8 = 10,      2 − 0 + 0 − 0 + 0 − 8 = -6,           008 − 200 = -192
+4_695_768,       68,             768,       4 + 6 + 9 + 5 + 7 + 6 + 8 = 45,  4 − 6 + 9 − 5 + 7 − 6 + 8 = 11,       768 − 695 + 4 = 77
 """)
     void rulesAnswer(
         int input,
         int expectedLast2Digits,
         int expectedLast3Digits,
         String expectedSumOfDigitsExpression,
-        String expectedDigitsAltSumExpression,
-        String expectedBlocksAltSumExpression
+        String expectedAltSumOfDigitsExpression,
+        String expectedAltSumOfBlocksExpression
     ) {
         var answer = new RulesAnswer(input, createStringWithCommas(input));
-        
         assertAll(
             () -> assertEquals(expectedLast2Digits, answer.getLast2Digits()),
             () -> assertEquals(expectedLast3Digits, answer.getLast3Digits()),
             () -> assertEquals(expectedSumOfDigitsExpression, answer.getSumOfDigitsExpression()),
-            () -> assertEquals(expectedDigitsAltSumExpression, answer.getDigitsAltSumExpression()),
-            () -> assertEquals(expectedBlocksAltSumExpression, answer.getBlocksAltSumExpression())
+            () -> assertEquals(expectedAltSumOfDigitsExpression, answer.getAltSumOfDigitsExpression()),
+            () -> assertEquals(expectedAltSumOfBlocksExpression, answer.getAltSumOfBlocksExpression())
         );
     }
     
     
     @ParameterizedTest
-    @FieldSource("argsForNumberOfFactorsAndExpression")
-    void numberOfFactorsAndExpression(int input, String expectedExpression, int expectedNumFactors) {
-        var numFactorsAndExpression =
-            new NumberOfFactorsAndExpression(new PrimeFactorization(input, ""));
-        
+    @FieldSource("argsForNumberOfFactorsData")
+    void numberOfFactorsData(int input, String expectedExpression, int expectedNumFactors) {
+        var data = new NumberOfFactorsData(new PrimeFactorization(input, ""));
         assertAll(
-            () -> assertEquals(expectedExpression, numFactorsAndExpression.getExpression()),
-            () -> assertEquals(expectedNumFactors, numFactorsAndExpression.getNumFactors())
+            () -> assertEquals(expectedExpression, data.getExpression()),
+            () -> assertEquals(expectedNumFactors, data.getNumFactors())
         );
     }
     
-    static final List<Arguments> argsForNumberOfFactorsAndExpression =
+    static final List<Arguments> argsForNumberOfFactorsData =
         List.of(
             arguments(2 * 2, "(2 + 1)", 3),
             arguments(2 * 3, "(1 + 1) × (1 + 1)", 2 * 2),
@@ -68,7 +65,7 @@ INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS_EXPRESSION,        DIG
         List<List<FactorAndPower>> expectedFactorFpLists
     ) {
         List<List<FactorAndPower>> actualFactorFpLists =
-            Divisibility.getFactorPfs(new PrimeFactorization(input))
+            Divisibility.getFactorPfs(new PrimeFactorization(input), 2)
             .stream()
             .map(PrimeFactorization::getFps)
             .toList();

@@ -1064,13 +1064,12 @@ const pfOf36FactorsAndPowers = [[2, 2], [3, 2]];
 const divisPfInfoHtml =
     `The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a
     variable ${nVarMl} and let it represent a whole number > 1. First, you can find how many factors ${nVarMl}
-    has by looking at ${nVarAndSMl} PF, taking all the powers of the factors, adding 1 to each, and then
-    multiplying all these together. For example, the PF of 36 is ${createPfMathElementMl(pfOf36FactorsAndPowers, '.')}
-    The powers are 2 and 2, so there are <math><mn>3</mn><mo>×</mo><mn>3</mn><mo>=</mo><mn>9</mn></math> factors.
-    However, that count includes 1 and the number that the PF is for (36 in this case). If you want to exclude
-    those, then subtract 2. That would give us 7 factors. You can find the factors of ${nVarMl} by finding all
-    the PFs within ${nVarAndSMl} PF, or the "sub-factorizations," as I like to call them. For
-    ${createPfMathElementMl(pfOf36FactorsAndPowers, ',')} the sub-factorizations are
+    has by looking at ${nVarAndSMl} PF, taking the powers of the factors, adding 1 to each, and multiplying them.
+    For example, the PF of 36 is ${createPfMathElementMl(pfOf36FactorsAndPowers, '.')} The powers are 2 and 2,
+    so there are <math><mn>3</mn><mo>×</mo><mn>3</mn><mo>=</mo><mn>9</mn></math> factors. This amount includes 1
+    and the number that the PF is for (36 in this case). You can find the factors of ${nVarMl} by finding the PFs
+    within ${nVarAndSMl} PF, or the <i>subfactorizations</i>, as I like to call them.
+    For ${createPfMathElementMl(pfOf36FactorsAndPowers, ',')} the subfactorizations are
     <math><mn>2</mn><mtext>,</mtext></math>
     <math><mn>3</mn><mtext>,</mtext></math>
     ${createSubfactorizationMl([[2, 2]], 4)}
@@ -1080,60 +1079,82 @@ const divisPfInfoHtml =
     and
     ${createSubfactorizationMl([[2, 1], [3, 2]], 18, '.')}
     
-    Whole numbers that are ≤ the max input of this section generally have a pretty small amount of factors, like
-    < 20. An example of an input number with a high number of factors is 9,240. This number has a PF of
-    ${createPfMathElementMl([[2, 3], [3, 1], [5, 1], [7, 1], [11, 1]], '.')} It has
-    <math>
-        <mrow>
-            <mn>4</mn>
-            <mo>×</mo>
-            <msup><mn>2</mn><mn>4</mn></msup>
-        </mrow>
-        <mo>=</mo>
-        <msup><mn>2</mn><mn>6</mn></msup>
-        <mo>=</mo>
-        <mn>64</mn>
-    </math>
-    total factors!`;
+    Whole numbers that are ≤ 1 million, the max input of this section, generally have a small amount of factors,
+    like < 50. An example of an input number with a high amount of factors is 510,510. This number has a PF of
+    ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1], [11, 1], [13, 1], [17, 1]], ',')} so it has
+    <math><msup><mn>2</mn><mn>7</mn></msup><mo>=</mo><mn>128</mn></math> factors!`;
 
 const divisPfInfoDiv =
     createDiv(createH3('Prime Factorization'), ...createPsWithParagraphs(divisPfInfoHtml));
 
 const divisRulesInfoHtml =
     `Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1
-    rule for each number in the range of 3 to 12, excluding 5 and 10, though there are rules for more numbers and
+    rule for each number in the range of 3 to 15, excluding 5 and 10, though there are rules for more numbers and
     many numbers have multiple rules. I'll go over an example of using these rules to find the factors of a number
     in the "Example" section below. Let's have a variable ${nVarMl} and let it represent a whole number. If the
     number formed from the last 2 digits of ${nVarMl} is divisible by 4, then ${nVarMl} is divisible by 4. If the
-    number formed from the last 3 digits of ${nVarMl} is divisible by 8, then ${nVarMl} is divisible by 8. If the
-    sum of the digits of ${nVarMl} is divisible by 3, then ${nVarMl} is divisible by 3. If the sum of the digits
-    of ${nVarMl} is divisible by 9, then ${nVarMl} is divisible by 9. If ${nVarMl} is even and divisible by 3,
-    then it's also divisible by 6. If ${nVarMl} is divisible by both 3 and 4, then it's also divisible by 12.
+    number formed from the last 3 digits is divisible by 8, then ${nVarMl} is divisible by 8. If the sum of the
+    digits of ${nVarMl} is divisible by 3, then ${nVarMl} is divisible by 3. If the sum of the digits is divisible
+    by 9, then ${nVarMl} is divisible by 9. If ${nVarMl} is even and divisible by 3,then it's also divisible by 6.
+    If ${nVarMl} is divisible by both 3 and 4, then it's also divisible by 12. If ${nVarMl} is even and divisible
+    by 7 (see rule below), then it's also divisible by 14. If ${nVarMl} is divisible by both 3 and 5, then it's
+    also divisible by 15.
     
     For 11, we do an alternating sum of the digits of ${nVarMl} from left to right. We start with 0, add the
     1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all the
     digits. If this sum is divisible by 11, then ${nVarMl} is divisible by 11.
     
-    For 7, we split ${nVarMl} into 3-digit blocks from right to left, though the leftmost block can contain 1 or
-    2 digits. Coincidentally, these are the blocks separated by commas if we write ${nVarMl} with commas. We do
-    an alternating sum of the blocks from right to left. We start with 0, add the rightmost block, subtract the
-    block to the left of that, add the block to the left of that, and so on for all the blocks. If this sum is
-    divisible by 7, then ${nVarMl} is divisible by 7. These alternating sums might involve negative integers or 0,
-    so that makes them some of the few calculations done by the Number Theory Playground that involve numbers
-    other than natural numbers.`;
+    For 7 and 13, we split ${nVarMl} into 3-digit blocks from right to left, though the leftmost block can
+    contain 1 or 2 digits. Coincidentally, these are the blocks separated by commas if we write ${nVarMl} with
+    commas. We do an alternating sum of the blocks from right to left. We start with 0, add the rightmost block,
+    subtract the block to the left of that, add the block to the left of that, and so on for all the blocks. If
+    this sum is divisible by 7, then ${nVarMl} is divisible by 7. If this sum is divisible by 13, then ${nVarMl}
+    is divisible by 13. These alternating sums might involve negative integers or 0, so that makes them some of
+    the few calculations done by the Number Theory Playground that involve numbers other than natural numbers.`;
 
 const divisRulesExampleHtml =
-    `Let ${nVarMl} be 5,544. Its PF is ${createPfMathElementMl([[2, 3], [3, 2], [7, 1]], '.')} We can tell from
-    that PF that ${nVarMl} is divisible by all the numbers that had rules mentioned about them above. Let's check
-    if ${nVarMl} is divisible by those numbers using those rules. The last 2 digits form the number 44, which is
-    divisible by 4. The last 3 digits form the number 544, which is divisible by 8. The sum of the digits is
-    <math><mn>5</mn><mo>+</mo><mn>5</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>4</mn><mo>=</mo><mn>18</mn><mtext>,</mtext></math>
+    `Let ${nVarMl} be 720,720. Its PF is ${createPfMathElementMl([[2, 4], [3, 2], [5, 1], [7, 1], [11, 1], [13, 1]], '.')}
+    We can tell from that PF that ${nVarMl} is divisible by all the numbers that had rules mentioned about them
+    above. Let's check using those rules. The last 2 digits form the number 20, which is divisible by 4. The last
+    3 digits form the number 720, which is divisible by 8. The sum of the digits is
+    <math>
+        <mn>7</mn>
+        <mo>+</mo>
+        <mn>2</mn>
+        <mo>+</mo>
+        <mn>0</mn>
+        <mo>+</mo>
+        <mn>7</mn>
+        <mo>+</mo>
+        <mn>2</mn>
+        <mo>+</mo>
+        <mn>0</mn>
+        <mo>=</mo>
+        <mn>18</mn>
+        <mtext>,</mtext>
+    </math>
     which is divisible by both 3 and 9. Since ${nVarMl} is even and divisible by 3, it's also divisible by 6.
-    Since ${nVarMl} is divisible by both 3 and 4, it's also divisible by 12. The alternating sum of digits from
-    left to right is
-    <math><mn>5</mn><mo>−</mo><mn>5</mn><mo>+</mo><mn>4</mn><mo>−</mo><mn>4</mn><mo>=</mo><mn>0</mn><mtext>,</mtext></math>
+    Since ${nVarMl} is divisible by both 3 and 4, it's also divisible by 12. Since ${nVarMl} is divisible by
+    both 3 and 5, it's also divisible by 15. The alternating sum of the digits from left to right is
+    <math>
+        <mn>7</mn>
+        <mo>−</mo>
+        <mn>2</mn>
+        <mo>+</mo>
+        <mn>0</mn>
+        <mo>−</mo>
+        <mn>7</mn>
+        <mo>+</mo>
+        <mn>2</mn>
+        <mo>−</mo>
+        <mn>0</mn>
+        <mo>=</mo>
+        <mn>0</mn>
+        <mtext>,</mtext>
+    </math>
     which is divisible by 11. The alternating sum of 3-digit blocks from right to left is
-    <math><mn>544</mn><mo>−</mo><mn>5</mn><mo>=</mo><mn>539</mn><mtext>,</mtext></math> which is divisible by 7.`;
+    <math><mn>720</mn><mo>−</mo><mn>720</mn><mo>=</mo><mn>0</mn><mtext>,</mtext></math> which is divisible by
+    both 7 and 13. Since ${nVarMl} is even and divisible by 7, it's also divisible by 14.`;
 
 const divisRulesExampleP = createPWithInnerHtml(divisRulesExampleHtml);
 divisRulesExampleP.id = 'divis-rules-example-p';
@@ -1166,13 +1187,13 @@ const createDivisAnswerElements = (pfAnswer, inputString, inputNum) =>
 /**
  * This function does the only non-trivial calculations that are done on the front end.
  * 
- * @param {string} inputStringWithCommas
+ * @param {string} inputString
  * @param {number} inputNum
  * @returns {HTMLDivElement}
  * A div with a heading and a paragraph element with info about factors of the input number that are found
  * using divisibility rules.
  */
-function createDivisRulesAnswerDiv(inputStringWithCommas, inputNum) {
+function createDivisRulesAnswerDiv(inputString, inputNum) {
     const heading = createH4('Rules Info');
     
     /**
@@ -1181,67 +1202,65 @@ function createDivisRulesAnswerDiv(inputStringWithCommas, inputNum) {
      * 
      * @param {number} possibleFactor
      * @param {boolean} isDivisible
+     * @param {boolean} [startWithWhich]
      * @returns {string}
      * This has a space at the end to separate the sentence in this string from the next sentence in the created paragraph.
      */
-    function getDivisSentenceEnd(possibleFactor, isDivisible) {
+    function getDivisSentenceEnd(possibleFactor, isDivisible, startWithWhich = true) {
         const isOrIsnt = isDivisible ? 'is' : `isn't`;
-        return ` which ${isOrIsnt} divisible by ${possibleFactor} so ${inputStringWithCommas}
-            ${isOrIsnt} divisible by ${possibleFactor}. `;
+        return ` ${startWithWhich ? 'which ' : ''}${isOrIsnt} divisible by ${possibleFactor} so
+            ${inputString} ${isOrIsnt} divisible by ${possibleFactor}. `;
     }
     
     const answerP = createP();
+    const isEvenVar = isEven(inputNum);
     const last2Digits = inputNum % 100;
     const isDivisibleBy4 = isDivisible(last2Digits, 4);
     
-    if (!isEven(inputNum)) {
-        answerP.append(`${inputStringWithCommas} isn't even so it isn't divisible by any even numbers. `);
+    if (!isEvenVar) {
+        answerP.append(`${inputString} isn't even so it isn't divisible by any even numbers. `);
     } else if (inputNum >= 100) {
         answerP.append(
             `The last 2 digits form the number ${last2Digits},`,
             getDivisSentenceEnd(4, isDivisibleBy4)
         );
         
-        if (isDivisibleBy4) {
-            if (inputNum >= 1_000) {
-                const last3Digits = inputNum % 1_000;
-                const isDivisibleBy8 = isDivisible(last3Digits, 8);
-                answerP.append(
-                    `The last 3 digits form the number ${last3Digits},`,
-                    getDivisSentenceEnd(8, isDivisibleBy8)
-                );
-            }
-        } else {
+        if (!isDivisibleBy4) {
             answerP.append(
-                `Since ${inputStringWithCommas} isn't divisible by 4, it's also not divisible by 8, 12, and any
+                `Since ${inputString} isn't divisible by 4, it's also not divisible by 8, 12, and any
                 other multiples of 4. `
+            );
+        } else if (inputNum >= 1_000) {
+            const last3Digits = inputNum % 1_000;
+            const isDivisibleBy8 = isDivisible(last3Digits, 8);
+            answerP.append(
+                `The last 3 digits form the number ${last3Digits},`,
+                getDivisSentenceEnd(8, isDivisibleBy8)
             );
         }
     }
     
-    const inputStringWithoutCommas = inputNum.toString();
     const sumOfDigitsEl = createMathElement();
     let sumOfDigits = 0;
-    const digitsAltSumEl = createMathElement();
-    let digitsAltSum = 0;
+    const altSumOfDigitsEl = createMathElement();
+    let altSumOfDigits = 0;
     let addForAltSum = true;
     
-    for (const digitString of inputStringWithoutCommas) {
+    for (const digitString of inputNum.toString()) {
         if (sumOfDigitsEl.firstChild) {
             sumOfDigitsEl.appendChild(createMo('+'));
-            digitsAltSumEl.appendChild(createMo(addForAltSum ? '+' : '−'));
+            altSumOfDigitsEl.appendChild(createMo(addForAltSum ? '+' : '−'));
         }
-        
         const digitNum = Number(digitString);
         sumOfDigitsEl.appendChild(createMn(digitString));
         sumOfDigits += digitNum;
-        digitsAltSumEl.appendChild(createMn(digitString));
-        digitsAltSum += addForAltSum ? digitNum : -digitNum;
+        altSumOfDigitsEl.appendChild(createMn(digitString));
+        altSumOfDigits += addForAltSum ? digitNum : -digitNum;
         addForAltSum = !addForAltSum;
     }
     
     sumOfDigitsEl.append(createMo('='), createMn(sumOfDigits), createMtext(','));
-    digitsAltSumEl.append(createMo('='), createMn(digitsAltSum), createMtext(','));
+    altSumOfDigitsEl.append(createMo('='), createMn(altSumOfDigits), createMtext(','));
     
     const isDivisibleBy3 = isDivisible(sumOfDigits, 3);
     answerP.append(
@@ -1250,60 +1269,68 @@ function createDivisRulesAnswerDiv(inputStringWithCommas, inputNum) {
         getDivisSentenceEnd(3, isDivisibleBy3)
     );
     
-    if (isDivisibleBy3) {
-        const isDivisibleBy9 = isDivisible(sumOfDigits, 9);
-        const isOrIsnt = isDivisibleBy9 ? 'is' : `isn't`;
+    if (!isDivisibleBy3) {
         answerP.append(
-            `${sumOfDigits} ${isOrIsnt} divisible by 9 so ${inputStringWithCommas} ${isOrIsnt} divisible by 9. `
-        );
-        
-        if (isEven(inputNum)) {
-            answerP.append(`${inputStringWithCommas} is even and divisible by 3 so it's also divisible by 6. `);
-            
-            if (isDivisibleBy4) {
-                answerP.append(`${inputStringWithCommas} is divisible by both 3 and 4 so it's also divisible by 12. `);
-            } else if (inputNum < 100) {
-                answerP.append(`${inputStringWithCommas} isn't divisible by 4 so it isn't divisible by 12. `)
-            }
-        }
-    } else {
-        answerP.append(
-            `Since ${inputStringWithCommas} isn't divisible by 3, it's also not divisible by 6, 9, 12, and any
+            `Since ${inputString} isn't divisible by 3, it's also not divisible by 6, 9, 12, and any
             other multiples of 3. `
         );
+    } else {
+        const isDivisibleBy9 = isDivisible(sumOfDigits, 9);
+        answerP.append(sumOfDigits, getDivisSentenceEnd(9, isDivisibleBy9, false));
+        
+        if (isEvenVar) {
+            answerP.append(`${inputString} is even and divisible by 3 so it's also divisible by 6. `);
+            
+            if (isDivisibleBy4) {
+                answerP.append(`${inputString} is divisible by both 3 and 4 so it's also divisible by 12. `);
+            } else if (inputNum < 100) {
+                answerP.append(`${inputString} isn't divisible by 4 so it isn't divisible by 12. `)
+            }
+        }
+        
+        if (isDivisible(inputNum, 5)) {
+            answerP.append(`${inputString} is divisible by both 3 and 5 so it's also divisible by 15. `);
+        }
     }
     
-    const isDivisibleBy11 = isDivisible(digitsAltSum, 11);
+    const isDivisibleBy11 = isDivisible(altSumOfDigits, 11);
     answerP.append(
-        'The alternating sum of digits from left to right is ',
-        digitsAltSumEl,
+        'The alternating sum of the digits from left to right is ',
+        altSumOfDigitsEl,
         getDivisSentenceEnd(11, isDivisibleBy11)
     );
     
     if (inputNum >= 1_000) {
-        const blocksAltSumEl = createMathElement();
-        let blocksAltSum = 0;
+        const altSumOfBlocksEl = createMathElement();
+        let altSumOfBlocks = 0;
         addForAltSum = true;
+        const blocksOf3 = inputString.split(',');
         
-        for (let i = inputStringWithoutCommas.length - 3; i >= -2; i -= 3) {
-            if (blocksAltSumEl.firstChild) {
-                blocksAltSumEl.append(createMo(addForAltSum ? '+' : '−'));
+        for (let i = blocksOf3.length - 1; i >= 0; i--) {
+            if (altSumOfBlocksEl.firstChild) {
+                altSumOfBlocksEl.append(createMo(addForAltSum ? '+' : '−'));
             }
-            
-            const blockString = inputStringWithoutCommas.substring(Math.max(i, 0), i + 3);
-            blocksAltSumEl.append(createMn(blockString));
+            const blockString = blocksOf3[i];
+            altSumOfBlocksEl.append(createMn(blockString));
             const blockNum = Number(blockString);
-            blocksAltSum += addForAltSum ? blockNum : -blockNum;
+            altSumOfBlocks += addForAltSum ? blockNum : -blockNum;
             addForAltSum = !addForAltSum;
         }
         
-        blocksAltSumEl.append(createMo('='), createMn(blocksAltSum), createMtext(','));
-        const isDivisibleBy7 = isDivisible(blocksAltSum, 7);
+        altSumOfBlocksEl.append(createMo('='), createMn(altSumOfBlocks), createMtext(','));
+        const isDivisibleBy7 = isDivisible(altSumOfBlocks, 7);
         answerP.append(
             'The alternating sum of 3-digit blocks from right to left is ',
-            blocksAltSumEl,
+            altSumOfBlocksEl,
             getDivisSentenceEnd(7, isDivisibleBy7)
         );
+        
+        const isDivisibleBy13 = isDivisible(altSumOfBlocks, 13);
+        answerP.append(altSumOfBlocks, getDivisSentenceEnd(13, isDivisibleBy13, false));
+        
+        if (isEvenVar && isDivisibleBy7) {
+            answerP.append(`${inputString} is even and divisible by 7 so it's also divisible by 14. `);
+        }
     }
     
     const div = createDiv(heading, answerP);
@@ -1339,26 +1366,19 @@ function createDivisPfAnswerDiv(pfAnswer, inputString, inputNum) {
     pfInfoTextDiv.append(createPfMathElement(inputFps, '.'), ' ');
     
     const numFactorsEl = createMathElement();
-    let numFactors = 1;
     for (const { power } of inputFps) {
         numFactorsEl.append(
             numFactorsEl.firstChild ? createMo('×') : '',
             createMrow(createMo('('), createMn(power), createMo('+'), createMn(1), createMo(')'))
         );
-        numFactors *= power + 1;
     }
-    numFactorsEl.append(createMo('='), createMn(numFactors));
+    // factorPfs doesn't include 1 and the input number.
+    numFactorsEl.append(createMo('='), createMn(factorPfs.length + 2));
     
     pfInfoTextDiv.append(
-        'By looking at the powers, we can see that there are ',
+        `By looking at the power${inputFps.length === 1 ? '' : 's'}, we can see that there are `,
         numFactorsEl,
-        ` factors. If 1 and ${inputString} are excluded, then `,
-        'there' + (
-            numFactors === 3
-            ? `'s 1 factor`
-            : ` are ${createNumStringWithCommas(numFactors - 2)} factors`
-        ),
-        '. The factors and their PFs are:'
+        ` factors. The factors, excluding 1 and ${inputString}, and their PFs are:`
     );
     
     /**

@@ -365,71 +365,34 @@ CLI and GUI max: 10 quadrillion (10,000,000,000,000,000)
 <summary>Info</summary>
 <br/>
 
-Say we have 2 whole numbers that we'll represent with the variables $a$ and $b$. If we divide $a$ by $b$ and get
-no remainder, then $a$ is said to be *divisible* by $b$ and $b$ is said to be a *factor* or *divisor* of $a$. If
-you want to find some whole number factors of a whole number, you could manually do some division but there are
-other ways to find them.
+Say we have 2 whole numbers that we'll represent with the variables $a$ and $b \text{.}$ If we divide $a$ by $b$ and get no remainder, then $a$ is said to be *divisible* by $b$ and $b$ is said to be a *factor* or *divisor* of $a \text{.}$ If you want to find some whole number factors of a whole number, you could manually do some division but there are other ways to find them.
 
 #### Prime Factorization
 
-The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a variable $n$
-and let it represent a whole number > 1. First, you can find how many factors $n$ has by looking at $n$'s PF,
-taking all the powers of the factors, adding 1 to each, and then multiplying all these together. For example, the
-PF of 36 is $2^2 \times 3^2$. The powers are 2 and 2, so there are $3 \times 3 = 9$ factors. However, that count
-includes 1 and the number that the PF is for (36 in this case). If you want to exclude those, then subtract 2.
-That would give us 7 factors. You can find the factors of $n$ by finding all the PFs within $n$'s PF, or the
-"sub-factorizations," as I like to call them. For $2^2 \times 3^2$, the sub-factorizations are
-$2$, $3$, $2^2 \text{ } (4)$, $2 \times 3 \text{ } (6)$, $3^2 \text{ } (9)$, $2^2 \times 3 \text{ } (12)$, and
-$2 \times 3^2 \text{ } (18)$.
+The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a variable $n$ and let it represent a whole number > 1. First, you can find how many factors $n$ has by looking at $n$'s PF, taking the powers of the factors, adding 1 to each, and multiplying them. For example, the PF of 36 is $2^2 \times 3^2 \text{.}$ The powers are 2 and 2, so there are $3 \times 3 = 9$ factors. This amount includes 1 and the number that the PF is for (36 in this case). You can find the factors of $n$ by finding the PFs within $n$'s PF, or the *subfactorizations*, as I like to call them. For $2^2 \times 3^2 \text{,}$ the subfactorizations are $2 \text{,}$ $3 \text{,}$ $2^2 \text{ (4),}$ $2 \times 3 \text{ (6),}$ $3^2 \text{ (9),}$ $2^2 \times 3 \text{ (12),}$ and $2 \times 3^2 \text{ (18).}$
 
-For the website version, whole numbers that are ≤ the max input of this section generally have a pretty small
-amount of factors, like < 20. An example of an input number with a high amount of factors is 9,240. This number
-has a PF of $2^3 \times 3 \times 5 \times 7 \times 11$, so it has $4 \times 2^4 = 2^6 = 64$ total factors!
+Whole numbers that are ≤ 1 million, the max input of this section in the website version, generally have a small amount of factors, like < 50. An example of an input number with a high amount of factors is 510,510. This number has a PF of $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \text{,}$ so it has $2^7 = 128$ factors!
 
-For the CLI and GUI versions, whole numbers that are ≤ the max input of this section still generally have a
-pretty small amount of factors, like < 100. An example of an input number with a high amount of factors is
-9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2<sup>6</sup> and the
-next 12 prime numbers so it has 13 unique prime factors and its PF is
-$2^6 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41$.
-It has $7 \times 2^12 = 28,672$ total factors!
+Whole numbers that are ≤ 10 quadrillion, the max input of this section in the CLI and GUI versions, still generally have a small amount of factors, like < 100. An example of an input number with a high amount of factors is 9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2<sup>6</sup> and the next 12 prime numbers so it has 13 unique prime factors and its PF is $2^6 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 \times 23 \times 29 \times 31 \times 37 \times 41 \text{.}$ It has $7 \times 2^{12} = 28,672$ factors!
 
 #### Divisibility Rules
 
-Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1 rule
-for each number in the range of 3 to 12, excluding 5 and 10, though there are rules for more numbers and many
-numbers have multiple rules. I'll go over an example of using these rules to find the factors of a
-number in the "Example" section below. Let's have a variable $n$ and let it represent a whole number. If the number formed from the last 2 digits of $n$ is divisible by 4, then $n$ is divisible by 4. If the number formed from the last 3 digits of $n$ is divisible by
-8, then $n$ is divisible by 8. If the sum of the digits of $n$ is divisible by 3, then $n$ is divisible by 3. If
-the sum of the digits of $n$ is divisible by 9, then $n$ is divisible by 9. If $n$ is even and divisible by 3,
-then it's also divisible by 6. If $n$ is divisible by both 3 and 4, then it's also divisible by 12.
+Some rules can be used to determine if a whole number is divisible by another whole number. I'll go over 1 rule for each number in the range of 3 to 15, excluding 5 and 10, though there are rules for more numbers and many numbers have multiple rules. I'll go over an example of using these rules to find the factors of a number in the "Example" section below. Let's have a variable $n$ and let it represent a whole number. If the number formed from the last 2 digits of $n$ is divisible by 4, then $n$ is divisible by 4. If the number formed from the last 3 digits is divisible by 8, then $n$ is divisible by 8. If the sum of the digits of $n$ is divisible by 3, then $n$ is divisible by 3. If the sum of the digits is divisible by 9, then $n$ is divisible by 9. If $n$ is even and divisible by 3, then it's also divisible by 6. If $n$ is divisible by both 3 and 4, then it's also divisible by 12. If $n$ is even and divisible by 7 (see rule below), then $n$ is divisible by 14. If $n$ is divisible by both 3 and 5, then it's also divisible by 15.
 
-For 11, we do an alternating sum of the digits of $n$ from left to right. We start with 0, add the
-1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all the
-digits. If this sum is divisible by 11, then $n$ is divisible by 11.
+For 11, we do an alternating sum of the digits of $n$ from left to right. We start with 0, add the 1<sup>st</sup> digit, subtract the 2<sup>nd</sup> digit, add the 3<sup>rd</sup> digit, and so on for all the digits. If this sum is divisible by 11, then $n$ is divisible by 11.
 
-For 7, we split $n$ into 3-digit blocks from right to left, though the leftmost block can contain 1 or 2 digits.
-Coincidentally, these are the blocks separated by commas if we write $n$ with commas. We do an alternating sum
-of the blocks from right to left. We start with 0, add the rightmost block, subtract the block to the left of
-that, add the block to the left of that, and so on for all the blocks. If this sum is divisible by 7, then $n$
-is divisible by 7. These alternating sums might involve negative integers or 0, so that makes them some of the few calculations done by the Number Theory Playground that involve numbers other than natural numbers.
+For 7 and 13, we split $n$ into 3-digit blocks from right to left, though the leftmost block can contain 1 or 2 digits. Coincidentally, these are the blocks separated by commas if we write $n$ with commas. We do an alternating sum of the blocks from right to left. We start with 0, add the rightmost block, subtract the block to the left of that, add the block to the left of that, and so on for all the blocks. If this sum is divisible by 7, then $n$ is divisible by 7. If this sum is divisible by 13, then $n$ is divisible by 13. These alternating sums might involve negative integers or 0, so that makes them some of the few calculations done by the Number Theory Playground that involve numbers other than natural numbers.
 
 ##### Example
 
-Let $n$ be 5,544. Its PF is $2^3 \times 3^2 \times 7 \times 11$. We can tell from that PF that $n$ is divisible
-by all the numbers that had rules mentioned about them above. Let's check if $n$ is divisible by those numbers
-using those rules. The last 2 digits form the number 44, which is divisible by 4. The last 3 digits form the number 544, which is
-divisible by 8. The sum of the digits is $5 + 5 + 4 + 4 = 18$, which is divisible by both 3 and 9. Since $n$ is
-even and divisible by 3, it's also divisible by 6. Since $n$ is divisible by both 3 and 4, it's also divisible
-by 12. The alternating sum of digits from left to right is $5 - 5 + 4 - 4 = 0$, which is divisible by 11. The alternating sum of 3-digit blocks from right to left is $544 - 4 = 539$, which is divisible by 7.
+Let $n$ be 720,720. Its PF is $2^4 \times 3^2 \times 5 \times 7 \times 11 \times 13 \text{.}$ We can tell from that PF that $n$ is divisible by all the numbers that had rules mentioned about them above. Let's check using those rules. The last 2 digits form the number 20, which is divisible by 4. The last 3 digits form the number 720, which is divisible by 8. The sum of the digits is $7 + 2 + 0 + 7 + 2 + 0 = 18 \text{,}$ which is divisible by both 3 and 9. Since $n$ is even and divisible by 3, it's also divisible by 6. Since $n$ is divisible by both 3 and 4, it's also divisible by 12. Since $n$ is divisible by both 3 and 5, it's also divisible by 15. The alternating sum of the digits from left to right is $7 - 2 + 0 - 7 + 2 - 0 = 0 \text{,}$ which is divisible by 11. The alternating sum of 3-digit blocks from right to left is $720 - 720 = 0 \text{,}$ which is divisible by both 7 and 13. Since $n$ is even and divisible by 7, it's also divisible by 14.
 
 
 #### Calculations
 
 Given an input number:
-1. Use the divisibility rules to see if we can find some factors of the number and display a paragraph with info
-   from this.
-2. Find the PF of the number. If we can determine from this PF that the input number is composite (not prime),
-   then find the factors by finding the sub-factorizations.
+1. Use the divisibility rules to see if we can find some factors of the number and display a paragraph with info from this.
+2. Find the PF of the number. If we can determine from this PF that the number is composite (not prime), then find its factors by finding the subfactorizations in its PF.
 
 #### Input Constraints
 

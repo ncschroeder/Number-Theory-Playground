@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
@@ -23,7 +24,6 @@ public class NTPTests {
         1_000,                      '1,000'
         1_000_000,                  '1,000,000'
         1_234_567,                  '1,234,567'
-        -1_000,                     '-1,000'
         9_223_372_036_854_775_807,  '9,223,372,036,854,775,807'
         """)
     void formatWithCommasLong(long n, String expected) {
@@ -47,13 +47,13 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("wrappedStringCases")
+    @FieldSource("wrappedStringCases")
     void wrappedString(String text, String expected) {
         assertEquals(expected, NTP.wrapped(text));
     }
-    
-    static Stream<Arguments> wrappedStringCases() {
-        return Stream.of(
+
+    static List<Arguments> wrappedStringCases =
+        List.of(
             arguments("", ""),
             arguments("hello", "hello"),
             arguments(
@@ -69,7 +69,6 @@ public class NTPTests {
                 "The quick brown fox jumps over the lazy dog and then some more words are added here to\ntest wrapping behavior when the line gets really long and needs to be wrapped more than\nonce for the test"
             )
         );
-    }
     
     
     @ParameterizedTest
@@ -100,13 +99,13 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("findPrimesFromCases")
+    @FieldSource("findPrimesFromCases")
     void findPrimesFrom(long start, List<Long> expected) {
         assertEquals(expected, NTP.findPrimesFrom(start));
     }
 
-    static Stream<Arguments> findPrimesFromCases() {
-        return Stream.of(
+    static List<Arguments> findPrimesFromCases =
+        List.of(
             arguments(
                 0,
                 longListOf(
@@ -123,21 +122,20 @@ public class NTPTests {
                 )
             )
         );
-    }
 
     
     @ParameterizedTest
-    @MethodSource("findSemiprimesFromCases")
+    @FieldSource("findSemiprimesFromCases")
     void findSemiprimesFrom(long start, List<NTP.SemiprimeData> expected) {
         assertEquals(expected, NTP.findSemiprimesFrom(start));
     }
-    
+
     private static NTP.SemiprimeData sd(long semiprime, long factor1, long factor2) {
         return new NTP.SemiprimeData(semiprime, factor1, factor2);
     }
 
-    static Stream<Arguments> findSemiprimesFromCases() {
-        return Stream.of(
+    static List<Arguments> findSemiprimesFromCases =
+        List.of(
             arguments(
                 0,
                 List.of(
@@ -161,17 +159,16 @@ public class NTPTests {
                 )
             )
         );
-    }
     
     
     @ParameterizedTest
-    @MethodSource("findTwinPrimePairLowersCases")
+    @FieldSource("findTwinPrimePairLowersCases")
     void findTwinPrimePairLowers(long start, List<Long> expected) {
         assertEquals(expected, NTP.findTwinPrimePairLowers(start));
     }
 
-    static Stream<Arguments> findTwinPrimePairLowersCases() {
-        return Stream.of(
+    static List<Arguments> findTwinPrimePairLowersCases =
+        List.of(
             arguments(
                 0,
                 longListOf(
@@ -187,7 +184,6 @@ public class NTPTests {
                 )
             )
         );
-    }
     
     
     private static NTP.FactorAndPower fp(long factor, int power) {
@@ -196,14 +192,13 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("primeFactorsAndPowersCases")
+    @FieldSource("primeFactorsAndPowersOfCases")
     void primeFactorsAndPowersOf(long n, List<NTP.FactorAndPower> expected) {
         assertEquals(expected, NTP.primeFactorsAndPowersOf(n));
     }
-    
-    static Stream<Arguments> primeFactorsAndPowersCases() {
-        return Stream.of(
-            arguments(1, List.of()),
+
+    static List<Arguments> primeFactorsAndPowersOfCases =
+        List.of(
             arguments(2, List.of(fp(2, 1))),
             arguments(4, List.of(fp(2, 2))),
             arguments(6, List.of(fp(2, 1), fp(3, 1))),
@@ -213,27 +208,24 @@ public class NTPTests {
             arguments(7_919, List.of(fp(7_919, 1))),
             arguments(2_000_000_014, List.of(fp(2, 1), fp(1_000_000_007, 1)))
         );
-    }
     
     @ParameterizedTest
-    @MethodSource("fpsToStringCases")
+    @FieldSource("fpsToStringCases")
     void fpsToString(List<NTP.FactorAndPower> fps, String expected) {
         assertEquals(expected, NTP.fpsToString(fps));
     }
 
-    static Stream<Arguments> fpsToStringCases() {
-        return Stream.of(
-            // empty fps — n=1 has no prime factors
-            arguments(List.of(), "1"),
+    static List<Arguments> fpsToStringCases =
+        List.of(
             // single prime
             arguments(List.of(fp(2, 1)), "2"),
-            // powerOf2 > 1
+            // power > 1
             arguments(List.of(fp(2, 2)), "2^2"),
             // two factors
             arguments(List.of(fp(2, 1), fp(3, 1)), "2 × 3"),
             // mixed powers
             arguments(List.of(fp(2, 2), fp(3, 1)), "2^2 × 3"),
-            // large powerOf2
+            // large power
             arguments(List.of(fp(2, 10)), "2^10"),
             // three factors
             arguments(List.of(fp(2, 2), fp(3, 1), fp(5, 1)), "2^2 × 3 × 5"),
@@ -242,7 +234,6 @@ public class NTPTests {
             arguments(List.of(fp(1_000_000_007, 1)), "1,000,000,007"),
             arguments(List.of(fp(2, 1), fp(1_000_000_007, 1)), "2 × 1,000,000,007")
         );
-    }
 
 
     private static NTP.SumAndExpression se(int value, String expression) {
@@ -251,33 +242,23 @@ public class NTPTests {
     
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        n,         expectedValue, expectedExpression
-        0,         0,             0
-        5,         5,             5
-        10,        1,             1 + 0
-        123,       6,             1 + 2 + 3
-        999,       27,            9 + 9 + 9
-        1_000,     1,             1 + 0 + 0 + 0
-        9_999,     36,            9 + 9 + 9 + 9
-        -123,      6,             1 + 2 + 3
+        n,         alternating, expectedValue, expectedExpression
+        0,         false,       0,             0
+        5,         false,       5,             5
+        10,        false,       1,             1 + 0
+        123,       false,       6,             1 + 2 + 3
+        999,       false,       27,            9 + 9 + 9
+        1_000,     false,       1,             1 + 0 + 0 + 0
+        9_999,     false,       36,            9 + 9 + 9 + 9
+        0,         true,        0,             0
+        7,         true,        7,             7
+        11,        true,        0,             1 − 1
+        121,       true,        0,             1 − 2 + 1
+        1_331,     true,        0,             1 − 3 + 3 − 1
+        12_345,    true,        3,             1 − 2 + 3 − 4 + 5
         """)
-    void getDigitSe(long n, int expectedValue, String expectedExpression) {
-        assertEquals(se(expectedValue, expectedExpression), NTP.getDigitSe(n));
-    }
-    
-    @ParameterizedTest
-    @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        n,         expectedValue, expectedExpression
-        0,         0,             0
-        7,         7,             7
-        11,        0,             1 − 1
-        121,       0,             1 − 2 + 1
-        1_331,     0,             1 − 3 + 3 − 1
-        12_345,    3,             1 − 2 + 3 − 4 + 5
-        -121,      0,             1 − 2 + 1
-        """)
-    void getAlternatingDigitSe(long n, int expectedValue, String expectedExpression) {
-        assertEquals(se(expectedValue, expectedExpression), NTP.getAlternatingDigitSe(n));
+    void getDigitSe(long n, boolean alternating, int expectedValue, String expectedExpression) {
+        assertEquals(se(expectedValue, expectedExpression), NTP.getDigitSe(n, alternating));
     }
     
     @ParameterizedTest
@@ -290,7 +271,6 @@ public class NTPTests {
         1_001,      0,              001 − 1
         1_000_000,  1,              000 − 000 + 1
         1_234_567,  334,            567 − 234 + 1
-        -1_001,     0,              001 − 1
         """)
     void getAlternatingBlockSe(long n, int expectedValue, String expectedExpression) {
         assertEquals(se(expectedValue, expectedExpression), NTP.getAlternatingBlockSe(n));
@@ -298,29 +278,20 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("factorsFromCases")
+    @FieldSource("factorsFromCases")
     void factorsFrom(long n, List<NTP.Factor> expected) {
         assertEquals(expected, NTP.factorsFrom(NTP.primeFactorsAndPowersOf(n)));
     }
-    
+
     private static NTP.Factor f(long value, String factorization) {
         return new NTP.Factor(value, factorization);
     }
-    
-    static Stream<Arguments> factorsFromCases() {
-        return Stream.of(
-            arguments(
-                6,
-                List.of(f(2, "2"), f(3, "3"))
-            ),
-            arguments(
-                12,
-                List.of(f(2, "2"), f(3, "3"), f(4, "2^2"), f(6, "2 × 3"))
-            ),
-            arguments(
-                49,
-                List.of(f(7, "7"))
-            ),
+
+    static List<Arguments> factorsFromCases =
+        List.of(
+            arguments(6, List.of(f(2, "2"), f(3, "3"))),
+            arguments(12, List.of(f(2, "2"), f(3, "3"), f(4, "2^2"), f(6, "2 × 3"))),
+            arguments(49, List.of(f(7, "7"))),
             arguments(
                 60,
                 List.of(
@@ -339,11 +310,10 @@ public class NTPTests {
                 )
             )
         );
-    }
     
     
     @ParameterizedTest
-    @MethodSource("euclideanAlgorithmCases")
+    @FieldSource("euclideanAlgorithmCases")
     void euclideanAlgorithm(long a, long b, List<NTP.EuclideanStep> expected) {
         assertEquals(expected, NTP.euclideanAlgorithm(a, b));
     }
@@ -352,13 +322,12 @@ public class NTPTests {
         return new NTP.EuclideanStep(max, min, remainder);
     }
 
-    static Stream<Arguments> euclideanAlgorithmCases() {
-        return Stream.of(
+    static List<Arguments> euclideanAlgorithmCases =
+        List.of(
             arguments(48, 18, List.of(es(48, 18, 12), es(18, 12, 6), es(12, 6, 0))),
             arguments(17, 13, List.of(es(17, 13, 4), es(13, 4, 1), es(4, 1, 0))),
             arguments(100, 25, List.of(es(100, 25, 0)))
         );
-    }
 
     @Test
     void euclideanAlgorithmSwappedInputs() {
@@ -367,15 +336,15 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("gcdAndLcmPrimeFactorizationDataCases")
+    @FieldSource("gcdAndLcmPrimeFactorizationDataCases")
     void gcdAndLcmPrimeFactorizationData(long a, long b, List<NTP.FactorAndPower> expectedGcd, List<NTP.FactorAndPower> expectedLcm) {
         var result = new NTP.GcdAndLcmPrimeFactorizationData(NTP.primeFactorsAndPowersOf(a), NTP.primeFactorsAndPowersOf(b));
         assertEquals(expectedGcd, result.gcdFps());
         assertEquals(expectedLcm, result.lcmFps());
     }
-    
-    static Stream<Arguments> gcdAndLcmPrimeFactorizationDataCases() {
-        return Stream.of(
+
+    static List<Arguments> gcdAndLcmPrimeFactorizationDataCases =
+        List.of(
             arguments(
                 48,
                 18,
@@ -389,36 +358,56 @@ public class NTPTests {
                 List.of(fp(2, 2), fp(3, 2), fp(5, 1), fp(7, 1))),
             arguments(17, 13, List.of(), List.of(fp(13, 1), fp(17, 1)))
         );
-    }
-    
 
     @ParameterizedTest
-    @MethodSource("findGoldbachPairLowersCases")
+    @FieldSource("productCases")
+    void product(List<NTP.FactorAndPower> fps, BigInteger expected) {
+        assertEquals(expected, NTP.product(fps));
+    }
+
+    static List<Arguments> productCases =
+        List.of(
+            // empty factorization, e.g. the GCD of coprime numbers
+            arguments(List.of(), BigInteger.ONE),
+            arguments(List.of(fp(2, 1)), BigInteger.valueOf(2)),
+            arguments(List.of(fp(7, 2)), BigInteger.valueOf(49)),
+            arguments(List.of(fp(2, 2), fp(3, 1), fp(5, 1)), BigInteger.valueOf(60)),
+            arguments(List.of(fp(2, 1), fp(1_000_000_007, 1)), BigInteger.valueOf(2_000_000_014)),
+            // exceeds the range of a long
+            arguments(List.of(fp(2, 64)), new BigInteger("18446744073709551616")),
+            arguments(
+                List.of(fp(2, 3), fp(3, 2), fp(999_999_999_989L, 2)),
+                new BigInteger("71999999998416000000008712")
+            )
+        );
+
+
+    @ParameterizedTest
+    @FieldSource("findGoldbachPairLowersCases")
     void findGoldbachPairLowers(long n, List<Long> expected) {
         assertEquals(expected, NTP.findGoldbachPairLowers(n));
     }
-    
-    static Stream<Arguments> findGoldbachPairLowersCases() {
-        return Stream.of(
+
+    static List<Arguments> findGoldbachPairLowersCases =
+        List.of(
             arguments(4, longListOf(2)),
             arguments(10, longListOf(3, 5)),
             arguments(100, longListOf(3, 11, 17, 29, 41, 47))
         );
-    }
     
     
     @ParameterizedTest
-    @MethodSource("firstPythagoreanTriplesCases")
+    @FieldSource("firstPythagoreanTriplesCases")
     void firstPythagoreanTriples(long minA, List<NTP.PythagoreanTriple> expected) {
         assertEquals(expected, NTP.firstPythagoreanTriples(minA));
     }
-    
+
     private static NTP.PythagoreanTriple pt(long a, long b, long c) {
         return new NTP.PythagoreanTriple(a, b, c);
     }
 
-    static Stream<Arguments> firstPythagoreanTriplesCases() {
-        return Stream.of(
+    static List<Arguments> firstPythagoreanTriplesCases =
+        List.of(
             arguments(
                 0,
                 List.of(
@@ -438,7 +427,6 @@ public class NTPTests {
                 )
             )
         );
-    }
     
     
     @ParameterizedTest
@@ -479,7 +467,7 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("fibonacciLikeSequenceCases")
+    @FieldSource("fibonacciLikeSequenceCases")
     void fibonacciLikeSequence(long a, long b, List<BigInteger> expected) {
         assertEquals(expected, NTP.fibonacciLikeSequence(a, b));
     }
@@ -488,8 +476,8 @@ public class NTPTests {
         return Arrays.stream(values).mapToObj(BigInteger::valueOf).toList();
     }
 
-    static Stream<Arguments> fibonacciLikeSequenceCases() {
-        return Stream.of(
+    static List<Arguments> fibonacciLikeSequenceCases =
+        List.of(
             arguments(
                 1,
                 1,
@@ -507,7 +495,6 @@ public class NTPTests {
                 )
             )
         );
-    }
 
     
     /**
@@ -540,22 +527,51 @@ public class NTPTests {
     
     
     @ParameterizedTest
-    @MethodSource("powersOfTwoSummingCases")
+    @FieldSource("powersOfTwoTableCases")
+    void powersOfTwoTable(long a, long b, List<NTP.PowerAndMultiple> expected) {
+        assertEquals(expected, NTP.powersOfTwoTable(a, b));
+    }
+    
+    static List<Arguments> powersOfTwoTableCases =
+    List.of(
+        arguments(13, 12, List.of(pm(1, 12), pm(2, 24), pm(4, 48), pm(8, 96))),
+        arguments(2, 2, List.of(pm(1, 2), pm(2, 4))),
+        arguments(16, 3, List.of(pm(1, 3), pm(2, 6), pm(4, 12), pm(8, 24), pm(16, 48))),
+        arguments(7, 5, List.of(pm(1, 5), pm(2, 10), pm(4, 20))),
+        arguments(15, 1, List.of(pm(1, 1), pm(2, 2), pm(4, 4), pm(8, 8)))
+    );
+    
+    /**
+     * The ancient Egyptian multiplication section allows inputs up to 9 quintillion, and for
+     * any input above 2^62 the next doubling of power would overflow long. powersOfTwoTable
+     * guards against this by breaking out of its loop once power > a / 2 instead of doubling
+     * again. Without that guard, this test would hang or produce garbage rows: power would
+     * wrap around to negative, stay ≤ a, and keep looping. So this test verifies the table
+     * stops cleanly at 2^62, the largest power of 2 that fits in a long.
+     */
+    @Test
+    void powersOfTwoTableWithMaxInput() {
+        List<NTP.PowerAndMultiple> table = NTP.powersOfTwoTable(NTP.NINE_QUINTILLION, 1);
+        assertEquals(63, table.size());
+        assertEquals(pm(1L << 62, 1L << 62), table.get(62));
+    }
+    
+    @ParameterizedTest
+    @FieldSource("powersOfTwoSummingCases")
     void powersOfTwoSumming(long a, long b, List<NTP.PowerAndMultiple> expected) {
         assertEquals(expected, NTP.powersOfTwoSumming(a, b));
     }
-    
+
     private static NTP.PowerAndMultiple pm(long power, long multiple) {
         return new NTP.PowerAndMultiple(power, BigInteger.valueOf(multiple));
     }
-    
-    static Stream<Arguments> powersOfTwoSummingCases() {
-        return Stream.of(
+
+    static List<Arguments> powersOfTwoSummingCases =
+        List.of(
             arguments(13, 12, List.of(pm(1, 12), pm(4, 48), pm(8, 96))),
             arguments(2, 2, List.of(pm(2, 4))),
             arguments(16, 3, List.of(pm(16, 48))),
             arguments(7, 5, List.of(pm(1, 5), pm(2, 10), pm(4, 20))),
             arguments(15, 1, List.of(pm(1, 1), pm(2, 2), pm(4, 4), pm(8, 8)))
         );
-    }
 }

@@ -4,18 +4,10 @@ import java.util.function.*;
 import java.util.stream.*;
 
 class NTP {
-    static final Scanner scanner = new Scanner(System.in);
-    static final Random random = new Random();
-
-    // Max input constants
-    static final long FIVE_HUNDRED_BILLION = 500_000_000_000L;
-    static final long TEN_TRILLION = 10_000_000_000_000L;
-    static final long FIFTY_TRILLION = TEN_TRILLION * 5;
-    static final long ONE_QUADRILLION = 1_000_000_000_000_000L;
-    static final long FIVE_QUADRILLION = ONE_QUADRILLION * 5;
-    static final long TEN_QUADRILLION = ONE_QUADRILLION * 10;
-    static final long NINE_QUINTILLION = 9_000_000_000_000_000_000L;
-
+    static final String MENU_COMMAND = "m";
+    static final String INFO_COMMAND = "i";
+    static final String RANDOM_COMMAND = "r";
+    
     static final String OVERVIEW =
         Stream.of("""
             Number theory is the branch of mathematics concerned with the integers \
@@ -28,12 +20,25 @@ class NTP {
             section takes a number or two and works a classic construction out in \
             full — the primes above a value, a number's prime factorization and \
             divisors, GCD and LCM, Goldbach pairs, Pythagorean triples, and more. At \
-            any input prompt you can enter 'i' for background on that topic, 'r' for \
-            a random input, or 'm' to return to this menu. Choose an option above to \
-            begin exploring."""
+            any input prompt you can enter '%s' for background on that topic, '%s' for \
+            a random input, or '%s' to return to this menu. Choose an option above to \
+            begin exploring.""".formatted(INFO_COMMAND, RANDOM_COMMAND, MENU_COMMAND)
         )
         .map(NTP::wrapped)
         .collect(Collectors.joining("\n\n"));
+    
+    static void println() { System.out.println(); }
+    
+    static void println(Object o) { System.out.println(o); }
+    
+    static void printf(String format, Object... args) {
+        System.out.printf(format, args);
+        println();
+    }
+    
+    static final Scanner scanner = new Scanner(System.in);
+    
+    static String readLine() { return scanner.nextLine().trim(); }
 
     /**
      * A main-menu entry: {@code run} runs the section. {@code name} is held as a field so it
@@ -56,20 +61,10 @@ class NTP {
             new Section("Fibonacci-Like Sequences", NTP::fibonacciLikeSequencesSection),
             new Section("Ancient Egyptian Multiplication", NTP::ancientEgyptianMultiplicationSection)
         );
-    
-    static void println() { System.out.println(); }
-    
-    static void println(Object o) { System.out.println(o); }
-    
-    static void printf(String format, Object... args) {
-        System.out.printf(format, args);
-        println();
-    }
 
     public static void main(String[] args) {
         String menu;
-        final String infoValue = "i";
-        final String exitValue = "e";
+        final String exitCommand = "e";
 
         {
             var menuLinesJoiner = new StringJoiner("\n").add("=== Number Theory Playground ===");
@@ -79,8 +74,8 @@ class NTP {
             
             menu =
                 menuLinesJoiner
-                .add(String.format("%2s. Overview of number theory and this playground", infoValue))
-                .add(String.format("%2s. Exit", exitValue))
+                .add(String.format("%2s. Overview of number theory and this playground", INFO_COMMAND))
+                .add(String.format("%2s. Exit", exitCommand))
                 .add("Select an option: ")
                 .toString();
         }
@@ -88,14 +83,14 @@ class NTP {
         while (true) {
             println();
             System.out.print(menu);
-            String input = scanner.nextLine().trim();
+            String input = readLine();
             
-            if (input.equals(exitValue)) {
+            if (input.equals(exitCommand)) {
                 println("Goodbye!");
                 return;
             }
 
-            if (input.equals(infoValue)) {
+            if (input.equals(INFO_COMMAND)) {
                 println();
                 println(OVERVIEW);
                 continue;
@@ -127,11 +122,24 @@ class NTP {
      */
     
     static void runSingleInputSection(String name, String description, String info, long min, long max, LongConsumer action) {
+        runSingleInputSection(name, description, info, min, max, false, action);
+    }
+
+    static void runSingleInputSection(
+        String name,
+        String description,
+        String info,
+        long min,
+        long max,
+        boolean needsEvenInput,
+        LongConsumer action
+    ) {
         println();
         printSectionHeader(name);
         println(description);
+
         while (true) {
-            Long n = readInput(info, min, max);
+            Long n = readInput(info, min, max, needsEvenInput);
             if (n == null) return;
             println();
             action.accept(n);
@@ -143,6 +151,7 @@ class NTP {
         println();
         printSectionHeader(name);
         println(description);
+        
         while (true) {
             long[] inputs = readTwoInputs(info, min, max);
             if (inputs == null) return;
@@ -152,43 +161,45 @@ class NTP {
         }
     }
     
-    static Long readInput(String info, long min, long max) {
-        return readInput("Enter a number", info, min, max, () -> randomInput(min, max));
-    }
-    
     /**
-     * Prompts for an integer within [min, max].
-     * Accepts 'r' (random, via {@code randomGen}), 'i' (info), or 'm' for menu (returns null).
-     * {@code randomGen} is a parameter so callers with extra constraints can supply their own
-     * generator — e.g. the Goldbach section needs the random value to be even.
+     * Prompts for an integer within [min, max], even if {@code needsEvenInput} is true.
+     * Accepts '{@value #RANDOM_COMMAND}' (random), '{@value #INFO_COMMAND}' (info), or '{@value #MENU_COMMAND}' for menu (returns null).
      */
-    static Long readInput(String prompt, String info, long min, long max, LongSupplier randomGen) {
+    static Long readInput(String info, long min, long max, boolean needsEvenInput) {
+        String prompt = needsEvenInput ? "Enter an even number" : "Enter a number";
         while (true) {
             System.out.printf(
-                "%s (%s–%s), 'r' for random, 'i' for info, or 'm' for menu: ",
+                "%s (%s–%s), '%s' for random, '%s' for info, or '%s' for menu: ",
                 prompt,
                 formatWithCommas(min),
-                formatWithCommas(max)
+                formatWithCommas(max),
+                RANDOM_COMMAND,
+                INFO_COMMAND,
+                MENU_COMMAND
             );
-            String input = scanner.nextLine().trim();
-            
-            if (input.equalsIgnoreCase("m")) return null;
-            if (input.equalsIgnoreCase("i")) {
+            String input = readLine();
+
+            if (input.equalsIgnoreCase(MENU_COMMAND)) return null;
+            if (input.equalsIgnoreCase(INFO_COMMAND)) {
                 println();
                 println(wrapped(info));
                 println();
                 continue;
             }
-            if (input.equalsIgnoreCase("r")) {
-                long n = randomGen.getAsLong();
+            if (input.equalsIgnoreCase(RANDOM_COMMAND)) {
+                long n = needsEvenInput ? 2 * randomInput(min / 2, max / 2) : randomInput(min, max);
                 println("Random number: " + formatWithCommas(n));
                 return n;
             }
-            
+
             try {
                 long n = Long.parseLong(input);
                 if (n < min || n > max) {
                     printf("Number must be between %s and %s.", formatWithCommas(min), formatWithCommas(max));
+                    continue;
+                }
+                if (needsEvenInput && n % 2 != 0) {
+                    println("Number must be even.");
                     continue;
                 }
                 return n;
@@ -200,24 +211,28 @@ class NTP {
     
     /**
      * Prompts for two integers within [min, max] separated by whitespace.
-     * Accepts 'r' (two random), 'i' (info), or 'm' for menu (returns null).
+     * Accepts '{@value #RANDOM_COMMAND}' (two random), '{@value #INFO_COMMAND}' (info), or '{@value #MENU_COMMAND}' for menu (returns null).
      */
     static long[] readTwoInputs(String info, long min, long max) {
         while (true) {
             System.out.printf(
-                "Enter two numbers separated by whitespace (each %s–%s), 'r' for random, 'i' for info, or 'm' for menu: ",
-                formatWithCommas(min), formatWithCommas(max)
+                "Enter two numbers separated by whitespace (each %s–%s), '%s' for random, '%s' for info, or '%s' for menu: ",
+                formatWithCommas(min),
+                formatWithCommas(max),
+                RANDOM_COMMAND,
+                INFO_COMMAND,
+                MENU_COMMAND
             );
-            String input = scanner.nextLine().trim();
-            
-            if (input.equalsIgnoreCase("m")) return null;
-            if (input.equalsIgnoreCase("i")) {
+            String input = readLine();
+
+            if (input.equalsIgnoreCase(MENU_COMMAND)) return null;
+            if (input.equalsIgnoreCase(INFO_COMMAND)) {
                 println();
                 println(wrapped(info));
                 println();
                 continue;
             }
-            if (input.equalsIgnoreCase("r")) {
+            if (input.equalsIgnoreCase(RANDOM_COMMAND)) {
                 long a = randomInput(min, max);
                 long b = randomInput(min, max);
                 printf("Random numbers: %s, %s", formatWithCommas(a), formatWithCommas(b));
@@ -237,32 +252,40 @@ class NTP {
                     printf("Each number must be between %s and %s.", formatWithCommas(min), formatWithCommas(max));
                     continue;
                 }
-                return new long[]{ a, b };
+                return new long[] { a, b };
             } catch (NumberFormatException e) {
                 println("Invalid input — enter two whole numbers.");
             }
         }
     }
     
-    /**
-     * Picks a random digit count from 1 to the digit count of max, then a random number with that many digits
-     * (capped at max so the top-digit-count bucket stays within range). Retries if the random number falls below min.
-     */
-    static long randomInput(long min, long max) {
-        int maxDigits = String.valueOf(max).length();
-        while (true) {
-            int digits = 1 + random.nextInt(maxDigits);
-            long origin = digits == 1 ? 0 : pow10(digits - 1);
-            long bound = digits == maxDigits ? max + 1 : pow10(digits);
-            long value = random.nextLong(origin, bound);
-            if (value >= min) return value;
-        }
-    }
-
+    static final Random random = new Random();
+    
     static long pow10(int n) {
         long result = 1;
         for (int i = 0; i < n; i++) result *= 10;
         return result;
+    }
+    
+    /**
+     * First, picks a random digit count for a random number. The min digit count is 1. If the max param
+     * is a power of 10, then the max digit count is the digit count of the max param - 1. Otherwise, the
+     * max digit count is the digit count of the max param. Then, a random number with the random digit
+     * count that's <= the max param is generated. Retries if the random number falls below min.
+     */
+    static long randomInput(long min, long max) {
+        int maxDigits = String.valueOf(max).length();
+        boolean isPowerOf10 = pow10(maxDigits - 1) == max;
+        if (isPowerOf10) maxDigits--;
+        long topBound = isPowerOf10 ? max : max + 1;
+        
+        while (true) {
+            int digits = 1 + random.nextInt(maxDigits);
+            long origin = digits == 1 ? 0 : pow10(digits - 1);
+            long bound = digits == maxDigits ? topBound : pow10(digits);
+            long value = random.nextLong(origin, bound);
+            if (value >= min) return value;
+        }
     }
 
     /**
@@ -313,17 +336,16 @@ class NTP {
         return result.toString();
     }
     
-    static boolean isPrime(long n) {
-        if (n < 2) return false;
-        if (n == 2) return true;
-        if (n % 2 == 0) return false;
-        for (long i = 3; i * i <= n; i += 2) {
-            if (n % i == 0) return false;
-        }
-        return true;
-    }
-
-
+    // Max input constants
+    static final long FIVE_HUNDRED_BILLION = 500_000_000_000L;
+    static final long TEN_TRILLION = 10_000_000_000_000L;
+    static final long FIFTY_TRILLION = TEN_TRILLION * 5;
+    static final long ONE_QUADRILLION = 1_000_000_000_000_000L;
+    static final long FIVE_QUADRILLION = ONE_QUADRILLION * 5;
+    static final long TEN_QUADRILLION = ONE_QUADRILLION * 10;
+    static final long NINE_QUINTILLION = 9_000_000_000_000_000_000L;
+    
+    
     static void primeNumbersSection(String name) {
         runSingleInputSection(
             name,
@@ -343,10 +365,21 @@ class NTP {
         );
     }
     
+    static boolean isPrime(long n) {
+        if (n < 2) return false;
+        if (n == 2) return true;
+        if (n % 2 == 0) return false;
+        for (long i = 3; i * i <= n; i += 2) {
+            if (n % i == 0) return false;
+        }
+        return true;
+    }
+    
     static List<Long> findPrimesFrom(long start) {
         var result = new ArrayList<Long>();
         if (start <= 2) result.add(2L);
         long n = start <= 3 ? 3 : (start % 2 == 0 ? start + 1 : start);
+        
         while (true) {
             if (isPrime(n)) {
                 result.add(n);
@@ -354,6 +387,7 @@ class NTP {
             }
             n += 2;
         }
+        
         return result;
     }
 
@@ -387,6 +421,7 @@ class NTP {
 
     static List<SemiprimeData> findSemiprimesFrom(long start) {
         var result = new ArrayList<SemiprimeData>();
+        
         for (long n = Math.max(start, 4); ; n++) {
             SemiprimeData sd = semiprimeFactors(n);
             if (sd != null) {
@@ -394,6 +429,7 @@ class NTP {
                 if (result.size() == 20) break;
             }
         }
+        
         return result;
     }
 
@@ -476,7 +512,7 @@ class NTP {
     record FactorAndPower(long factor, int power) {}
     
     /**
-     * Returns the prime factorization of {@code n} as (primeFactor, powerOf2) pairs, ordered by
+     * Returns the prime factorization of {@code n} as (primeFactor, power) pairs, ordered by
      * ascending factors. For example, 60 yields (2, 2), (3, 1), (5, 1).
      */
     static List<FactorAndPower> primeFactorsAndPowersOf(long n) {
@@ -507,17 +543,17 @@ class NTP {
 
     /**
      * Renders {@code fps} as a product expression like {@code 2^2 × 3 × 5}, omitting the
-     * exponent where it is 1. An empty list renders as {@code "1"}.
+     * exponent where it is 1.
      */
     static String fpsToString(List<FactorAndPower> fps) {
         return
-            fps.isEmpty()
-            ? "1"
-            :
-                fps
-                .stream()
-                .map(fp -> fp.power() > 1 ? formatWithCommas(fp.factor()) + "^" + fp.power() : formatWithCommas(fp.factor()))
-                .collect(Collectors.joining(" × "));
+            fps
+            .stream()
+            .map(fp -> {
+                var factorString = formatWithCommas(fp.factor());
+                return fp.power() == 1 ? factorString : String.format("%s^%d", factorString, fp.power());
+            })
+            .collect(Collectors.joining(" × "));
     }
     
     
@@ -559,7 +595,7 @@ class NTP {
 
     
     static String divisResult(int divisor, boolean divisible, String explanation) {
-        return String.format("%2d: %s — %s", divisor, explanation, (divisible ? "" : "not ") +  "divisible");
+        return String.format("%2d: %s — %s", divisor, explanation, (divisible ? "" : "not ") + "divisible");
     }
     
     /**
@@ -568,7 +604,7 @@ class NTP {
     record SumAndExpression(int sum, String expression) {}
 
     /**
-     * The 1st line of the returned string has shows the digit sum. The rest of the lines are for each
+     * The 1st line of the returned string shows the digit sum. The rest of the lines are for each
      * of the divisors 3, 4, 6, 7, 8, 9, 11, and 12. Each of these lines states whether it divides
      * {@code n} and the reasoning from its divisibility rule. The digit sum is used for the rules for
      * 3 and 9 so that's why it's shown on the 1st line.
@@ -576,7 +612,7 @@ class NTP {
     static String divisResults(long n) {
         var lines = new ArrayList<String>();
         
-        SumAndExpression digitSe = getDigitSe(n);
+        SumAndExpression digitSe = getDigitSe(n, false);
         int digitSum = digitSe.sum();
         lines.add(String.format("The digit sum is %s = %d", digitSe.expression, digitSe.sum));
         
@@ -634,7 +670,6 @@ class NTP {
         );
 
         // n is divisible by 9 if the sum of its digits is.
-        
         boolean divisBy9 = digitSum % 9 == 0;
         lines.add(
             divisResult(
@@ -645,7 +680,7 @@ class NTP {
         );
 
         // n is divisible by 11 exactly when the alternating digit sum is.
-        SumAndExpression altDigitSe = getAlternatingDigitSe(n);
+        SumAndExpression altDigitSe = getDigitSe(n, true);
         boolean divisBy11 = altDigitSe.sum() % 11 == 0;
         lines.add(
             divisResult(
@@ -668,34 +703,15 @@ class NTP {
     }
     
     /**
-     * Sums n's digits.
      */
-    static SumAndExpression getDigitSe(long n) {
+    static SumAndExpression getDigitSe(long n, boolean alternating) {
         String digits = String.valueOf(n);
         int sum = 0;
         var expressionBuilder = new StringBuilder();
-        
+
         for (int i = 0; i < digits.length(); i++) {
             int digit = Character.getNumericValue(digits.charAt(i));
-            sum += digit;
-            if (i > 0) expressionBuilder.append(" + ");
-            expressionBuilder.append(digit);
-        }
-        
-        return new SumAndExpression(sum, expressionBuilder.toString());
-    }
-    
-    /**
-     * Does an alternating sum of n's digits. Adds the 1st digit, subtracts the 2nd digit, and so on.
-     */
-    static SumAndExpression getAlternatingDigitSe(long n) {
-        String digits = String.valueOf(n);
-        int sum = 0;
-        var expressionBuilder = new StringBuilder();
-        
-        for (int i = 0; i < digits.length(); i++) {
-            int digit = Character.getNumericValue(digits.charAt(i));
-            int sign = (i % 2 == 0) ? 1 : -1;
+            int sign = alternating && i % 2 == 1 ? -1 : 1;
             sum += sign * digit;
             if (i == 0) {
                 expressionBuilder.append(digit);
@@ -703,7 +719,7 @@ class NTP {
                 expressionBuilder.append(sign == 1 ? " + " : " − ").append(digit);
             }
         }
-        
+
         return new SumAndExpression(sum, expressionBuilder.toString());
     }
     
@@ -736,32 +752,36 @@ class NTP {
     record Factor(long value, String factorization) {
         @Override
         public String toString() {
-            return String.format("%s = %s", formatWithCommas(value), factorization);
+            var valueString = formatWithCommas(value);
+            return
+                valueString.equals(factorization)
+                ? valueString
+                : String.format("%s = %s", valueString, factorization);
         }
     }
     
     /**
-     * Returns every factor of the number whose prime factorization is {@code fps}, sorted
-     * ascending, each paired with its own factorization. For 12 = 2² × 3 this gives
-     * 1, 2, 3, 4, 6, 12.
+     * Returns a list of Factors for every factor of the number whose prime factorization
+     * is {@code fps}, excluding 1 and that number. The Factors are sorted by their values.
+     * For 12 = 2² × 3, a list of Factors for 2, 3, 4, 6 would be returned.
      */
     static List<Factor> factorsFrom(List<FactorAndPower> fps) {
         var result = new ArrayList<Factor>();
         
         for (FactorAndPower fp : fps) {
             long primeFactor = fp.factor();
-            int inputFpPower = fp.power();
+            int maxPower = fp.power();
             int startSize = result.size();
             
-            for (int newFactorPower = 1; newFactorPower <= inputFpPower; newFactorPower++) {
-                var pow = (long) Math.pow(primeFactor, newFactorPower);
+            for (int power = 1; power <= maxPower; power++) {
+                var primeFactorPower = (long) Math.pow(primeFactor, power);
                 var primeFactorAndPowerString =
-                    formatWithCommas(primeFactor) + (newFactorPower > 1 ? "^" + newFactorPower : "");
-                result.add(new Factor(pow, primeFactorAndPowerString));
+                    formatWithCommas(primeFactor) + (power > 1 ? "^" + power : "");
+                result.add(new Factor(primeFactorPower, primeFactorAndPowerString));
                 
                 for (int i = 0; i < startSize; i++) {
                     Factor existingFactor = result.get(i);
-                    long newFactorValue = existingFactor.value() * pow;
+                    long newFactorValue = existingFactor.value() * primeFactorPower;
                     String newFactorFactorization =
                         String.format("%s × %s", existingFactor.factorization(), primeFactorAndPowerString);
                     result.add(new Factor(newFactorValue, newFactorFactorization));
@@ -769,6 +789,11 @@ class NTP {
             }
         }
         
+        /*
+        The last Factor is for the number whose prime factorization is the fps param,
+        which we want to exclude.
+         */
+        result.removeLast();
         result.sort(Comparator.comparingLong(Factor::value));
         return result;
     }
@@ -800,16 +825,9 @@ class NTP {
                 printf("%s = %s", formatWithCommas(b), fpsToString(bFps));
 
                 var pfData = new GcdAndLcmPrimeFactorizationData(aFps, bFps);
-                printf(
-                    "\nGCD = %s = %s",
-                    fpsToString(pfData.gcdFps()),
-                    formatWithCommas(product(pfData.gcdFps()))
-                );
-                printf(
-                    "LCM = %s = %s",
-                    fpsToString(pfData.lcmFps()),
-                    formatWithCommas(product(pfData.lcmFps()))
-                );
+                println();
+                printGcdOrLcm("GCD", pfData.gcdFps());
+                printGcdOrLcm("LCM", pfData.lcmFps());
             }
         );
     }
@@ -832,19 +850,23 @@ class NTP {
     }
     
     static void printEuclideanTable(List<EuclideanStep> steps) {
-        int maxW = "max".length();
-        int minW = "min".length();
-        int remW = "remainder".length();
+        final String maxColHeading = "max";
+        final String minColHeading = "min";
+        final String remainderColHeading = "remainder";
         
-        for (EuclideanStep step : steps) {
-            maxW = Math.max(maxW, formatWithCommas(step.max()).length());
-            minW = Math.max(minW, formatWithCommas(step.min()).length());
-            remW = Math.max(remW, formatWithCommas(step.remainder()).length());
-        }
-        
+        /*
+        The numbers in each column only get smaller from top to bottom: each step's max and min
+        are the previous step's min and remainder, and each step's remainder is less than the
+        previous step's remainder. So only the headings and the first step's numbers need to be
+        considered for the column widths.
+         */
+        EuclideanStep first = steps.getFirst();
+        int maxW = Math.max(maxColHeading.length(), formatWithCommas(first.max()).length());
+        int minW = Math.max(minColHeading.length(), formatWithCommas(first.min()).length());
+        int remW = Math.max(remainderColHeading.length(), formatWithCommas(first.remainder()).length());
         String rowFormat = "%" + maxW + "s  %" + minW + "s  %" + remW + "s";
-        printf(rowFormat, "max", "min", "remainder");
         
+        printf(rowFormat, maxColHeading, minColHeading, remainderColHeading);
         for (EuclideanStep step : steps) {
             printf(rowFormat, formatWithCommas(step.max()), formatWithCommas(step.min()), formatWithCommas(step.remainder()));
         }
@@ -852,8 +874,8 @@ class NTP {
     
     /**
      * Given the prime factorizations of two numbers, holds the prime factorizations of their
-     * GCD and LCM: the GCD takes the smaller powerOf2 of each prime the two share, and the LCM
-     * takes the larger powerOf2 of every prime that appears in either.
+     * GCD and LCM: the GCD takes the smaller power of each prime the two share, and the LCM
+     * takes the larger power of every prime that appears in either.
      */
     static class GcdAndLcmPrimeFactorizationData {
         final List<FactorAndPower> gcdFps;
@@ -894,12 +916,27 @@ class NTP {
     }
     
     /**
+     * Prints a line like {@code GCD = 2^2 × 3 = 12} for the GCD or LCM represented by
+     * {@code fps}. When the number is 1 or prime, its factorization would just repeat the
+     * number, so the line is shortened to like {@code GCD = 1} or {@code LCM = 13}.
+     */
+    static void printGcdOrLcm(String label, List<FactorAndPower> fps) {
+        String number = formatWithCommas(product(fps));
+        boolean isPrime = fps.size() == 1 && fps.getFirst().power() == 1;
+        if (fps.isEmpty() || isPrime) {
+            printf("%s = %s", label, number);
+        } else {
+            printf("%s = %s = %s", label, fpsToString(fps), number);
+        }
+    }
+    
+    /**
      * Multiplies the prime factorization {@code fps} back out into the number it represents.
      * The result is a BigInteger because an LCM of two large inputs can exceed the range of
      * a long.
      */
     static BigInteger product(List<FactorAndPower> fps) {
-        BigInteger result = BigInteger.ONE;
+        var result = BigInteger.ONE;
         for (FactorAndPower fp : fps) {
             result =
                 result.multiply(
@@ -912,9 +949,10 @@ class NTP {
     
     
     static void goldbachConjectureSection(String name) {
-        final long min = 4;
-        final long max = 1_500_000;
-        final String info = """
+        runSingleInputSection(
+            name,
+            "Finds all pairs of primes that sum to a given even number.",
+            """
             Christian Goldbach conjectured in 1742 that every even integer greater \
             than 2 is the sum of two primes; for example, 10 = 3 + 7 = 5 + 5. It \
             has been verified by computer for all even numbers up to roughly \
@@ -922,26 +960,18 @@ class NTP {
             — that every odd integer greater than 5 is a sum of three primes — \
             was proven by Harald Helfgott in 2013. The number of representations \
             tends to grow with n, making counterexamples increasingly unlikely \
-            as n increases.""";
-        
-        println();
-        printSectionHeader(name);
-        println("Finds all pairs of primes that sum to a given even number.");
-        
-        while (true) {
-            println();
-            Long n = readInput("Enter an even number", info, min, max, () -> 2 * randomInput(min / 2, max / 2));
-            if (n == null) return;
-            if (n % 2 != 0) {
-                println("Number must be even.");
-                continue;
+            as n increases.""",
+            4,
+            1_500_000,
+            true,
+            n -> {
+                List<Long> lowers = findGoldbachPairLowers(n);
+                printf("Prime pairs summing to %s:", formatWithCommas(n));
+                Function<Long, String> lowerToString =
+                    l -> String.format("(%s, %s)", formatWithCommas(l), formatWithCommas(n - l));
+                println(wrapped(lowers, lowerToString));
             }
-            List<Long> lowers = findGoldbachPairLowers(n);
-            printf("\nPrime pairs summing to %s:", formatWithCommas(n));
-            Function<Long, String> lowerToString =
-                l -> String.format("(%s, %s)", formatWithCommas(l), formatWithCommas(n - l));
-            println(wrapped(lowers, lowerToString));
-        }
+        );
     }
 
     /**
@@ -951,11 +981,13 @@ class NTP {
     static List<Long> findGoldbachPairLowers(long n) {
         if (n == 4) return List.of(2L);
         var lowers = new ArrayList<Long>();
+        
         for (long p = 3; p <= n / 2; p += 2) {
             if (isPrime(p) && isPrime(n - p)) {
                 lowers.add(p);
             }
         }
+        
         return lowers;
     }
 
@@ -968,7 +1000,7 @@ class NTP {
             A Pythagorean triple is three positive integers (a, b, c) satisfying \
             a² + b² = c², corresponding to a right triangle with integer side \
             lengths. The smallest is (3, 4, 5). Euclid's formula generates all \
-            primitive triples — those with gcdFps(a, b, c) = 1 — as a = m² − n², \
+            primitive triples — those with gcd(a, b, c) = 1 — as a = m² − n², \
             b = 2mn, c = m² + n² for coprime m > n of opposite parity. Every \
             Pythagorean triple is a positive integer multiple of a primitive \
             one, and there are infinitely many.""",
@@ -1078,15 +1110,16 @@ class NTP {
             
             for (long l = 1; 2 * l * l <= candidate; l++) {
                 long bSq = candidate - l * l;
-                long j = (long) Math.sqrt((double) bSq);
+                /*
+                Math.sqrt is only reliable here because bSq < 2^53 (~9 quadrillion), so the
+                long-to-double conversion is exact and the correctly rounded sqrt of a perfect
+                square k² is exactly k. Above 2^53, sqrt can land 1 off the true integer root,
+                and j - 1 and j + 1 would need to be checked as well.
+                 */
+                long j = (long) Math.sqrt(bSq);
                 if (j * j == bSq) {
                     foundA = l;
                     foundB = j;
-                    break;
-                }
-                if ((j + 1) * (j + 1) == bSq) {
-                    foundA = l;
-                    foundB = j + 1;
                     break;
                 }
             }
@@ -1195,10 +1228,18 @@ class NTP {
             2,
             NINE_QUINTILLION,
             (a, b) -> {
-                printf("All powers of 2 ≤ %s:", formatWithCommas(a));
-                printEgyptianTable(powersOfTwoTable(a, b));
-                printf("\nPowers of 2 summing to %s:", formatWithCommas(a));
-                printEgyptianTable(powersOfTwoSumming(a, b));
+                String multipleColHeading = "Corresponding Multiples of " + formatWithCommas(b);
+                printEgyptianTable(
+                    "All powers of 2 ≤ " + formatWithCommas(a),
+                    multipleColHeading,
+                    powersOfTwoTable(a, b)
+                );
+                println();
+                printEgyptianTable(
+                    "Powers of 2 Summing to " + formatWithCommas(a),
+                    multipleColHeading,
+                    powersOfTwoSumming(a, b)
+                );
             }
         );
     }
@@ -1236,16 +1277,15 @@ class NTP {
         return result;
     }
 
-    static void printEgyptianTable(List<PowerAndMultiple> rows) {
-        final String powerColHeading = "Power of 2";
-        final String multipleColHeading = "Multiple";
-        int powerColWidth = powerColHeading.length();
-        int multipleColWidth = multipleColHeading.length();
-        for (PowerAndMultiple row : rows) {
-            powerColWidth = Math.max(powerColWidth, formatWithCommas(row.powerOf2()).length());
-            multipleColWidth = Math.max(multipleColWidth, formatWithCommas(row.multiple()).length());
-        }
-        String rowFormat = "%" + powerColWidth + "s  %" + multipleColWidth + "s";
+    static void printEgyptianTable(String powerColHeading, String multipleColHeading, List<PowerAndMultiple> rows) {
+        /*
+        The headings determine the column widths since each is always the longest text in its
+        column: every power of 2 fits within the first input formatted at the end of the powers
+        heading, and the largest multiple has at most 25 more characters (19 digits + 6 commas)
+        than the second input formatted at the end of the multiples heading, which is covered by
+        the 27-character "Corresponding Multiples of " prefix.
+         */
+        String rowFormat = "%" + powerColHeading.length() + "s  %" + multipleColHeading.length() + "s";
         printf(rowFormat, powerColHeading, multipleColHeading);
         for (PowerAndMultiple row : rows) {
             printf(rowFormat, formatWithCommas(row.powerOf2()), formatWithCommas(row.multiple()));

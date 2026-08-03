@@ -41,33 +41,22 @@ another iteration and the max of the new iteration is the min of the last iterat
 of the new iteration is the remainder of the last iteration. Again, we check if the remainder
 is 0 and if it is, then the min of this iteration is the GCD. Otherwise, we keep doing
 iterations until we get a remainder of 0.""";
-
-    private static final String OTHER_INFO = """
-2 whole numbers are said to be coprime if their GCD is 1. Therefore, coprime numbers don't have
-any common factors in their PFs. the input numbers whose LCM is the highest are
-5 quadrillion (5,000,000,000,000,000), the max input, and
-4,999,999,999,999,999, the max input - 1. Their LCM is
-24,999,999,999,999,995,000,000,000,000,000, or
-24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion!
-It has 32 digits. Trillion is before quadrillion. A pair of input numbers whose LCM has the
-highest amount of prime factors is 4,503,599,627,370,496 (2^52) and
-1,853,020,188,851,841 (3^32). Their LCM is 8,345,261,032,023,157,253,752,158,683,136, or
-8 nonillion ... A pair of input numbers whose LCM might have the highest amount of unique prime
-factors is 304,250,263,527,210, the product of the first 13 prime numbers, and
-133,869,006,807,307, the product of the next 8 prime numbers. Their LCM is
-40,729,680,599,249,024,150,621,323,470, or 40 octillion ... It has 29 digits and 21 unique
-prime factors and its PF is
-2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41 × 47 × 53 × 59 × 61 × 67 × 71 × 73!""";
     
     /*
-    Given 2 input numbers, the calculations for this section are:
-    1. Perform the Euclidean algorithm on the numbers and display a table with info about all iterations.
-    2. Find the PFs of the numbers and use these to find the PFs of the GCD and LCM.
+    Some calculations for this section are: perform the Euclidean algorithm on 2 input numbers
+    and display a table with info about all iterations. The other calculations are explained
+    below the OTHER_INFO string.
      */
     
-    // This section uses prime factorizations so the min input for those will be used.
+    /**
+     * This section creates PrimeFactorization objects so the min input for those is used.
+     */
     private static final long MIN_INPUT = PrimeFactorization.MIN_INPUT;
     private static final long MAX_INPUT = FIVE_QUADRILLION;
+    
+    private static String getAnswerMainHeading(String input1String, String input2String) {
+        return String.format("GCD and LCM Info for %s and %s", input1String, input2String);
+    }
     
     /**
      * Record with data for an iteration of the Euclidean algorithm.
@@ -133,13 +122,11 @@ prime factors and its PF is
     private static String getEuclideanCliAnswer(long input1Long, long input2Long) {
         List<EuclideanIteration> iterations = getEuclideanIterations(input1Long, input2Long);
         
-        // The gap between the end of the longest item in a column and the item in the next column.
-        final int columnGap = 4;
-        
         /*
-        Make column widths equal to the length of the longest element in the column + the column gap.
-        The first iteration will have the longest elements of all iterations.
+        Make column widths the length of the longest element in the column + the column gap.
+        The first iteration has the longest elements of all iterations.
          */
+        final int columnGap = 4;
         EuclideanIteration iteration1 = iterations.getFirst();
         
         int maxColumnWidth =
@@ -152,8 +139,10 @@ prime factors and its PF is
         
         String headRow =
             NtpCli.getRowFor3ColumnTable(
-                EUCLIDEAN_MAX_COLUMN_HEADING, maxColumnWidth,
-                EUCLIDEAN_MIN_COLUMN_HEADING, minColumnWidth,
+                EUCLIDEAN_MAX_COLUMN_HEADING,
+                maxColumnWidth,
+                EUCLIDEAN_MIN_COLUMN_HEADING,
+                minColumnWidth,
                 EUCLIDEAN_REMAINDER_COLUMN_HEADING
             );
         
@@ -165,7 +154,11 @@ prime factors and its PF is
             .stream()
             .map(i ->
                 NtpCli.getRowFor3ColumnTable(
-                    i.maxString(), maxColumnWidth, i.minString(), minColumnWidth, i.remainderString()
+                    i.maxString(),
+                    maxColumnWidth,
+                    i.minString(),
+                    minColumnWidth,
+                    i.remainderString()
                 )
             )
             .collect(Collectors.joining("\n", collectingPrefix, collectingSuffix));
@@ -179,9 +172,6 @@ prime factors and its PF is
     private static NtpPanel getEuclideanPanel(long input1Long, long input2Long) {
         List<EuclideanIteration> iterations = getEuclideanIterations(input1Long, input2Long);
         
-        Function<EuclideanIteration, Stream<String>> getIterationRowStrings =
-            ei -> Stream.of(ei.maxString(), ei.minString(), ei.remainderString());
-        
         List<String> columnHeadings =
             List.of(
                 EUCLIDEAN_MAX_COLUMN_HEADING,
@@ -189,12 +179,11 @@ prime factors and its PF is
                 EUCLIDEAN_REMAINDER_COLUMN_HEADING
             );
         
+        Function<EuclideanIteration, Stream<String>> getIterationRowStrings =
+            ei -> Stream.of(ei.maxString(), ei.minString(), ei.remainderString());
+        
         NtpPanel iterationsTable =
-            NtpPanel.createTablePanel(
-                columnHeadings,
-                iterations.stream(),
-                getIterationRowStrings
-            );
+            NtpPanel.createTablePanel(columnHeadings, iterations.stream(), getIterationRowStrings);
         
         String gcdMessage = getEuclideanGcdMessage(iterations);
         
@@ -212,126 +201,127 @@ prime factors and its PF is
 The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs).
 If those numbers don't have any common prime factors, then the GCD is 1. If they do have common
 prime factors, then the GCD PF consists of all the common prime factors and the power of each
-factor is the min of the powers of that factor in the 2 PFs. The LCM PF consists of all factors
-that are in either of the PFs of the 2 numbers. If a factor is in both PFs, then the power of
-that factor in the LCM PF is the max of the powers of that factor in the 2 PFs. If a factor is
-unique to one of the PFs, then that factor and its power are in the LCM PF.
+factor is the min of the powers of that factor in the 2 PFs. The LCM PF consists of all the prime
+factors that are in either of the PFs of the 2 numbers. If a factor is in both PFs, then the
+power of that factor in the LCM PF is the max of the powers of that factor in the 2 PFs. If a
+factor is unique to one of the PFs, then that factor and its power are in the LCM PF.
 
 Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is 2 × 3 and the PF of 35 is 5 × 7.
 There are no common prime factors so the GCD is 1. The LCM PF is 2 × 3 × 5 × 7, which is 210.
 
 Let's find the GCD and LCM of 54 and 99. The PF of 54 is 2 × 3^3 and the PF of 99 is 3^2 × 11.
 3 is the only common prime factor and the min power of it is 2 so the GCD PF is 3^2, which is 9.
-The max power of 3 is 3 so 3^3 is in the LCM PF. The LCM PF is 2 × 3^3 × 11, which is 594.
-
-The input numbers whose LCM is the highest are 5 quadrillion (5,000,000,000,000,000),
-the max input, and 5 quadrillion - 1. The LCM is 24,999,999,999,999,995,000,000,000,000,000,
-or 24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion!
-It has 32 digits. Trillion is before quadrillion.
-
-A pair of input numbers whose LCM might have the highest amount of unique prime factors is
-304,250,263,527,210, the product of the first 13 prime numbers; and 133,869,006,807,307,
-the product of the next 8 prime numbers. The LCM is 40,729,680,599,249,024,150,621,323,470,
-or 40 octillion ... It has 29 digits and 21 unique prime factors and its PF is
-2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41 × 47 × 53 × 59 × 61 × 67 × 71 × 73!
-Other pairs of input numbers have the same LCM, such as that first input number divided by 2 and
-the second input number multiplied by 2.""";
+The max power of 3 is 3 so 3^3 is in the LCM PF. The LCM PF is 2 × 3^3 × 11, which is 594.""";
     
-    /**
-     * This class uses PFs to find the GCD and LCM of 2 longs.
+    private static final String OTHER_INFO = """
+2 whole numbers are said to be coprime if their GCD is 1. Therefore, coprime numbers don't have
+any common prime factors in their PFs. The input numbers that have the largest LCM are
+5 quadrillion (5,000,000,000,000,000), the max input; and 5 quadrillion − 1. Their LCM is
+24,999,999,999,999,995,000,000,000,000,000
+(24 nonillion 999 octillion 999 septillion 999 sextillion 999 quintillion 995 quadrillion)!
+It has 32 digits. Trillion is before quadrillion. A pair of input numbers whose LCM has the
+most prime factors is 4,503,599,627,370,496 (2^52) and 1,853,020,188,851,841 (3^32). Their LCM
+has a PF of 2^52 × 3^32, has 84 prime factors, and is 8,345,261,032,023,157,253,752,158,683,136
+(8 nonillion ...). A pair of input numbers whose LCM might have the most unique prime factors is
+304,250,263,527,210, the product of the first 13 prime numbers; and 133,869,006,807,307, the
+product of the next 8 prime numbers. Their LCM is the product of the first 21 prime numbers, or
+40,729,680,599,249,024,150,621,323,470 (40 octillion ...). Its PF is
+2 × 3 × 5 × 7 × 11 × 13 × 17 × 19 × 23 × 29 × 31 × 37 × 41 × 47 × 53 × 59 × 61 × 67 × 71 × 73!""";
+    
+    /*
+    The other calculations for this section are: find the PFs of 2 input numbers and use these
+    to find the PFs of the GCD and LCM.
      */
+    
     static final class PrimeFactorizationAnswer {
-        private final PrimeFactorization input1Pf;
-        
-        private final PrimeFactorization input2Pf;
+        private static final String HEADING = "Prime Factorizations Info";
         
         /**
-         * If the GCD of the inputs is 1, this is null since only integers ≥ 2 have a prime factorization.
+         * If the GCD of the inputs is 1, then this is null since only whole numbers > 1 have a PF.
          */
         private final PrimeFactorization gcdPf;
         
         private final PrimeFactorization lcmPf;
         
+        private final Stream<String> infoSentences;
+        
         PrimeFactorizationAnswer(
-            long input1Long, long input2Long,
-            String input1String, String input2String
+            long input1Long,
+            long input2Long,
+            String input1String,
+            String input2String
         ) {
             assertIsInRange(input1Long, MIN_INPUT, MAX_INPUT);
             assertIsInRange(input2Long, MIN_INPUT, MAX_INPUT);
             
-            input1Pf = new PrimeFactorization(input1Long, input1String);
+            var input1Pf = new PrimeFactorization(input1Long);
+            PrimeFactorization input2Pf;
             
             if (input1Long == input2Long) {
                 lcmPf = gcdPf = input2Pf = input1Pf;
-                return;
-            }
-            
-            input2Pf = new PrimeFactorization(input2Long, input2String);
-            var gcdPfFps = new ArrayList<FactorAndPower>();
-            var lcmPfFps = new ArrayList<FactorAndPower>();
-            
-            for (FactorAndPower fp : input1Pf.getFps()) {
-                long factor = fp.factor();
-                int power1 = fp.power();
+            } else {
+                input2Pf = new PrimeFactorization(input2Long);
+                var gcdPfFps = new ArrayList<FactorAndPower>();
+                var lcmPfFps = new ArrayList<FactorAndPower>();
                 
-                input2Pf
-                .getPowerOf(factor)
-                .ifPresentOrElse(
-                    power2 -> {
-                        gcdPfFps.add(new FactorAndPower(factor, Math.min(power1, power2)));
-                        lcmPfFps.add(new FactorAndPower(factor, Math.max(power1, power2)));
-                    },
-                    () -> lcmPfFps.add(new FactorAndPower(factor, power1))
-                );
-            }
-            
-            for (FactorAndPower fp : input2Pf.getFps()) {
-                if (!input1Pf.containsFactor(fp.factor())) {
-                    lcmPfFps.add(new FactorAndPower(fp.factor(), fp.power()));
+                for (FactorAndPower fp : input1Pf) {
+                    long factor = fp.factor();
+                    int power1 = fp.power();
+                    
+                    input2Pf
+                    .getPowerOf(factor)
+                    .ifPresentOrElse(
+                        power2 -> {
+                            gcdPfFps.add(new FactorAndPower(factor, Math.min(power1, power2)));
+                            lcmPfFps.add(new FactorAndPower(factor, Math.max(power1, power2)));
+                        },
+                        () -> lcmPfFps.add(fp)
+                    );
                 }
+                
+                for (FactorAndPower fp : input2Pf) {
+                    if (!input1Pf.containsFactor(fp.factor())) {
+                        lcmPfFps.add(fp);
+                    }
+                }
+                
+                gcdPf = gcdPfFps.isEmpty() ? null : new PrimeFactorization(gcdPfFps);
+                lcmPfFps.sort(Comparator.comparingLong(FactorAndPower::factor));
+                lcmPf = new PrimeFactorization(lcmPfFps);
             }
             
-            gcdPf = gcdPfFps.isEmpty() ? null : new PrimeFactorization(gcdPfFps);
-            lcmPf = new PrimeFactorization(lcmPfFps);
+            String gcdSentence =
+                gcdPf != null
+                ? getGcdOrLcmPfSentence("GCD", gcdPf)
+                : "There are no common prime factors so the GCD is 1.";
+            
+            infoSentences =
+                Stream.of(
+                    input1Pf.getInfoSentence(input1String),
+                    input2Pf.getInfoSentence(input2String),
+                    gcdSentence,
+                    getGcdOrLcmPfSentence("LCM", lcmPf)
+                );
+        }
+    
+        private static String getGcdOrLcmPfSentence(String gcdOrLcmText, PrimeFactorization pf) {
+            var corBigIntString = createStringWithCommas(pf.getCorrespondingBigInt());
+            var end =
+                pf.isForAPrimeNumber()
+                ? corBigIntString
+                : String.format("%s, which is %s", pf, corBigIntString);
+            
+            return String.format("The PF of the %s is %s.", gcdOrLcmText, end);
         }
         
-        Optional<PrimeFactorization> getGcdPf() {
-            return Optional.ofNullable(gcdPf);
+        PrimeFactorization getGcdPf() {
+            return gcdPf;
         }
         
         PrimeFactorization getLcmPf() {
             return lcmPf;
         }
-        
-        private Stream<String> getInfoSentences() {
-            String gcdSentence =
-                getGcdPf()
-                .map(pf -> getGcdOrLcmPfSentence("GCD", gcdPf))
-                .orElse("There are no common prime factors so the GCD is 1.");
-            
-            return Stream.of(
-                input1Pf.getInfoSentence(),
-                input2Pf.getInfoSentence(),
-                gcdSentence,
-                getGcdOrLcmPfSentence("LCM", lcmPf)
-            );
-        }
-        
-        private static String getGcdOrLcmPfSentence(String gcdOrLcmText, PrimeFactorization pf) {
-            var textAfterIs = pf.isForAPrimeNumber() ? "" : pf + ", which is ";
-            return String.format(
-                "The PF of the %s is %s%s.",
-                gcdOrLcmText, textAfterIs, pf.getCorrespondingBigIntString()
-            );
-        }
     }
-    
-    
-    private static String getAnswerMainHeading(String input1String, String input2String) {
-        return String.format("GCD and LCM Info for %s and %s", input1String, input2String);
-    }
-    
-    private static final String PF_INFO_HEADING = "Prime Factorizations Info";
     
     
     public static final class Section extends DoubleInputSection {
@@ -348,17 +338,21 @@ the second input number multiplied by 2.""";
         
         @Override
         public String getCliAnswer(
-            long input1Long, long input2Long,
-            String input1String, String input2String
+            long input1Long,
+            long input2Long,
+            String input1String,
+            String input2String
         ) {
             String euclideanAnswer = getEuclideanCliAnswer(input1Long, input2Long);
             
             Stream<String> pfInfoSentences =
                 new PrimeFactorizationAnswer(input1Long, input2Long, input1String, input2String)
-                .getInfoSentences();
-            
+                .infoSentences;
             String pfAnswer =
-                NtpCli.buildStringWithStreamElementsOnSeparateLines(PF_INFO_HEADING, pfInfoSentences);
+                NtpCli.buildStringWithStreamElementsOnSeparateLines(
+                    PrimeFactorizationAnswer.HEADING,
+                    pfInfoSentences
+                );
             
             return String.join(
                 "\n\n",
@@ -370,19 +364,20 @@ the second input number multiplied by 2.""";
         
         @Override
         public List<Component> getGuiComponents(
-            long input1Long, long input2Long,
-            String input1String, String input2String
+            long input1Long,
+            long input2Long,
+            String input1String,
+            String input2String
         ) {
             NtpPanel euclideanPanel = getEuclideanPanel(input1Long, input2Long);
             
             Stream<String> pfInfoSentences =
                 new PrimeFactorizationAnswer(input1Long, input2Long, input1String, input2String)
-                .getInfoSentences();
-            
+                .infoSentences;
             NtpPanel pfInfoPanel =
                 new NtpPanel()
                 .setToBoxLayoutWithPageAxis()
-                .add(createAnswerSubHeadingLabel(PF_INFO_HEADING))
+                .add(createAnswerSubHeadingLabel(PrimeFactorizationAnswer.HEADING))
                 .add(NtpTextArea.createWithStreamElementsOnSeparateLines(pfInfoSentences));
             
             return List.of(

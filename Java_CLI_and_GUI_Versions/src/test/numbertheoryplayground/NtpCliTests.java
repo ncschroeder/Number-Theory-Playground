@@ -92,7 +92,7 @@ class NtpCliTests {
 
 
     @ParameterizedTest
-    @MethodSource("getArgsForTestBuildStringWithStreamElementsOnShortLines")
+    @MethodSource("getArgsForBuildStringWithStreamElementsOnShortLines")
     void buildStringWithStreamElementsOnShortLines(
         String expectedContentResult,
         List<String> contentStrings,
@@ -106,7 +106,7 @@ class NtpCliTests {
         );
     }
 
-    static Stream<Arguments> getArgsForTestBuildStringWithStreamElementsOnShortLines() {
+    static Stream<Arguments> getArgsForBuildStringWithStreamElementsOnShortLines() {
         var testMessage = """
             If a list of elements is 75 characters long after being joined together, \
             buildStringWithStreamElementsOnShortLines puts those elements on a single line.
@@ -127,8 +127,8 @@ class NtpCliTests {
 
         testMessage = """
             If a list of elements is 76 characters long after being joined together, \
-            buildStringWithStreamElementsOnShortLines puts the last element on its own line \
-            and the rest of the elements on the same line.
+            buildStringWithStreamElementsOnShortLines puts the last element on its own \
+            line and the rest of the elements on the same line.
             """;
         
         strings = new ArrayList<>(strings);

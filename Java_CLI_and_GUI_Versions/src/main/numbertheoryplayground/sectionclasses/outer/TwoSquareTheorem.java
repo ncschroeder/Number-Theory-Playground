@@ -18,10 +18,9 @@ Fermat's two square theorem says that every prime number that's 1 above a multip
 expressed as the sum of 2 squares in 1 way. This was named after 1600s French mathematician
 Pierre de Fermat. In the context of this theorem, square is a shortening of square number or
 perfect square and is a number that can be formed by taking an integer and multiplying it by
-itself, or squaring it. The first 4 squares are 0 (0^2), 1 (1^2 or (-1)^2), 4 (2^2 or (-2)^2),
-and 9 (3^2 or (-3)^2). Because of this theorem, a prime number that's 1 above a multiple of 4
-is known as a Pythagorean prime. An example of a Pythagorean prime is 29 and it can be expressed
-as 2^2 (4) + 5^2 (25).""";
+itself, or squaring it. The first 4 squares are 0 (0^2), 1 (1^2), 4 (2^2), and 9 (3^2). Because
+of this theorem, a prime number that's 1 above a multiple of 4 is known as a Pythagorean prime.
+An example of a Pythagorean prime is 29 and it can be expressed as 2^2 (4) + 5^2 (25).""";
     
     /*
     The calculations for this section are: find the first Pythagorean prime ≥ an input number,

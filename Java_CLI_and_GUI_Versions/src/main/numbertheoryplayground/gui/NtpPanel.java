@@ -71,9 +71,12 @@ public class NtpPanel extends JPanel {
     }
     
     /**
-     * The args for contentSourceStream are streams of either GcdAndLcm.EuclideanIterations or
-     * AncientMultiplication.TableRows. The args for getRowStrings are functions that return
-     * streams with strings of the fields of those records.
+     * Creates a table panel with the provided column headings and a row for each object in
+     * contentSourceStream. The content of the data cells is determined by calling getRowStrings
+     * on each object. The args for contentSourceStream are streams of either
+     * GcdAndLcm.EuclideanIterations or AncientMultiplication.TableRows. The args for getRowStrings
+     * are functions that return streams of strings of the fields of those records. These streams
+     * are the same size as columnHeadings.
      */
     public static <T> NtpPanel createTablePanel(
         List<String> columnHeadings,

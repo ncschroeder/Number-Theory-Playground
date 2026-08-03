@@ -21,7 +21,7 @@ public class PrimeNumbers {
 A prime number, or a prime, is a whole number > 1 that isn't divisible by any whole numbers
 other than 1 and itself. A composite number is a whole number > 1 that is divisible by a whole
 number other than 1 and itself. The first 10 primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, and 29.
-There are an infinite amount of primes. The largest known prime is (2^136,279,841) − 1. It has
+There are an infinite amount of primes. The largest known one is (2^136,279,841) − 1. It has
 41,024,320 digits! Primes are used in 8 of the 11 sections in the Number Theory Playground.
 
 With the exception of 2 and 3, all primes are either 1 above or 1 below a multiple of 6. To
@@ -30,11 +30,11 @@ that's a multiple of 6. We know that n is divisible by 2 and 3 so n + 2 and n + 
 by 2 and n + 3 is divisible by 3 but we don't have any guarantees about what n + 1 and n + 5
 are divisible by. Therefore, that's where primes can be.
 
-A whole number can be determined to be prime if it's not divisible by any primes ≤ the square
-root of that number. This is called trial division. Let's determine if 29 and 33 are prime.
-5^2 = 25 and 6^2 = 36 so the square roots of 29 and 33 are between 5 and 6. We check if 29 and
-33 are divisible by 2, 3, or 5; which are the primes ≤ 5. 29 isn't divisible by any of those
-and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
+We can check if a whole number > 1 is prime by checking if it's divisible by any primes ≤ its
+square root. If it is, then it's not prime. This is called trial division. Let's check if 29 and
+33 are prime. 5^2 = 25 and 6^2 = 36 so the square roots of 29 and 33 are between 5 and 6. We check
+if 29 and 33 are divisible by 2, 3, or 5; which are the primes ≤ 5. 29 isn't divisible by any of
+those and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     
     // The calculation for this section is: find the first 30 primes that are ≥ an input number.
     
@@ -45,13 +45,19 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     static boolean isPrime(long input) {
         if (input <= 1) return false;
         if (input <= 3) return true;
+        
+        /*
+        We need to check if the input is divisible by any primes ≤ its square root. We'll check
+        if it's divisible by 2, and then if it's divisible by an odd number since all primes
+        besides 2 are odd.
+         */
+        
         if (isEven(input)) return false;
         
         var maxPossibleFactorToCheck = (long) Math.sqrt(input);
         for (var l = 3L; l <= maxPossibleFactorToCheck; l += 2) {
             if (isDivisible(input, l)) return false;
         }
-        
         return true;
     }
     
@@ -61,10 +67,10 @@ and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     static List<Long> getPrimes(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
+        long possiblePrime = isOdd(input) ? input : input + 1;
         var primes = new ArrayList<Long>(NUM_PRIMES_TO_FIND);
         if (input < 2) primes.add(2L);
         
-        long possiblePrime = isOdd(input) ? input : input + 1;
         while (true) {
             if (isPrime(possiblePrime)) {
                 primes.add(possiblePrime);

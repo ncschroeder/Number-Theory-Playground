@@ -33,14 +33,14 @@ the largest known prime number, which is (2^136,279,841) − 1.""";
     private static final long MAX_INPUT = FIFTY_TRILLION;
     private static final int NUM_SEMIPRIMES_TO_FIND = 20;
     
-    record SemiprimeData(long semiprime, long primeFactor1, long primeFactor2) {
+    record SemiprimeData(long semiprime, long factor1, long factor2) {
         @Override
         public String toString() {
             return String.format(
                 "%s (%s × %s)",
                 createStringWithCommas(semiprime),
-                createStringWithCommas(primeFactor1),
-                createStringWithCommas(primeFactor2)
+                createStringWithCommas(factor1),
+                createStringWithCommas(factor2)
             );
         }
     }
@@ -51,11 +51,13 @@ the largest known prime number, which is (2^136,279,841) − 1.""";
      */
     private static SemiprimeData checkIfSemiprime(long input) {
         /*
-        First, we need to find the first int factor of the input that's > 1 and < the input.
+        First, we need to find the first long factor of the input that's > 1 and < the input.
         Just like with the algorithm for determining if a long is prime, we only need to check
-        primes ≤ the square root of the input. If we don't find a factor, then that means that
-        the input is prime and not semiprime.
+        primes ≤ the square root of the input. We'll check if 2 is a factor and then if there's an
+        odd number factor since all primes besides 2 are odd. If we don't find a factor, then that
+        means that the input is prime and not semiprime.
          */
+        
         if (isEven(input)) {
             return isPrime(input / 2) ? new SemiprimeData(input, 2, input / 2) : null;
         }
@@ -80,14 +82,13 @@ the largest known prime number, which is (2^136,279,841) − 1.""";
     static List<SemiprimeData> getSemiprimesData(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        final int numSemiprimesToFind = 20;
-        var semiprimesData = new ArrayList<SemiprimeData>(numSemiprimesToFind);
+        var semiprimesData = new ArrayList<SemiprimeData>(NUM_SEMIPRIMES_TO_FIND);
         
         for (var l = input; ; l++) {
             var possibleSemiprimeData = checkIfSemiprime(l);
             if (possibleSemiprimeData != null) {
                 semiprimesData.add(possibleSemiprimeData);
-                if (semiprimesData.size() == numSemiprimesToFind) {
+                if (semiprimesData.size() == NUM_SEMIPRIMES_TO_FIND) {
                     return semiprimesData;
                 }
             }

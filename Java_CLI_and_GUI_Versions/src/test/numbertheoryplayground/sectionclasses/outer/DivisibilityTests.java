@@ -43,7 +43,7 @@ INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS_EXPRESSION,        ALT
     @ParameterizedTest
     @FieldSource("argsForNumberOfFactorsData")
     void numberOfFactorsData(int input, String expectedExpression, int expectedNumFactors) {
-        var data = new NumberOfFactorsData(new PrimeFactorization(input, ""));
+        var data = new NumberOfFactorsData(new PrimeFactorization(input));
         assertAll(
             () -> assertEquals(expectedExpression, data.getExpression()),
             () -> assertEquals(expectedNumFactors, data.getNumFactors())

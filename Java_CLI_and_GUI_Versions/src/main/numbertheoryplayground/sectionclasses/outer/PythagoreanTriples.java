@@ -36,16 +36,16 @@ same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61;
 55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025).
 
 The algorithm I came up with for calculating triples first tries to find triples where the short
-leg length equals the input number and then tries to find triples where the short leg equals the
-input number + 1, and so on until 10 are found.""";
+leg length, the lowest number in the triple, equals the input number and then tries to find
+triples where the short leg length equals the input number + 1, and so on until 10 are found.""";
 
     /*
-    The calculation for this section is: find the first 10 Pythagorean triples where the lowest
-    number in the triple is ≥ an input number. For example, if the input number is 3, then the
-    triple 3, 4, and 5 will be the first one found. If the input number is 4, then the triple
-    5, 12, and 13 will be the first one found. These triples will be displayed like the examples
-    at the end of the paragraphs in the text block above are displayed. If a triple is primitive,
-    then it'll be followed by "(primitive)".
+    The calculation for this section is: find the first 10 Pythagorean triples where the short
+    leg length, the lowest number in the triple, is ≥ an input number. For example, if the input
+    number is 3, then the triple 3, 4, and 5 will be the first one found. If the input number is
+    4, then the triple 5, 12, and 13 will be the first one found. These triples will be displayed
+    like the examples at the end of the paragraphs in the text block above are displayed. If a
+    triple is primitive, then it'll be followed by "(primitive)".
      */
     
     private static final long MIN_INPUT = 0;
@@ -87,10 +87,10 @@ input number + 1, and so on until 10 are found.""";
     }
     
     /**
-     * Returns a list of Triples for the first 10 Pythagorean triples where the short leg length,
-     * the lowest number in the triple, is ≥ the input. For example, if the input is 3, then a
-     * Triple for the triple 3, 4, and 5 will be the first one. If the input is 4, then a Triple
-     * for the triple 5, 12, and 13 will be the first one.
+     * Returns a list of Triples for the first 10 Pythagorean triples where the short leg length
+     * is ≥ the input. The algorithm I came up with first tries to find triples where the short
+     * leg length equals the input number and then tries to find triples where the short leg
+     * length equals the input number + 1, and so on until 10 are found.
      */
     static List<Triple> getTriples(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
@@ -124,10 +124,10 @@ input number + 1, and so on until 10 are found.""";
     }
     
     /**
-     * Returns a stream of strings that say the first 10 Pythagorean triples where the lowest integer in
-     * the triple is ≥ the input. Each string contains the 1-based position of that triple followed by ") "
-     * followed by the string representation of that triple. Currently, NUM_TRIPLES_TO_FIND is 10 so
-     * there'll be a 1-space indent for the strings that start with a single digit.
+     * Returns a stream of strings that show the first 10 Pythagorean triples where the short leg
+     * length is ≥ the input. Each string contains the 1-based position of that triple followed by
+     * ") " followed by the string representation of that triple. Currently, NUM_TRIPLES_TO_FIND
+     * is 10 so there'll be an indent for the strings that start with a single digit.
      */
     private static Stream<String> getNumberedTripleStrings(long input, int indentLength) {
         List<Triple> triples = getTriples(input);

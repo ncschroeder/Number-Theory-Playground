@@ -3,7 +3,6 @@ package numbertheoryplayground;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -31,7 +30,6 @@ number.
 
 The term "whole number" is often used in this app since I find it to be the more self-explanatory
 than "natural number.\"""";
-    
     
     // Max input constants
     public static final long ONE_POINT_FIVE_MILLION = 1_500_000;
@@ -89,7 +87,7 @@ than "natural number.\"""";
     }
     
     /**
-     * Used to assert that a long argument is in a valid range for an algorithm.
+     * Used to assert that a long argument is in a valid range for a calculation.
      */
     public static void assertIsInRange(long input, long minInput, long maxInput) {
         if (input < minInput || input > maxInput) {

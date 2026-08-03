@@ -22,10 +22,7 @@ b and get no remainder, then a is said to be divisible by b and b is said to be 
 divisor of a. If you want to find some whole number factors of a whole number, you could
 manually do some division but there are other ways to find them.""";
     
-    /*
-    The calculations for this section need 1 input number and are explained below the info
-    strings below.
-     */
+    // The calculations for this section are explained below the info strings below.
     
     /**
      * This is 10 since none of the divisibility rules mentioned below can be used on
@@ -34,7 +31,7 @@ manually do some division but there are other ways to find them.""";
     private static final long MIN_INPUT = 10;
     
     /**
-     * This section creates PrimeFactorization objects so the max input for those will be used.
+     * This section creates PrimeFactorization objects so the max input for those is used.
      */
     private static final long MAX_INPUT = PrimeFactorization.MAX_INPUT;
     
@@ -94,15 +91,16 @@ both 7 and 13. Since n is even and divisible by 7, it's also divisible by 14."""
     
     /*
     Some calculations for this section are: use the divisibility rules to see if we can find
-    some factors of the input number and display a paragraph with info from this.
+    some factors of an input number and display a paragraph with info from this. The other
+    calculations are explained below the PF_INFO string.
      */
     
     /**
-     * Class with data related to rules that can be used to determine if the input long is
-     * divisible by other whole numbers.
+     * Class with data related to using the divisibility rules on an input long.
      */
     static final class RulesAnswer {
         private static final String HEADING = "Rules Info";
+        
         private final String infoParagraph;
         
         private final long last2Digits;
@@ -356,13 +354,13 @@ call them. For 2^2 × 3^2, the subfactorizations are
 2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).
 
 Whole numbers that are ≤ 10 quadrillion, the max input of this section, generally have a small
-amount of factors, like < 100. An example of an input number with a high number of factors is
-9,736,008,432,870,720, or 9 quadrillion 736 trillion ... This number is the product of 2^6 and
-the next 12 prime numbers so it has 13 unique prime factors and its PF is
-2^6 x 3 x 5 x 7 x 11 x 13 x 17 x 19 x 23 x 29 x 31 x 37 x 41. It has 7 × 2^12 = 28,672 factors!""";
+amount of factors, like < 100. An example of an input number with a high amount of factors is
+9,736,008,432,870,720 (9 quadrillion 736 trillion ...). This number is the product of 2^6 and
+the next 12 prime numbers so it has 7 × 2^12 = 28,672 factors! Its PF is
+2^6 x 3 x 5 x 7 x 11 x 13 x 17 x 19 x 23 x 29 x 31 x 37 x 41.""";
     
     /*
-    The other calculations for this section are: find the PF of the input number and if we can
+    The other calculations for this section are: find the PF of an input number and if we can
     determine from this PF that the input number is composite (not prime), then find its factors
     by finding the subfactorizations of its PF.
      */
@@ -428,17 +426,20 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
      * This method finds PFs of factors of the input PF's corresponding big int, excluding 1
      * and the corresponding big int, by finding subfactorizations in the input PF and that's
      * done by finding combinations of factors and powers in that PF. The PFs in the list
-     * returned are sorted by corresponding big ints.
+     * returned are sorted by corresponding big ints. FactorAndPower objects are reused for PFs
+     * and some are created but no duplicate ones are.
      */
     static List<PrimeFactorization> getFactorPfs(PrimeFactorization pf, int numFactors) {
         /*
-        numFactors is the calculated number of factors that the input PF's corresponding big int
-        has, including 1 and the corresponding big int. The algorithm below will add a PF to
-        factorPfs that's the same as the input PF but then remove it, so the capacity for
-        factorPfs will be set to numFactors - 1 and its size at the end will be numFactors - 2.
+        numFactors comes from a NumberOfFactorsData object and is the calculated number of
+        factors that the input PF's corresponding big int has, including 1 and the corresponding
+        big int. The last PF that the algorithm below adds to factorPfs is the same as the input
+        PF but that last PF gets removed, so the capacity for factorPfs will be set to
+        numFactors - 1 and its size at the end will be numFactors - 2.
          */
+        var factorPfs = new ArrayList<PrimeFactorization>(numFactors - 1);
         
-        for (FactorAndPower fp : pf.getFps()) {
+        for (FactorAndPower fp : pf) {
             long primeFactor = fp.factor();
             int maxPower = fp.power();
             /*
@@ -448,14 +449,14 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
             int lastPfIndexToUse = factorPfs.size() - 1;
             
             for (var power = 1; power <= maxPower; power++) {
-                var singleton = List.of(new FactorAndPower(primeFactor, power));
-                factorPfs.add(new PrimeFactorization(singleton));
+                var fpToAdd = power == maxPower ? fp : new FactorAndPower(primeFactor, power);
+                factorPfs.add(new PrimeFactorization(List.of(fpToAdd)));
                 
                 for (var i = 0; i <= lastPfIndexToUse; i++) {
                     List<FactorAndPower> listFactorFps = factorPfs.get(i).getFps();
                     var newFactorFps = new ArrayList<FactorAndPower>(listFactorFps.size() + 1);
                     newFactorFps.addAll(listFactorFps);
-                    newFactorFps.add(new FactorAndPower(primeFactor, power));
+                    newFactorFps.add(fpToAdd);
                     factorPfs.add(new PrimeFactorization(newFactorFps));
                 }
             }
@@ -470,11 +471,13 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
         return
             getFactorPfs(pf, numFactors)
             .stream()
-            .map(pf2 ->
-                pf2.isForAPrimeNumber()
-                ? pf2.getCorrespondingBigIntString()
-                : String.format("%s (%s)", pf2, pf2.getCorrespondingBigIntString())
-            );
+            .map(pf2 -> {
+                var corBigIntString = createStringWithCommas(pf2.getCorrespondingBigInt());
+                return
+                    pf2.isForAPrimeNumber()
+                    ? corBigIntString
+                    : String.format("%s (%s)", pf2, corBigIntString);
+            });
     }
     
     
@@ -496,7 +499,8 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
         @Override
         public String getCliAnswer(long inputLong, String inputString) {
             String rulesInfo = new RulesAnswer(inputLong, inputString).infoParagraph;
-            var pf = new PrimeFactorization(inputLong, inputString);
+            var pf = new PrimeFactorization(inputLong);
+            String pfInfoSentence = pf.getInfoSentence(inputString);
             
             var linesJoiner =
                 new StringJoiner("\n")
@@ -510,14 +514,14 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
             if (pf.isForAPrimeNumber()) {
                 linesJoiner.add(
                     NtpCli.putNewLineChars(
-                        pf.getInfoSentence() + ' ' + getInputIsPrimeSentence(inputString)
+                        pfInfoSentence + ' ' + getInputIsPrimeSentence(inputString)
                     )
                 );
             } else {
                 var numFactorsData = new NumberOfFactorsData(pf);
                 String textAboveFactorPfs =
                     NtpCli.putNewLineChars(
-                        pf.getInfoSentence() + ' ' + numFactorsData.infoSentence +
+                        pfInfoSentence + ' ' + numFactorsData.infoSentence +
                         ' ' + getFactorsAndPfsSentence(inputString)
                     );
                 linesJoiner.add(
@@ -537,7 +541,7 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
         contains the factors of the input long and the PFs of those factors. For longs with a
         lot of factors, the string that gets built will be pretty long and displaying that string
         in a text area would take a long time, so for longs like this, an error message will be
-        displayed instead of the factors and their PFS. See the documentation comment for
+        displayed instead of the factors and their PFs. See the documentation comment for
         NtpTextArea.StringTooLongException for more info. Longs that have so many factors that
         the resulting string takes a long time to display seem rare. An example of one that's
         below the max input is 9,736,008,432,870,720, which was mentioned in the PF_INFO string
@@ -551,7 +555,8 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
         @Override
         public List<Component> getGuiComponents(long inputLong, String inputString) {
             String rulesInfo = new RulesAnswer(inputLong, inputString).infoParagraph;
-            var pf = new PrimeFactorization(inputLong, inputString);
+            var pf = new PrimeFactorization(inputLong);
+            String pfInfoSentence = pf.getInfoSentence(inputString);
             
             var comps = new ArrayList<Component>(9);
             comps.addAll(
@@ -567,7 +572,7 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
             );
             
             if (pf.isForAPrimeNumber()) {
-                String textToDisplay = pf.getInfoSentence() + ' ' + getInputIsPrimeSentence(inputString);
+                String textToDisplay = pfInfoSentence + ' ' + getInputIsPrimeSentence(inputString);
                 comps.add(new NtpTextArea(textToDisplay));
             } else {
                 var numFactorsData = new NumberOfFactorsData(pf);
@@ -578,13 +583,13 @@ the next 12 prime numbers so it has 13 unique prime factors and its PF is
                             getFactorPfStrings(pf, numFactorsData.numFactors)
                         );
                     String textAboveFactorPfs =
-                        pf.getInfoSentence() + ' ' + numFactorsData.infoSentence +
+                        pfInfoSentence + ' ' + numFactorsData.infoSentence +
                         ' ' + getFactorsAndPfsSentence(inputString);
                     comps.add(new NtpTextArea(textAboveFactorPfs));
                     comps.add(factorPfsArea);
                 } catch (NtpTextArea.StringTooLongException ex) {
                     String textToDisplay =
-                        pf.getInfoSentence() + ' ' + numFactorsData.infoSentence +
+                        pfInfoSentence + ' ' + numFactorsData.infoSentence +
                         ' ' + NtpTextArea.StringTooLongException.ERROR_MESSAGE;
                     comps.add(new NtpTextArea(textToDisplay));
                 }

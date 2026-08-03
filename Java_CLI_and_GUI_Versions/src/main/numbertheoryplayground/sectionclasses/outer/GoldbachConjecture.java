@@ -10,14 +10,11 @@ import numbertheoryplayground.gui.NtpTextArea;
 import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
-import static numbertheoryplayground.sectionclasses.outer.Divisibility.isOdd;
+import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
 import static numbertheoryplayground.sectionclasses.outer.PrimeNumbers.isPrime;
 
 /**
  * Utility class related to the Goldbach conjecture and the section for it.
- *
- * The Goldbach conjecture section needs even input so that's why getPrimePairStarts throws an
- * exception for odd inputs and the getRandomInput method is overridden.
  */
 public class GoldbachConjecture {
     private static final String INFO = """
@@ -57,8 +54,8 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
      */
     
     /**
-     * Find the pairs of primes that sum to the input and returns a list that contains the
-     * lowest numbers of those pairs.
+     * Find the pairs of primes that sum to the input, which should be even, and returns a list
+     * that contains the lowest numbers of those pairs.
      */
     static List<Integer> getPrimePairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
@@ -66,14 +63,13 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
             throw InvalidInputNumberException.getInstance();
         }
         
+        // 4 is the only even number ≥ 4 that has 2 in a pair of primes that sum to it.
         if (input == 4) return List.of(2);
         
         /*
-        Check if the input is 4 since 4 is the only even number ≥ 4 that has 2 in a pair of
-        primes that sum to it. If the input isn't 4, then check pairs of odd numbers that sum to
-        the input for primality. The iterating only needs to go up to the floor of half of the
-        input. After that point, checks for primality will be done on pairs of numbers that have
-        already been checked for primality.
+        Check pairs of odd numbers that sum to the input for primality. The iterating only
+        needs to go up to the floor of half of the input. After that point, checks for
+        primality will be done on pairs of numbers that have already been checked for primality.
          */
         var pairStarts = new ArrayList<Integer>();
         var maxPossiblePairStart = (int) input / 2;
@@ -96,7 +92,7 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
     }
     
     private static String getNumPairsSentence(int numPairs, String inputString) {
-        String sentenceStart =
+        String start =
             "There" + (
                 numPairs == 1
                 ? "'s 1 pair"
@@ -105,7 +101,7 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
         
         return String.format(
             "%s of prime numbers that sum to %s.",
-            sentenceStart, inputString
+            start, inputString
         );
     }
     
@@ -162,11 +158,8 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
         
         @Override
         public long getRandomInput() {
-            long randomInput;
-            do {
-                randomInput = super.getRandomInput();
-            } while (isOdd(randomInput));
-            return randomInput;
+            long randomInput = super.getRandomInput();
+            return isEven(randomInput) ? randomInput : randomInput - 1;
         }
     }
 }

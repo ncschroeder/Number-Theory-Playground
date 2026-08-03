@@ -60,10 +60,6 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
     private static final long MIN_INPUT = 2;
     private static final long MAX_INPUT = NINE_QUINTILLION;
     
-    /**
-     * This record has data that'll be in rows of tables shown when showing ancient Egyptian
-     * multiplication info.
-     */
     record TableRow(long powerOf2, BigInteger correspondingMultiple) {
         private String powerOf2String() {
             return createStringWithCommas(powerOf2);
@@ -138,12 +134,10 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
                     input2BigInt.multiply(BigInteger.valueOf(powerOf2));
                 var row = new TableRow(powerOf2, correspondingMultiple);
                 table1RowsBuilder.accept(row);
-                
                 if (input1BinaryString.charAt(i) == '1') {
                     // powerOf2 is one of the powers of 2 that sum to input1.
                     table2RowsBuilder.accept(row);
                 }
-                
                 powerOf2 *= 2;
             }
             
@@ -175,8 +169,10 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
         
         @Override
         public String getCliAnswer(
-            long input1Long, long input2Long,
-            String input1String, String input2String
+            long input1Long,
+            long input2Long,
+            String input1String,
+            String input2String
         ) {
             var answer = new Answer(input1Long, input2Long, input1String, input2String);
             
@@ -186,14 +182,18 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
                     int column1Width = powersOf2ColumnHeading.length() + 3;
                     String headRow =
                         NtpCli.getRowFor2ColumnTable(
-                            powersOf2ColumnHeading, column1Width, answer.input2MultiplesColumnHeading
+                            powersOf2ColumnHeading,
+                            column1Width,
+                            answer.input2MultiplesColumnHeading
                         );
                     
                     return
                         rows
                         .map(r ->
                             NtpCli.getRowFor2ColumnTable(
-                                r.powerOf2String(), column1Width, r.correspondingMultipleString()
+                                r.powerOf2String(),
+                                column1Width,
+                                r.correspondingMultipleString()
                             )
                         )
                         .collect(Collectors.joining("\n", headRow + '\n', ""));
@@ -215,8 +215,10 @@ products of 5 and these powers are 20 and 40. 20 + 40 = (5 × 4) + (5 × 8) = 5 
         
         @Override
         public List<Component> getGuiComponents(
-            long input1Long, long input2Long,
-            String input1String, String input2String
+            long input1Long,
+            long input2Long,
+            String input1String,
+            String input2String
         ) {
             var answer = new Answer(input1Long, input2Long, input1String, input2String);
             

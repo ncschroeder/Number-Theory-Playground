@@ -49,17 +49,15 @@ twin prime pairs, the first 2 mentioned above."""
     static List<Long> getPairStarts(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        var pairStarts = new ArrayList<Long>(NUM_PAIRS_TO_FIND);
         /*
-        As mentioned in the INFO string, all twin prime pairs besides 3 and 5 consist of 1 number
-        that's 1 below a multiple of 6 and another number that's 1 above that same multiple of 6.
-        Set iterationStart to the first long ≥ the input that's 1 below a multiple of 6 so that
-        we'll be able to iterate through longs that are 1 below a multiple of 6.
+        Set possiblePairStart to the first long ≥ the input that's 1 below a multiple of 6 so
+        that we'll be able to iterate through longs that are 1 below a multiple of 6.
          */
-        if (input <= 3) pairStarts.add(3L);
         long possiblePairStart = input;
         while (possiblePairStart % 6 != 5) possiblePairStart++;
-
+        var pairStarts = new ArrayList<Long>(NUM_PAIRS_TO_FIND);
+        if (input <= 3) pairStarts.add(3L);
+        
         while (true) {
             if (isPrime(possiblePairStart) && isPrime(possiblePairStart + 2)) {
                 pairStarts.add(possiblePairStart);

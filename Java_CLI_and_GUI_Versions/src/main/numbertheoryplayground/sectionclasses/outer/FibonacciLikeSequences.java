@@ -41,7 +41,8 @@ public class FibonacciLikeSequences {
     
     /*
     I would use the Unicode char 𝚽 for Phi in INFO and the ratioAndPhiExpressions field in the
-    Answer class, but Swing doesn't recognize that char.
+    Answer class; but Swing, the GUI library I'm using, doesn't recognize that char. A black
+    square gets displayed instead of that char.
      */
     
     private static final String INFO = """
@@ -90,24 +91,20 @@ involve numbers other than natural numbers."""
 
         private Answer(long input1Long, long input2Long, String input1String, String input2String) {
             List<BigInteger> bigIntSequence = getBigIntFiboLikeSequence(input1Long, input2Long);
+            stringSequence = bigIntSequence.stream().map(Misc::createStringWithCommas);
             
             sequenceHeading =
                 String.format(
                     "The first %d numbers in the Fibonacci-like sequence that starts with %s and %s are:",
                     SEQUENCE_LENGTH, input1String, input2String
                 );
-
-            stringSequence = bigIntSequence.stream().map(Misc::createStringWithCommas);
-
+            
             Stream<String> ratioExpressions =
                 IntStream.of(3, 8, 13, 18)
                 .mapToObj(i -> getRatioExpression(bigIntSequence.get(i), bigIntSequence.get(i + 1)));
             
             ratioAndPhiExpressions =
-                Stream.concat(
-                    ratioExpressions,
-                    Stream.of("Phi ≈ " + PHI_STRING)
-                );
+                Stream.concat(ratioExpressions, Stream.of("Phi ≈ " + PHI_STRING));
         }
     }
     
@@ -151,7 +148,7 @@ involve numbers other than natural numbers."""
         }
         
         return String.format(
-            "%s / %s %s %s",
+            "%s / %s %c %s",
             createStringWithCommas(bigInt2),
             createStringWithCommas(bigInt1),
             equalityChar,
@@ -181,28 +178,28 @@ involve numbers other than natural numbers."""
         
         @Override
         public String getCliAnswer(
-            long input1Long, long input2Long,
-            String input1String, String input2String
+            long input1Long,
+            long input2Long,
+            String input1String,
+            String input2String
         ) {
             var answer = new Answer(input1Long, input2Long, input1String, input2String);
-            
             String sequenceHeading = NtpCli.putNewLineChars(answer.sequenceHeading);
             var sequenceString =
                 NtpCli.buildStringWithStreamElementsOnShortLines(sequenceHeading, answer.stringSequence);
-            
             var ratioAndPhiExpressionsString =
                 NtpCli.buildStringWithStreamElementsOnSeparateLines(RATIOS_HEADING, answer.ratioAndPhiExpressions);
-            
             return sequenceString + "\n\n" + ratioAndPhiExpressionsString;
         }
         
         @Override
         public List<Component> getGuiComponents(
-            long input1Long, long input2Long,
-            String input1String, String input2String
+            long input1Long,
+            long input2Long,
+            String input1String,
+            String input2String
         ) {
             var answer = new Answer(input1Long, input2Long, input1String, input2String);
-            
             return List.of(
                 createListHeadingLabel(answer.sequenceHeading),
                 NtpTextArea.createNarrowOneWithStreamElements(answer.stringSequence),

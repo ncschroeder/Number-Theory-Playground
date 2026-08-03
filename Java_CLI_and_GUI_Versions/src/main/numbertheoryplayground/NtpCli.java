@@ -44,8 +44,8 @@ public class NtpCli {
         /*
         Setup and show main menu. There'll be options to exit, get info about the NTP, and go to
         the sections. There are currently 11 sections so the ints 1-11 will be what the user can
-        enter to go to a section. These ints will be at the start of the lines for the section
-        options. There'll be a 1-space indent for the lines that start with a single digit.
+        enter to go to a section. These ints in parentheses will be at the start of the lines for
+        the section options. There'll be a 1-space indent for the lines for single-digit ints.
 
         Let inputsAndSections be a map where the keys are the string representations of the
         aforementioned ints and the values are the corresponding Section objects.
@@ -57,9 +57,10 @@ public class NtpCli {
         String menuString;
         
         {
-            final String directions = """
-                Enter "e" to exit, "i" to get info about the Number Theory Playground, \
-                or one of the following to go to a section:""";
+            String directions = """
+                Enter "%s" to exit, "%s" to get info about the Number Theory Playground, \
+                or one of the following to go to a section:"""
+                .formatted(exitValue, ntpInfoValue);
             
             StringJoiner menuLinesJoiner =
                 new StringJoiner("\n")
@@ -83,15 +84,15 @@ public class NtpCli {
             println();
             println(menuString);
             String input = getFormattedInput();
+            println();
             
             switch (input) {
                 case ntpInfoValue:
-                    println();
                     println(ntpInfo);
                     break;
                 
                 case exitValue:
-                    println("\nI hope you found this interesting.");
+                    println("I hope you found this interesting.");
                     return;
                     
                 default:
@@ -99,7 +100,6 @@ public class NtpCli {
                     if (sectionToGoTo != null) {
                         goToSection(sectionToGoTo);
                     } else {
-                        println();
                         printInvalidInput();
                     }
             }
@@ -122,19 +122,16 @@ public class NtpCli {
         String sectionHeading = section.getHeading();
         String sectionInfo =
             buildStringWithHeadingAndInfoParagraphs(
-                sectionHeading, section.getInfoParagraphs().stream()
+                sectionHeading,
+                section.getInfoParagraphs().stream()
             );
         
-        
         while (true) {
-            println();
             println(sectionHeading);
             println();
             println(sectionChoicesString);
-            
             String input = getFormattedInput();
             if (input.equals(menuValue)) return;
-            
             println();
             
             switch (input) {
@@ -168,6 +165,8 @@ public class NtpCli {
                         printInvalidInput();
                     }
             }
+            
+            println();
         }
     }
     
@@ -244,12 +243,10 @@ public class NtpCli {
         while (true) {
             int spaceSearchStartIndex =
                 lineStartIndex + (!indent || lines.isEmpty() ? maxLineLength : maxLineLength - indentLength);
-            
             if (spaceSearchStartIndex >= s.length()) {
                 lines.add(s.subSequence(lineStartIndex, s.length()));
                 break;
             }
-            
             int spaceIndex = s.lastIndexOf(' ', spaceSearchStartIndex);
             lines.add(s.subSequence(lineStartIndex, spaceIndex));
             lineStartIndex = spaceIndex + 1;

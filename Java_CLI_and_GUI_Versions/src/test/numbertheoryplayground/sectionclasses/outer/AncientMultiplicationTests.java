@@ -55,16 +55,13 @@ class AncientMultiplicationTests {
                 List.of(tr(32, 1_056))
             );
         
-        
         // 255 is 1 below a power of 2 so this is used for expectedTable1Rows and expectedTable2Rows.
         List<TableRow> rowsFor255And300 =
             List.of(
                 tr(1, 300), tr(2, 600), tr(4, 1_200), tr(8, 2_400), tr(16, 4_800),
                 tr(32, 9_600), tr(64, 19_200), tr(128, 38_400)
             );
-        
         var args2 = arguments(255, 300, rowsFor255And300, rowsFor255And300);
-        
         
         var args3 =
             arguments(

@@ -5,9 +5,6 @@ import numbertheoryplayground.sectionclasses.outer.*;
 
 import static numbertheoryplayground.Misc.*;
 
-/**
- * Class for data and functionality of each section of the applications.
- */
 public abstract sealed class Section
     permits SingleInputSection, DoubleInputSection {
     
@@ -27,8 +24,6 @@ public abstract sealed class Section
         );
     }
     
-    private static final Random random = new Random();
-    
     
     private final String heading;
     
@@ -44,23 +39,23 @@ public abstract sealed class Section
     /**
      * There are a few "action" sentences used that say what the user is to do and what will happen
      * in response. For the GUI, there's 1 action sentence that starts with "Enter or generate a
-     * whole number and click the 'Calculate' button to ." For the CLI, there's an action sentence
+     * whole number and click the 'Calculate' button to ". For the CLI, there's an action sentence
      * for the custom input option and one for the random input option. The custom input option
-     * starts with "A whole number to ." The random input option starts with "(r) to generate a
-     * random whole number and ." This field is for the ending of those sentences. For example, for
-     * PrimeNumbers.Section, this field is "get the first 30 prime numbers ≥ that number."
+     * starts with "A whole number to ". The random input option starts with "(r) to generate a
+     * random whole number and ". This field is for the ending of those sentences. For example, for
+     * PrimeNumbers.Section, this field is "get the first 30 prime numbers ≥ that number".
      */
     private final String actionSentencesEnding;
     
     /**
      * The first input info sentence mentions that the input number(s) should be ≥ the min input
      * and ≤ the max input. For the Goldbach conjecture section, it's also mentioned that the
-     * input should be even. The 2nd input info sentence is "Commas are optional."
+     * input should be even. The second input info sentence is "Commas are optional."
      */
     private final String inputInfoSentences;
     
     /**
-     * The beginning of the CLI info option is "'i' to get info about ."
+     * The beginning of the CLI info option is "'i' to get info about ".
      */
     private final String cliInfoOptionEnding;
     
@@ -80,7 +75,6 @@ public abstract sealed class Section
         this.actionSentencesEnding = "get " + actionSentencesEnding;
         this.cliInfoOptionEnding = cliInfoOptionEnding;
         
-        
         var maxInputString = createStringWithCommas(maxInput);
 
         /*
@@ -92,9 +86,9 @@ public abstract sealed class Section
         the max inputs for the Pythagorean triples section and the Goldbach conjecture section
         in the GUI version, respectively.
         
-        As of Java 21, the version I'm using right now, longs can't be used as the selector for
-        switch statements and expressions, which seems pathetic. Using a map seems to be the next
-        best option.
+        As of Java 21, the version I'm using at the time of this writing, longs can't be used as
+        the selector for switch statements and expressions, which seems pathetic. Using a map seems
+        to be the next best option.
          */
         
         Map<Long, String> maxInputsAndStringsWithWords =
@@ -109,12 +103,11 @@ public abstract sealed class Section
                 NINE_QUINTILLION, "9 quintillion"
             );
         
+        String maxInputStringWithWord = maxInputsAndStringsWithWords.get(maxInput);
         String maxInputSentencePart =
-            Optional.ofNullable(maxInputsAndStringsWithWords.get(maxInput))
-            .map(maxInputStringWithWord ->
-                String.format("%s (%s)", maxInputStringWithWord, maxInputString)
-            )
-            .orElse(maxInputString);
+            maxInputStringWithWord != null
+            ? String.format("%s (%s)", maxInputStringWithWord, maxInputString)
+            : maxInputString;
 
         var inputInfoSentence1End =
             String.format(
@@ -146,15 +139,16 @@ public abstract sealed class Section
         return this instanceof GoldbachConjecture.Section;
     }
     
+    private static final Random random = new Random();
+    
     /**
      * First, a random number of digits will be generated for a random number. The min number of
      * random digits is 1 since all sections have a single digit integer for their min input. If
      * the max input is a power of 10, then the max number of digits for the random number is the
      * number of digits of the max input - 1. Otherwise, the max number of random number digits is
-     * the number of digits of the max input.
-     *
-     * Then, a random number with the generated random number of digits will be generated and
-     * returned. The random number will be > the min input & < the max input of this section.
+     * the number of digits of the max input. Then, a random number with the generated random
+     * number of digits will be generated and returned. The random number will be > the min input
+     * and < the max input of this section.
      */
     public long getRandomInput() {
         int numMinInputDigits = minInput == 0 ? 1 : (int) Math.log10(minInput) + 1;
@@ -172,8 +166,8 @@ public abstract sealed class Section
     }
     
     /**
-     * Used by the CLI to run the algorithm(s) for this section using random input and create a string
-     * with info about the results of the algorithm(s).
+     * Does the calculation(s) for this section using random input and returns a string with info
+     * about it to be displayed in the CLI app.
      */
     public abstract String getRandomCliAnswer();
     

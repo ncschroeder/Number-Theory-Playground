@@ -62,8 +62,8 @@ class GcdAndLcmTests {
     
     /**
      * As mentioned in the comment at the start of this class, 2 ints are coprime if their GCD
-     * is 1, so if a PrimeFactorizationAnswer object is created with coprime inputs, then the
-     * getGcdPf method of that object should return an empty Optional.
+     * is 1, so if a PrimeFactorizationAnswer object is created with coprime inputs, then its
+     * GCD PF should be null.
      */
     @Test
     void pfAnswerForCoprimeInputs() {
@@ -75,7 +75,7 @@ class GcdAndLcmTests {
         var answer = new PrimeFactorizationAnswer(input1, input2, "", "");
         
         assertAll(
-            () -> assertTrue(answer.getGcdPf().isEmpty(), "GCD PF is empty."),
+            () -> assertNull(answer.getGcdPf()),
             () -> assertPf(answer.getLcmPf(), expectedLcmFps, expectedLcm)
         );
     }
@@ -91,13 +91,10 @@ class GcdAndLcmTests {
         int expectedLcm
     ) {
         var answer = new PrimeFactorizationAnswer(input1, input2, "", "");
-        
         assertAll(
             () -> {
-                answer.getGcdPf().ifPresentOrElse(
-                    pf -> assertPf(pf, expectedGcdFps, expectedGcd),
-                    () -> fail("GCD PF is empty but shouldn't have been.")
-                );
+                assertNotNull(answer.getGcdPf());
+                assertPf(answer.getGcdPf(), expectedGcdFps, expectedGcd);
             },
             () -> assertPf(answer.getLcmPf(), expectedLcmFps, expectedLcm)
         );
@@ -105,7 +102,6 @@ class GcdAndLcmTests {
     
     static Stream<Arguments> getArgsForGcdAndLcmAnswerForNonCoprimeInputs() {
         List<FactorAndPower> fpsFor10 = List.of(fp(2, 1), fp(5, 1));
-        
         return Stream.of(
             arguments(10, 10, fpsFor10, 10, fpsFor10, 10),
             arguments(

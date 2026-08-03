@@ -22,7 +22,7 @@ class PrimeFactorizationTests {
     @ParameterizedTest
     @FieldSource("longConstructorArgs")
     void longConstructor(long input, List<FactorAndPower> expectedFps) {
-        assertEquals(expectedFps, new PrimeFactorization(input, "").getFps());
+        assertEquals(expectedFps, new PrimeFactorization(input).getFps());
     }
 
     static final List<Arguments> longConstructorArgs =
@@ -43,7 +43,7 @@ class PrimeFactorizationTests {
     @ParameterizedTest
     @FieldSource("toStringArgs")
     void toString(int input, String expectedString) {
-        assertEquals(expectedString, new PrimeFactorization(input, "").toString());
+        assertEquals(expectedString, new PrimeFactorization(input).toString());
     }
 
     static final List<Arguments> toStringArgs =

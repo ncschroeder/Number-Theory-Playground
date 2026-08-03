@@ -6,7 +6,7 @@ import java.util.List;
 import static numbertheoryplayground.Misc.createStringWithCommas;
 
 /**
- * Superclass for Sections that require 1 input long for their algorithm(s).
+ * Superclass for Sections that require 1 input longs for their calculation(s).
  */
 public abstract non-sealed class SingleInputSection extends Section {
     protected SingleInputSection(
@@ -21,14 +21,13 @@ public abstract non-sealed class SingleInputSection extends Section {
     }
     
     /**
-     * Used by the CLI to run the algorithm(s) for this section using inputLong and create a string
-     * with info about the results of the algorithm(s).
+     * Does the calculation(s) for this section and returns a string with info about it to be
+     * displayed in the CLI app.
      */
     public abstract String getCliAnswer(long inputLong, String inputString);
     
     /**
-     * Used by the GUI to run the algorithm(s) for this section using inputLong and create GUI
-     * components with info about the results of the algorithm(s).
+     * Does the calculation(s) for this section and returns a list of GUI components with info about it.
      */
     public abstract List<Component> getGuiComponents(long inputLong, String inputString);
     

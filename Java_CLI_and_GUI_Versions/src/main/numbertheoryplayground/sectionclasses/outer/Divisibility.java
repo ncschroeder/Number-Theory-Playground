@@ -10,7 +10,7 @@ import numbertheoryplayground.sectionclasses.abstract_.SingleInputSection;
 
 import static numbertheoryplayground.Misc.*;
 import static numbertheoryplayground.gui.NtpGui.*;
-import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndPower;
+import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndExponent;
 
 /**
  * Utility class related to divisibility and the section for it.
@@ -346,11 +346,11 @@ both 7 and 13. Since n is even and divisible by 7, it's also divisible by 14."""
     private static final String PF_INFO = """
 The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's
 have a variable n and let it represent a whole number > 1. First, you can find how many factors
-n has by looking at n's PF, taking the powers of the factors, adding 1 to each, and multiplying
-them. For example, the PF of 36 is 2^2 × 3^2. The powers are 2 and 2, so there are 3 × 3 = 9
-factors. This amount includes 1 and the number that the PF is for (36 in this case). You can
-find the factors of n by finding the PFs within n's PF, or the subfactorizations, as I like to
-call them. For 2^2 × 3^2, the subfactorizations are
+n has by looking at n's PF, taking the exponents of the factors, adding 1 to each, and
+multiplying them. For example, the PF of 36 is 2^2 × 3^2. The exponents are 2 and 2, so there are
+3 × 3 = 9 factors. This amount includes 1 and the number that the PF is for (36 in this case).
+You can find the factors of n by finding the PFs within n's PF, or the subfactorizations, as I
+like to call them. For 2^2 × 3^2, the subfactorizations are
 2, 3, 2^2 (4), 2 × 3 (6), 3^2 (9), 2^2 × 3 (12), and 2 × 3^2 (18).
 
 Whole numbers that are ≤ 10 quadrillion, the max input of this section, generally have a small
@@ -397,17 +397,17 @@ the next 12 prime numbers so it has 7 × 2^12 = 28,672 factors! Its PF is
         
         NumberOfFactorsData(PrimeFactorization pf) {
             numFactors = 1;
-            var powerStrings = new ArrayList<String>(pf.getFps().size());
-            for (FactorAndPower fp : pf.getFps()) {
-                numFactors *= fp.power() + 1;
-                powerStrings.add(String.format("(%d + 1)", fp.power()));
+            var exponentStrings = new ArrayList<String>(pf.getFes().size());
+            for (FactorAndExponent fe : pf.getFes()) {
+                numFactors *= fe.exponent() + 1;
+                exponentStrings.add(String.format("(%d + 1)", fe.exponent()));
             }
-            expression = String.join(" × ", powerStrings);
+            expression = String.join(" × ", exponentStrings);
             
             infoSentence =
                 String.format(
-                    "By looking at the power%s, we can see that there are %s = %s factors.",
-                    pf.getFps().size() == 1 ? "" : "s",
+                    "By looking at the exponent%s, we can see that there are %s = %s factors.",
+                    pf.getFes().size() == 1 ? "" : "s",
                     expression,
                     createStringWithCommas(numFactors)
                 );
@@ -425,9 +425,9 @@ the next 12 prime numbers so it has 7 × 2^12 = 28,672 factors! Its PF is
     /**
      * This method finds PFs of factors of the input PF's corresponding big int, excluding 1
      * and the corresponding big int, by finding subfactorizations in the input PF and that's
-     * done by finding combinations of factors and powers in that PF. The PFs in the list
-     * returned are sorted by corresponding big ints. FactorAndPower objects are reused for PFs
-     * and some are created but no duplicate ones are.
+     * done by finding combinations of factors and exponents in that PF. The PFs in the list
+     * returned are sorted by corresponding big ints. FactorAndExponent objects are reused for
+     * PFs and some are created but no duplicate ones are.
      */
     static List<PrimeFactorization> getFactorPfs(PrimeFactorization pf, int numFactors) {
         /*
@@ -439,25 +439,26 @@ the next 12 prime numbers so it has 7 × 2^12 = 28,672 factors! Its PF is
          */
         var factorPfs = new ArrayList<PrimeFactorization>(numFactors - 1);
         
-        for (FactorAndPower fp : pf) {
-            long primeFactor = fp.factor();
-            int maxPower = fp.power();
+        for (FactorAndExponent fe : pf) {
+            long primeFactor = fe.factor();
+            int maxExponent = fe.exponent();
             /*
             In the 2nd for loop below, we want to iterate through all the PFs that are in factorPfs
             at this point, and not the ones that get added below. Use this variable for that.
              */
             int lastPfIndexToUse = factorPfs.size() - 1;
             
-            for (var power = 1; power <= maxPower; power++) {
-                var fpToAdd = power == maxPower ? fp : new FactorAndPower(primeFactor, power);
-                factorPfs.add(new PrimeFactorization(List.of(fpToAdd)));
+            for (var exponent = 1; exponent <= maxExponent; exponent++) {
+                var feToAdd =
+                    exponent == maxExponent ? fe : new FactorAndExponent(primeFactor, exponent);
+                factorPfs.add(new PrimeFactorization(List.of(feToAdd)));
                 
                 for (var i = 0; i <= lastPfIndexToUse; i++) {
-                    List<FactorAndPower> listFactorFps = factorPfs.get(i).getFps();
-                    var newFactorFps = new ArrayList<FactorAndPower>(listFactorFps.size() + 1);
-                    newFactorFps.addAll(listFactorFps);
-                    newFactorFps.add(fpToAdd);
-                    factorPfs.add(new PrimeFactorization(newFactorFps));
+                    List<FactorAndExponent> listFactorFes = factorPfs.get(i).getFes();
+                    var newFactorFes = new ArrayList<FactorAndExponent>(listFactorFes.size() + 1);
+                    newFactorFes.addAll(listFactorFes);
+                    newFactorFes.add(feToAdd);
+                    factorPfs.add(new PrimeFactorization(newFactorFes));
                 }
             }
         }

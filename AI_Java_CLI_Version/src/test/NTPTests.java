@@ -186,53 +186,53 @@ public class NTPTests {
         );
     
     
-    private static NTP.FactorAndPower fp(long factor, int power) {
-        return new NTP.FactorAndPower(factor, power);
+    private static NTP.FactorAndExponent fe(long factor, int exponent) {
+        return new NTP.FactorAndExponent(factor, exponent);
     }
     
     
     @ParameterizedTest
-    @FieldSource("primeFactorsAndPowersOfCases")
-    void primeFactorsAndPowersOf(long n, List<NTP.FactorAndPower> expected) {
-        assertEquals(expected, NTP.primeFactorsAndPowersOf(n));
+    @FieldSource("primeFactorsAndExponentsOfCases")
+    void primeFactorsAndExponentsOf(long n, List<NTP.FactorAndExponent> expected) {
+        assertEquals(expected, NTP.primeFactorsAndExponentsOf(n));
     }
 
-    static List<Arguments> primeFactorsAndPowersOfCases =
+    static List<Arguments> primeFactorsAndExponentsOfCases =
         List.of(
-            arguments(2, List.of(fp(2, 1))),
-            arguments(4, List.of(fp(2, 2))),
-            arguments(6, List.of(fp(2, 1), fp(3, 1))),
-            arguments(12, List.of(fp(2, 2), fp(3, 1))),
-            arguments(60, List.of(fp(2, 2), fp(3, 1), fp(5, 1))),
-            arguments(49, List.of(fp(7, 2))),
-            arguments(7_919, List.of(fp(7_919, 1))),
-            arguments(2_000_000_014, List.of(fp(2, 1), fp(1_000_000_007, 1)))
+            arguments(2, List.of(fe(2, 1))),
+            arguments(4, List.of(fe(2, 2))),
+            arguments(6, List.of(fe(2, 1), fe(3, 1))),
+            arguments(12, List.of(fe(2, 2), fe(3, 1))),
+            arguments(60, List.of(fe(2, 2), fe(3, 1), fe(5, 1))),
+            arguments(49, List.of(fe(7, 2))),
+            arguments(7_919, List.of(fe(7_919, 1))),
+            arguments(2_000_000_014, List.of(fe(2, 1), fe(1_000_000_007, 1)))
         );
     
     @ParameterizedTest
-    @FieldSource("fpsToStringCases")
-    void fpsToString(List<NTP.FactorAndPower> fps, String expected) {
-        assertEquals(expected, NTP.fpsToString(fps));
+    @FieldSource("fesToStringCases")
+    void fesToString(List<NTP.FactorAndExponent> fes, String expected) {
+        assertEquals(expected, NTP.fesToString(fes));
     }
 
-    static List<Arguments> fpsToStringCases =
+    static List<Arguments> fesToStringCases =
         List.of(
             // single prime
-            arguments(List.of(fp(2, 1)), "2"),
-            // power > 1
-            arguments(List.of(fp(2, 2)), "2^2"),
+            arguments(List.of(fe(2, 1)), "2"),
+            // exponent > 1
+            arguments(List.of(fe(2, 2)), "2^2"),
             // two factors
-            arguments(List.of(fp(2, 1), fp(3, 1)), "2 × 3"),
+            arguments(List.of(fe(2, 1), fe(3, 1)), "2 × 3"),
             // mixed powers
-            arguments(List.of(fp(2, 2), fp(3, 1)), "2^2 × 3"),
-            // large power
-            arguments(List.of(fp(2, 10)), "2^10"),
+            arguments(List.of(fe(2, 2), fe(3, 1)), "2^2 × 3"),
+            // large exponent
+            arguments(List.of(fe(2, 10)), "2^10"),
             // three factors
-            arguments(List.of(fp(2, 2), fp(3, 1), fp(5, 1)), "2^2 × 3 × 5"),
+            arguments(List.of(fe(2, 2), fe(3, 1), fe(5, 1)), "2^2 × 3 × 5"),
             // factor values are comma-formatted
-            arguments(List.of(fp(7_919, 1)), "7,919"),
-            arguments(List.of(fp(1_000_000_007, 1)), "1,000,000,007"),
-            arguments(List.of(fp(2, 1), fp(1_000_000_007, 1)), "2 × 1,000,000,007")
+            arguments(List.of(fe(7_919, 1)), "7,919"),
+            arguments(List.of(fe(1_000_000_007, 1)), "1,000,000,007"),
+            arguments(List.of(fe(2, 1), fe(1_000_000_007, 1)), "2 × 1,000,000,007")
         );
 
 
@@ -280,7 +280,7 @@ public class NTPTests {
     @ParameterizedTest
     @FieldSource("factorsFromCases")
     void factorsFrom(long n, List<NTP.Factor> expected) {
-        assertEquals(expected, NTP.factorsFrom(NTP.primeFactorsAndPowersOf(n)));
+        assertEquals(expected, NTP.factorsFrom(NTP.primeFactorsAndExponentsOf(n)));
     }
 
     private static NTP.Factor f(long value, String factorization) {
@@ -337,10 +337,19 @@ public class NTPTests {
     
     @ParameterizedTest
     @FieldSource("gcdAndLcmPrimeFactorizationDataCases")
-    void gcdAndLcmPrimeFactorizationData(long a, long b, List<NTP.FactorAndPower> expectedGcd, List<NTP.FactorAndPower> expectedLcm) {
-        var result = new NTP.GcdAndLcmPrimeFactorizationData(NTP.primeFactorsAndPowersOf(a), NTP.primeFactorsAndPowersOf(b));
-        assertEquals(expectedGcd, result.gcdFps());
-        assertEquals(expectedLcm, result.lcmFps());
+    void gcdAndLcmPrimeFactorizationData(
+        long a,
+        long b,
+        List<NTP.FactorAndExponent> expectedGcdFes,
+        List<NTP.FactorAndExponent> expectedLcmFes
+    ) {
+        var result =
+            new NTP.GcdAndLcmPrimeFactorizationData(
+                NTP.primeFactorsAndExponentsOf(a),
+                NTP.primeFactorsAndExponentsOf(b)
+            );
+        assertEquals(expectedGcdFes, result.gcdFes());
+        assertEquals(expectedLcmFes, result.lcmFes());
     }
 
     static List<Arguments> gcdAndLcmPrimeFactorizationDataCases =
@@ -348,35 +357,35 @@ public class NTPTests {
             arguments(
                 48,
                 18,
-                List.of(fp(2, 1), fp(3, 1)),
-                List.of(fp(2, 4), fp(3, 2))
+                List.of(fe(2, 1), fe(3, 1)),
+                List.of(fe(2, 4), fe(3, 2))
             ),
             arguments(
                 60,
                 126,
-                List.of(fp(2, 1), fp(3, 1)),
-                List.of(fp(2, 2), fp(3, 2), fp(5, 1), fp(7, 1))),
-            arguments(17, 13, List.of(), List.of(fp(13, 1), fp(17, 1)))
+                List.of(fe(2, 1), fe(3, 1)),
+                List.of(fe(2, 2), fe(3, 2), fe(5, 1), fe(7, 1))),
+            arguments(17, 13, List.of(), List.of(fe(13, 1), fe(17, 1)))
         );
 
     @ParameterizedTest
     @FieldSource("productCases")
-    void product(List<NTP.FactorAndPower> fps, BigInteger expected) {
-        assertEquals(expected, NTP.product(fps));
+    void product(List<NTP.FactorAndExponent> fes, BigInteger expected) {
+        assertEquals(expected, NTP.product(fes));
     }
 
     static List<Arguments> productCases =
         List.of(
             // empty factorization, e.g. the GCD of coprime numbers
             arguments(List.of(), BigInteger.ONE),
-            arguments(List.of(fp(2, 1)), BigInteger.valueOf(2)),
-            arguments(List.of(fp(7, 2)), BigInteger.valueOf(49)),
-            arguments(List.of(fp(2, 2), fp(3, 1), fp(5, 1)), BigInteger.valueOf(60)),
-            arguments(List.of(fp(2, 1), fp(1_000_000_007, 1)), BigInteger.valueOf(2_000_000_014)),
+            arguments(List.of(fe(2, 1)), BigInteger.valueOf(2)),
+            arguments(List.of(fe(7, 2)), BigInteger.valueOf(49)),
+            arguments(List.of(fe(2, 2), fe(3, 1), fe(5, 1)), BigInteger.valueOf(60)),
+            arguments(List.of(fe(2, 1), fe(1_000_000_007, 1)), BigInteger.valueOf(2_000_000_014)),
             // exceeds the range of a long
-            arguments(List.of(fp(2, 64)), new BigInteger("18446744073709551616")),
+            arguments(List.of(fe(2, 64)), new BigInteger("18446744073709551616")),
             arguments(
-                List.of(fp(2, 3), fp(3, 2), fp(999_999_999_989L, 2)),
+                List.of(fe(2, 3), fe(3, 2), fe(999_999_999_989L, 2)),
                 new BigInteger("71999999998416000000008712")
             )
         );

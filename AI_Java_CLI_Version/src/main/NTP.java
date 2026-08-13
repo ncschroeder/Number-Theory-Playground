@@ -505,18 +505,18 @@ class NTP {
             cryptography remains secure.""",
             2,
             TEN_QUADRILLION,
-            n -> printf("%s = %s", formatWithCommas(n), fpsToString(primeFactorsAndPowersOf(n)))
+            n -> printf("%s = %s", formatWithCommas(n), fesToString(primeFactorsAndExponentsOf(n)))
         );
     }
     
-    record FactorAndPower(long factor, int power) {}
+    record FactorAndExponent(long factor, int exponent) {}
     
     /**
-     * Returns the prime factorization of {@code n} as (primeFactor, power) pairs, ordered by
+     * Returns the prime factorization of {@code n} as (primeFactor, exponent) pairs, ordered by
      * ascending factors. For example, 60 yields (2, 2), (3, 1), (5, 1).
      */
-    static List<FactorAndPower> primeFactorsAndPowersOf(long n) {
-        var result = new ArrayList<FactorAndPower>();
+    static List<FactorAndExponent> primeFactorsAndExponentsOf(long n) {
+        var result = new ArrayList<FactorAndExponent>();
         long remaining = n;
         
         int count2 = 0;
@@ -524,7 +524,7 @@ class NTP {
             remaining /= 2;
             count2++;
         }
-        if (count2 > 0) result.add(new FactorAndPower(2, count2));
+        if (count2 > 0) result.add(new FactorAndExponent(2, count2));
         
         for (long p = 3; p * p <= remaining; p += 2) {
             if (remaining % p == 0) {
@@ -533,25 +533,25 @@ class NTP {
                     remaining /= p;
                     count++;
                 }
-                result.add(new FactorAndPower(p, count));
+                result.add(new FactorAndExponent(p, count));
             }
         }
         
-        if (remaining > 1) result.add(new FactorAndPower(remaining, 1));
+        if (remaining > 1) result.add(new FactorAndExponent(remaining, 1));
         return result;
     }
 
     /**
-     * Renders {@code fps} as a product expression like {@code 2^2 × 3 × 5}, omitting the
+     * Renders {@code fes} as a product expression like {@code 2^2 × 3 × 5}, omitting the
      * exponent where it is 1.
      */
-    static String fpsToString(List<FactorAndPower> fps) {
+    static String fesToString(List<FactorAndExponent> fes) {
         return
-            fps
+            fes
             .stream()
-            .map(fp -> {
-                var factorString = formatWithCommas(fp.factor());
-                return fp.power() == 1 ? factorString : String.format("%s^%d", factorString, fp.power());
+            .map(fe -> {
+                var factorString = formatWithCommas(fe.factor());
+                return fe.exponent() == 1 ? factorString : String.format("%s^%d", factorString, fe.exponent());
             })
             .collect(Collectors.joining(" × "));
     }
@@ -580,14 +580,14 @@ class NTP {
                 println(divisResults(n));
                 
                 String nString = formatWithCommas(n);
-                List<FactorAndPower> pfs = primeFactorsAndPowersOf(n);
-                printf("\n%s = %s", nString, fpsToString(pfs));
+                List<FactorAndExponent> fes = primeFactorsAndExponentsOf(n);
+                printf("\n%s = %s", nString, fesToString(fes));
                 
-                if (pfs.size() == 1 && pfs.getFirst().power == 1) {
+                if (fes.size() == 1 && fes.getFirst().exponent == 1) {
                     println(nString + " is prime and doesn't have any factors besides 1 and itself.");
                 } else {
                     printf("\nFactors of %s:", nString);
-                    println(wrapped(factorsFrom(pfs), Object::toString));
+                    println(wrapped(factorsFrom(fes), Object::toString));
                 }
             }
         );
@@ -762,35 +762,35 @@ class NTP {
     
     /**
      * Returns a list of Factors for every factor of the number whose prime factorization
-     * is {@code fps}, excluding 1 and that number. The Factors are sorted by their values.
+     * is {@code fes}, excluding 1 and that number. The Factors are sorted by their values.
      * For 12 = 2² × 3, a list of Factors for 2, 3, 4, 6 would be returned.
      */
-    static List<Factor> factorsFrom(List<FactorAndPower> fps) {
+    static List<Factor> factorsFrom(List<FactorAndExponent> fes) {
         var result = new ArrayList<Factor>();
         
-        for (FactorAndPower fp : fps) {
-            long primeFactor = fp.factor();
-            int maxPower = fp.power();
+        for (FactorAndExponent fe : fes) {
+            long primeFactor = fe.factor();
+            int maxExponent = fe.exponent();
             int startSize = result.size();
             
-            for (int power = 1; power <= maxPower; power++) {
-                var primeFactorPower = (long) Math.pow(primeFactor, power);
-                var primeFactorAndPowerString =
-                    formatWithCommas(primeFactor) + (power > 1 ? "^" + power : "");
-                result.add(new Factor(primeFactorPower, primeFactorAndPowerString));
+            for (int exponent = 1; exponent <= maxExponent; exponent++) {
+                var primeFactorPower = (long) Math.pow(primeFactor, exponent);
+                var primeFactorAndExponentString =
+                    formatWithCommas(primeFactor) + (exponent > 1 ? "^" + exponent : "");
+                result.add(new Factor(primeFactorPower, primeFactorAndExponentString));
                 
                 for (int i = 0; i < startSize; i++) {
                     Factor existingFactor = result.get(i);
                     long newFactorValue = existingFactor.value() * primeFactorPower;
                     String newFactorFactorization =
-                        String.format("%s × %s", existingFactor.factorization(), primeFactorAndPowerString);
+                        String.format("%s × %s", existingFactor.factorization(), primeFactorAndExponentString);
                     result.add(new Factor(newFactorValue, newFactorFactorization));
                 }
             }
         }
         
         /*
-        The last Factor is for the number whose prime factorization is the fps param,
+        The last Factor is for the number whose prime factorization is the fes param,
         which we want to exclude.
          */
         result.removeLast();
@@ -818,16 +818,16 @@ class NTP {
                 println("Euclidean algorithm:");
                 printEuclideanTable(euclideanAlgorithm(a, b));
 
-                List<FactorAndPower> aFps = primeFactorsAndPowersOf(a);
-                List<FactorAndPower> bFps = primeFactorsAndPowersOf(b);
+                List<FactorAndExponent> aFes = primeFactorsAndExponentsOf(a);
+                List<FactorAndExponent> bFes = primeFactorsAndExponentsOf(b);
                 println("\nPrime factorizations:");
-                printf("%s = %s", formatWithCommas(a), fpsToString(aFps));
-                printf("%s = %s", formatWithCommas(b), fpsToString(bFps));
+                printf("%s = %s", formatWithCommas(a), fesToString(aFes));
+                printf("%s = %s", formatWithCommas(b), fesToString(bFes));
 
-                var pfData = new GcdAndLcmPrimeFactorizationData(aFps, bFps);
+                var pfData = new GcdAndLcmPrimeFactorizationData(aFes, bFes);
                 println();
-                printGcdOrLcm("GCD", pfData.gcdFps());
-                printGcdOrLcm("LCM", pfData.lcmFps());
+                printGcdOrLcm("GCD", pfData.gcdFes());
+                printGcdOrLcm("LCM", pfData.lcmFes());
             }
         );
     }
@@ -874,74 +874,74 @@ class NTP {
     
     /**
      * Given the prime factorizations of two numbers, holds the prime factorizations of their
-     * GCD and LCM: the GCD takes the smaller power of each prime the two share, and the LCM
-     * takes the larger power of every prime that appears in either.
+     * GCD and LCM: the GCD takes the smaller exponent of each prime the two share, and the LCM
+     * takes the larger exponent of every prime that appears in either.
      */
     static class GcdAndLcmPrimeFactorizationData {
-        final List<FactorAndPower> gcdFps;
-        final List<FactorAndPower> lcmFps;
+        private final List<FactorAndExponent> gcdFes;
+        private final List<FactorAndExponent> lcmFes;
         
-        List<FactorAndPower> gcdFps() { return gcdFps; }
-        List<FactorAndPower> lcmFps() { return lcmFps; }
+        List<FactorAndExponent> gcdFes() { return gcdFes; }
+        List<FactorAndExponent> lcmFes() { return lcmFes; }
 
-        GcdAndLcmPrimeFactorizationData(List<FactorAndPower> aFps, List<FactorAndPower> bFps) {
-            var gcdFps = new ArrayList<FactorAndPower>();
-            var lcmFps = new ArrayList<FactorAndPower>();
+        GcdAndLcmPrimeFactorizationData(List<FactorAndExponent> aFes, List<FactorAndExponent> bFes) {
+            var gcdFes = new ArrayList<FactorAndExponent>();
+            var lcmFes = new ArrayList<FactorAndExponent>();
             
-            for (FactorAndPower fp : aFps) {
-                findFactor(bFps, fp.factor())
+            for (FactorAndExponent fe : aFes) {
+                findFactor(bFes, fe.factor())
                 .ifPresentOrElse(
                     match -> {
-                        gcdFps.add(new FactorAndPower(fp.factor(), Math.min(fp.power(), match.power())));
-                        lcmFps.add(new FactorAndPower(fp.factor(), Math.max(fp.power(), match.power())));
+                        gcdFes.add(new FactorAndExponent(fe.factor(), Math.min(fe.exponent(), match.exponent())));
+                        lcmFes.add(new FactorAndExponent(fe.factor(), Math.max(fe.exponent(), match.exponent())));
                     },
-                    () -> lcmFps.add(fp)
+                    () -> lcmFes.add(fe)
                 );
             }
             
-            for (FactorAndPower fp : bFps) {
-                if (findFactor(aFps, fp.factor()).isEmpty()) {
-                    lcmFps.add(fp);
+            for (FactorAndExponent fe : bFes) {
+                if (findFactor(aFes, fe.factor()).isEmpty()) {
+                    lcmFes.add(fe);
                 }
             }
             
-            lcmFps.sort(Comparator.comparingLong(FactorAndPower::factor));
-            this.gcdFps = List.copyOf(gcdFps);
-            this.lcmFps = List.copyOf(lcmFps);
+            lcmFes.sort(Comparator.comparingLong(FactorAndExponent::factor));
+            this.gcdFes = List.copyOf(gcdFes);
+            this.lcmFes = List.copyOf(lcmFes);
         }
     }
     
-    static Optional<FactorAndPower> findFactor(List<FactorAndPower> fps, long factor) {
-        return fps.stream().filter(pf -> pf.factor() == factor).findFirst();
+    static Optional<FactorAndExponent> findFactor(List<FactorAndExponent> fes, long factor) {
+        return fes.stream().filter(fe -> fe.factor() == factor).findFirst();
     }
     
     /**
      * Prints a line like {@code GCD = 2^2 × 3 = 12} for the GCD or LCM represented by
-     * {@code fps}. When the number is 1 or prime, its factorization would just repeat the
+     * {@code fes}. When the number is 1 or prime, its factorization would just repeat the
      * number, so the line is shortened to like {@code GCD = 1} or {@code LCM = 13}.
      */
-    static void printGcdOrLcm(String label, List<FactorAndPower> fps) {
-        String number = formatWithCommas(product(fps));
-        boolean isPrime = fps.size() == 1 && fps.getFirst().power() == 1;
-        if (fps.isEmpty() || isPrime) {
+    static void printGcdOrLcm(String label, List<FactorAndExponent> fes) {
+        String number = formatWithCommas(product(fes));
+        boolean isPrime = fes.size() == 1 && fes.getFirst().exponent() == 1;
+        if (fes.isEmpty() || isPrime) {
             printf("%s = %s", label, number);
         } else {
-            printf("%s = %s = %s", label, fpsToString(fps), number);
+            printf("%s = %s = %s", label, fesToString(fes), number);
         }
     }
     
     /**
-     * Multiplies the prime factorization {@code fps} back out into the number it represents.
+     * Multiplies the prime factorization {@code fes} back out into the number it represents.
      * The result is a BigInteger because an LCM of two large inputs can exceed the range of
      * a long.
      */
-    static BigInteger product(List<FactorAndPower> fps) {
+    static BigInteger product(List<FactorAndExponent> fes) {
         var result = BigInteger.ONE;
-        for (FactorAndPower fp : fps) {
+        for (FactorAndExponent fe : fes) {
             result =
                 result.multiply(
-                    BigInteger.valueOf(fp.factor())
-                    .pow(fp.power())
+                    BigInteger.valueOf(fe.factor())
+                    .pow(fe.exponent())
                 );
         }
         return result;

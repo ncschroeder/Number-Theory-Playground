@@ -4,7 +4,7 @@ import java.util.*;
 import com.numbertheoryplayground.calculationsimpl.PrimeFactorization;
 
 import static com.numbertheoryplayground.InputValidation.assertIsInRange;
-import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
+import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndExponent;
 import static com.numbertheoryplayground.calculationsimpl.gcdandlcm.GcdAndLcmAnswer.*;
 
 /**
@@ -12,9 +12,9 @@ import static com.numbertheoryplayground.calculationsimpl.gcdandlcm.GcdAndLcmAns
  * least common multiple (LCM) of 2 ints.
  */
 public final class PrimeFactorizationAnswer {
-    private final List<FactorAndPower> input1Fps;
+    private final List<FactorAndExponent> input1PfFes;
     
-    private final List<FactorAndPower> input2Fps;
+    private final List<FactorAndExponent> input2PfFes;
     
     /**
      * If the GCD of the inputs is 1, this is null since only integers > 1 have a prime factorization.
@@ -28,50 +28,50 @@ public final class PrimeFactorizationAnswer {
         assertIsInRange(input2, MIN_INPUT, MAX_INPUT);
         
         var input1Pf = new PrimeFactorization(input1);
-        input1Fps = input1Pf.getFps();
+        input1PfFes = input1Pf.getFes();
         
         if (input1 == input2) {
-            input2Fps = input1Fps;
+            input2PfFes = input1PfFes;
             lcmPf = gcdPf = input1Pf;
             return;
         }
         
         var input2Pf = new PrimeFactorization(input2);
-        input2Fps = input2Pf.getFps();
-        var gcdFps = new ArrayList<FactorAndPower>();
-        var lcmFps = new ArrayList<FactorAndPower>();
+        input2PfFes = input2Pf.getFes();
+        var gcdPfFes = new ArrayList<FactorAndExponent>();
+        var lcmPfFes = new ArrayList<FactorAndExponent>();
         
-        for (FactorAndPower fp : input1Pf.getFps()) {
-            int factor = fp.factor();
-            int power1 = fp.power();
+        for (FactorAndExponent fe : input1Pf) {
+            int factor = fe.factor();
+            int exponent1 = fe.exponent();
             
             input2Pf
-            .findPowerOf(factor)
+            .getExponentOf(factor)
             .ifPresentOrElse(
-                power2 -> {
-                    gcdFps.add(new FactorAndPower(factor, Math.min(power1, power2)));
-                    lcmFps.add(new FactorAndPower(factor, Math.max(power1, power2)));
+                exponent2 -> {
+                    gcdPfFes.add(new FactorAndExponent(factor, Math.min(exponent1, exponent2)));
+                    lcmPfFes.add(new FactorAndExponent(factor, Math.max(exponent1, exponent2)));
                 },
-                () -> lcmFps.add(new FactorAndPower(factor, power1))
+                () -> lcmPfFes.add(fe)
             );
         }
         
-        for (FactorAndPower fp : input2Pf.getFps()) {
-            if (!input1Pf.containsFactor(fp.factor())) {
-                lcmFps.add(new FactorAndPower(fp.factor(), fp.power()));
+        for (FactorAndExponent fe : input2Pf) {
+            if (!input1Pf.containsFactor(fe.factor())) {
+                lcmPfFes.add(fe);
             }
         }
         
-        gcdPf = gcdFps.isEmpty() ? null : new PrimeFactorization(gcdFps);
-        lcmPf = new PrimeFactorization(lcmFps);
+        gcdPf = gcdPfFes.isEmpty() ? null : new PrimeFactorization(gcdPfFes);
+        lcmPf = new PrimeFactorization(lcmPfFes);
     }
     
-    public List<FactorAndPower> getInput1Fps() {
-        return input1Fps;
+    public List<FactorAndExponent> getInput1PfFes() {
+        return input1PfFes;
     }
     
-    public List<FactorAndPower> getInput2Fps() {
-        return input2Fps;
+    public List<FactorAndExponent> getInput2PfFes() {
+        return input2PfFes;
     }
     
     public PrimeFactorization getGcdPf() {

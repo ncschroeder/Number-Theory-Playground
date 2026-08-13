@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static numbertheoryplayground.Misc.createStringWithCommas;
 import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
-import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndPower;
+import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndExponent;
 
 class DivisibilityTests {
     @ParameterizedTest
@@ -61,65 +61,65 @@ INPUT,      LAST_2_DIGITS,  LAST_3_DIGITS,  SUM_OF_DIGITS_EXPRESSION,        ALT
     @ParameterizedTest
     @MethodSource("getArgsForGetFactorPfs")
     void getFactorPfs(
-        List<FactorAndPower> input,
-        List<List<FactorAndPower>> expectedFactorFpLists
+        List<FactorAndExponent> input,
+        List<List<FactorAndExponent>> expectedFactorFeLists
     ) {
-        List<List<FactorAndPower>> actualFactorFpLists =
+        List<List<FactorAndExponent>> actualFactorFeLists =
             Divisibility.getFactorPfs(new PrimeFactorization(input), 2)
             .stream()
-            .map(PrimeFactorization::getFps)
+            .map(PrimeFactorization::getFes)
             .toList();
         
-        assertEquals(expectedFactorFpLists, actualFactorFpLists);
+        assertEquals(expectedFactorFeLists, actualFactorFeLists);
     }
     
-    static FactorAndPower fp(long factor, int power) {
-        return new FactorAndPower(factor, power);
+    static FactorAndExponent fe(long factor, int exponent) {
+        return new FactorAndExponent(factor, exponent);
     }
     
     static Stream<Arguments> getArgsForGetFactorPfs() {
-        List<FactorAndPower> input1 = List.of(fp(2, 2), fp(3, 1));
-        List<List<FactorAndPower>> expectedFactorFpLists1 =
+        List<FactorAndExponent> input1 = List.of(fe(2, 2), fe(3, 1));
+        List<List<FactorAndExponent>> expectedFactorFeLists1 =
             List.of(
-                List.of(fp(2, 1)),
-                List.of(fp(3, 1)),
-                List.of(fp(2, 2)),
-                List.of(fp(2, 1), fp(3, 1))
+                List.of(fe(2, 1)),
+                List.of(fe(3, 1)),
+                List.of(fe(2, 2)),
+                List.of(fe(2, 1), fe(3, 1))
             );
 
-        List<FactorAndPower> input2 = List.of(fp(2, 1), fp(3, 2), fp(5, 2));
-        List<List<FactorAndPower>> expectedFactorFpLists2 =
+        List<FactorAndExponent> input2 = List.of(fe(2, 1), fe(3, 2), fe(5, 2));
+        List<List<FactorAndExponent>> expectedFactorFeLists2 =
             List.of(
                 // The comments say the corresponding factor.
-                List.of(fp(2, 1)), // 2
-                List.of(fp(3, 1)), // 3
-                List.of(fp(5, 1)), // 5
-                List.of(fp(2, 1), fp(3, 1)), // 6
-                List.of(fp(3, 2)), // 9
-                List.of(fp(2, 1), fp(5, 1)), // 10
-                List.of(fp(3, 1), fp(5, 1)), // 15
-                List.of(fp(2, 1), fp(3, 2)), // 18
-                List.of(fp(5, 2)), // 25
-                List.of(fp(2, 1), fp(3, 1), fp(5, 1)), // 30
-                List.of(fp(3, 2), fp(5, 1)), // 45
-                List.of(fp(2, 1), fp(5, 2)), // 50
-                List.of(fp(3, 1), fp(5, 2)), // 75
-                List.of(fp(2, 1), fp(3, 2), fp(5, 1)), // 90
-                List.of(fp(2, 1), fp(3, 1), fp(5, 2)), // 150
-                List.of(fp(3, 2), fp(5, 2)) // 225
+                List.of(fe(2, 1)), // 2
+                List.of(fe(3, 1)), // 3
+                List.of(fe(5, 1)), // 5
+                List.of(fe(2, 1), fe(3, 1)), // 6
+                List.of(fe(3, 2)), // 9
+                List.of(fe(2, 1), fe(5, 1)), // 10
+                List.of(fe(3, 1), fe(5, 1)), // 15
+                List.of(fe(2, 1), fe(3, 2)), // 18
+                List.of(fe(5, 2)), // 25
+                List.of(fe(2, 1), fe(3, 1), fe(5, 1)), // 30
+                List.of(fe(3, 2), fe(5, 1)), // 45
+                List.of(fe(2, 1), fe(5, 2)), // 50
+                List.of(fe(3, 1), fe(5, 2)), // 75
+                List.of(fe(2, 1), fe(3, 2), fe(5, 1)), // 90
+                List.of(fe(2, 1), fe(3, 1), fe(5, 2)), // 150
+                List.of(fe(3, 2), fe(5, 2)) // 225
             );
         
         return Stream.of(
-            arguments(input1, expectedFactorFpLists1),
-            arguments(input2, expectedFactorFpLists2),
-            arguments(List.of(fp(2, 1)), Collections.emptyList()),
+            arguments(input1, expectedFactorFeLists1),
+            arguments(input2, expectedFactorFeLists2),
+            arguments(List.of(fe(2, 1)), Collections.emptyList()),
             arguments(
-                List.of(fp(2, 4)),
-                List.of(List.of(fp(2, 1)), List.of(fp(2, 2)), List.of(fp(2, 3)))
+                List.of(fe(2, 4)),
+                List.of(List.of(fe(2, 1)), List.of(fe(2, 2)), List.of(fe(2, 3)))
             ),
             arguments(
-                List.of(fp(2, 1), fp(3, 1)),
-                List.of(List.of(fp(2, 1)), List.of(fp(3, 1)))
+                List.of(fe(2, 1), fe(3, 1)),
+                List.of(List.of(fe(2, 1)), List.of(fe(3, 1)))
             )
         );
     }

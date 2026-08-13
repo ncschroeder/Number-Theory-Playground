@@ -3,21 +3,18 @@ package com.numbertheoryplayground.calculationsimpl;
 import java.util.*;
 
 import static com.numbertheoryplayground.InputValidation.*;
-import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
+import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndExponent;
 
 public final class DivisibilityPrimeFactorizationAnswer {
     private static final int MIN_INPUT = 10;
     private static final int MAX_INPUT = PrimeFactorization.MAX_INPUT;
     
-    /**
-     * Contains the factors and powers of the PF of the input number.
-     */
-    private final List<FactorAndPower> inputFps;
+    private final List<FactorAndExponent> inputPfFes;
     
     private final List<PrimeFactorization> factorPfs;
     
     private DivisibilityPrimeFactorizationAnswer(PrimeFactorization inputPf) {
-        inputFps = inputPf.getFps();
+        inputPfFes = inputPf.getFes();
         factorPfs = getFactorPfs(inputPf);
     }
     
@@ -30,8 +27,8 @@ public final class DivisibilityPrimeFactorizationAnswer {
         return pf.isForAPrimeNumber() ? null : new DivisibilityPrimeFactorizationAnswer(pf);
     }
     
-    public List<FactorAndPower> getInputFps() {
-        return inputFps;
+    public List<FactorAndExponent> getInputPfFes() {
+        return inputPfFes;
     }
     
     public List<PrimeFactorization> getFactorPfs() {
@@ -42,8 +39,8 @@ public final class DivisibilityPrimeFactorizationAnswer {
     /**
      * This method finds PFs of factors of the input PF's corresponding int, excluding 1 and the
      * corresponding int, by finding subfactorizations in the input PF and that's done by
-     * finding combinations of factors and powers in that PF. The PFs in the list returned are
      * sorted by corresponding ints.
+     * finding combinations of factors and exponents in that PF. The PFs in the list returned
      */
     static List<PrimeFactorization> getFactorPfs(PrimeFactorization pf) {
         /*
@@ -51,8 +48,8 @@ public final class DivisibilityPrimeFactorizationAnswer {
         including 1 and the corresponding long.
          */
         var numFactors = 1;
-        for (FactorAndPower fp : pf.getFps()) {
-            numFactors *= fp.power() + 1;
+        for (FactorAndExponent fe : pf) {
+            numFactors *= fe.exponent() + 1;
         }
         
         /*
@@ -62,25 +59,26 @@ public final class DivisibilityPrimeFactorizationAnswer {
          */
         var factorPfs = new ArrayList<PrimeFactorization>(numFactors - 1);
         
-        for (FactorAndPower fp : pf.getFps()) {
-            int primeFactor = fp.factor();
-            int maxPower = fp.power();
+        for (FactorAndExponent fe : pf) {
+            int primeFactor = fe.factor();
+            int maxExponent = fe.exponent();
             /*
             In the 2nd for loop below, we want to iterate through all the PFs that are in factorPfs
             at this point, and not the ones that get added below. Use this variable for that.
              */
             int lastPfIndexToUse = factorPfs.size() - 1;
             
-            for (var power = 1; power <= maxPower; power++) {
-                var singleton = List.of(new FactorAndPower(primeFactor, power));
-                factorPfs.add(new PrimeFactorization(singleton));
+            for (var exponent = 1; exponent <= maxExponent; exponent++) {
+                var feToAdd =
+                    exponent == maxExponent ? fe : new FactorAndExponent(primeFactor, exponent);
+                factorPfs.add(new PrimeFactorization(List.of(feToAdd)));
                 
                 for (var i = 0; i <= lastPfIndexToUse; i++) {
-                    List<FactorAndPower> listFactorFps = factorPfs.get(i).getFps();
-                    var newFactorFps = new ArrayList<FactorAndPower>(listFactorFps.size() + 1);
-                    newFactorFps.addAll(listFactorFps);
-                    newFactorFps.add(new FactorAndPower(primeFactor, power));
-                    factorPfs.add(new PrimeFactorization(newFactorFps));
+                    List<FactorAndExponent> listFactorFes = factorPfs.get(i).getFes();
+                    var newFactorFes = new ArrayList<FactorAndExponent>(listFactorFes.size() + 1);
+                    newFactorFes.addAll(listFactorFes);
+                    newFactorFes.add(feToAdd);
+                    factorPfs.add(new PrimeFactorization(newFactorFes));
                 }
             }
         }

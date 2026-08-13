@@ -250,9 +250,9 @@ const createMn = (value) => createMathMlElement('mn', createNumStringWithCommas(
 /**
  * Creates a math superscript element.
  * @param {number} base
- * @param {number} power
+ * @param {number} exponent
  */
-const createMsup = (base, power) => createMathMlElement('msup', createMn(base), createMn(power));
+const createMsup = (base, exponent) => createMathMlElement('msup', createMn(base), createMn(exponent));
 
 /**
  * Creates a math operator (e.g. +) element.
@@ -932,16 +932,16 @@ new SingleInputSection(
 
 
 /**
- * Creates a Math ML string for the prime factorization whose factors and powers are in factorsAndPowers.
+ * Creates a Math ML string for the prime factorization whose factors and exponents are in factorsAndExponents.
  * 
  * @param {number[][]} factorsAndPowers
  * For each inner array, the first number is the factor and the second is the power.
  * 
  * @returns {string}
  */
-const createPfMl = (factorsAndPowers) =>
-    factorsAndPowers
     .map(([factor, power]) => power === 1 ? `<mn>${factor}</mn>` : `<msup><mn>${factor}</mn><mn>${power}</mn></msup>`)
+const createPfMl = (factorsAndExponents) =>
+    factorsAndExponents
     .join('<mo>×</mo>');
 
 /**
@@ -949,8 +949,8 @@ const createPfMl = (factorsAndPowers) =>
  * @param {string} [endText]
  * @returns {string}
  */
-const createPfMathElementMl = (factorsAndPowers, endText) =>
-    `<math>${createPfMl(factorsAndPowers)}${endText ? `<mtext>${endText}</mtext>`: ''}</math>`;
+const createPfMathElementMl = (factorsAndExponents, endText) =>
+    `<math>${createPfMl(factorsAndExponents)}${endText ? `<mtext>${endText}</mtext>`: ''}</math>`;
 
 const pfInfoHtml =
     `The fundamental theorem of arithmetic says that every whole number > 1 can be expressed as the product of
@@ -970,6 +970,7 @@ const pfInfoHtml =
 
 /**
  * @typedef {Object} PrimeFactorization
+ * @typedef {{ factor: number, exponent: number }} FactorAndExponent
  * 
  * @property {number} correspondingNum
  * 
@@ -979,18 +980,18 @@ const pfInfoHtml =
  */
 
 /**
- * @param {FactorAndPower[]} fps
+ * @param {FactorAndExponent[]} fes
  * @param {string} [endText]
  * @returns {MathMLElement}
- * A math element for the prime factorization whose factors and powers are in fps.
+ * A math element for the prime factorization whose factors and exponents are in fes.
  */
-function createPfMathElement(fps, endText) {
+function createPfMathElement(fes, endText) {
     const pfEl = createMathElement();
     
-    for (const { factor, power} of fps) {
+    for (const { factor, exponent } of fes) {
         pfEl.append(
             pfEl.firstChild ? createMo('×') : '',
-            power === 1 ? createMn(factor) : createMsup(factor, power)
+            exponent === 1 ? createMn(factor) : createMsup(factor, exponent)
         )
     }
     
@@ -1002,17 +1003,17 @@ function createPfMathElement(fps, endText) {
 }
 
 /**
- * @param {FactorAndPower[]} fps
+ * @param {FactorAndExponent[]} fes
  * @param {string} inputString
  * @returns {HTMLElement[]}
  */
-function createPfAnswerElements(fps, inputString) {
+function createPfAnswerElements(fes, inputString) {
     const headingText = `The PF of ${inputString} is:`;
     /*
     Put math element in a div since math elements are displayed inline by default and manually
     giving them a block display causes their children to get a block display as well.
      */
-    const pfDiv = createDiv(createPfMathElement(fps));
+    const pfDiv = createDiv(createPfMathElement(fes));
     pfDiv.id = 'pf-section-answer-div';
     return [createNonBoldAnswerH3(headingText), pfDiv];
 }
@@ -1047,9 +1048,9 @@ const divisInfoStartHtml =
  * @param {string} [endText]
  * @returns {string} A Math ML string.
  */
-const createSubfactorizationMl = (factorsAndPowers, num, endText = ',') =>
+const createSubfactorizationMl = (factorsAndExponents, num, endText = ',') =>
     `<math>
-        <mrow>${createPfMl(factorsAndPowers)}</mrow>
+        <mrow>${createPfMl(factorsAndExponents)}</mrow>
         <mrow>
             <mtext class="math-font">&nbsp;(</mtext>
             <mn>${num}</mn>
@@ -1059,17 +1060,17 @@ const createSubfactorizationMl = (factorsAndPowers, num, endText = ',') =>
     </math>`;
 
 const nVarAndSMl = createMiMl('n', `'s`);
-const pfOf36FactorsAndPowers = [[2, 2], [3, 2]];
+const pfOf36FactorsAndExponents = [[2, 2], [3, 2]];
 
 const divisPfInfoHtml =
     `The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a
     variable ${nVarMl} and let it represent a whole number > 1. First, you can find how many factors ${nVarMl}
-    has by looking at ${nVarAndSMl} PF, taking the powers of the factors, adding 1 to each, and multiplying them.
-    For example, the PF of 36 is ${createPfMathElementMl(pfOf36FactorsAndPowers, '.')} The powers are 2 and 2,
-    so there are <math><mn>3</mn><mo>×</mo><mn>3</mn><mo>=</mo><mn>9</mn></math> factors. This amount includes 1
-    and the number that the PF is for (36 in this case). You can find the factors of ${nVarMl} by finding the PFs
-    within ${nVarAndSMl} PF, or the <i>subfactorizations</i>, as I like to call them.
-    For ${createPfMathElementMl(pfOf36FactorsAndPowers, ',')} the subfactorizations are
+    has by looking at ${nVarAndSMl} PF, taking the exponents of the factors, adding 1 to each, and multiplying
+    them. For example, the PF of 36 is ${createPfMathElementMl(pfOf36FactorsAndExponents, '.')} The exponents are
+    2 and 2, so there are <math><mn>3</mn><mo>×</mo><mn>3</mn><mo>=</mo><mn>9</mn></math> factors. This amount
+    includes 1 and the number that the PF is for (36 in this case). You can find the factors of ${nVarMl} by
+    finding the PFs within ${nVarAndSMl} PF, or the <i>subfactorizations</i>, as I like to call them.
+    For ${createPfMathElementMl(pfOf36FactorsAndExponents, ',')} the subfactorizations are
     <math><mn>2</mn><mtext>,</mtext></math>
     <math><mn>3</mn><mtext>,</mtext></math>
     ${createSubfactorizationMl([[2, 2]], 4)}
@@ -1169,7 +1170,7 @@ const divisRulesInfoDiv =
 const divisInfoElements =
     [createPWithInnerHtml(divisInfoStartHtml), divisPfInfoDiv, divisRulesInfoDiv];
 
-/** @typedef {{ inputFps: FactorAndPower[], factorPfs: PrimeFactorization[] }} DivisibilityPrimeFactorizationAnswer */
+/** @typedef {{ inputPfFes: FactorAndExponent[], factorPfs: PrimeFactorization[] }} DivisibilityPrimeFactorizationAnswer */
 
 /**
  * @param {?DivisibilityPrimeFactorizationAnswer} pfAnswer
@@ -1362,21 +1363,21 @@ function createDivisPfAnswerDiv(pfAnswer, inputString, inputNum) {
         return pfDiv;
     }
     
-    const { inputFps, factorPfs } = pfAnswer;
-    pfInfoTextDiv.append(createPfMathElement(inputFps, '.'), ' ');
+    const { inputPfFes, factorPfs } = pfAnswer;
+    pfInfoTextDiv.append(createPfMathElement(inputPfFes, '.'), ' ');
     
     const numFactorsEl = createMathElement();
-    for (const { power } of inputFps) {
+    for (const { exponent } of inputPfFes) {
         numFactorsEl.append(
             numFactorsEl.firstChild ? createMo('×') : '',
-            createMrow(createMo('('), createMn(power), createMo('+'), createMn(1), createMo(')'))
+            createMrow(createMo('('), createMn(exponent), createMo('+'), createMn(1), createMo(')'))
         );
     }
     // factorPfs doesn't include 1 and the input number.
     numFactorsEl.append(createMo('='), createMn(factorPfs.length + 2));
     
     pfInfoTextDiv.append(
-        `By looking at the power${inputFps.length === 1 ? '' : 's'}, we can see that there are `,
+        `By looking at the exponent${inputPfFes.length === 1 ? '' : 's'}, we can see that there are `,
         numFactorsEl,
         ` factors. The factors, excluding 1 and ${inputString}, and their PFs are:`
     );
@@ -1385,10 +1386,10 @@ function createDivisPfAnswerDiv(pfAnswer, inputString, inputNum) {
      * @param {PrimeFactorization}
      * @returns {MathMLElement}
      */
-    function createPfEl({ fps, correspondingNum }) {
+    function createPfEl({ fes, correspondingNum }) {
         const corNumMn = createMn(correspondingNum);
-        if (!fps) return createMathElement(corNumMn);
-        const pfEl = createPfMathElement(fps);
+        if (!fes) return createMathElement(corNumMn);
+        const pfEl = createPfMathElement(fes);
         pfEl.appendChild(
             createMrow(createMtextWithMathFont('(', true), corNumMn, createMtextWithMathFont(')'))
         );
@@ -1505,21 +1506,23 @@ const euclideanInfoDiv =
 
 const gcdAndLcmPfInfoHtml =
     `The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs). If those
-    numbers don't have any common prime factors, then the GCD is 1. If they do have common prime factors, then the
-    GCD PF consists of all the common prime factors and the power of each factor is the min of the powers of that
-    factor in the 2 PFs. The LCM PF consists of all prime factors that are in either of the PFs of the 2 numbers.
-    If a factor is in both PFs, then the power of that factor in the LCM PF is the max of the powers of that
-    factor in the 2 PFs. If a factor is unique to one of the PFs, then that factor and its power are in the LCM PF.
     
     Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is ${createPfMathElementMl([[2, 1], [3, 1]])}
     and the PF of 35 is ${createPfMathElementMl([[5, 1], [7, 1]], '.')} There are no common prime factors so the
     GCD is 1. The LCM PF is ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1]], ',')} which is 210.
     
-    Let's find the GCD and LCM of 54 and 99 using their PFs. The PF of 54 is ${createPfMathElementMl([[2, 1], [3, 3]])}
-    and the PF of 99 is ${createPfMathElementMl([[3, 2], [11, 1]], '.')} 3 is the only common prime factor and
-    the min power of it is 2 so the GCD PF is ${createPfMathElementMl([[3, 2]], ',')} which is 9. The max power
-    of 3 is 3 so ${createPfMathElementMl([[3, 3]])} is in the LCM PF. The LCM PF is
-    ${createPfMathElementMl([[2, 1], [3, 3], [11, 1]], ',')} which is 594.`;
+    numbers don't have any common prime factors, then the GCD is 1. If they do have common prime factors, then
+    the GCD PF consists of all the common prime factors and the exponent of each factor is the min of the
+    exponents of that factor in the 2 PFs. The LCM PF consists of all the prime factors that are in either of the
+    PFs of the 2 numbers. If a factor is in both PFs, then the exponent of that factor in the LCM PF is the max
+    of the exponents of that factor in the 2 PFs. If a factor is unique to one of the PFs, then that factor and
+    its exponent are in the LCM PF.
+    
+    Let's find the GCD and LCM of 54 and 99 using their PFs. The PF of 54 is ${createPfMathElementMl([2, [3, 3]])}
+    and the PF of 99 is ${createPfMathElementMl([[3, 2], 11], '.')} 3 is the only common prime factor and the min
+    exponent of it is 2 so the GCD PF is ${createPfMathElementMl([[3, 2]], ',')} which is 9. The max exponent of
+    3 is 3 so ${createPfMathElementMl([[3, 3]])} is in the LCM PF. The LCM PF is
+    ${createPfMathElementMl([2, [3, 3], 11], ',')} which is 594.`;
 
 const gcdAndLcmPfInfoDiv =
     createDiv(createH3('Prime Factorizations'), ...createPsWithParagraphs(gcdAndLcmPfInfoHtml));
@@ -1539,7 +1542,13 @@ const gcdAndLcmOtherInfoDiv =
 const gcdAndLcmInfoElements =
     [createP(gcdAndLcmInfoStart), euclideanInfoDiv, gcdAndLcmPfInfoDiv, gcdAndLcmOtherInfoDiv];
 
-/** @typedef {{ input1Fps: FactorAndPower[], input2Fps: FactorAndPower[], gcdPf: PrimeFactorization?, lcmPf: PrimeFactorization }} GcdAndLcmPrimeFactorizationAnswer */
+/**
+ * @typedef {Object} GcdAndLcmPrimeFactorizationAnswer
+ * @property {FactorAndExponent[]} input1PfFes
+ * @property {FactorAndExponent[]} input2PfFes
+ * @property {PrimeFactorization?} gcdPf
+ * @property {PrimeFactorization} lcmPf
+ */
 
 /**
  * @param {{ euclideanIterations: EuclideanIteration[], pfAnswer: GcdAndLcmPrimeFactorizationAnswer }}
@@ -1567,28 +1576,28 @@ function createGcdAndLcmPfAnswerDiv(answer, input1String, input2String) {
     
     /**
      * @param {string} inputString
-     * @param {FactorAndPower[]} fps
+     * @param {FactorAndExponent[]} fes
      * @returns {HTMLLIElement}
      */
-    const createInputPfLi = (inputString, fps) =>
-        createLi(`The PF of ${inputString} is `, createPfMathElement(fps, '.'));
+    const createInputPfLi = (inputString, fes) =>
+        createLi(`The PF of ${inputString} is `, createPfMathElement(fes, '.'));
     
     /**
      * @param {string} gcdOrLcmText
      * @param {PrimeFactorization}
      * @returns {HTMLLIElement}
      */
-    function createGcdOrLcmPfLi(gcdOrLcmText, { fps, correspondingNum }) {
+    function createGcdOrLcmPfLi(gcdOrLcmText, { correspondingNum, fes }) {
         const li = createLi(`The PF of the ${gcdOrLcmText} is `);
-        if (fps) {
-            li.append(createPfMathElement(fps, ','), ' which is ', createNumStringWithCommas(correspondingNum), '.');
+        if (fes) {
+            li.append(createPfMathElement(fes, ','), ' which is ', createNumStringWithCommas(correspondingNum), '.');
         } else {
             li.append(createMathElement(createMn(correspondingNum), createMtext('.')))
         }
         return li;
     }
     
-    const { input1Fps, input2Fps, gcdPf, lcmPf } = answer;
+    const { input1PfFes, input2PfFes, gcdPf, lcmPf } = answer;
     
     const gcdLi =
         gcdPf
@@ -1597,8 +1606,8 @@ function createGcdAndLcmPfAnswerDiv(answer, input1String, input2String) {
     
     const pfsOl =
         createOl(
-            createInputPfLi(input1String, input1Fps),
-            createInputPfLi(input2String, input2Fps),
+            createInputPfLi(input1String, input1PfFes),
+            createInputPfLi(input2String, input2PfFes),
             gcdLi,
             createGcdOrLcmPfLi('LCM', lcmPf)
         );

@@ -18,9 +18,9 @@ public final class PrimeFactorization {
     public static final int MAX_INPUT = ONE_MILLION;
     
     /**
-     * Instances of this class are shortened to fp or its plural fps.
+     * fe and its plural fes are used to refer to instances of this in variable names.
      */
-    public record FactorAndPower(int factor, int power) {}
+    public record FactorAndExponent(int factor, int exponent) {}
     
     /**
      * The long that this prime factorization is for.
@@ -32,7 +32,7 @@ public final class PrimeFactorization {
      * list to JSON and then sending that to the web page and then displaying the contents
      * of this list.
      */
-    private final List<FactorAndPower> fps;
+    private final List<FactorAndExponent> fes;
     
     /**
      * Constructs a PrimeFactorization for the prime factorization of the input.
@@ -41,10 +41,10 @@ public final class PrimeFactorization {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         correspondingLong = input;
-        var tempFps = new ArrayList<FactorAndPower>();
         var maxIntToCheck = (int) Math.sqrt(input);
         int remaining = input;
 
+        var tempFes = new ArrayList<FactorAndExponent>();
         /*
         Find all the prime factors and their powers and put these in tempFps. Divide remaining
         by each factor that's found. When remaining becomes 1, the entire prime factorization
@@ -53,49 +53,49 @@ public final class PrimeFactorization {
          */
         
         if (isDivisible(remaining, 2)) {
-            var power = 0;
+            var exponent = 0;
             do {
-                power++;
+                exponent++;
                 remaining /= 2;
             } while (isDivisible(remaining, 2));
-            tempFps.add(new FactorAndPower(2, power));
+            tempFes.add(new FactorAndExponent(2, exponent));
         }
         
         if (remaining > 1) {
             for (var possiblePrimeFactor = 3; possiblePrimeFactor <= maxIntToCheck; possiblePrimeFactor += 2) {
                 if (isDivisible(remaining, possiblePrimeFactor)) {
-                    var power = 0;
+                    var exponent = 0;
                     do {
-                        power++;
-                        remaining /= possiblePrimeFactor;
-                    } while (isDivisible(remaining, possiblePrimeFactor));
-                    tempFps.add(new FactorAndPower(possiblePrimeFactor, power));
+                        exponent++;
+                        remaining /= possibleFactor;
+                    } while (isDivisible(remaining, possibleFactor));
+                    tempFes.add(new FactorAndExponent(possibleFactor, exponent));
                     if (remaining == 1) break;
                 }
             }
         }
         
         if (remaining > 1) {
-            tempFps.add(new FactorAndPower(remaining, 1));
+            tempFes.add(new FactorAndExponent(remaining, 1));
         }
         
-        fps = List.copyOf(tempFps);
+        fes = List.copyOf(tempFes);
     }
     
     /**
      * Constructs a PrimeFactorization for the prime factorization whose factors and powers are
      * in the list provided.
      */
-    public PrimeFactorization(List<FactorAndPower> fps) {
         this.fps =
             fps
             .stream()
             .sorted(Comparator.comparingInt(FactorAndPower::factor))
             .toList();
+    public PrimeFactorization(List<FactorAndExponent> fes) {
         
         var tempCorrespondingLong = 1L;
-        for (FactorAndPower fp : fps) {
-            tempCorrespondingLong *= (long) Math.pow(fp.factor, fp.power);
+        for (FactorAndExponent fp : fes) {
+            tempCorrespondingLong *= (long) Math.pow(fp.factor, fp.exponent);
         }
         correspondingLong = tempCorrespondingLong;
     }
@@ -106,13 +106,13 @@ public final class PrimeFactorization {
     }
     
     @JsonIgnore
-    public List<FactorAndPower> getFps() {
-        return fps;
+    public List<FactorAndExponent> getFes() {
+        return fes;
     }
     
     @JsonIgnore
     public boolean isForAPrimeNumber() {
-        return fps.size() == 1 && fps.getFirst().power == 1;
+        return fes.size() == 1 && fes.getFirst().exponent == 1;
     }
     
     /**
@@ -125,9 +125,9 @@ public final class PrimeFactorization {
      * would be displayed. If a marshaled PF has an fps property of null, then that means that
      * only the corresponding number needs to be displayed.
      */
-    @JsonProperty("fps")
-    public List<FactorAndPower> getFpsOrNull() {
-        return isForAPrimeNumber() ? null : fps;
+    @JsonProperty("fes")
+    public List<FactorAndExponent> getFesOrNull() {
+        return isForAPrimeNumber() ? null : fes;
     }
     
     /**

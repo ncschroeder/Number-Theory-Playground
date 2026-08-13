@@ -12,7 +12,7 @@ import numbertheoryplayground.sectionclasses.abstract_.DoubleInputSection;
 
 import static numbertheoryplayground.Misc.*;
 import static numbertheoryplayground.gui.NtpGui.*;
-import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndPower;
+import static numbertheoryplayground.sectionclasses.outer.PrimeFactorization.FactorAndExponent;
 
 /**
  * Utility class related to GCDs and LCMs and the section for it.
@@ -200,18 +200,18 @@ iterations until we get a remainder of 0.""";
     private static final String PF_INFO = """
 The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs).
 If those numbers don't have any common prime factors, then the GCD is 1. If they do have common
-prime factors, then the GCD PF consists of all the common prime factors and the power of each
-factor is the min of the powers of that factor in the 2 PFs. The LCM PF consists of all the prime
-factors that are in either of the PFs of the 2 numbers. If a factor is in both PFs, then the
-power of that factor in the LCM PF is the max of the powers of that factor in the 2 PFs. If a
-factor is unique to one of the PFs, then that factor and its power are in the LCM PF.
+prime factors, then the GCD PF consists of all the common prime factors and the exponent of each
+factor is the min of the exponents of that factor in the 2 PFs. The LCM PF consists of all the
+prime factors that are in either of the PFs of the 2 numbers. If a factor is in both PFs, then the
+exponent of that factor in the LCM PF is the max of the exponents of that factor in the 2 PFs.
+If a factor is unique to one of the PFs, then that factor and its exponent are in the LCM PF.
 
 Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is 2 × 3 and the PF of 35 is 5 × 7.
 There are no common prime factors so the GCD is 1. The LCM PF is 2 × 3 × 5 × 7, which is 210.
 
 Let's find the GCD and LCM of 54 and 99. The PF of 54 is 2 × 3^3 and the PF of 99 is 3^2 × 11.
-3 is the only common prime factor and the min power of it is 2 so the GCD PF is 3^2, which is 9.
-The max power of 3 is 3 so 3^3 is in the LCM PF. The LCM PF is 2 × 3^3 × 11, which is 594.""";
+3 is the only common prime factor and the min exponent of it is 2 so the GCD PF is 3^2, which is 9.
+The max exponent of 3 is 3 so 3^3 is in the LCM PF. The LCM PF is 2 × 3^3 × 11, which is 594.""";
     
     private static final String OTHER_INFO = """
 2 whole numbers are said to be coprime if their GCD is 1. Therefore, coprime numbers don't have
@@ -261,33 +261,33 @@ product of the next 8 prime numbers. Their LCM is the product of the first 21 pr
                 lcmPf = gcdPf = input2Pf = input1Pf;
             } else {
                 input2Pf = new PrimeFactorization(input2Long);
-                var gcdPfFps = new ArrayList<FactorAndPower>();
-                var lcmPfFps = new ArrayList<FactorAndPower>();
+                var gcdPfFes = new ArrayList<FactorAndExponent>();
+                var lcmPfFes = new ArrayList<FactorAndExponent>();
                 
-                for (FactorAndPower fp : input1Pf) {
-                    long factor = fp.factor();
-                    int power1 = fp.power();
+                for (FactorAndExponent fe : input1Pf) {
+                    long factor = fe.factor();
+                    int exponent1 = fe.exponent();
                     
                     input2Pf
-                    .getPowerOf(factor)
+                    .getExponentOf(factor)
                     .ifPresentOrElse(
-                        power2 -> {
-                            gcdPfFps.add(new FactorAndPower(factor, Math.min(power1, power2)));
-                            lcmPfFps.add(new FactorAndPower(factor, Math.max(power1, power2)));
+                        exponent2 -> {
+                            gcdPfFes.add(new FactorAndExponent(factor, Math.min(exponent1, exponent2)));
+                            lcmPfFes.add(new FactorAndExponent(factor, Math.max(exponent1, exponent2)));
                         },
-                        () -> lcmPfFps.add(fp)
+                        () -> lcmPfFes.add(fe)
                     );
                 }
                 
-                for (FactorAndPower fp : input2Pf) {
-                    if (!input1Pf.containsFactor(fp.factor())) {
-                        lcmPfFps.add(fp);
+                for (FactorAndExponent fe : input2Pf) {
+                    if (!input1Pf.containsFactor(fe.factor())) {
+                        lcmPfFes.add(fe);
                     }
                 }
                 
-                gcdPf = gcdPfFps.isEmpty() ? null : new PrimeFactorization(gcdPfFps);
-                lcmPfFps.sort(Comparator.comparingLong(FactorAndPower::factor));
-                lcmPf = new PrimeFactorization(lcmPfFps);
+                gcdPf = gcdPfFes.isEmpty() ? null : new PrimeFactorization(gcdPfFes);
+                lcmPfFes.sort(Comparator.comparingLong(FactorAndExponent::factor));
+                lcmPf = new PrimeFactorization(lcmPfFes);
             }
             
             String gcdSentence =

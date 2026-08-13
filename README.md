@@ -369,7 +369,7 @@ Say we have 2 whole numbers that we'll represent with the variables $a$ and $b \
 
 #### Prime Factorization
 
-The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a variable $n$ and let it represent a whole number > 1. First, you can find how many factors $n$ has by looking at $n$'s PF, taking the powers of the factors, adding 1 to each, and multiplying them. For example, the PF of 36 is $2^2 \times 3^2 \text{.}$ The powers are 2 and 2, so there are $3 \times 3 = 9$ factors. This amount includes 1 and the number that the PF is for (36 in this case). You can find the factors of $n$ by finding the PFs within $n$'s PF, or the *subfactorizations*, as I like to call them. For $2^2 \times 3^2 \text{,}$ the subfactorizations are $2 \text{,}$ $3 \text{,}$ $2^2 \text{ (4),}$ $2 \times 3 \text{ (6),}$ $3^2 \text{ (9),}$ $2^2 \times 3 \text{ (12),}$ and $2 \times 3^2 \text{ (18).}$
+The factors of a whole number > 1 can be found by looking at its prime factorization (PF). Let's have a variable $n$ and let it represent a whole number > 1. First, you can find how many factors $n$ has by looking at $n$'s PF, taking the exponents of the factors, adding 1 to each, and multiplying them. For example, the PF of 36 is $2^2 \times 3^2 \text{.}$ The exponents are 2 and 2, so there are $3 \times 3 = 9$ factors. This amount includes 1 and the number that the PF is for (36 in this case). You can find the factors of $n$ by finding the PFs within $n$'s PF, or the *subfactorizations*, as I like to call them. For $2^2 \times 3^2 \text{,}$ the subfactorizations are $2 \text{,}$ $3 \text{,}$ $2^2 \text{ (4),}$ $2 \times 3 \text{ (6),}$ $3^2 \text{ (9),}$ $2^2 \times 3 \text{ (12),}$ and $2 \times 3^2 \text{ (18).}$
 
 Whole numbers that are ≤ 1 million, the max input of this section in the website version, generally have a small amount of factors, like < 50. An example of an input number with a high amount of factors is 510,510. This number has a PF of $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \text{,}$ so it has $2^7 = 128$ factors!
 
@@ -465,19 +465,12 @@ The GCD is 9.
 
 #### Prime Factorizations
 
-The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs). If those
-numbers don't have any common prime factors, then the GCD is 1. If they do have common prime factors, then the GCD
-PF consists of all the common prime factors and the power of each factor is the min of the powers of that factor
-in the 2 PFs. The LCM PF consists of all factors that are in either of the PFs of the 2 numbers. If a factor is in
-both PFs, then the power of that factor in the LCM PF is the max of the powers of that factor in the 2 PFs. If a
-factor is unique to one of the PFs, then that factor and its power are in the LCM PF.
+The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs). If those numbers don't have any common prime factors, then the GCD is 1. If they do have common prime factors, then the GCD PF consists of all the common prime factors and the exponent of each factor is the min of the exponents of that factor in the 2 PFs. The LCM PF consists of all the prime factors that are in either of the PFs of the 2 numbers. If a factor is in both PFs, then the exponent of that factor in the LCM PF is the max of the exponents of that factor in the 2 PFs. If a factor is unique to one of the PFs, then that factor and its exponent are in the LCM PF.
 
 Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is $2 \times 3$ and the PF of 35 is $5 \times 7$.
 There are no common prime factors so the GCD is 1. The LCM PF is $2 \times 3 \times 5 \times 7$, which is 210.
 
-Let's find the GCD and LCM of 54 and 99. The PF of 54 is $2 \times 3^3$ and the PF of 99 is $3^2 \times 11$. 3 is
-the only common prime factor and the min power of it is 2 so the GCD PF is $3^2$, which is 9. The max power of 3
-is 3 so $3^3$ is in the LCM PF. The LCM PF is $2 \times 3^3 \times 11$, which is 594.
+Let's find the GCD and LCM of 54 and 99. The PF of 54 is $2 \times 3^3$ and the PF of 99 is $3^2 \times 11 \text{.}$ 3 is the only common prime factor and the min exponent of it is 2 so the GCD PF is $3^2 \text{,}$ which is 9. The max exponent of 3 is 3 so $3^3$ is in the LCM PF. The LCM PF is $2 \times 3^3 \times 11 \text{,}$ which is 594.
 
 #### Other Info
 

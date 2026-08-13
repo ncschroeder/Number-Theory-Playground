@@ -16,7 +16,7 @@ import static numbertheoryplayground.sectionclasses.outer.Divisibility.*;
  * the section for it. The initials PF are used to refer to instances of this class and to prime
  * factorizations in general.
  */
-public final class PrimeFactorization implements Iterable<PrimeFactorization.FactorAndPower> {
+public final class PrimeFactorization implements Iterable<PrimeFactorization.FactorAndExponent> {
     private static final String INFO = """
 The fundamental theorem of arithmetic says that every whole number > 1 is either prime or can be
 expressed as the product of prime numbers in 1 way if you ignore the order of those prime numbers.
@@ -41,9 +41,9 @@ prime factors.""";
     static final long MAX_INPUT = TEN_QUADRILLION;
     
     /**
-     * fp and its plural fps are used to refer to instances of this in variable names.
+     * fe and its plural fes are used to refer to instances of this in variable names.
      */
-    record FactorAndPower(long factor, int power) {}
+    record FactorAndExponent(long factor, int exponent) {}
     
     /**
      * The BigInteger that this PF is for.
@@ -64,12 +64,12 @@ prime factors.""";
      */
     
     /**
-     * An immutable list of the factors and powers in this PF. This is sorted by factors, which
+     * An immutable list of the factors and exponents in this PF. This is sorted by factors, which
      * is appropriate for the string representation of this. As mentioned above, the PF of 12,250
      * is 2 × 5^3 × 7^2, so if a PF object was created for that number, then this list would
-     * contain 3 FactorAndPowers and the fields of them would be 2 & 1, 5 & 3, and 7 & 2.
+     * contain 3 FactorAndExponents and the fields of them would be 2 & 1, 5 & 3, and 7 & 2.
      */
-    private final List<FactorAndPower> fps;
+    private final List<FactorAndExponent> fes;
     
     /**
      * Constructs a PrimeFactorization for the prime factorization of the input.
@@ -80,7 +80,7 @@ prime factors.""";
         correspondingBigInt = BigInteger.valueOf(input);
         long remaining = input;
         // The max amount of unique prime factors is 13.
-        var tempFps = new ArrayList<FactorAndPower>(13);
+        var tempFes = new ArrayList<FactorAndExponent>(13);
         
         /*
         Find all the prime factors and their powers and put these in tempFps. Divide remaining
@@ -90,46 +90,46 @@ prime factors.""";
          */
         
         if (isDivisible(remaining, 2)) {
-            var power = 0;
+            var exponent = 0;
             do {
-                power++;
+                exponent++;
                 remaining /= 2;
             } while (isDivisible(remaining, 2));
-            tempFps.add(new FactorAndPower(2, power));
+            tempFes.add(new FactorAndExponent(2, exponent));
         }
         
         if (remaining > 1) {
             var maxPossibleFactorToCheck = (long) Math.sqrt(input);
             for (var possibleFactor = 3L; possibleFactor <= maxPossibleFactorToCheck; possibleFactor += 2) {
                 if (isDivisible(remaining, possibleFactor)) {
-                    var power = 0;
+                    var exponent = 0;
                     do {
-                        power++;
+                        exponent++;
                         remaining /= possibleFactor;
                     } while (isDivisible(remaining, possibleFactor));
-                    tempFps.add(new FactorAndPower(possibleFactor, power));
+                    tempFes.add(new FactorAndExponent(possibleFactor, exponent));
                     if (remaining == 1) break;
                 }
             }
         }
         
         if (remaining > 1) {
-            tempFps.add(new FactorAndPower(remaining, 1));
+            tempFes.add(new FactorAndExponent(remaining, 1));
         }
         
-        fps = List.copyOf(tempFps);
+        fes = List.copyOf(tempFes);
     }
     
     /**
-     * Constructs a PrimeFactorization for the prime factorization whose factors and powers are
+     * Constructs a PrimeFactorization for the prime factorization whose factors and exponents are
      * in the list provided, which should be sorted by factors.
      */
-    PrimeFactorization(List<FactorAndPower> fps) {
-        this.fps = List.copyOf(fps);
+    PrimeFactorization(List<FactorAndExponent> fes) {
+        this.fes = List.copyOf(fes);
         
         var tempCorrespondingBigInt = BigInteger.ONE;
-        for (FactorAndPower fp : fps) {
-            var multiplicand = BigInteger.valueOf((long) Math.pow(fp.factor, fp.power));
+        for (FactorAndExponent fe : fes) {
+            var multiplicand = BigInteger.valueOf((long) Math.pow(fe.factor, fe.exponent));
             tempCorrespondingBigInt = tempCorrespondingBigInt.multiply(multiplicand);
         }
         correspondingBigInt = tempCorrespondingBigInt;
@@ -139,8 +139,8 @@ prime factors.""";
         return correspondingBigInt;
     }
     
-    List<FactorAndPower> getFps() {
-        return fps;
+    List<FactorAndExponent> getFes() {
+        return fes;
     }
     
     /**
@@ -151,11 +151,11 @@ prime factors.""";
     @Override
     public String toString() {
         return
-            fps
+            fes
             .stream()
-            .map(fp -> {
-                var factorString = createStringWithCommas(fp.factor);
-                return fp.power == 1 ? factorString : String.format("%s^%d", factorString, fp.power);
+            .map(fe -> {
+                var factorString = createStringWithCommas(fe.factor);
+                return fe.exponent == 1 ? factorString : String.format("%s^%d", factorString, fe.exponent);
             })
             .collect(Collectors.joining(" × "));
     }
@@ -165,25 +165,25 @@ prime factors.""";
     }
     
     @Override
-    public Iterator<FactorAndPower> iterator() {
-        return fps.iterator();
+    public Iterator<FactorAndExponent> iterator() {
+        return fes.iterator();
     }
     
     boolean isForAPrimeNumber() {
-        return fps.size() == 1 && fps.getFirst().power == 1;
+        return fes.size() == 1 && fes.getFirst().exponent == 1;
     }
     
-    Optional<Integer> getPowerOf(long possibleFactor) {
+    Optional<Integer> getExponentOf(long possibleFactor) {
         return
-            fps
+            fes
             .stream()
-            .filter(fp -> fp.factor == possibleFactor)
+            .filter(fe -> fe.factor == possibleFactor)
             .findFirst()
-            .map(FactorAndPower::power);
+            .map(FactorAndExponent::exponent);
     }
     
     boolean containsFactor(long possibleFactor) {
-        return fps.stream().anyMatch(fp -> fp.factor == possibleFactor);
+        return fes.stream().anyMatch(fe -> fe.factor == possibleFactor);
     }
 
     

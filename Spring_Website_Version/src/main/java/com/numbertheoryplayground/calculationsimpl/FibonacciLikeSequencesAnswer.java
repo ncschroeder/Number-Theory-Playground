@@ -13,8 +13,9 @@ public final class FibonacciLikeSequencesAnswer {
     private static final int MAX_INPUT = ONE_BILLION;
     
     /**
-     * Contains strings of the numbers in the Fibonacci-like sequence that gets created.
-     * Strings are used since these numbers might be too big for a JavaScript safe integer.
+     * This can be a list of longs since if 1 billion is used as both inputs, then the last
+     * number in the sequence is 6 trillion something, which is small enough to be a long
+     * and JavaScript safe integer.
      */
     private final List<Long> fiboLikeSequence;
     
@@ -44,9 +45,7 @@ public final class FibonacciLikeSequencesAnswer {
         
         ratiosData =
             IntStream.of(3, 8, 13, 18)
-            .mapToObj(i ->
-                new RatioData(fiboLikeSequence.get(i), fiboLikeSequence.get(i + 1))
-            )
+            .mapToObj(i -> new RatioData(fiboLikeSequence.get(i), fiboLikeSequence.get(i + 1)))
             .toList();
     }
     
@@ -60,6 +59,8 @@ public final class FibonacciLikeSequencesAnswer {
     
     
     /**
+     * Contains data for the ratio of long2 to long1, which are 2 consecutive numbers in a
+     * Fibonacci-like sequence.
      */
     public static final class RatioData {
         private static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
@@ -71,7 +72,11 @@ public final class FibonacciLikeSequencesAnswer {
         
         private final long long2;
         
-        private BigDecimal ratio;
+        /**
+         * A string is used since a decimal64 format is used for the ratio and
+         * JavaScript numbers have a binary64 format.
+         */
+        private final String ratioString;
         
         private boolean isRounded;
         
@@ -80,6 +85,7 @@ public final class FibonacciLikeSequencesAnswer {
             this.long2 = long2;
             var bigDecimal1 = new BigDecimal(long1);
             var bigDecimal2 = new BigDecimal(long2);
+            BigDecimal ratio;
             
             try {
                 ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITHOUT_ROUNDING);
@@ -88,6 +94,8 @@ public final class FibonacciLikeSequencesAnswer {
                 ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITH_ROUNDING);
                 isRounded = true;
             }
+            
+            ratioString = ratio.toPlainString();
         }
         
         @JsonProperty("num1")
@@ -100,8 +108,9 @@ public final class FibonacciLikeSequencesAnswer {
             return long2;
         }
         
-        public BigDecimal getRatio() {
-            return ratio;
+        @JsonProperty("ratio")
+        public String getRatioString() {
+            return ratioString;
         }
         
         /*

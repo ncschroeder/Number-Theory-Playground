@@ -155,7 +155,8 @@ const arrToAnswerFlexOl = (arr, arrElementTransform) =>
  * @param {any[]} rowsDataSourceArr
  * 
  * @param {(obj: any) => (number | string)[]} rowsDataSourceTransform
- * Return type is an array of numbers and/or unformatted number strings.
+ * The return value is an array of numbers and/or unformatted number strings of the fields of the type of
+ * elements in rowsDataSourceArr. This array should be the same size as colHeadings.
  * 
  * @returns {HTMLTableElement}
  */
@@ -230,42 +231,45 @@ function createMathMlElement(elementName, ...objectsToAppend) {
  */
 const createMathElement = (...objectsToAppend) => createMathMlElement('math', ...objectsToAppend);
 
+/*
+If a Math ML element in a math element is immediately followed by a period or comma or something else, then that
+following text must be placed in an mtext element after the element in that same math element to group them. If
+the following text is placed after the math element, then it'll be separated from the element and break onto a
+new line if the webpage is at a certain width. This is why some Math ML strings have an mtext element as the
+last child of a math element. Some examples are the createMiMl function and the primesInfoHtml string.
+ */
+
 /**
- * Creates a math row element, which is used to group related elements together, like a div.
  * @param  {...Appendable} objectsToAppend
- * @returns {MathMLElement}
+ * @returns {MathMLElement} A row element, which is used to group related elements together, like a div.
  */
 const createMrow = (...objectsToAppend) => createMathMlElement('mrow', ...objectsToAppend);
 
 /**
- * Creates a math number element.
- * 
  * @param {number | string} value
  * A number or unformatted number string.
  * 
- * @returns {MathMLElement}
+ * @returns {MathMLElement} A number element.
  */
 const createMn = (value) => createMathMlElement('mn', createNumStringWithCommas(value));
 
 /**
- * Creates a math superscript element.
  * @param {number} base
  * @param {number} exponent
+ * @returns {MathMLElement} A superscript element.
  */
 const createMsup = (base, exponent) => createMathMlElement('msup', createMn(base), createMn(exponent));
 
 /**
- * Creates a math operator (e.g. +) element.
  * @param {string} operator
- * @returns {MathMLElement}
+ * @returns {MathMLElement} An operator (e.g. +) element.
  */
 const createMo = (operator) => createMathMlElement('mo', operator);
 
 /**
- * Creates a math text element.
  * @param {string} text
  * @param {boolean} [putSpaceAtStart]
- * @returns {MathMLElement}
+ * @returns {MathMLElement} A text element.
  */
 function createMtext(text, putSpaceAtStart = false) {
     const mtext = createMathMlElement('mtext', text);
@@ -287,9 +291,8 @@ function createMtextWithMathFont(text, putSpaceAtStart = false) {
 }
 
 /**
- * Creates a math identifier (e.g. letter for variable) element.
  * @param {string} identifier
- * @returns {MathMLElement}
+ * @returns {MathMLElement} An identifier (e.g. letter for variable) element.
  */
 const createMi = (identifier) => createMathMlElement('mi', identifier);
 
@@ -477,6 +480,9 @@ class Section {
     #apiEndpointEnd;
     
     /**
+     * The Section constructor has an object param so that args can be named. We don't need this type definition
+     * to do that but it allows for organized documentation and autocompletion options when creating a Section
+     * or destructuring in the constructor.
      * @typedef {Object} SectionParams
      * 
      * @property {string} btnIdStart
@@ -509,9 +515,9 @@ class Section {
         
         /** @type {HTMLElement[]} */
         const infoHtmlElements =
-            Array.isArray(infoHtmlStringOrArr)
-            ? Array.from(infoHtmlStringOrArr)
-            : createPsWithParagraphs(infoHtmlStringOrArr);
+            typeof infoHtmlStringOrArr === 'string'
+            ? createPsWithParagraphs(infoHtmlStringOrArr)
+            : Array.from(infoHtmlStringOrArr);
         
         const maxInputString = createNumStringWithCommas(maxInput);
         const numWithWord =
@@ -596,11 +602,10 @@ class Section {
     
     /**
      * First, a random number of digits will be generated for a random number. If the max input is a power of
-     * 10, then the max number of digits for the random number is the number of digits of the max input - 1.
-     * Otherwise, the max number of random digits is the number of digits of the max input.
-     * 
-     * Then, a random number with the generated random number of digits will be generated and returned. The
-     * random number will be ≥ the min input and ≤ the max input of this section.
+     * 10, then the max number of digits for the random number is the number of digits of the max input − 1.
+     * Otherwise, the max number of random digits is the number of digits of the max input. Then, a random
+     * number with the generated random number of digits will be generated and returned. The random number will
+     * be ≥ the min input and ≤ the max input of this section.
      * 
      * @returns {number}
      */
@@ -676,11 +681,8 @@ class GoldbachConjectureSection extends SingleInputSection {
      * @override
      */
     getRandomInput() {
-        let randomInput;
-        do {
-            randomInput = super.getRandomInput();
-        } while (isOdd(randomInput));
-        return randomInput;
+        const randomInput = super.getRandomInput();
+        return isEven(randomInput) ? randomInput : randomInput - 1;
     }
 }
 
@@ -719,6 +721,7 @@ calculateBtn.onclick = () => {
         return;
     }
     const input1String = createNumStringWithCommas(input1Num);
+    
     const urlParams = new URLSearchParams();
     
     /**
@@ -780,8 +783,8 @@ const primesInfoHtml =
     by 2 and ${nVarMl} + 3 is divisible by 3 but we don't have any guarantees about what ${nVarMl} + 1 and
     ${nVarMl} + 5 are divisible by. Therefore, that's where primes can be.
     
-    A whole number can be determined to be prime if it's not divisible by any primes ≤ the square root of that
-    number. This is called <i>trial division</i>. Let's determine if 29 and 33 are prime.
+    We can check if a whole number > 1 is prime by checking if it's divisible by any primes ≤ its square root.
+    If it is, then it's not prime. This is called <i>trial division</i>. Let's check if 29 and 33 are prime.
     <math>
         <msup><mn>5</mn><mn>2</mn></msup>
         <mo>=</mo>
@@ -838,7 +841,7 @@ const semiprimesInfoHtml =
     amount of semiprimes. The largest known semiprime is the square of the largest known prime number, which is
     ${largestKnownPrimeAndPeriodMl}`;
 
-/** @typedef {{ semiprime: number, primeFactor1: number, primeFactor2: number }} SemiprimeData */
+/** @typedef {{ semiprime: number, factor1: number, factor2: number }} SemiprimeData */
 
 /**
  * @param {SemiprimeData[]} semiprimesData
@@ -855,9 +858,7 @@ function createSemiprimesAnswerElements(semiprimesData, inputString) {
      */
     function semiprimeDataToString(sd) {
         const [semiprimeString, factor1String, factor2String] =
-            [sd.semiprime, sd.primeFactor1, sd.primeFactor2]
-            .map(createNumStringWithCommas);
-        
+            [sd.semiprime, sd.factor1, sd.factor2].map(createNumStringWithCommas);
         return `${semiprimeString} (${factor1String} × ${factor2String})`;
     }
     
@@ -931,21 +932,40 @@ new SingleInputSection(
 );
 
 
+// The initials PF are used to refer to objects with a PrimeFactorization type and to prime factorizations in general.
+
 /**
- * Creates a Math ML string for the prime factorization whose factors and exponents are in factorsAndExponents.
+ * Objects of this type come from responses to HTTP requests. fes is used to refer to arrays of instances of
+ * this type in field and variable names.
+ * @typedef {{ factor: number, exponent: number }} FactorAndExponent
  * 
- * @param {number[][]} factorsAndPowers
- * For each inner array, the first number is the factor and the second is the power.
+ * @typedef {{ correspondingNum: number, fes: ?(FactorAndExponent[]) }} PrimeFactorization
+ */
+
+/**
+ * Creates a Math ML string for the PF whose factors and exponents are in factorsAndExponents. Info about PFs
+ * can be found in the pfInfoHtml string below.
+ * 
+ * @param {(number | number[])[]} factorsAndExponents
+ * Args for this are hardcoded so this type is used instead of FactorAndExponent[]. If a factor has an exponent
+ * of 1,  then a number is used. Otherwise, an array is used and the first number in it is the factor and the
+ * second is the power.
  * 
  * @returns {string}
  */
-    .map(([factor, power]) => power === 1 ? `<mn>${factor}</mn>` : `<msup><mn>${factor}</mn><mn>${power}</mn></msup>`)
 const createPfMl = (factorsAndExponents) =>
     factorsAndExponents
+    .map(factorAndMaybeExponent => {
+        if (typeof factorAndMaybeExponent === 'number') {
+            return `<mn>${factorAndMaybeExponent}</mn>`;
+        }
+        const [factor, exponent] = factorAndMaybeExponent;
+        return `<msup><mn>${factor}</mn><mn>${exponent}</mn></msup>`;
+    })
     .join('<mo>×</mo>');
 
 /**
- * @param {number[][]} factorsAndPowers
+ * @param {(number | number[])[]} factorsAndExponents
  * @param {string} [endText]
  * @returns {string}
  */
@@ -953,31 +973,19 @@ const createPfMathElementMl = (factorsAndExponents, endText) =>
     `<math>${createPfMl(factorsAndExponents)}${endText ? `<mtext>${endText}</mtext>`: ''}</math>`;
 
 const pfInfoHtml =
-    `The fundamental theorem of arithmetic says that every whole number > 1 can be expressed as the product of
-    prime numbers in 1 way if you ignore the order of those prime numbers. The <i>prime factorization</i> (PF)
-    of a whole number > 1 is an expression of the prime numbers whose product is that number. For example; the
-    PF of 5 is just <math><mn>5</mn><mtext>,</mtext></math> the PF of 25 is ${createPfMathElementMl([[5, 2]], ',')}
-    and the PF of 4,725 is ${createPfMathElementMl([[3, 3], [5, 2], [7, 1]])} if the prime numbers are in
-    ascending order. 4,725 could also be expressed as ${createPfMathElementMl([[5, 2], [3, 3], [7, 1]])} but
-    that's the same expression as the previous one if you ignore the order of the prime numbers. The Number
-    Theory Playground displays PFs with the prime numbers in ascending order. There are some interesting
-    applications for PFs. See the info for the "Divisibility" or "GCD and LCM" sections for some applications.
+    `The fundamental theorem of arithmetic says that every whole number > 1 is either prime or can be expressed
+    as the product of prime numbers in 1 way if you ignore their order. The <i>prime factorization</i> (PF) of a
+    whole number > 1 is an expression of that number if it's prime or the prime numbers whose product is that
+    number. These prime numbers are factors of that number. For example, the PF of 3 is just
+    <math><mn>3</mn><mtext>,</mtext></math> the PF of 12 is ${createPfMathElementMl([[2, 2], 3], ',')}
+    and the PF of 25,137 is ${createPfMathElementMl([[3, 3], [7, 2], 19], '.')} 25,137 can also be expressed as
+    ${createPfMathElementMl([[7, 2], [3, 3], 19])} but that's the same expression if you ignore the order of the
+    factors. There are some interesting applications for PFs. See the info for the "Divisibility" or
+    "GCD and LCM" sections for some applications.
     
-    The input number with the highest amount of prime factors is 8,192 (2<sup>13</sup>). An input number with
-    the highest amount of <em>unique</em> prime factors is 2,310. This number has a PF of
-    ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1], [11, 1]], '.')} You could also multiply that number
-    by 2, 3, or 4 and those numbers are ≤ the max input and have the same amount of unique prime factors.`;
-
-/**
- * @typedef {Object} PrimeFactorization
- * @typedef {{ factor: number, exponent: number }} FactorAndExponent
- * 
- * @property {number} correspondingNum
- * 
- * @property {?(FactorAndPower[])} fps
- * If this is null, then that means the corresponding number is prime and therefore the PF just consists of 1
- * factor with 1 as its power.
- */
+    The input number with the most prime factors is 524,288 (2<sup>19</sup>), the largest power of 2 ≤ 1 million,
+    the max input. The input number with the most <em>unique</em> prime factors is 510,510, which is the product
+    of the first 7 prime numbers and has a PF of ${createPfMathElementMl([2, 3, 5, 7, 11, 13, 17], '.')}`;
 
 /**
  * @param {FactorAndExponent[]} fes
@@ -1019,6 +1027,7 @@ function createPfAnswerElements(fes, inputString) {
 }
 
 const pfMinInput = 2;
+const pfMaxInput = oneMillion;
 
 new SingleInputSection(
     {
@@ -1037,13 +1046,11 @@ const divisInfoStartHtml =
     `Say we have 2 whole numbers that we'll represent with the variables ${aVarMl} and ${bVarAndPeriodMl}
     If we divide ${aVarMl} by ${bVarMl} and get no remainder, then ${aVarMl} is said to be <i>divisible</i> by
     ${bVarMl} and ${bVarMl} is said to be a <i>factor</i> or <i>divisor</i> of ${aVarMl}. If you want to find
-    some whole number factors of a whole number, you could manually do some division but there are other ways to
-    find them.`;
+    some whole number factors of a whole number, you could manually do some division but there are other ways
+    to find them.`;
 
 /**
- * @param {number[][]} factorsAndPowers
- * For each inner array, the first number is the factor and the second is the power.
- * 
+ * @param {(number | number[])[]} factorsAndExponents
  * @param {number} num
  * @param {string} [endText]
  * @returns {string} A Math ML string.
@@ -1074,16 +1081,16 @@ const divisPfInfoHtml =
     <math><mn>2</mn><mtext>,</mtext></math>
     <math><mn>3</mn><mtext>,</mtext></math>
     ${createSubfactorizationMl([[2, 2]], 4)}
-    ${createSubfactorizationMl([[2, 1], [3, 1]], 6)}
+    ${createSubfactorizationMl([2, 3], 6)}
     ${createSubfactorizationMl([[3, 2]], 9)}
-    ${createSubfactorizationMl([[2, 2], [3, 1]], 12)}
+    ${createSubfactorizationMl([[2, 2], 3], 12)}
     and
-    ${createSubfactorizationMl([[2, 1], [3, 2]], 18, '.')}
+    ${createSubfactorizationMl([2, [3, 2]], 18, '.')}
     
     Whole numbers that are ≤ 1 million, the max input of this section, generally have a small amount of factors,
-    like < 50. An example of an input number with a high amount of factors is 510,510. This number has a PF of
-    ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1], [11, 1], [13, 1], [17, 1]], ',')} so it has
-    <math><msup><mn>2</mn><mn>7</mn></msup><mo>=</mo><mn>128</mn></math> factors!`;
+    like < 50. An example of an input number with a high amount of factors is 510,510. This number is the product
+    of the first 7 prime numbers so it has <math><msup><mn>2</mn><mn>7</mn></msup><mo>=</mo><mn>128</mn></math>
+    factors. Its PF is ${createPfMathElementMl([2, 3, 5, 7, 11, 13, 17], '.')}`;
 
 const divisPfInfoDiv =
     createDiv(createH3('Prime Factorization'), ...createPsWithParagraphs(divisPfInfoHtml));
@@ -1114,7 +1121,7 @@ const divisRulesInfoHtml =
     the few calculations done by the Number Theory Playground that involve numbers other than natural numbers.`;
 
 const divisRulesExampleHtml =
-    `Let ${nVarMl} be 720,720. Its PF is ${createPfMathElementMl([[2, 4], [3, 2], [5, 1], [7, 1], [11, 1], [13, 1]], '.')}
+    `Let ${nVarMl} be 720,720. Its PF is ${createPfMathElementMl([[2, 4], [3, 2], 5, 7, 11, 13], '.')}
     We can tell from that PF that ${nVarMl} is divisible by all the numbers that had rules mentioned about them
     above. Let's check using those rules. The last 2 digits form the number 20, which is divisible by 4. The last
     3 digits form the number 720, which is divisible by 8. The sum of the digits is
@@ -1186,8 +1193,6 @@ const createDivisAnswerElements = (pfAnswer, inputString, inputNum) =>
     ];
 
 /**
- * This function does the only non-trivial calculations that are done on the front end.
- * 
  * @param {string} inputString
  * @param {number} inputNum
  * @returns {HTMLDivElement}
@@ -1506,17 +1511,16 @@ const euclideanInfoDiv =
 
 const gcdAndLcmPfInfoHtml =
     `The GCD and LCM of 2 whole numbers > 1 can be found by looking at their prime factorizations (PFs). If those
-    
-    Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is ${createPfMathElementMl([[2, 1], [3, 1]])}
-    and the PF of 35 is ${createPfMathElementMl([[5, 1], [7, 1]], '.')} There are no common prime factors so the
-    GCD is 1. The LCM PF is ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1]], ',')} which is 210.
-    
     numbers don't have any common prime factors, then the GCD is 1. If they do have common prime factors, then
     the GCD PF consists of all the common prime factors and the exponent of each factor is the min of the
     exponents of that factor in the 2 PFs. The LCM PF consists of all the prime factors that are in either of the
     PFs of the 2 numbers. If a factor is in both PFs, then the exponent of that factor in the LCM PF is the max
     of the exponents of that factor in the 2 PFs. If a factor is unique to one of the PFs, then that factor and
     its exponent are in the LCM PF.
+    
+    Let's find the GCD and LCM of 6 and 35 using their PFs. The PF of 6 is ${createPfMathElementMl([2, 3])} and
+    the PF of 35 is ${createPfMathElementMl([5, 7], '.')} There are no common prime factors so the GCD is 1. The
+    LCM PF is ${createPfMathElementMl([2, 3, 5, 7], ',')} which is 210.
     
     Let's find the GCD and LCM of 54 and 99 using their PFs. The PF of 54 is ${createPfMathElementMl([2, [3, 3]])}
     and the PF of 99 is ${createPfMathElementMl([[3, 2], 11], '.')} 3 is the only common prime factor and the min
@@ -1529,12 +1533,14 @@ const gcdAndLcmPfInfoDiv =
 
 const gcdAndLcmOtherInfo =
     `2 whole numbers are said to be <i>coprime</i> if their GCD is 1. Therefore, coprime numbers don't have any
-    common factors in their PFs. The input numbers whose LCM is the highest are 10,000, the max input, and 9,999.
-    Their LCM is 99,990,000. A pair of input numbers whose LCM has the highest amount of prime factors is
-    8,192 (2<sup>13</sup>) and 6,561 (3<sup>8</sup>). Their LCM is 53,747,712. A pair of input numbers whose LCM
-    might have the highest amount of <em>unique</em> prime factors is 2,310, the product of the first 5 prime
-    numbers; and 4,199, the product of the next 3 prime numbers. Their LCM is 9,699,690 and its PF is
-    ${createPfMathElementMl([[2, 1], [3, 1], [5, 1], [7, 1], [11, 1], [13, 1], [17, 1], [19, 1]], '.')}`;
+    common prime factors in their PFs. The input numbers that have the largest LCM are 1,000,000, the max input;
+    and 999,999. Their LCM is 999,999,000,000. A pair of input numbers whose LCM has the most prime factors is
+    524,288 (2<sup>19</sup>) and 531,441 (3<sup>12</sup>). Their LCM has a PF of
+    ${createPfMathElementMl([2, 19], [3, 12])}, has 29 prime factors, and is 278,628,139,008. A pair of input
+    numbers whose LCM might have the most <em>unique</em> prime factors is 510,510, the product of the first 7
+    prime numbers; and 392,863, the product of the next 4 prime numbers. Their LCM is the product of the first
+    11 prime numbers, or 200,560,490,130. Its PF is
+    ${createPfMathElementMl([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31], '.')}`;
 
 const gcdAndLcmOtherInfoDiv =
     createDiv(createH3('Other Info'), createPWithInnerHtml(gcdAndLcmOtherInfo));
@@ -1707,9 +1713,9 @@ const pythagTriplesInfoHtml =
     another triple. ${createPythagTripleMl(6, 8, 10)} 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
     ${createPythagTripleMl(55, 300, 305)}
     
-    The algorithm I came up with for calculating triples first tries to find triples where the short leg length
-    equals the input number and then tries to find triples where the short leg equals the input number + 1, and
-    so on until 10 are found.`;
+    The algorithm I came up with for calculating triples first tries to find triples where the short leg length,
+    the lowest number in the triple, equals the input number and then tries to find triples where the short leg
+    length equals the input number + 1, and so on until 10 are found.`;
 
 const pythagTriplesHeadingStart = 'The first 10 Pythagorean triples where the lowest number in the triple is ≥';
 const pythagTriplesActionSentenceEnding = 't' + pythagTriplesHeadingStart.substring(1) + ' that number';
@@ -1764,10 +1770,9 @@ const twoSquareTheoremInfoHtml =
     the sum of 2 squares in 1 way. This was named after 1600s French mathematician Pierre de Fermat. In the
     context of this theorem, <i>square</i> is a shortening of <i>square number</i> or <i>perfect square</i> and
     is a number that can be formed by taking an integer and multiplying it by itself, or <i>squaring</i> it. The
-    first 4 squares are 0 (0<sup>2</sup>), 1 (1<sup>2</sup> or (-1)<sup>2</sup>),
-    4 (2<sup>2</sup> or (-2)<sup>2</sup>), and 9 (3<sup>2</sup> or (-3)<sup>2</sup>). Because of this theorem, a
-    prime number that's 1 above a multiple of 4 is known as a <i>Pythagorean prime</i>. An example of a
-    Pythagorean prime is 29 and it can be expressed as
+    first 4 squares are 0 (0<sup>2</sup>), 1 (1<sup>2</sup>), 4 (2<sup>2</sup>), and 9 (3<sup>2</sup>). Because
+    of this theorem, a prime number that's 1 above a multiple of 4 is known as a <i>Pythagorean prime</i>. An
+    example of a Pythagorean prime is 29 and it can be expressed as
     <math>
         ${createNumAndSquareMl(2)}
         <mo>+</mo>
@@ -1805,10 +1810,9 @@ new SingleInputSection(
 const phiLetter = '𝚽';
 
 /**
- * Phi is approximately this number.
- * 
- * The server must use BigDecimal division with MathContexts when calculating Fibonacci-like sequences, so one
- * of those MathContexts was also used to calculate this number, as well as 21 / 13 in the info HTML string below.
+ * Phi is approximately this number. The server must use BigDecimal division with MathContexts when calculating
+ * Fibonacci-like sequences, so one of those MathContexts was also used to calculate this number, as well as
+ * 21 / 13 in the info HTML string below.
  */
 const phiNumString = '1.618033988749895';
 
@@ -1886,7 +1890,7 @@ function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratiosData },
      */
     const createRatioEl = ({ num1, num2, ratio, isRounded }) =>
         createMathElement(
-            createMathMlElement('mfrac', createMn(num1), createMn(num2)),
+            createMathMlElement('mfrac', createMn(num2), createMn(num1)),
             createMo(isRounded ? '≈' : '='),
             createMn(ratio)
         );

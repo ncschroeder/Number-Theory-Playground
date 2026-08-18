@@ -6,7 +6,7 @@ import com.numbertheoryplayground.calculationsimpl.*;
 import com.numbertheoryplayground.calculationsimpl.gcdandlcm.GcdAndLcmAnswer;
 
 import static com.numbertheoryplayground.calculationsimpl.Calculations.*;
-import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndPower;
+import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.FactorAndExponent;
 
 @RestController
 @RequestMapping("/calculate/")
@@ -43,8 +43,8 @@ public class CalculationsController {
     static final String PF_ENDPOINT_END = "prime-factorization";
     
     @GetMapping(PF_ENDPOINT_END)
-    public List<FactorAndPower> getPfFactorsAndPowers(@RequestParam int input) {
-        return new PrimeFactorization(input).getFps();
+    public List<FactorAndExponent> getPfFes(@RequestParam int input) {
+        return new PrimeFactorization(input).getFes();
     }
     
     
@@ -78,7 +78,7 @@ public class CalculationsController {
     static final String PYTHAG_TRIPLES_ENDPOINT_END = "pythagorean-triples";
     
     @GetMapping(PYTHAG_TRIPLES_ENDPOINT_END)
-    public List<Calculations.PythagoreanTriple> getPythagTriples(@RequestParam int input) {
+    public List<PythagoreanTriple> getPythagTriples(@RequestParam int input) {
         return Calculations.getPythagTriples(input);
     }
     

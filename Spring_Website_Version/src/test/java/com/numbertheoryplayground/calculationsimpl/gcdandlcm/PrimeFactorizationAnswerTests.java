@@ -43,8 +43,8 @@ class PrimeFactorizationAnswerTests {
 
     /**
      * As mentioned in the comment above, 2 ints are coprime if their GCD is 1, so if a
-     * PrimeFactorizationAnswer object is created with coprime inputs, then the getGcdPf
-     * method of that object should return an empty Optional.
+     * PrimeFactorizationAnswer object is created with coprime inputs, then its GCD PF
+     * should be null.
      */
     @Test
     void pfAnswerForCoprimeInputs() {
@@ -72,7 +72,6 @@ class PrimeFactorizationAnswerTests {
         int expectedLcm
     ) {
         var answer = new PrimeFactorizationAnswer(input1, input2);
-        
         assertAll(
             () -> {
                 assertNotNull(answer.getGcdPf());

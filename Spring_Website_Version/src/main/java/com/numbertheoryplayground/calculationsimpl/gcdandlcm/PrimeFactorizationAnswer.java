@@ -8,7 +8,7 @@ import static com.numbertheoryplayground.calculationsimpl.PrimeFactorization.Fac
 import static com.numbertheoryplayground.calculationsimpl.gcdandlcm.GcdAndLcmAnswer.*;
 
 /**
- * This class uses prime factorizations to find the greatest common divisor (GCD) and
+ * This class uses prime factorizations (PFs) to find the greatest common divisor (GCD) and
  * least common multiple (LCM) of 2 ints.
  */
 public final class PrimeFactorizationAnswer {
@@ -17,7 +17,7 @@ public final class PrimeFactorizationAnswer {
     private final List<FactorAndExponent> input2PfFes;
     
     /**
-     * If the GCD of the inputs is 1, this is null since only integers > 1 have a prime factorization.
+     * If the GCD of the inputs is 1, then this is null since only whole numbers > 1 have a PF.
      */
     private final PrimeFactorization gcdPf;
     
@@ -63,6 +63,7 @@ public final class PrimeFactorizationAnswer {
         }
         
         gcdPf = gcdPfFes.isEmpty() ? null : new PrimeFactorization(gcdPfFes);
+        lcmPfFes.sort(Comparator.comparingInt(FactorAndExponent::factor));
         lcmPf = new PrimeFactorization(lcmPfFes);
     }
     

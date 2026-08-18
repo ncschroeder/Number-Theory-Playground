@@ -37,10 +37,11 @@ public final class DivisibilityPrimeFactorizationAnswer {
     
     
     /**
-     * This method finds PFs of factors of the input PF's corresponding int, excluding 1 and the
-     * corresponding int, by finding subfactorizations in the input PF and that's done by
-     * sorted by corresponding ints.
+     * This method finds PFs of factors of the input PF's corresponding long, excluding 1 and
+     * the corresponding long, by finding subfactorizations in the input PF and that's done by
      * finding combinations of factors and exponents in that PF. The PFs in the list returned
+     * are sorted by corresponding longs. FactorAndExponent objects are reused for PFs and some
+     * are created but no duplicate ones are.
      */
     static List<PrimeFactorization> getFactorPfs(PrimeFactorization pf) {
         /*
@@ -53,9 +54,9 @@ public final class DivisibilityPrimeFactorizationAnswer {
         }
         
         /*
-        The algorithm below will add a PF to factorPfs that's the same as the input PF but
-        then remove it, so the capacity for factorPfs will be set to numFactors - 1 and its
-        size at the end will be numFactors - 2.
+        The last PF that the algorithm below adds to factorPfs is the same as the input PF but
+        that last PF gets removed, so the capacity for factorPfs will be set to numFactors - 1
+        and its size at the end will be numFactors - 2.
          */
         var factorPfs = new ArrayList<PrimeFactorization>(numFactors - 1);
         

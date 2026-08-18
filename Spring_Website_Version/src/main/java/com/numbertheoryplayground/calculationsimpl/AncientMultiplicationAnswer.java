@@ -10,14 +10,12 @@ public final class AncientMultiplicationAnswer {
     private static final int MAX_INPUT = ONE_BILLION;
     
     /**
-     * This record has data that'll be in rows of tables shown on the web page.
-     *
-     * Strings are used for numbers in this record since a number in a
-     * correspondingMultipleString might be too big for a safe JavaScript integer. A number
-     * in a powerOf2String will always be small enough for a safe JavaScript integer but a
-     * string is still used for consistency.
+     * This record has data that'll be in rows of tables shown on the webpage. Strings are
+     * used for the numbers in this record since a corresponding multiple might be too big
+     * for a safe JavaScript integer. A power of 2 will always be small enough for a safe
+     * JavaScript integer but a string is still used for consistency.
      */
-    public record TableRow(String powerOf2String, String correspondingMultipleString) {}
+    public record TableRow(String powerOf2, String correspondingMultiple) {}
     
     /**
      * Contains rows for all the powers of 2 ≤ input1 and the corresponding multiples of input2.
@@ -31,10 +29,10 @@ public final class AncientMultiplicationAnswer {
     private final List<TableRow> table2Rows;
     
     /**
-     * A string of the product of the 2 input longs. Just like with correspondingMultipleString,
+     * A string of the product of the 2 input ints. Just like with correspondingMultiple,
      * a string is used since this product might be too big for a safe JavaScript integer.
      */
-    private final String productString;
+    private final String product;
     
     public AncientMultiplicationAnswer(int input1, int input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
@@ -49,15 +47,21 @@ public final class AncientMultiplicationAnswer {
         table2Rows = new ArrayList<>(input1BinaryString.length());
         var powerOf2 = 1;
         
+        /*
+        The max possible corresponding multiple is input1 × input2. The max input is 1 billion
+        and 1 billion × 1 billion = 1 quintillion, which is smaller than the max value for a
+        long, which is 9 quintillion something. Therefore, longs can be used for calculating
+        corresponding multiples and the product.
+         */
+        
         for (int i = input1BinaryString.length() - 1; i >= 0; i--) {
-            String correspondingMultiple = Long.toString((long) input2 * powerOf2);
+            var correspondingMultiple = Long.toString((long) input2 * powerOf2);
+            var row = new TableRow(Long.toString(powerOf2), correspondingMultiple);
             table1Rows.add(row);
-            
             if (input1BinaryString.charAt(i) == '1') {
                 // powerOf2 is one of the powers of 2 that sum to input1.
                 table2Rows.add(row);
             }
-
             powerOf2 *= 2;
         }
         
@@ -72,7 +76,7 @@ public final class AncientMultiplicationAnswer {
         return table2Rows;
     }
     
-    public String getProductString() {
-        return productString;
+    public String getProduct() {
+        return product;
     }
 }

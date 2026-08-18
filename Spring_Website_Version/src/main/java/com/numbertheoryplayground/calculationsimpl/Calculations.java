@@ -25,6 +25,13 @@ public class Calculations {
     static boolean isPrime(int input) {
         if (input <= 1) return false;
         if (input <= 3) return true;
+        
+        /*
+        We need to check if the input is divisible by any primes ≤ its square root. First, we'll
+        check if it's divisible by 2 and then if it's divisible by an odd number since all primes
+        besides 2 are odd.
+         */
+        
         if (isEven(input)) return false;
         
         var maxPossibleFactorToCheck = (int) Math.sqrt(input);
@@ -43,8 +50,8 @@ public class Calculations {
         final int numPrimesToFind = 30;
         var primes = new ArrayList<Integer>(numPrimesToFind);
         if (input < 2) primes.add(2);
-        
         int possiblePrime = isOdd(input) ? input : input + 1;
+        
         while (true) {
             if (isPrime(possiblePrime)) {
                 primes.add(possiblePrime);
@@ -57,7 +64,7 @@ public class Calculations {
     }
     
     
-    public record SemiprimeData(int semiprime, int primeFactor1, int primeFactor2) {}
+    public record SemiprimeData(int semiprime, int factor1, int factor2) {}
     
     /**
      * If the input is a semiprime, then a SemiprimeData for it gets returned.
@@ -67,9 +74,11 @@ public class Calculations {
         /*
         First, we need to find the first int factor of the input that's > 1 and < the input.
         Just like with the algorithm for determining if an int is prime, we only need to check
-        primes ≤ the square root of the input. If we don't find a factor, then that means that
-        the input is prime and not semiprime.
+        primes ≤ the square root of the input. First, we'll check if 2 is a factor and then if
+        there's an odd number factor since all primes besides 2 are odd. If we don't find a
+        factor, then that means that the input is prime and not semiprime.
          */
+        
         if (isEven(input)) {
             return isPrime(input / 2) ? new SemiprimeData(input, 2, input / 2) : null;
         }
@@ -120,6 +129,7 @@ public class Calculations {
         
         final int numPairsToFind = 20;
         var pairStarts = new ArrayList<Integer>(numPairsToFind);
+        
         /*
         All twin prime pairs besides 3 and 5 consist of 1 number that's 1 below a multiple of 6
         and another number that's 1 above that same multiple of 6. Set possiblePairStart to the
@@ -141,9 +151,10 @@ public class Calculations {
         }
     }
     
+    
     /**
-     * lowest ints of those pairs.
      * Find the pairs of primes that sum to the input and returns a list that contains the
+     * lowest numbers of those pairs.
      */
     public static List<Integer> getGoldbachPrimePairStarts(int input) {
         assertIsInRange(input, 4, 10_000);
@@ -151,16 +162,13 @@ public class Calculations {
             throw InvalidInputNumberException.getInstance();
         }
         
-        /*
-        Check if the input is 4 since 4 is the only even number ≥ 4 that has 2 in a pair of
-        primes that sum to it.
-         */
+        // 4 is the only even number ≥ 4 that has 2 in a pair of primes that sum to it.
         if (input == 4) return List.of(2);
         
         /*
         Check pairs of odd numbers that sum to the input for primality. The iterating only
-        needs to go up to the floor of half of the input. After that point, checks for
-        primality will be done on pairs of numbers that have already been checked for primality.
+        needs to go up to half of the input. After that point, checks for primality will be
+        done on pairs of numbers that have already been checked for primality.
          */
         var pairStarts = new ArrayList<Integer>();
         int maxPossiblePairStart = input / 2;
@@ -174,6 +182,12 @@ public class Calculations {
         return pairStarts;
     }
     
+    
+    /**
+     * For a right triangle, the 2 shortest sides are the legs and the longest side is the
+     * hypotenuse. For this record, a is the short leg length, b is the long leg length,
+     * and c is the hypotenuse length. a^2 + b^2 = c^2.
+     */
     public record PythagoreanTriple(int a, int b, int c) {
         /*
         I want the JSON property to be "isPrimitive" but the Jackson JSON mapper
@@ -207,22 +221,22 @@ public class Calculations {
      * then an object for the triple 3, 4, and 5 will be the first one. If the input is 4, then
      * an object for the triple 5, 12, and 13 will be the first one. The algorithm I came up with
      * first tries to find triples where the short leg length equals the input and then tries to
-     * find triples where the short leg equals the input + 1, and so on until 10 are found.
+     * find triples where the short leg length equals the input + 1, and so on until 10 are found.
      */
     public static List<PythagoreanTriple> getPythagTriples(int input) {
         assertIsInRange(input, 0, 100);
         
         final int numTriplesToFind = 10;
         var triples = new ArrayList<PythagoreanTriple>(numTriplesToFind);
-        // a and b and for the short and long leg lengths, respectively.
+        // a and b are for the short and long leg lengths, respectively.
         int a = input;
         int b = a + 1;
         
         while (true) {
             var cDouble = Math.hypot(a, b);
             /*
-            b + 1 is the min possible integer value for c, so if c is less than that then
-            the max value for b for the current value of a has been exceeded.
+            b + 1 is the min possible int value for c, so if c is less than that,
+            the the max value for b for the current value of a has been exceeded.
              */
             if (cDouble < b + 1) {
                 b = ++a + 1;

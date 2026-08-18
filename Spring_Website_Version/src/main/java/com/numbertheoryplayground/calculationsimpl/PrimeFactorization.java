@@ -5,15 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static com.numbertheoryplayground.InputValidation.*;
-import static com.numbertheoryplayground.calculationsimpl.Calculations.isDivisible;
+import static com.numbertheoryplayground.calculationsimpl.Calculations.*;
 
 /**
- * The initials PF are used to refer to instances of this class or to prime factorizations in general.
- *
- * Sometimes, instances of this class get marshaled to JSON as part of a response for an HTTP
- * request and sometimes, just the factors and powers list of an instance gets marshaled.
+ * The initials PF are used to refer to instances of this class and to prime factorizations
+ * in general. Sometimes, instances of this class get marshaled to JSON as part of a response
+ * for an HTTP request and sometimes, just the fes list of an instance gets marshaled.
  */
-public final class PrimeFactorization {
+public final class PrimeFactorization implements Iterable<PrimeFactorization.FactorAndExponent> {
     public static final int MIN_INPUT = 2;
     public static final int MAX_INPUT = ONE_MILLION;
     
@@ -23,14 +22,26 @@ public final class PrimeFactorization {
     public record FactorAndExponent(int factor, int exponent) {}
     
     /**
-     * The long that this prime factorization is for.
+     * The long that this PF is for.
      */
     private final long correspondingLong;
     
+    /*
+    Why use a long? Well, this class has 2 constructors, 1 of which has a list for a param.
+    1 place where that one is used is in the constructor for the
+    gcdandlcm.PrimeFactorizationAnswer class. That constructor creates a list of the prime
+    factors and powers of the LCM of 2 input ints, and then creates a PrimeFactorization using
+    that list. That PrimeFactorization constructor will then set the correspondingLong field
+    to the product of all factors raised to their powers. The LCM of 2 ints is at most the
+    product of them. The GCD and LCM section has a max input of 1 million. The highest possible
+    LCM is 1 million × (1 million − 1), which is almost 1 trillion. The max value for an int is
+    2 billion something.
+     */
+    
     /**
-     * An immutable list that's sorted by factors, which is appropriate when marshaling this
-     * list to JSON and then sending that to the web page and then displaying the contents
-     * of this list.
+     * An immutable list of the factors and exponents in this PF. This is sorted by factors,
+     * which is appropriate for marshaling this to JSON, sending that to the webpage, and
+     * displaying the contents of this list.
      */
     private final List<FactorAndExponent> fes;
     
@@ -41,18 +52,21 @@ public final class PrimeFactorization {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
         correspondingLong = input;
-        var maxIntToCheck = (int) Math.sqrt(input);
         int remaining = input;
-
-        var tempFes = new ArrayList<FactorAndExponent>();
         /*
-        Find all the prime factors and their powers and put these in tempFps. Divide remaining
-        by each factor that's found. When remaining becomes 1, the entire prime factorization
-        has been found. First, 2 will be checked and then odd numbers will be checked since all
-        prime numbers besides 2 are odd.
+        Use a mutable ArrayList and create an immutable copy at the end.
+        The max amount of unique prime factors is 7.
+         */
+        var tempFes = new ArrayList<FactorAndExponent>(7);
+        
+        /*
+        Find all the prime factors and their powers and put these in tempFes. Divide remaining
+        by each factor that's found. If remaining becomes 1, then the entire PF has been found.
+        First, we'll check if 2 is a factor then check odd numbers since all prime numbers
+        besides 2 are odd. We only need to check odd numbers up to the square root of the input.
          */
         
-        if (isDivisible(remaining, 2)) {
+        if (isEven(remaining)) {
             var exponent = 0;
             do {
                 exponent++;
@@ -62,8 +76,9 @@ public final class PrimeFactorization {
         }
         
         if (remaining > 1) {
-            for (var possiblePrimeFactor = 3; possiblePrimeFactor <= maxIntToCheck; possiblePrimeFactor += 2) {
-                if (isDivisible(remaining, possiblePrimeFactor)) {
+            var maxPossibleFactorToCheck = (int) Math.sqrt(input);
+            for (var possibleFactor = 3; possibleFactor <= maxPossibleFactorToCheck; possibleFactor += 2) {
+                if (isDivisible(remaining, possibleFactor)) {
                     var exponent = 0;
                     do {
                         exponent++;
@@ -83,16 +98,13 @@ public final class PrimeFactorization {
     }
     
     /**
-     * Constructs a PrimeFactorization for the prime factorization whose factors and powers are
-     * in the list provided.
+     * Constructs a PrimeFactorization for the prime factorization whose factors and
+     * exponents are in the list provided, which should be sorted by factors.
      */
-        this.fps =
-            fps
-            .stream()
-            .sorted(Comparator.comparingInt(FactorAndPower::factor))
-            .toList();
     public PrimeFactorization(List<FactorAndExponent> fes) {
+        this.fes = List.copyOf(fes);
         
+        // Use a temp variable to allow correspondingLong to be final.
         var tempCorrespondingLong = 1L;
         for (FactorAndExponent fp : fes) {
             tempCorrespondingLong *= (long) Math.pow(fp.factor, fp.exponent);
@@ -116,37 +128,29 @@ public final class PrimeFactorization {
     }
     
     /**
-     * In the places that marshaled PFs will be used on the front end, if the corresponding
-     * number is NOT prime, then that number and the fps will be displayed, since they'll look
-     * different from each other. If the corresponding number is prime, then only that number
-     * will be displayed since the PF just contains that number as its only factor and the power
-     * of it is 1. For example, for a PF with a corresponding number of 2, only 2 would be
-     * displayed. For a PF with a corresponding number of 6, 6 and its prime factors, 2 and 3,
-     * would be displayed. If a marshaled PF has an fps property of null, then that means that
-     * only the corresponding number needs to be displayed.
+     * If this PF is for a prime number, then the corresponding long and the representation of
+     * this PF would look the same, so the webpage doesn't need to display both.
      */
     @JsonProperty("fes")
     public List<FactorAndExponent> getFesOrNull() {
         return isForAPrimeNumber() ? null : fes;
     }
     
-    /**
-     * If the factor is in this PF, then an Optional with that factor's power will be returned.
-     * Otherwise, an empty Optional will be returned.
-     */
-    public OptionalInt findPowerOf(int factor) {
-        return
-            fps
-            .stream()
-            .filter(fp -> fp.factor == factor)
-            .mapToInt(FactorAndPower::power)
-            .findFirst();
+    @Override
+    public Iterator<FactorAndExponent> iterator() {
+        return fes.iterator();
     }
     
-    public boolean containsFactor(int i) {
+    public Optional<Integer> getExponentOf(int possibleFactor) {
         return
-            fps
+            fes
             .stream()
-            .anyMatch(fp -> fp.factor == i);
+            .filter(fe -> fe.factor == possibleFactor)
+            .findFirst()
+            .map(FactorAndExponent::exponent);
+    }
+    
+    public boolean containsFactor(int possibleFactor) {
+        return fes.stream().anyMatch(fe -> fe.factor == possibleFactor);
     }
 }

@@ -206,7 +206,7 @@ table, th, td {
     margin-bottom: 0.4rem;
 }
 
-/* For GCD and LCM PFs info, Pythagorean triples, and Fibonacci-like sequence ratios info. */
+/* For GCD and LCM PFs info, Pythagorean triples, and Fibonacci-like sequence division results. */
 .answer-normal-ol {
     margin-top: 0.4rem;
     width: max-content;
@@ -256,14 +256,14 @@ and Fibonacci-like sequence numbers.
     text-align: center;
 }
 
-#fibo-like-sequence-ratios-div {
+#fibo-like-sequence-division-div {
     margin-top: 1.2rem;
 }
 
-#fibo-like-sequence-ratios-div li {
+#fibo-like-sequence-division-div li {
     margin-top: 0.7rem;
     
-    /* The ratio is the last part of the text in each li. Align the ratios. */
+    /* The quotient is the last part of the text in each li. Align the quotients. */
     text-align: right;
 }
 

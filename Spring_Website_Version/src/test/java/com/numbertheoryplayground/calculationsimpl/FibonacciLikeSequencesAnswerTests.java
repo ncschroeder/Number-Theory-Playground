@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.numbertheoryplayground.calculationsimpl.FibonacciLikeSequencesAnswer.RatioData;
+import static com.numbertheoryplayground.calculationsimpl.FibonacciLikeSequencesAnswer.Division;
 
 class FibonacciLikeSequencesAnswerTests {
     @ParameterizedTest
@@ -45,20 +45,20 @@ class FibonacciLikeSequencesAnswerTests {
     
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        INPUT_1,  INPUT_2,  EXPECTED_RATIO_STRING,  EXPECTED_IS_ROUNDED
-           3,        4,       1.333333333333333,           true
-           4,        5,             1.25,                  false
+        DIVIDEND,  DIVISOR,  EXPECTED_QUOTIENT_STRING,  EXPECTED_QUOTIENT_IS_ROUNDED
+           4,         3,        1.333333333333333,                  true
+           5,         4,        1.25,                               false
         """)
-    void ratioData(
-        long input1,
-        long input2,
-        String expectedRatioString,
-        boolean expectedIsRounded
+    void division(
+        long dividend,
+        long divisor,
+        String expectedQuotientString,
+        boolean expectedQuotientIsRounded
     ) {
-        var data = new RatioData(input1, input2);
+        var d = new Division(dividend, divisor);
         assertAll(
-            () -> assertEquals(expectedRatioString, data.getRatioString()),
-            () -> assertEquals(expectedIsRounded, data.isRounded())
+            () -> assertEquals(expectedQuotientString, d.getQuotientString()),
+            () -> assertEquals(expectedQuotientIsRounded, d.getQuotientIsRounded())
         );
     }
 }

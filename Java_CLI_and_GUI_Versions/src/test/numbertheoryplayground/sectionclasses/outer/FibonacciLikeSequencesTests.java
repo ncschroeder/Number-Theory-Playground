@@ -47,11 +47,11 @@ class FibonacciLikeSequencesTests {
     
     @ParameterizedTest
     @CsvSource(useHeadersInDisplayName = true, textBlock = """
-        INPUT_1,  INPUT_2,  EXPECTED_EXPRESSION
-           3,        4,     4 / 3 ≈ 1.333333333333333
-           4,        5,     5 / 4 = 1.25
+        DIVIDEND,  DIVISOR,  EXPECTED_EXPRESSION
+           4,         3,     4 / 3 ≈ 1.333333333333333
+           5,         4,     5 / 4 = 1.25
         """)
-    void getRatioExpression(BigInteger input1, BigInteger input2, String expectedExpression) {
-        assertEquals(expectedExpression, FibonacciLikeSequences.getRatioExpression(input1, input2));
+    void getDivisionExpression(BigInteger dividend, BigInteger divisor, String expectedExpression) {
+        assertEquals(expectedExpression, FibonacciLikeSequences.getDivisionExpression(dividend, divisor));
     }
 }

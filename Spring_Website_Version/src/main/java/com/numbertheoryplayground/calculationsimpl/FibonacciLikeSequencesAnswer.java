@@ -20,10 +20,10 @@ public final class FibonacciLikeSequencesAnswer {
     private final List<Long> fiboLikeSequence;
     
     /**
-     * Contains RatioDatas for the 4th and 5th, 9th and 10th, 14th and 15th, and
-     * 19th and 20th numbers in the Fibonacci-like sequence that gets created.
+     * Contains Divisions for the 5th number in fiboLikeSequence divided by the 4th,
+     * the 10th by the 9th, the 15th by the 14th, and the 20th by the 19th.
      */
-    private final List<RatioData> ratiosData;
+    private final List<Division> divisions;
     
     public FibonacciLikeSequencesAnswer(int input1, int input2) {
         assertIsInRange(input1, MIN_INPUT, MAX_INPUT);
@@ -43,9 +43,9 @@ public final class FibonacciLikeSequencesAnswer {
             long2 = nextLong;
         }
         
-        ratiosData =
-            IntStream.of(3, 8, 13, 18)
-            .mapToObj(i -> new RatioData(fiboLikeSequence.get(i), fiboLikeSequence.get(i + 1)))
+        divisions =
+            IntStream.of(4, 9, 14, 19)
+            .mapToObj(i -> new Division(fiboLikeSequence.get(i), fiboLikeSequence.get(i - 1)))
             .toList();
     }
     
@@ -53,73 +53,65 @@ public final class FibonacciLikeSequencesAnswer {
         return fiboLikeSequence;
     }
     
-    public List<RatioData> getRatiosData() {
-        return ratiosData;
+    public List<Division> getDivisions() {
+        return divisions;
     }
     
     
     /**
-     * Contains data for the ratio of long2 to long1, which are 2 consecutive numbers in a
-     * Fibonacci-like sequence.
+     * Contains data for the division of 2 longs.
      */
-    public static final class RatioData {
+    public static final class Division {
         private static final MathContext MATH_CONTEXT_WITH_ROUNDING = MathContext.DECIMAL64;
         
         private static final MathContext MATH_CONTEXT_WITHOUT_ROUNDING =
             new MathContext(MATH_CONTEXT_WITH_ROUNDING.getPrecision(), RoundingMode.UNNECESSARY);
         
-        private final long long1;
+        private final long dividend;
         
-        private final long long2;
+        private final long divisor;
         
         /**
-         * A string is used since a decimal64 format is used for the ratio and
-         * JavaScript numbers have a binary64 format.
+         * A string is used since the quotient can have up to 16 significant digits
+         * and JavaScript numbers can have a max of 15 to 17 significant digits.
          */
-        private final String ratioString;
+        private final String quotientString;
         
-        private boolean isRounded;
+        private boolean quotientIsRounded;
         
-        RatioData(long long1, long long2) {
-            this.long1 = long1;
-            this.long2 = long2;
-            var bigDecimal1 = new BigDecimal(long1);
-            var bigDecimal2 = new BigDecimal(long2);
-            BigDecimal ratio;
+        Division(long dividend, long divisor) {
+            this.dividend = dividend;
+            this.divisor = divisor;
+            var dividendBd = new BigDecimal(dividend);
+            var divisorBd = new BigDecimal(divisor);
+            BigDecimal quotient;
             
             try {
-                ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITHOUT_ROUNDING);
-                isRounded = false;
+                quotient = dividendBd.divide(divisorBd, MATH_CONTEXT_WITHOUT_ROUNDING);
+                quotientIsRounded = false;
             } catch (ArithmeticException ex) {
-                ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITH_ROUNDING);
-                isRounded = true;
+                quotient = dividendBd.divide(divisorBd, MATH_CONTEXT_WITH_ROUNDING);
+                quotientIsRounded = true;
             }
             
-            ratioString = ratio.toPlainString();
+            quotientString = quotient.toPlainString();
         }
         
-        @JsonProperty("num1")
-        public long getLong1() {
-            return long1;
+        public long getDividend() {
+            return dividend;
         }
         
-        @JsonProperty("num2")
-        public long getLong2() {
-            return long2;
+        public long getDivisor() {
+            return divisor;
         }
         
-        @JsonProperty("ratio")
-        public String getRatioString() {
-            return ratioString;
+        @JsonProperty("quotient")
+        public String getQuotientString() {
+            return quotientString;
         }
         
-        /*
-        I want the JSON property to be "isRounded" but the Jackson JSON mapper
-        removes "is" by default.
-         */
-        @JsonProperty("isRounded")
-        public boolean isRounded() {
-            return isRounded;
+        public boolean getQuotientIsRounded() {
+            return quotientIsRounded;
         }
     }
 }

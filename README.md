@@ -723,11 +723,7 @@ A Fibonacci-like sequence starts with two seed values; each subsequent term is t
 #### Calculations
 
 1. Find the first 20 numbers of the Fibonacci-like sequence that starts with 2 input numbers.
-2. Find the ratios between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>,
-   15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in the sequence. These
-   ratios get closer and closer to 𝚽 and are floating-point numbers most of the time, so the calculations for
-   them are some of the few calculations done by the Number Theory Playground that involve numbers other than
-   natural numbers.
+2. Divide the 5<sup>th</sup> number in that sequence by the 4<sup>th</sup>, the 10<sup>th</sup> by the 9<sup>th</sup>, the 15<sup>th</sup> by the 14<sup>th</sup>, and the 20<sup>th</sup> by the 19<sup>th</sup>. The results usually can't be expressed as integers, so these calculations are the only ones done by the Number Theory Playground that involve numbers other than integers.
 
 #### Input Constraints
 
@@ -879,21 +875,21 @@ Using streams takes more work because of how they're implemented. Without even r
 
 I used the [`System.nanoTime` method](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/System.html#nanoTime()) to measure how long it takes to run `isPrime` with 100,003 as the arg and a loop is used and it usually took about 1.8 milliseconds. When a stream was used, it always took over 5 milliseconds. `isPrime` gets called a lot by lots of methods. For example, `getPrimes` uses `isPrime` to find the first 30 prime numbers ≥ an input number. I consider the time difference to be non-negligible.
 
-There are plenty of other situations where I used streams and thought of the time difference as negligible. For example, for the [`FibonacciLikeSequencesAnswer` class](https://github.com/ncschroeder/Number-Theory-Playground/blob/master/Spring_Website_Version/src/main/java/com/numbertheoryplayground/calculationsimpl/FibonacciLikeSequencesAnswer.java), `ratiosData` is a `List<RatioData>` and the constructor initializes it like:
+There are plenty of other situations where I used streams and thought of the time difference as negligible. For example, for the [`FibonacciLikeSequencesAnswer` class](https://github.com/ncschroeder/Number-Theory-Playground/blob/master/Spring_Website_Version/src/main/java/com/numbertheoryplayground/calculationsimpl/FibonacciLikeSequencesAnswer.java), `divisions` is a `List<Division>` and the constructor initializes it like:
 
 ```java
-ratiosData =
-    IntStream.of(3, 8, 13, 18)
-    .mapToObj(i -> new RatioData(fiboLikeSequence.get(i), fiboLikeSequence.get(i + 1)))
+divisions =
+    IntStream.of(4, 9, 14, 19)
+    .mapToObj(i -> new Division(fiboLikeSequence.get(i), fiboLikeSequence.get(i - 1)))
     .toList();
 ```
 
 I could've done this instead:
 
 ```java
-ratiosData = new ArrayList<>(4);
-for (var i : new int[] { 3, 8, 13, 18 }) {
-    ratiosData.add(new RatioData(fiboLikeSequence.get(i), fiboLikeSequence.get(i + 1)));
+divisions = new ArrayList<>(4);
+for (var i : new int[] { 4, 9, 14, 19 }) {
+    divisions.add(new Division(fiboLikeSequence.get(i), fiboLikeSequence.get(i - 1)));
 }
 ```
 
@@ -1222,13 +1218,11 @@ Type:
 ```
 {
     fiboLikeSequence: number[],
-    ratiosData: { num1: number, num2: number, ratio: string, isRounded: boolean }[]
+    divisions: { dividend: number, divisor: number, quotient: string, quotientIsRounded: boolean }[]
 }
 ```
 
-`fiboLikeSequence` contains the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. `ratiosData` contains objects with data about the ratios of the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>, 15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in the sequence.
-
-`ratio` is a string since a decimal64 format is used for this and JavaScript numbers have a binary64 format.
+`fiboLikeSequence` contains the first 20 numbers in the Fibonacci-like sequence that starts with `input1` and `input2`. `divisions` contains objects with data about the division of the 5<sup>th</sup> number in that sequence by the 4<sup>th</sup>, the 10<sup>th</sup> by the 9<sup>th</sup>, the 15<sup>th</sup> by the 14<sup>th</sup>, and the 20<sup>th</sup> by the 19<sup>th</sup>. `quotient` is a string since it can have up to 16 significant digits and JavaScript numbers can have a max of 15 to 17 significant digits.
 
 </details>
 

@@ -529,8 +529,8 @@ public class NTPTests {
         # non-terminating (314 = 2 × 157)
         623,       314,         623 / 314 ≈ 1.984076433121019
         """)
-    void ratioExpression(int numerator, int denominator, String expected) {
-        String actual = NTP.ratioExpression(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
+    void divisionExpression(int numerator, int denominator, String expected) {
+        String actual = NTP.divisionExpression(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
         assertEquals(expected, actual);
     }
     

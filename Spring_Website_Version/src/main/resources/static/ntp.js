@@ -1836,9 +1836,9 @@ const fiboLikeSequencesInfoHtml =
         <mn>${phiNumString}</mn>
         <mtext>.</mtext>
     </math>
-    As we advance further and further into a Fibonacci-like sequence, the ratio between a number and the number
-    before it gets closer and closer to ${phiLetter}. For example, recall that the first 8 numbers of the
-    Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21.
+    As we advance further and further into a Fibonacci-like sequence, the result of dividing a number by the
+    number before it gets closer and closer to ${phiLetter}. For example, recall that the first 8 numbers of
+    the Fibonacci sequence are 1, 1, 2, 3, 5, 8, 13, and 21.
     <math>
         <mfrac><mn>2</mn><mn>1</mn></mfrac>
         <mo>=</mo>
@@ -1858,26 +1858,25 @@ const fiboLikeSequencesInfoHtml =
         <mtext>.</mtext>
     </math>
     
-    The ratios that get calculated by this section are floating-point numbers most of the time, so these
-    calculations are some of the few calculations done by the Number Theory Playground that involve numbers other
-    than natural numbers.`;
+    The division results of the calculations for this section usually can't be expressed as integers, so those
+    calculations are the only ones done by the Number Theory Playground that involve numbers other than integers.`;
 
 const fiboLikeSequencesActionSentenceEndingHtml =
-    `the first 20 numbers in the Fibonacci-like sequence that starts with those numbers, as well as the ratios
-    between the 5<sup>th</sup> and 4<sup>th</sup>, 10<sup>th</sup> and 9<sup>th</sup>,
-    15<sup>th</sup> and 14<sup>th</sup>, and 20<sup>th</sup> and 19<sup>th</sup> numbers in that sequence`;
+    `the first 20 numbers in the Fibonacci-like sequence that starts with those numbers, as well as the results
+    of dividing the 5<sup>th</sup> number in that sequence by the 4<sup>th</sup>, the 10<sup>th</sup> by the
+    9<sup>th</sup>, the 15<sup>th</sup> by the 14<sup>th</sup>, and the 20<sup>th</sup> by the 19<sup>th</sup>`
 
-/** @typedef {{ num1: number, num2: number, ratio: string, isRounded: boolean }} RatioData */
+/** @typedef {{ dividend: number, divisor: number, quotient: string, quotientIsRounded: boolean }} Division */
 
 /**
- * @param {{ fiboLikeSequence: number[], ratiosData: RatioData[] }}
+ * @param {{ fiboLikeSequence: number[], divisions: Division[] }}
  * @param {string} input1String
  * @param {string} input2String
  * @returns {HTMLElement[]}
  * An array with a div that shows the Fibonacci-like sequence and another div that shows ratios between some
  * consecutive numbers in the sequence.
  */
-function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratiosData }, input1String, input2String) {
+function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, divisions }, input1String, input2String) {
     const sequenceHeadingText =
         `The first ${fiboLikeSequence.length} numbers in the Fibonacci-like sequence that starts with
         ${input1String} and ${input2String} are:`;
@@ -1885,24 +1884,25 @@ function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, ratiosData },
     const sequenceDiv = createDiv(createNonBoldAnswerH3(sequenceHeadingText), sequenceOl);
     
     /**
-     * @param {RatioData}
+     * @param {Division}
      * @returns {MathMLElement}
      */
-    const createRatioEl = ({ num1, num2, ratio, isRounded }) =>
+    const createDivisionEl = ({ dividend, divisor, quotient, quotientIsRounded }) =>
         createMathElement(
-            createMathMlElement('mfrac', createMn(num2), createMn(num1)),
-            createMo(isRounded ? '≈' : '='),
-            createMn(ratio)
+            createMathMlElement('mfrac', createMn(dividend), createMn(divisor)),
+            createMo(quotientIsRounded ? '≈' : '='),
+            createMathMlElement('mn', quotient)
         );
     
-    const ratiosHeading = createNonBoldAnswerH3('The ratios are:');
-    const ratiosOl = arrToAnswerNormalOl(ratiosData, createRatioEl);
-    const phiEl = createMathElement(createMi(phiLetter), createMo('≈'), createMn(phiNumString));
-    ratiosOl.appendChild(createLi(phiEl));
-    const ratiosDiv = createDiv(ratiosHeading, ratiosOl);
-    ratiosDiv.id = 'fibo-like-sequence-ratios-div';
+    const divisionHeading = createNonBoldAnswerH3('The division results are:');
+    const divisionOl = arrToAnswerNormalOl(divisions, createDivisionEl);
+    const phiEl =
+        createMathElement(createMi(phiLetter), createMo('≈'), createMathMlElement('mn', phiNumString));
+    divisionOl.appendChild(createLi(phiEl));
+    const divisionDiv = createDiv(divisionHeading, divisionOl);
+    divisionDiv.id = 'fibo-like-sequence-division-div';
     
-    return [sequenceDiv, ratiosDiv];
+    return [sequenceDiv, divisionDiv];
 }
 
 new DoubleInputSection(

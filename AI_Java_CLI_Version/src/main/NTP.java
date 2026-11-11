@@ -1147,7 +1147,7 @@ class NTP {
         runDoubleInputSection(
             name,
             "Builds a 20-term sequence whose first two terms are the inputs; each later " +
-            "term is the sum of the previous two. Shows ratios at positions 5/4, 10/9, 15/14, 20/19.",
+            "term is the sum of the previous two. Shows division results at positions 5/4, 10/9, 15/14, 20/19.",
             """
             A Fibonacci-like sequence starts with two seed values; each subsequent \
             term is the sum of the previous two: a, b, a+b, a+2b, 2a+3b, .... The \
@@ -1165,7 +1165,7 @@ class NTP {
 
                 println("\nRatios:");
                 for (int i : new int[] { 4, 9, 14, 19 }) {
-                    println(ratioExpression(sequence.get(i), sequence.get(i - 1)));
+                    println(divisionExpression(sequence.get(i), sequence.get(i - 1)));
                 }
             }
         );
@@ -1186,17 +1186,17 @@ class NTP {
     static final MathContext MATH_CONTEXT_WITHOUT_ROUNDING =
         new MathContext(MATH_CONTEXT_WITH_ROUNDING.getPrecision(), RoundingMode.UNNECESSARY);
 
-    static String ratioExpression(BigInteger numerator, BigInteger denominator) {
+    static String divisionExpression(BigInteger numerator, BigInteger denominator) {
         var num = new BigDecimal(numerator);
         var den = new BigDecimal(denominator);
-        BigDecimal value;
+        BigDecimal quotient;
         char equalityChar;
 
         try {
-            value = num.divide(den, MATH_CONTEXT_WITHOUT_ROUNDING);
+            quotient = num.divide(den, MATH_CONTEXT_WITHOUT_ROUNDING);
             equalityChar = '=';
         } catch (ArithmeticException e) {
-            value = num.divide(den, MATH_CONTEXT_WITH_ROUNDING);
+            quotient = num.divide(den, MATH_CONTEXT_WITH_ROUNDING);
             equalityChar = '≈';
         }
         
@@ -1205,7 +1205,7 @@ class NTP {
             formatWithCommas(numerator),
             formatWithCommas(denominator),
             equalityChar,
-            value.toPlainString()
+            quotient.toPlainString()
         );
     }
 

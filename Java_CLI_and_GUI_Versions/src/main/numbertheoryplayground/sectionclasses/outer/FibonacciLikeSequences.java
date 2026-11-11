@@ -54,23 +54,23 @@ the first 8 numbers of it are 2, 1, 3, 4, 7, 11, 18, and 29. This sequence was n
 1800s French mathematician François Édouard Anatole Lucas.
 
 The Golden Ratio is an irrational number symbolized by the Greek letter Phi.
-Phi = (1 + the square root of 5) / 2 ≈ %s. As we advance further and further into a
-Fibonacci-like sequence, the ratio between a number and the number before it gets closer and
-closer to Phi. For example, recall that the first 8 numbers of the Fibonacci sequence are
+Phi = (1 + the square root of 5) / 2 ≈ %s. As we advance further and further into a Fibonacci-like
+sequence, the result of dividing a number by the number before it gets closer and closer to Phi.
+For example, recall that the first 8 numbers of the Fibonacci sequence are
 1, 1, 2, 3, 5, 8, 13, and 21. 2 / 1 = 2, 8 / 5 = 1.6, and 21 / 13 ≈ %s.
 
-The ratios that get calculated by this section are floating-point numbers most of the time, so
-these calculations are some of the few calculations done by the Number Theory Playground that
-involve numbers other than natural numbers."""
+The division results of the calculations for this section usually can't be expressed as integers,
+so those calculations are the only ones done by the Number Theory Playground that involve numbers
+other than integers."""
         .formatted(
             PHI_STRING,
             BigDecimal.valueOf(21).divide(BigDecimal.valueOf(13), MATH_CONTEXT_WITH_ROUNDING) /* ~1.615 */
         );
     
     /*
-    The calculations for this section are: find the first 20 numbers of the Fibonacci-like
-    sequence that starts with 2 input numbers, as well as the ratios between the 5th and 4th,
-    10th and 9th, 15th and 14th, and 20th and 19th numbers.
+    The calculations for this section are: find the first 20 numbers of the Fibonacci-like sequence
+    that starts with 2 input numbers, as well as the results of dividing the 5th number in that
+    sequence by the 4th, the 10th by the 9th, the 15th by the 14th, and the 20th by the 19th.
      */
     
     private static final long MIN_INPUT = 1;
@@ -83,11 +83,12 @@ involve numbers other than natural numbers."""
         private final Stream<String> stringSequence;
 
         /**
-         * The first 4 elements are expressions about the ratios between the 5th and 4th,
-         * 10th and 9th, 15th and 14th, and 20th and 19th numbers in bigIntSequence.
-         * The 5th element is an expression about what Phi approximately is.
+         * The first 4 elements in this stream are expressions of the division of consecutive numbers
+         * in the Fibonacci-like sequence that gets created, namely the 5th number divided by the 4th,
+         * the 10th by the 9th, the 15th by the 14th, and the 20th by the 19th. The 5th element in
+         * this stream is an expression about what Phi approximately is.
          */
-        private final Stream<String> ratioAndPhiExpressions;
+        private final Stream<String> divisionAndPhiExpressions;
 
         private Answer(long input1Long, long input2Long, String input1String, String input2String) {
             List<BigInteger> bigIntSequence = getBigIntFiboLikeSequence(input1Long, input2Long);
@@ -99,12 +100,12 @@ involve numbers other than natural numbers."""
                     SEQUENCE_LENGTH, input1String, input2String
                 );
             
-            Stream<String> ratioExpressions =
-                IntStream.of(3, 8, 13, 18)
-                .mapToObj(i -> getRatioExpression(bigIntSequence.get(i), bigIntSequence.get(i + 1)));
+            Stream<String> divisionExpressions =
+                IntStream.of(4, 9, 14, 19)
+                .mapToObj(i -> getDivisionExpression(bigIntSequence.get(i), bigIntSequence.get(i - 1)));
             
-            ratioAndPhiExpressions =
-                Stream.concat(ratioExpressions, Stream.of("Phi ≈ " + PHI_STRING));
+            divisionAndPhiExpressions =
+                Stream.concat(divisionExpressions, Stream.of("Phi ≈ " + PHI_STRING));
         }
     }
     
@@ -133,30 +134,33 @@ involve numbers other than natural numbers."""
         return sequence;
     }
     
-    static String getRatioExpression(BigInteger bigInt1, BigInteger bigInt2) {
-        var bigDecimal1 = new BigDecimal(bigInt1);
-        var bigDecimal2 = new BigDecimal(bigInt2);
-        BigDecimal ratio;
+    /**
+     * Returns an expression of the division of 2 BigIntegers.
+     */
+    static String getDivisionExpression(BigInteger dividend, BigInteger divisor) {
+        var dividendBd = new BigDecimal(dividend);
+        var divisorBd = new BigDecimal(divisor);
+        BigDecimal quotient;
         char equalityChar;
         
         try {
-            ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITHOUT_ROUNDING);
+            quotient = dividendBd.divide(divisorBd, MATH_CONTEXT_WITHOUT_ROUNDING);
             equalityChar = '=';
         } catch (ArithmeticException ex) {
-            ratio = bigDecimal2.divide(bigDecimal1, MATH_CONTEXT_WITH_ROUNDING);
+            quotient = dividendBd.divide(divisorBd, MATH_CONTEXT_WITH_ROUNDING);
             equalityChar = '≈';
         }
         
         return String.format(
             "%s / %s %c %s",
-            createStringWithCommas(bigInt2),
-            createStringWithCommas(bigInt1),
+            createStringWithCommas(dividend),
+            createStringWithCommas(divisor),
             equalityChar,
-            ratio
+            quotient
         );
     }
     
-    private static final String RATIOS_HEADING = "The ratios are:";
+    private static final String DIVISION_RESULTS_HEADING = "The division results are:";
     
     
     public static final class Section extends DoubleInputSection {
@@ -168,8 +172,8 @@ involve numbers other than natural numbers."""
                 MAX_INPUT,
                 String.format(
                     "the first %d numbers in the Fibonacci-like sequence that starts with those numbers, " +
-                        "as well as the ratios between the 5th and 4th, 10th and 9th, 15th and 14th, and " +
-                        "20th and 19th numbers in that sequence",
+                        "as well as the results of dividing the 5th number in that sequence by the 4th, " +
+                        "the 10th by the 9th, the 15th by the 14th, and the 20th by the 19th.",
                     SEQUENCE_LENGTH
                 ),
                 "Fibonacci-like sequences"
@@ -187,9 +191,9 @@ involve numbers other than natural numbers."""
             String sequenceHeading = NtpCli.putNewLineChars(answer.sequenceHeading);
             var sequenceString =
                 NtpCli.buildStringWithStreamElementsOnShortLines(sequenceHeading, answer.stringSequence);
-            var ratioAndPhiExpressionsString =
-                NtpCli.buildStringWithStreamElementsOnSeparateLines(RATIOS_HEADING, answer.ratioAndPhiExpressions);
-            return sequenceString + "\n\n" + ratioAndPhiExpressionsString;
+            var divisionAndPhiExpressionsString =
+                NtpCli.buildStringWithStreamElementsOnSeparateLines(DIVISION_RESULTS_HEADING, answer.divisionAndPhiExpressions);
+            return sequenceString + "\n\n" + divisionAndPhiExpressionsString;
         }
         
         @Override
@@ -204,8 +208,8 @@ involve numbers other than natural numbers."""
                 createListHeadingLabel(answer.sequenceHeading),
                 NtpTextArea.createNarrowOneWithStreamElements(answer.stringSequence),
                 createGapBetweenAnswerSections(),
-                createListHeadingLabel(RATIOS_HEADING),
-                NtpTextArea.createWithStreamElementsOnSeparateLines(answer.ratioAndPhiExpressions)
+                createListHeadingLabel(DIVISION_RESULTS_HEADING),
+                NtpTextArea.createWithStreamElementsOnSeparateLines(answer.divisionAndPhiExpressions)
             );
         }
     }

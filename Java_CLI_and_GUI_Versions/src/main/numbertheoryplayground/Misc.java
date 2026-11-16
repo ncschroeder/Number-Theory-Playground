@@ -10,10 +10,9 @@ import java.util.stream.Stream;
  */
 public class Misc {
     public static final String NTP_INFO = """
-Number theory is a branch of math and is the study of integers. Let's go over a few types of
-numbers. Natural numbers are 1, 2, 3, and so on. Whole numbers are the natural numbers along
-with 0. Integers are the whole numbers along with negative natural numbers; so ...,
--2, -1, 0, 1, 2, ...
+Number theory is a branch of math and is the study of integers. Let's go over a couple types of
+numbers. Whole numbers are 0, 1, 2, 3, and so on. Integers are whole numbers that can be negative
+as well; so ..., -2, -1, 0, 1, 2, ...
 
 The Number Theory Playground is an application where a user can visit sections that show
 info and do calculations for number theory concepts. These calculations are done based on input
@@ -21,15 +20,8 @@ numbers provided by the user. Some sections require 1 input number and some requ
 of a section is the prime numbers section and it has 17 sentences of info and can find the first
 30 prime numbers that are ≥ an input number.
 
-Almost all of these calculations involve only natural numbers. There are 2 exceptions to this:
-
-1. The divisibility section does calculations that might involve negative integers or 0.
-
-2. The Fibonacci-like sequences section does calculations where the result is a floating-point
-number.
-
-The term "whole number" is often used in this app since I find it to be the more self-explanatory
-than "natural number.\"""";
+The Fibonacci-like sequences section does calculations where the results usually can't be expressed
+as integers. All other calculations involve only integers.""";
     
     // Max input constants
     public static final long ONE_POINT_FIVE_MILLION = 1_500_000;

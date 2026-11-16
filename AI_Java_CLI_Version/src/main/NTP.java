@@ -725,7 +725,7 @@ class NTP {
     
     /**
      * Does an alternating sum of 3-digit groups in n from right to left. Adds the rightmost group,
-     * subtracts the group to the left of that, and so on.
+     * subtracts the group to the left of that, adds the group to the left of that, and so on.
      */
     static SumAndExpression getAlternatingBlockSe(long n) {
         String digits = String.valueOf(n);

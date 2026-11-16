@@ -41,7 +41,9 @@ public final class PrimeFactorization implements Iterable<PrimeFactorization.Fac
     /**
      * An immutable list of the factors and exponents in this PF. This is sorted by factors,
      * which is appropriate for marshaling this to JSON, sending that to the webpage, and
-     * displaying the contents of this list.
+     * displaying the contents of this list. the PF of 25,137 is 3^3 × 7^2 × 19, so if a PF
+     * object was created for that number, then this list would contain 3 FactorAndExponents
+     * and the fields of them would be 3 & 3, 7 & 2, and 19 & 1.
      */
     private final List<FactorAndExponent> fes;
     
@@ -54,8 +56,9 @@ public final class PrimeFactorization implements Iterable<PrimeFactorization.Fac
         correspondingLong = input;
         int remaining = input;
         /*
-        Use a mutable ArrayList and create an immutable copy at the end.
-        The max amount of unique prime factors is 7.
+        Use a mutable ArrayList and create an immutable copy at the end. For a max input of
+        1 million, the max amount of unique prime factors is 7 since the product of the first
+        7 prime numbers is ≤ 1 million and the product of the first 8 prime numbers is > 1 million.
          */
         var tempFes = new ArrayList<FactorAndExponent>(7);
         

@@ -1,10 +1,12 @@
 # Number Theory Playground &nbsp;&nbsp; :heavy_plus_sign: &nbsp; :heavy_minus_sign: &nbsp; :heavy_multiplication_x: &nbsp; :heavy_division_sign:
 
+[numbertheoryplayground.com](https://numbertheoryplayground.com)
+
 *Number theory* is a branch of math and is the study of integers. Let's go over a couple types of numbers. *Whole numbers* are 0, 1, 2, 3, and so on. *Integers* are whole numbers that can be negative as well; so ..., -2, -1, 0, 1, 2, ...
 
 The *Number Theory Playground* (NTP), often referred to as "the app", is an application where a user can visit sections that show info and do calculations for number theory concepts. These calculations are done based on input numbers provided by the user. Some sections require 1 input number and some require 2. An example of a section is the prime numbers section. It has 17 sentences of info and can find the first 30 prime numbers that are ≥ an input number. Plenty of info about the sections can be found in the ["All Sections" section](#all-sections).
 
-The Fibonacci-like sequences section does calculations where the results usually can't be expressed as integers. All other calculations done by the NTP involve only integers.
+The Fibonacci-like sequences section does calculations where the results usually can't be expressed as integers. All other calculations involve only integers.
 
 <br/>
 
@@ -18,45 +20,7 @@ In case it's not obvious, the black triangles or play buttons below are where co
 
 ## Versions
 
-There are 5 versions of the NTP. 4 of them were made entirely by me: Java command line interface (CLI), Java graphical user interface (GUI), Node website, and Spring and Java website. I used AI to make another Java CLI version. More info about that is in the next section. The Node website version hasn't been worked on for years and there aren't many notable things to say about it, so it's mentioned very little throughout this README. Any time I mention the website version, I'm referring to the Spring website version. More info about the CLI, GUI, and Spring website versions is given throughout this README.
-
-### AI CLI Version
-
-I used Claude to make another Java CLI version and unit tests for it. I had it generate most of the code and documentation. I also had it generate an overview of the app and info for the sections. For the sections info, I prompted it to come up with 5 sentences or less. The overview it generated is below and the sections info is in the ["All Sections" section](#all-sections) in the "AI-Generated Info" collapsible sections below the info I came up with for each section. I had it generate 26 JUnit tests, all but 2 of which are parameterized. Most of them are for calculations and 4 are related to how numbers and info are shown in the app.
-
-<details>
-<summary>AI-Generated Overview of the App</summary>
-<br/>
-
-Number theory is the branch of mathematics concerned with the integers and the relationships between them: primes, divisibility, factorization, and the patterns they form. It is one of the oldest parts of mathematics, studied for its elegance for millennia before it became the foundation of modern cryptography, computing, and coding theory.
-
-The Number Theory Playground is an interactive tour of these ideas. Each section takes a number or two and works a classic construction out in full — the primes above a value, a number's prime factorization and divisors, GCD and LCM, Goldbach pairs, Pythagorean triples, and more. At any input prompt you can enter 'i' for background on that topic, 'r' for a random input, or 'm' to return to this menu. Choose an option above to begin exploring.
-
-</details>
-
-<details>
-<summary>A Mistake Made by Claude</summary>
-<br/>
-
-Unsurprisingly, Claude made some mistakes. For example, for the GCD and LCM section, one of the calculations is finding the GCD and LCM of 2 numbers by using the prime factorizations (PFs) of those numbers. A method used as part of that is:
-
-```java
-static BigInteger product(List<FactorAndExponent> fes) {
-    var result = BigInteger.ONE;
-    for (FactorAndExponent fe : fes) {
-        result =
-            result.multiply(
-                BigInteger.valueOf(fe.factor())
-                .pow(fe.exponent())
-            );
-    }
-    return result;
-}
-```
-
-The max input of the GCD and LCM section is 5 quadrillion (5,000,000,000,000,000). I used the same input constraints for the AI version as I did for the CLI and GUI versions that I made myself. It's possible for the LCM of 2 input numbers to exceed the max value of a `long`. I knew that and used a `BigInteger` for this situation in the CLI and GUI versions that I made myself. The method above needs to return a `BigInteger` but Claude originally had it return a `long`. To have Claude generate the code for the GCD and LCM section, I prompted it to create a section where the user can enter 2 input integers and the Euclidean algorithm will be done on them and the PFs of them will be calculated and those PFs will be used to find the GCD and LCM and that the input integers can be ≥ 2 and ≤ 5 quadrillion. Claude wrote some code, including the method above, without realizing that a `BigInteger` needs to be used.
-
-</details>
+There are 5 versions of the NTP. 4 of them were made entirely by me: Java command line interface (CLI), Java graphical user interface (GUI), Node website, and Spring and Java website, which is the one that can be visited at [numbertheoryplayground.com](https://numbertheoryplayground.com). I used AI to make another Java CLI version. More info about that is in the ["AI CLI Version" section](#ai-cli-version). The Node website version hasn't been worked on for years and there aren't many notable things to say about it, so it's mentioned very little throughout this README. Any time I mention the website version, I'm referring to the Spring website version. More info about the CLI, GUI, and Spring website versions is given throughout this README.
 
 <br/>
 
@@ -98,7 +62,7 @@ The user can enter input in the text fields or can change the text of one by cli
 Clicking the "Randomize" button will generate a random input number and put it in the text field. First, a valid random number of digits will be generated and then a valid random number with that number of digits will be generated.
 
 For the "+" and "−" buttons, nothing will happen if any of these are clicked in these situations:
-- The text field has something other than a whole number. Recall that the whole numbers are 0, 1, 2, 3, and so on.
+- The text field has something other than a whole number. Recall that whole numbers are 0, 1, 2, 3, and so on.
 - Website version: the text field has a number > the max value of a JavaScript safe integer (2<sup>53</sup> − 1, or 9,007,199,254,740,991, or 9 quadrillion 7 trillion ...).
 - GUI version: the text field has a number > the max value of a Java `long` (2<sup>63</sup> − 1, or 9,223,372,036,854,775,807, or 9 quintillion 223 quadrillion ...).
 
@@ -121,6 +85,10 @@ More example calculations screenshots can be seen in the ["All Sections" section
 Invalid input:
 
 ![Website invalid input](/Spring_Website_Version/screenshots/app_overview/invalid_input.JPG)
+
+Trying to have a calculation be done without internet:
+
+![Website no internet](/Spring_Website_Version/screenshots/app_overview/no_internet.JPG)
 
 <br/>
 </details>
@@ -182,7 +150,7 @@ Invalid input:
 <br/>
 
 
-## Math Expressions and Unicode Chars
+## Math Expressions and Unicode Characters
 
 [Mathematical Markup Language (MathML)](https://developer.mozilla.org/en-US/docs/Web/MathML) is used for some math expressions in this README and the website. For this README, MathML expressions can be written concisely using LaTeX. More info about that is in this [*GitHub Docs* article on writing math expressions](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions). When this README is rendered, those expressions get converted to MathML elements. This can be seen by inspecting the elements in this README. For the website, one way MathML expressions are created is by setting the [`innerHTML` property](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) of elements to strings that contain MathML. Another way is by calling [`document.createElementNS`](https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS) with the MathML namespace.
 
@@ -190,7 +158,7 @@ An example of a MathML expression is $\sqrt{29} \text{,}$ the square root of 29,
 
 <!-- If a math expression in $s is immediately followed by a period or comma or something else, then that following text must be placed in a text element within the $s to group the following text and the expression element before it. If the following text is placed after the closing $, then it'll be separated from the expression and break onto a new line if this README is at a certain width. -->
 
-There are also some Unicode chars for math symbols such as ≥ and × that were copied and pasted into this README and the source code. × is used for multiplication and is different from the letter x or X. A Unicode char for the Greek letter 𝚽 (Phi) is used for the Fibonacci-like sequences section info.
+There are also some Unicode characters for math symbols such as ≥ and × that were copied and pasted into this README and the source code. × is used for multiplication and is different from the letter x or X. A Unicode character for the Greek letter 𝚽 (Phi) is used for the Fibonacci-like sequences section info.
 
 <br/>
 
@@ -619,9 +587,10 @@ Why are there separate max inputs for the CLI and GUI? See the comment by the st
 <summary>Info</summary>
 <br/>
 
-The Pythagorean theorem says that for a right triangle, the sum of the squares of the lengths of the 2 shortest sides (legs) equals the square of the longest side (hypotenuse) length, or $a^2 + b^2 = c^2 \text{.}$ This was named after the ancient Greek mathematician Pythagoras. A *Pythagorean triple* is a triple of whole numbers that $a \text{,}$ $b \text{,}$ and $c$ can be. For example; 3, 4, and 5 is a Pythagorean triple since $3^2 \text{ (} 9 \text{)}  + 4^2 \text{ (} 16 \text{)} = 5^2 \text{ (} 25 \text{)}$ and 11, 60, and 61 is another one since $11^2 \text{ (} 121 \text{)} + 60^2 \text{ (} 3,600 \text{)} = 61^2 \text{ (} 3,721 \text{).}$
+The Pythagorean theorem says that for a right triangle, the sum of the squares of the lengths of the 2 shortest sides (legs) equals the square of the longest side (hypotenuse) length, or $a^2 + b^2 = c^2 \text{.}$ This was named after the ancient Greek mathematician Pythagoras. A *Pythagorean triple* is a triple of whole numbers that $a \text{,}$ $b \text{,}$ and $c$ can be. For example; 3, 4, and 5 is a Pythagorean triple since $3^2 \text{ (} 9 \text{)} + 4^2 \text{ (} 16 \text{)} = 5^2 \text{ (} 25 \text{)}$ and 11, 60, and 61 is another one since $11^2 \text{ (} 121 \text{)} + 60^2 \text{ (} 3,600 \text{)} = 61^2 \text{ (} 3,721 \text{).}$
 
-Once we know a Pythagorean triple, we can form another one by multiplying $a \text{,}$ $b \text{,}$ and $c$ by the same whole number > 1. Because of this, there are an infinite amount of Pythagorean triples. A Pythagorean triple is ~~said to be~~ *primitive* if the GCD of $a \text{,}$ $b \text{,}$ and $c$ is 1. Therefore, a primitive triple can't be formed by taking another triple and multiplying $a$, $b$, and $c$ by the same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive. 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is another triple. $6^2 \text{ (} 36 \text{)} + 8^2 \text{ (} 64 \text{)} = 10^2 \text{ (} 100 \text{).}$ 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one. $55^2 \text{ (} 3,025 \text{)} + 300^2 \text{ (} 90,000 \text{)} = 305^2 \text{ (} 93,025 \text{).}$
+Once we know a Pythagorean triple, we can form another one by multiplying $a \text{,}$ $b \text{,}$ and $c$ by the same whole number > 1. Because of this, there are an infinite amount of Pythagorean triples. A Pythagorean triple is *primitive* if the GCD of $a \text{,}$ $b \text{,}$ and $c$ is 1. Therefore, a primitive triple can't be formed by taking another triple and multiplying $a \text{,}$ $b \text{,}$ and $c$ by the same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive. 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is another triple. $6^2 \text{ (} 36 \text{)} + 8^2 \text{ (} 64 \text{)} = 10^2 \text{ (} 100 \text{).}$ 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one. $55^2 \text{ (} 3,025 \text{)} + 300^2 \text{ (} 90,000 \text{)} = 305^2 \text{ (} 93,025 \text{).}$
+
 
 <details>
 <summary>AI-Generated Info</summary>
@@ -757,7 +726,7 @@ The ancient Egyptians had an interesting algorithm for multiplication of 2 whole
 
 1. Let variable $a$ represent one of the numbers and variable $b$ represent the other number.
 2. Find all powers of 2 that are ≤ $a \text{.}$ This could be done without modern multiplication by starting with 1, the 1<sup>st</sup> power of 2 or 2<sup>0</sup>, and finding the next power by adding the previous power to itself. This process will look like: $1 + 1 = 2 \text{ (} 2^1 \text{),}$ $2 + 2 = 4 \text{ (} 2^2 \text{),}$ $4 + 4 = 8 \text{ (} 2^3 \text{),}$ and so on until we find a power that's > $a \text{,}$ which we won't use.
-3. Find the products of $b$ and these powers of 2. Like with the powers of 2, this could be done by starting with $b$ and finding the next product by adding the previous product to itself. If we let $b$ be 5, this process will look like: $5 + 5 = 10 \text{ (} 5 \times 2 \text{),}$ $10 + 10 = 20 \text{ (} 5 \times 4\text{),}$ $20 + 20 = 40 \text{ (} 5 \times 8 \text{),}$ and so on.
+3. Find the *products*, or results of multiplication, of $b$ and these powers of 2. Like with the powers of 2, this could be done by starting with $b$ and finding the next product by adding the previous product to itself. If we let $b$ be 5, this process will look like: $5 + 5 = 10 \text{ (} 5 \times 2 \text{),}$ $10 + 10 = 20 \text{ (} 5 \times 4\text{),}$ $20 + 20 = 40 \text{ (} 5 \times 8 \text{),}$ and so on.
 4. Find the powers of 2 that sum to $a \text{.}$
 5. Add up the products of $b$ and these powers.
 
@@ -920,7 +889,7 @@ One reason to have `SingleInputSection` and `DoubleInputSection` classes is that
 
 ###### `infoHtmlStringOrArr` (`string` or `HTMLElement[]`)
 
-The webpage has a collapsible section with info about a number theory concept. For most sections, the info to show is 1 or more paragraphs and we can just use `p` elements to show these paragraphs. For these sections, we create a `SingleInputSection` or `DoubleInputSection` and pass in a string with paragraphs of info that can contain HTML for `infoHtmlStringOrArr`. Each paragraph is separated by a blank line. The `Section` constructor splits this string to get the paragraphs and maps each to a `p` element with its `innerHTML` set to that paragraph. More info about the use of `innerHTML` is in the [`innerHTML` section](#innerhtml) below. The `Section` constructor will then assign this array of `p` elements to an `infoHtmlElements` variable.
+The webpage has a collapsible section with info about a number theory concept. For most sections, the info to show is 1 or more paragraphs and we can just use `p` elements to show these paragraphs. For these sections, we create a `SingleInputSection` or `DoubleInputSection` and pass in a string with paragraphs of info that can contain HTML for `infoHtmlStringOrArr`. Each paragraph is separated by a blank line. The `Section` constructor splits this string to get the paragraphs and maps each to a `p` element with its `innerHTML` set to that paragraph. More info about the use of `innerHTML` is in the `innerHTML` section below. The `Section` constructor will then assign this array of `p` elements to an `infoHtmlElements` variable.
 
 For a few sections, the info to show is more complex. For example, for the divisibility section, this info is an intro paragraph, multiple paragraphs about prime factorizations, and multiple paragraphs about divisiblity rules. We can use `p` elements for the paragraphs, but we also want to use `div`s to divide these paragraphs and use headings. For the divisibility section, we create a `SingleInputSection` and pass in an array of those elements for `infoHtmlStringOrArr`. The `Section` constructor will assign a copy of this array to `infoHtmlElements`.
 
@@ -946,7 +915,7 @@ When the calculate button is clicked, the user's input will be checked and if it
 
 ##### Calculations
 
-Most of the calculations are done on the back end. The only calculations that are done on the front end are for using divisibility rules on an input number. The ["Divisibility" section](#divisibility--heavy_division_sign) has more info about that. When a user has the app do a calculation for the divisibility section, one of the things the front end does is create a `p` element with a paragraph in it with info about the use of the rules on the number. Some sentences in this paragraph contain the input number with commas or [MathML](#math-expressions-and-unicode-chars) elements created using `document.createElementNS`. The webpage script uses an [`Intl.NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) object to create number strings with commas. The server can build this paragraph as a string if it created number strings with commas and used HTML for the MathML elements. Even then, [`innerHTML`](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) or something similar would need to be used by the webpage script. It's better for this paragraph to be built on the front end.
+Most of the calculations are done on the back end. The only calculations that are done on the front end are for using divisibility rules on an input number. The ["Divisibility" section](#divisibility--heavy_division_sign) has more info about that. When a user has the app do a calculation for the divisibility section, one of the things the front end does is create a `p` element with a paragraph in it with info about the use of the rules on the number. Some sentences in this paragraph contain the input number with commas or [MathML](#math-expressions-and-unicode-characters) elements created using `document.createElementNS`. The webpage script uses an [`Intl.NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) object to create number strings with commas. The server can build this paragraph as a string if it created number strings with commas and used HTML for the MathML elements. Even then, [`innerHTML`](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) or something similar would need to be used by the webpage script. It's better for this paragraph to be built on the front end.
 
 The divisibility rule calculations are done on the front end while building this paragraph. These calculations require trivially little code and are trivially cheap. Most of them involve using the `%` operator. There are also calculations for the sum and alternating sum of digits and the alternating sum of 3-digit blocks of the input number. We need to iterate through the digits and blocks in order to create MathML elements for them, so we may as well calculate the sum and alternating sums while doing that.
 
@@ -956,7 +925,7 @@ The divisibility rule calculations are done on the front end while building this
 <summary>Info</summary>
 <br/>
 
-In the webpage script, the [`innerHTML` property](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) of some elements are set. This is done when creating section info elements and setting the text of the directions for the current section. Some of the `innerHTML` values are string literals; some are strings created by taking a string literal variable, calling `toLowerCase` on it, and concatenating it with another string (for the `twinPrimePairsActionSentenceEnding` and `pythagTriplesActionSentenceEnding` variables); and some are strings with interpolated values. For that last option, I'm aware that *can* be unsafe but I'm being safe. The interpolated values are string literal variables, calls to functions that I wrote that return [MathML](#math-expressions-and-unicode-chars) strings, or variables for MathML strings that were returned by calls to those functions. The args for those function calls are hardcoded values, though the args aren't always hardcoded. You see, an example of a MathML string variable that gets interpolated is `nVarMl`. This is done to use the variable $n$ in the info of some sections. `nVarMl` comes from this code:
+In the webpage script, the [`innerHTML` property](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) of some elements are set. This is done when creating section info elements and setting the text of the directions for the current section. Some of the `innerHTML` values are string literals; some are strings created by taking a string literal variable, calling `toLowerCase` on it, and concatenating it with another string (for the `twinPrimePairsActionSentenceEnding` and `pythagTriplesActionSentenceEnding` variables); and some are strings with interpolated values. For that last option, I'm aware that *can* be unsafe but I'm being safe. The interpolated values are string literal variables, calls to functions that I wrote that return [MathML](#math-expressions-and-unicode-characters) strings, or variables for MathML strings that were returned by calls to those functions. The args for those function calls are hardcoded values, though the args aren't always hardcoded. You see, an example of a MathML string variable that gets interpolated is `nVarMl`. This is done to use the variable $n$ in the info of some sections. `nVarMl` comes from this code:
 
 ```js
 const createMiMl = (identifier, endText) =>
@@ -1393,6 +1362,47 @@ static final class Answer {
 ```
 
 `infoSentence` is displayed in the app and the other fields are used in a test in the `TwoSquareTheoremTests` class. If there wasn't any unit testing, then I would be able to just have a static method that does what the `Answer` constructor does and returns an info sentence string.
+
+</details>
+
+<br/>
+
+
+## AI CLI Version
+
+I used Claude to make another Java CLI version and unit tests for it. I had it generate most of the code and documentation. I also had it generate an overview of the app and info for the sections. For the sections info, I prompted it to come up with 5 sentences or less. The overview it generated is below and the sections info is in the ["All Sections" section](#all-sections) in the "AI-Generated Info" collapsible sections below the info I came up with for each section. I had it generate 26 JUnit tests, all but 2 of which are parameterized. Most of them are for calculations and 4 are related to how numbers and info are shown in the app.
+
+<details>
+<summary>AI-Generated Overview of the App</summary>
+<br/>
+
+Number theory is the branch of mathematics concerned with the integers and the relationships between them: primes, divisibility, factorization, and the patterns they form. It is one of the oldest parts of mathematics, studied for its elegance for millennia before it became the foundation of modern cryptography, computing, and coding theory.
+
+The Number Theory Playground is an interactive tour of these ideas. Each section takes a number or two and works a classic construction out in full — the primes above a value, a number's prime factorization and divisors, GCD and LCM, Goldbach pairs, Pythagorean triples, and more. At any input prompt you can enter 'i' for background on that topic, 'r' for a random input, or 'm' to return to this menu. Choose an option above to begin exploring.
+
+</details>
+
+<details>
+<summary>A Mistake Made by Claude</summary>
+<br/>
+
+Unsurprisingly, Claude made some mistakes. For example, for the GCD and LCM section, one of the calculations is finding the GCD and LCM of 2 numbers by using the prime factorizations (PFs) of those numbers. A method used as part of that is:
+
+```java
+static BigInteger product(List<FactorAndExponent> fes) {
+    var result = BigInteger.ONE;
+    for (FactorAndExponent fe : fes) {
+        result =
+            result.multiply(
+                BigInteger.valueOf(fe.factor())
+                .pow(fe.exponent())
+            );
+    }
+    return result;
+}
+```
+
+The max input of the GCD and LCM section is 5 quadrillion (5,000,000,000,000,000). I used the same input constraints for the AI version as I did for the CLI and GUI versions that I made myself. It's possible for the LCM of 2 input numbers to exceed the max value of a `long`. I knew that and used a `BigInteger` for this situation in the CLI and GUI versions that I made myself. The method above needs to return a `BigInteger` but Claude originally had it return a `long`. To have Claude generate the code for the GCD and LCM section, I prompted it to create a section where the user can enter 2 input integers and the Euclidean algorithm will be done on them and the PFs of them will be calculated and those PFs will be used to find the GCD and LCM and that the input integers can be ≥ 2 and ≤ 5 quadrillion. Claude wrote some code, including the method above, without realizing that a `BigInteger` needs to be used.
 
 </details>
 

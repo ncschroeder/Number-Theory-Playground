@@ -22,11 +22,10 @@ The fundamental theorem of arithmetic says that every whole number > 1 is either
 expressed as the product of prime numbers in 1 way if you ignore the order of those prime numbers.
 The prime factorization (PF) of a whole number > 1 is an expression of the prime numbers whose
 product is that number. These prime numbers are factors of that number. For example, the PF of 3
-is just 3, the PF of 25 is 5 × 5 or 5^2, and the PF of 12,250 is 2 × 5^3 × 7^2 if the factors are
-in ascending order. 12,250 can also be expressed as 5^3 × 2 × 7^2 but that's the same expression
-as the previous one if you ignore the order of the factors. The Number Theory Playground displays
-PFs with the factors in ascending order. There are some interesting applications for PFs. See the
-info for the "Divisibility" or "GCD and LCM" sections for some applications.
+is just 3, the PF of 12 is 2^2 × 3, and the PF of 25,137 is 3^3 × 7^2 × 19. 25,137 can also be
+expressed as 7^2 × 3^3 × 19 but that's the same expression if you ignore the order of the factors.
+There are some interesting applications for PFs. See the info for the "Divisibility" or
+"GCD and LCM" sections for some applications.
 
 The input number with the most prime factors is 9,007,199,254,740,992 (2^53), the largest power
 of 2 ≤ 10 quadrillion, the max input. An input number with the most unique prime factors is
@@ -65,9 +64,9 @@ prime factors.""";
     
     /**
      * An immutable list of the factors and exponents in this PF. This is sorted by factors, which
-     * is appropriate for the string representation of this. As mentioned above, the PF of 12,250
-     * is 2 × 5^3 × 7^2, so if a PF object was created for that number, then this list would
-     * contain 3 FactorAndExponents and the fields of them would be 2 & 1, 5 & 3, and 7 & 2.
+     * is appropriate for the string representation of this. As mentioned above, the PF of 25,137
+     * is 3^3 × 7^2 × 19, so if a PF object was created for that number, then this list would
+     * contain 3 FactorAndExponents and the fields of them would be 3 & 3, 7 & 2, and 19 & 1.
      */
     private final List<FactorAndExponent> fes;
     
@@ -79,17 +78,22 @@ prime factors.""";
         
         correspondingBigInt = BigInteger.valueOf(input);
         long remaining = input;
-        // The max amount of unique prime factors is 13.
+        /*
+        Use a mutable ArrayList and create an immutable copy at the end. For a max input of
+        10 quadrillion, the max amount of unique prime factors is 13 since the product of the
+        first 13 prime numbers is ≤ 10 quadrillion and the product of the first 14 prime numbers
+        is > 10 quadrillion.
+         */
         var tempFes = new ArrayList<FactorAndExponent>(13);
         
         /*
-        Find all the prime factors and their powers and put these in tempFps. Divide remaining
-        by each factor that's found. When remaining becomes 1, the entire prime factorization has
-        been found. First 2 will be checked and then odd numbers will be checked since all prime
-        numbers besides 2 are odd.
+        Find all prime factors and their exponents and put these in tempFes. Divide remaining
+        by each factor that's found. If remaining becomes 1, then the entire PF has been found.
+        First, we'll check if 2 is a factor then check odd numbers since all prime numbers
+        besides 2 are odd. We only need to check odd numbers up to the square root of the input.
          */
         
-        if (isDivisible(remaining, 2)) {
+        if (isEven(remaining)) {
             var exponent = 0;
             do {
                 exponent++;
@@ -145,8 +149,8 @@ prime factors.""";
     
     /**
      * Returns a string that represents this PF the same way that the first info paragraph at the
-     * top represents PFs. That paragraph says "the PF of 5 is just 5, the PF of 25 is 5^2, and
-     * the PF of 12,250 is 2 × 5^3 × 7^2".
+     * top represents PFs. That paragraph says "the PF of 3 is just 3, the PF of 12 is 2^2 × 3,
+     * and the PF of 25,137 is 3^3 × 7^2 × 19".
      */
     @Override
     public String toString() {

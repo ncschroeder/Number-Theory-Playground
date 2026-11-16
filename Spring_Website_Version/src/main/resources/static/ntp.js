@@ -151,7 +151,12 @@ const arrToAnswerFlexOl = (arr, arrElementTransform) =>
     arrToOl(arr, arrElementTransform, 'answer-flex-ol');
 
 /**
+ * Creates a table with the provided column headings and a row for each object in rowsDataSourceArr. The content
+ * of the data cells is determined by calling rowsDataSourceTransform on each object and then calling
+ * createNumStringWithCommas on each number or string in the returned array.
+ * 
  * @param {string[]} colHeadings
+ * 
  * @param {any[]} rowsDataSourceArr
  * 
  * @param {(obj: any) => (number | string)[]} rowsDataSourceTransform
@@ -190,11 +195,8 @@ function createTable(colHeadings, rowsDataSourceArr, rowsDataSourceTransform) {
  * Having the locale be "en-US" ensures that numbers will be formatted with commas. In the section info HTML
  * strings, I'm manually formatting numbers with commas so I'll have other numbers be formatted with commas as
  * well, even if this website is accessed from a country where numbers are formatted differently.
- * 
- * I'll have the maximum fraction digits be the max it can be. It would be 3 by default, but the ratios for
- * the Fibonacci-like sequences section answers need more than 3 fraction digits.
  */
-const commaAdder = new Intl.NumberFormat('en-US', { maximumFractionDigits: 100 });
+const commaAdder = new Intl.NumberFormat('en-US');
 
 /**
  * @param {number | string} value
@@ -232,10 +234,10 @@ function createMathMlElement(elementName, ...objectsToAppend) {
 const createMathElement = (...objectsToAppend) => createMathMlElement('math', ...objectsToAppend);
 
 /*
-If a Math ML element in a math element is immediately followed by a period or comma or something else, then that
+If a MathML element in a math element is immediately followed by a period or comma or something else, then that
 following text must be placed in an mtext element after the element in that same math element to group them. If
 the following text is placed after the math element, then it'll be separated from the element and break onto a
-new line if the webpage is at a certain width. This is why some Math ML strings have an mtext element as the
+new line if the webpage is at a certain width. This is why some MathML strings have an mtext element as the
 last child of a math element. Some examples are the createMiMl function and the primesInfoHtml string.
  */
 
@@ -299,7 +301,7 @@ const createMi = (identifier) => createMathMlElement('mi', identifier);
 /**
  * @param {string} identifier
  * @param {string} [endText]
- * @returns {string} A Math ML string.
+ * @returns {string} A MathML string.
  */
 const createMiMl = (identifier, endText) =>
     `<math><mi>${identifier}</mi>${endText ? `<mtext>${endText}</mtext>` : ''}</math>`;
@@ -324,7 +326,7 @@ const createNumAndSquareMrow = (num) =>
 
 /**
  * @param {number} num
- * @returns {string} A Math ML string.
+ * @returns {string} A MathML string.
  */
 const createNumAndSquareMl = (num) =>
     `<mrow>
@@ -365,9 +367,8 @@ let curSection;
  */
 function getNum(textField) {
     const modifiedValue = textField.value.trim().replaceAll(',', '');
-    if (modifiedValue.length === 0) return null;
-    const containsNonDigit = /\D/.test(modifiedValue);
-    if (containsNonDigit) return null;
+    // Check for a non-digit char.
+    if (modifiedValue.length === 0 || /\D/.test(modifiedValue)) return null;
     const num = Number(modifiedValue);
     return Number.isSafeInteger(num) ? num : null;
 }
@@ -434,12 +435,12 @@ const sectionHeading = getElementById('section-heading');
 const homeHeadingText = sectionHeading.textContent;
 const homeContentDiv = getElementById('home-content-div');
 
-const sectionInfoDetailsSummary = createHtmlElement('summary', 'Info');
 const sectionInfoDiv = createDiv();
 sectionInfoDiv.id = 'section-info-div';
 sectionInfoDiv.className = 'non-answer-info-div';
 /** @type {HTMLDetailsElement} */
-const sectionInfoDetails = createHtmlElement('details', sectionInfoDetailsSummary, sectionInfoDiv);
+const sectionInfoDetails =
+    createHtmlElement('details', createHtmlElement('summary', 'Info'), sectionInfoDiv);
 
 const { inputDiv: inputDiv1, textField: textField1 } = createInputDiv();
 const { inputDiv: inputDiv2, textField: textField2 } = createInputDiv();
@@ -480,16 +481,17 @@ class Section {
     #apiEndpointEnd;
     
     /**
+     * @typedef {Object} SectionParams
      * The Section constructor has an object param so that args can be named. We don't need this type definition
      * to do that but it allows for organized documentation and autocompletion options when creating a Section
      * or destructuring in the constructor.
-     * @typedef {Object} SectionParams
      * 
      * @property {string} btnIdStart
      * The ID of the button for this section in section-btns-div.
      * 
      * @property {string | HTMLElement[]} infoHtmlStringOrArr
-     * If this is a string, then it'll contain paragraphs of info with each one separated by a blank line.
+     * If this is a string, then it'll contain paragraphs of info that can contain HTML with each one separated
+     * by a blank line.
      * 
      * @property {string} actionSentenceEndingHtml
      * @property {number} minInput
@@ -500,7 +502,14 @@ class Section {
      * section. The full endpoint is the website URL followed by "/calculate/" followed by this endpoint end.
      */
     
-    /** @param {SectionParams} params */
+    /**
+     * Outside this constructor, the only way Sections are accessed is via the curSection variable. Sections
+     * get assigned to that variable via the on-click listener created here, so Sections are able to be created
+     * by just calling the constructor and the new instance doesn't need to have anything done to it, such as
+     * storing it to a variable.
+     * 
+     * @param {SectionParams} params
+     */
     constructor(params) {
         const {
             btnIdStart, infoHtmlStringOrArr, actionSentenceEndingHtml, minInput, maxInput, apiEndpointEnd
@@ -526,8 +535,8 @@ class Section {
             numWithWord ? `${numWithWord} (${maxInputString})` : maxInputString;
         
         const directionsHtml =
-            `Enter or generate ${this.isSingleInputSection ? 'a whole number' : '2 whole numbers'} and click
-            the "Calculate" button to get ${actionSentenceEndingHtml}.
+            `Enter or generate ${this.isSingleInputSection ? 'a whole number' : '2 whole numbers'}
+            and click the "Calculate" button to calculate ${actionSentenceEndingHtml}.
             Have ${this.isSingleInputSection ? 'this number' : 'these numbers'} be ${
                 this.needsEvenInput
                 ? `even, ≥ ${minInput}, and ≤ ${maxInputSentencePart}`
@@ -638,7 +647,7 @@ class SingleInputSection extends Section {
      * Contains the input number with commas.
      * 
      * @param {number} inputNum
-     * The createAnswerElements functions for the Divisibility and Goldbach Conjecture Sections use this number.
+     * The createAnswerElements functions for the divisibility and Goldbach conjecture Sections use this number.
      * The other createAnswerElements functions omit this param.
      * 
      * @returns {HTMLElement[]}
@@ -761,7 +770,7 @@ calculateBtn.onclick = () => {
 };
 
 
-/** A Math ML string. */
+/** A MathML string. */
 const largestKnownPrimeAndPeriodMl =
     `<math>
         <msup><mn>2</mn><mn>136,279,841</mn></msup>
@@ -910,8 +919,7 @@ const twinPrimePairsActionSentenceEnding = twinPrimePairsHeadingStart.toLowerCas
 /**
  * @param {number[]} pairStarts
  * @param {string} inputString
- * @returns {HTMLElement[]}
- * An array with a heading and an ordered list that shows twin prime pairs.
+ * @returns {HTMLElement[]} An array with a heading and an ordered list that shows twin prime pairs.
  */
 function createTwinPrimePairsAnswerElements(pairStarts, inputString) {
     const headingText = `${twinPrimePairsHeadingStart} ${inputString} are:`;
@@ -932,24 +940,25 @@ new SingleInputSection(
 );
 
 
-// The initials PF are used to refer to objects with a PrimeFactorization type and to prime factorizations in general.
-
 /**
- * Objects of this type come from responses to HTTP requests. fes is used to refer to arrays of instances of
- * this type in field and variable names.
+ * Objects of these types come from responses to HTTP requests.
+ * 
  * @typedef {{ factor: number, exponent: number }} FactorAndExponent
+ * fes is used to refer to arrays of instances of this type in field and variable names.
  * 
  * @typedef {{ correspondingNum: number, fes: ?(FactorAndExponent[]) }} PrimeFactorization
  */
 
+// The initials PF are used to refer to objects with a PrimeFactorization type and to prime factorizations in general.
+
 /**
- * Creates a Math ML string for the PF whose factors and exponents are in factorsAndExponents. Info about PFs
+ * Creates a MathML string for the PF whose factors and exponents are in factorsAndExponents. Info about PFs
  * can be found in the pfInfoHtml string below.
  * 
  * @param {(number | number[])[]} factorsAndExponents
- * Args for this are hardcoded so this type is used instead of FactorAndExponent[]. If a factor has an exponent
- * of 1,  then a number is used. Otherwise, an array is used and the first number in it is the factor and the
- * second is the power.
+ * Args for this are hardcoded so this type is easier to use than FactorAndExponent[]. If a factor has an
+ * exponent of 1, then a number is used. Otherwise, an array is used and the first number in it is the factor
+ * and the second is the power.
  * 
  * @returns {string}
  */
@@ -990,8 +999,7 @@ const pfInfoHtml =
 /**
  * @param {FactorAndExponent[]} fes
  * @param {string} [endText]
- * @returns {MathMLElement}
- * A math element for the prime factorization whose factors and exponents are in fes.
+ * @returns {MathMLElement} A math element for the PF whose factors and exponents are in fes.
  */
 function createPfMathElement(fes, endText) {
     const pfEl = createMathElement();
@@ -1044,16 +1052,15 @@ new SingleInputSection(
 
 const divisInfoStartHtml =
     `Say we have 2 whole numbers that we'll represent with the variables ${aVarMl} and ${bVarAndPeriodMl}
-    If we divide ${aVarMl} by ${bVarMl} and get no remainder, then ${aVarMl} is said to be <i>divisible</i> by
-    ${bVarMl} and ${bVarMl} is said to be a <i>factor</i> or <i>divisor</i> of ${aVarMl}. If you want to find
-    some whole number factors of a whole number, you could manually do some division but there are other ways
-    to find them.`;
+    If we divide ${aVarMl} by ${bVarMl} and get no remainder, then ${aVarMl} is <i>divisible</i> by ${bVarMl}
+    and ${bVarMl} is a <i>factor</i> or <i>divisor</i> of ${aVarMl}. If you want to find some whole number
+    factors of a whole number, you could manually do some division but there are other ways to find them.`;
 
 /**
  * @param {(number | number[])[]} factorsAndExponents
  * @param {number} num
  * @param {string} [endText]
- * @returns {string} A Math ML string.
+ * @returns {string} A MathML string.
  */
 const createSubfactorizationMl = (factorsAndExponents, num, endText = ',') =>
     `<math>
@@ -1335,7 +1342,7 @@ function createDivisRulesAnswerDiv(inputString, inputNum) {
         answerP.append(altSumOfBlocks, getDivisSentenceEnd(13, isDivisibleBy13, false));
         
         if (isEvenVar && isDivisibleBy7) {
-            answerP.append(`${inputString} is even and divisible by 7 so it's also divisible by 14. `);
+            answerP.append(`${inputString} is even and divisible by 7 so it's also divisible by 14.`);
         }
     }
     
@@ -1351,8 +1358,8 @@ function createDivisRulesAnswerDiv(inputString, inputNum) {
  * @returns {HTMLDivElement}
  * A div with at least a heading and an inner div with text that shows the PF of the input number. If pfAnswer
  * is null, then the inner div will only contain a little more info. Otherwise, the inner div will contain more
- * info about the number of factors the input number has. Also, the returned div will also contain an ordered
- * list that shows the factors of the input number and the PFs of those factors.
+ * info about the number of factors the input number has. Also, the returned div will contain an ordered
+ * list that shows the factors of the input number and their PFs.
  */
 function createDivisPfAnswerDiv(pfAnswer, inputString, inputNum) {
     const heading = createH4('Prime Factorization Info');
@@ -1676,7 +1683,7 @@ new GoldbachConjectureSection(
  * @param {number} a
  * @param {number} b
  * @param {number} c
- * @returns {string} A Math ML string. This is used at the ends of sentences so a period is included.
+ * @returns {string} A MathML string. This is used at the ends of sentences so a period is included.
  */
 const createPythagTripleMl = (a, b, c) =>
     `<math>
@@ -1706,11 +1713,11 @@ const pythagTriplesInfoHtml =
     
     Once we know a Pythagorean triple, we can form another one by multiplying ${aVarAndCommaMl} ${bVarAndCommaMl}
     and ${cVarMl} by the same whole number > 1, Because of this, there are an infinite amount of Pythagorean
-    triples. A Pythagorean triple is considered to be <i>primitive</i> if the GCD of ${aVarAndCommaMl}
-    ${bVarAndCommaMl} and ${cVarMl} is 1. Therefore, a primitive triple can't be formed by taking another triple
-    and multiplying ${aVarAndCommaMl} ${bVarAndCommaMl} and ${cVarMl} by the same whole number. The triples
-    mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive. 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is
-    another triple. ${createPythagTripleMl(6, 8, 10)} 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
+    triples. A Pythagorean triple is <i>primitive</i> if the GCD of ${aVarAndCommaMl} ${bVarAndCommaMl} and
+    ${cVarMl} is 1. Therefore, a primitive triple can't be formed by taking another triple and multiplying
+    ${aVarAndCommaMl} ${bVarAndCommaMl} and ${cVarMl} by the same whole number. The triples mentioned above;
+    3, 4, and 5, and 11, 60, and 61; are primitive. 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is another triple.
+    ${createPythagTripleMl(6, 8, 10)} 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
     ${createPythagTripleMl(55, 300, 305)}
     
     The algorithm I came up with for calculating triples first tries to find triples where the short leg length,
@@ -1817,14 +1824,14 @@ const phiLetter = '𝚽';
 const phiNumString = '1.618033988749895';
 
 const fiboLikeSequencesInfoHtml =
-    `I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every following
-    number be the sum of the 2 previous numbers. The Fibonacci sequence does this and the first 8 numbers of it
-    are 1, 1, 2, 3, 5, 8, 13, and 21. Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy.
+    `I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and every following number
+    is the sum of the 2 previous numbers. The Fibonacci sequence does this and the first 8 numbers of it are
+    1, 1, 2, 3, 5, 8, 13, and 21. Fibonacci was a mathematician from the 1100s to 1200s from modern-day Italy.
     Another Fibonacci-like sequence is the Lucas sequence and the first 8 numbers of it are
     2, 1, 3, 4, 7, 11, 18, and 29. This sequence was named after 1800s French mathematician
     François Édouard Anatole Lucas.
     
-    The <i>Golden Ratio</i> is an irrational number symbolized by the Greek letter ${phiLetter} (Phi).
+    The <i>golden ratio</i> is an irrational number symbolized by the Greek letter ${phiLetter} (Phi).
     <math>
         <mi>${phiLetter}</mi>
         <mo>=</mo>
@@ -1882,6 +1889,13 @@ function createFiboLikeSequencesAnswerElements({ fiboLikeSequence, divisions }, 
         ${input1String} and ${input2String} are:`;
     const sequenceOl = arrToAnswerFlexOl(fiboLikeSequence, createNumStringWithCommas);
     const sequenceDiv = createDiv(createNonBoldAnswerH3(sequenceHeadingText), sequenceOl);
+    
+    /*
+    For quotients and phiNumString, we can't use the createMn function since it calls createNumStringWithCommas
+    which uses an Intl.NumberFormat object which formats numbers using 3 fraction digits and drops trailing
+    zeros in the fraction part by default. If a quotient is rounded and the last digit is 0, then I want that 0
+    to be shown.
+     */
     
     /**
      * @param {Division}
@@ -1963,9 +1977,9 @@ const ancientMultStepsArr = [
     </math>
     and so on until we find a power that's > ${aVarAndCommaMl} which we won't use.`,
     
-    `Find the products of ${bVarMl} and these powers of 2. Like with the powers of 2, this could be done by
-    starting with ${bVarMl} and finding the next product by adding the previous product to itself. If we let
-    ${bVarMl} be 5, this process will look like:
+    `Find the <i>products</i>, or results of multiplication, of ${bVarMl} and these powers of 2. Like with
+    the powers of 2, this could be done by starting with ${bVarMl} and finding the next product by adding
+    the previous product to itself. If we let ${bVarMl} be 5, this process will look like:
     <math>
         <mrow><mn>5</mn><mo>+</mo><mn>5</mn></mrow>
         <mo>=</mo>

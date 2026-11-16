@@ -10,8 +10,8 @@ public class InputValidation {
     
     /**
      * This exception is used for back-end validation and isn't supposed to be thrown since
-     * there's also front-end validation. The instance is possibly thrown by assertIsInRange
-     * below and by Calculations.getGoldbachPrimePairStarts.
+     * there's also front-end validation. This is possibly thrown by assertIsInRange below
+     * and by Calculations.getGoldbachPrimePairStarts.
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public static final class InvalidInputNumberException extends IllegalArgumentException {

@@ -10,7 +10,6 @@ class TwoSquareTheoremTests {
     /**
      * At the start of the Answer constructor, there are 2 loops to determine the first Pythagorean
      * prime ≥ the input. There are 4 situations that can happen with those loops as follows:
-     *
      * 1. The input is a Pythagorean prime, so none of the loops have to be used.
      * 2. The input is 1 above a multiple of 4 but isn't prime so only the second loop is used.
      * 3. The input is 1, 2, or 3 less than a prime number that's 1 above a multiple of 4, so only

@@ -32,7 +32,7 @@ public class FibonacciLikeSequences {
     /**
      * Phi = (1 + the square root of 5) / 2 ≈ 1.618.
      */
-    public static final String PHI_STRING =
+    private static final String PHI_STRING =
         BigDecimal.valueOf(5)
         .sqrt(MATH_CONTEXT_WITH_ROUNDING)
         .add(BigDecimal.ONE, MATH_CONTEXT_WITH_ROUNDING)
@@ -46,14 +46,14 @@ public class FibonacciLikeSequences {
      */
     
     private static final String INFO = """
-I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and has every
-following number be the sum of the 2 previous numbers. The Fibonacci sequence does this and the
+I consider a number sequence to be "Fibonacci-like" if it starts with 2 numbers and every
+following number is the sum of the 2 previous numbers. The Fibonacci sequence does this and the
 first 8 numbers of it are 1, 1, 2, 3, 5, 8, 13, and 21. Fibonacci was a mathematician from the
 1100s to 1200s from modern-day Italy. Another Fibonacci-like sequence is the Lucas sequence and
 the first 8 numbers of it are 2, 1, 3, 4, 7, 11, 18, and 29. This sequence was named after
 1800s French mathematician François Édouard Anatole Lucas.
 
-The Golden Ratio is an irrational number symbolized by the Greek letter Phi.
+The golden ratio is an irrational number symbolized by the Greek letter Phi.
 Phi = (1 + the square root of 5) / 2 ≈ %s. As we advance further and further into a Fibonacci-like
 sequence, the result of dividing a number by the number before it gets closer and closer to Phi.
 For example, recall that the first 8 numbers of the Fibonacci sequence are

@@ -43,14 +43,14 @@ button {
     margin: 1.1rem auto 0;
     display: flex;
     justify-content: center;
-    gap: 1.1rem 1.2rem;
+    gap: 0.9rem 1.1rem;
     flex-wrap: wrap;
 }
 
 #section-btns-div > button {
     background-color: rgb(16, 0, 105);
     color: white;
-    padding: 0.8rem;
+    padding: 0.7rem 0.8rem;
 }
 
 #section-btns-div > button:hover {
@@ -114,6 +114,7 @@ table, th, td {
     margin-top: 0.8rem;
 }
 
+/* Space between heading and first paragraph. */
 .non-answer-info-div > div:not(.div-with-info-and-ol) > :nth-child(2) {
     margin-top: 0.3rem;
 }
@@ -130,7 +131,7 @@ table, th, td {
     margin-top: 0.2rem;
 }
 
-/* Spacing between section info and directions. */
+/* Space between section info and directions. */
 #section-info-div {
     margin-bottom: 1.5rem;
 }
@@ -248,8 +249,12 @@ and Fibonacci-like sequence numbers.
     margin-top: 0.9rem;
 }
 
-:is(.euclidean-example-table-div, .euclidean-answer-table-div) > table, .gcd-message-div {
+.euclidean-example-table-div > table, .gcd-message-div {
     margin-top: 0.5rem;
+}
+
+.euclidean-answer-table-div > table {
+    margin-top: 0.6rem;
 }
 
 .gcd-message-div {

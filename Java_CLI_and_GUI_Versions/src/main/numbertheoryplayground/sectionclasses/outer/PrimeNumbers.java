@@ -47,8 +47,8 @@ those and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
         if (input <= 3) return true;
         
         /*
-        We need to check if the input is divisible by any primes ≤ its square root. We'll check
-        if it's divisible by 2, and then if it's divisible by an odd number since all primes
+        We need to check if the input is divisible by any primes ≤ its square root. First, we'll
+        check if it's divisible by 2 and then if it's divisible by an odd number since all primes
         besides 2 are odd.
          */
         
@@ -67,9 +67,9 @@ those and 33 is divisible by 3 so 29 is prime and 33 isn't.""";
     static List<Long> getPrimes(long input) {
         assertIsInRange(input, MIN_INPUT, MAX_INPUT);
         
-        long possiblePrime = isOdd(input) ? input : input + 1;
         var primes = new ArrayList<Long>(NUM_PRIMES_TO_FIND);
         if (input < 2) primes.add(2L);
+        long possiblePrime = isOdd(input) ? input : input + 1;
         
         while (true) {
             if (isPrime(possiblePrime)) {

@@ -53,9 +53,9 @@ the largest known prime number, which is (2^136,279,841) − 1.""";
         /*
         First, we need to find the first long factor of the input that's > 1 and < the input.
         Just like with the algorithm for determining if a long is prime, we only need to check
-        primes ≤ the square root of the input. We'll check if 2 is a factor and then if there's an
-        odd number factor since all primes besides 2 are odd. If we don't find a factor, then that
-        means that the input is prime and not semiprime.
+        primes ≤ the square root of the input. First, we'll check if 2 is a factor and then if
+        there's an odd number factor since all primes besides 2 are odd. If we don't find a
+        factor, then that means that the input is prime and not semiprime.
          */
         
         if (isEven(input)) {

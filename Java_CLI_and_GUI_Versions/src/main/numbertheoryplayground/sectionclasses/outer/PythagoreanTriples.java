@@ -28,9 +28,9 @@ Pythagorean triple since 3^2 (9) + 4^2 (16) = 5^2 (25) and 11, 60, and 61 is ano
 
 Once we know a Pythagorean triple, we can form another one by multiplying a, b, and c by the
 same whole number > 1. Because of this, there are an infinite amount of Pythagorean triples.
-A Pythagorean triple is considered to be primitive if the GCD of a, b, and c is 1. Therefore,
-a primitive triple can't be formed by taking another triple and multiplying a, b, and c by the
-same whole number. The triples mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive.
+A Pythagorean triple is primitive if the GCD of a, b, and c is 1. Therefore, a primitive triple
+can't be formed by taking another triple and multiplying a, b, and c by the same whole number.
+The triples mentioned above; 3, 4, and 5, and 11, 60, and 61; are primitive.
 6 (3 × 2), 8 (4 × 2), and 10 (5 × 2) is another triple. 6^2 (36) + 8^2 (64) = 10^2 (100).
 55 (11 × 5), 300 (60 × 5), and 305 (61 × 5) is another one.
 55^2 (3,025) + 300^2 (90,000) = 305^2 (93,025).
@@ -53,7 +53,7 @@ triples where the short leg length equals the input number + 1, and so on until 
     private static final int NUM_TRIPLES_TO_FIND = 10;
     
     /**
-     * a is for the short leg, b is for the long leg, and c is for the hypotenuse.
+     * a is the short leg length, b is the long leg length, and c is the hypotenuse length.
      */
     record Triple(int a, int b, int c) {
         @Override
@@ -102,11 +102,11 @@ triples where the short leg length equals the input number + 1, and so on until 
         
         while (true) {
             var cDouble = Math.hypot(a, b);
+            /*
+            b + 1 is the min possible int value for c, so if c is less than that,
+            then the max value for b for the current value of a has been exceeded.
+             */
             if (cDouble < b + 1) {
-                /*
-                b + 1 is the minimum possible integer value for c, so if c is less than that,
-                then the max value for b for the current value of a has been exceeded.
-                 */
                 b = ++a + 1;
                 continue;
             }

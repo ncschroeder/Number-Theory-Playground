@@ -67,9 +67,9 @@ conjecture has been verified to be true for all even numbers ≥ 4 and ≤ 4 × 
         if (input == 4) return List.of(2);
         
         /*
-        Check pairs of odd numbers that sum to the input for primality. The iterating only
-        needs to go up to the floor of half of the input. After that point, checks for
-        primality will be done on pairs of numbers that have already been checked for primality.
+        Check pairs of odd numbers that sum to the input for primality. The iterating only needs
+        to go up to half of the input. After that point, checks for primality will be done on
+        pairs of numbers that have already been checked for primality.
          */
         var pairStarts = new ArrayList<Integer>();
         var maxPossiblePairStart = (int) input / 2;

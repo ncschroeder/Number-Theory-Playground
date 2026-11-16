@@ -13,8 +13,9 @@ public final class FibonacciLikeSequencesAnswer {
     private static final int MAX_INPUT = ONE_BILLION;
     
     /**
-     * This can be a list of longs since if 1 billion is used as both inputs, then the last
-     * number in the sequence is 6 trillion something, which is small enough to be a long
+     * A list of the first 20 numbers in the Fibonacci-like sequence that starts with 2 input
+     * numbers. This can be a list of longs since if 1 billion is used as both inputs, then the
+     * last number in the sequence is 6 trillion something, which is small enough to be a long
      * and JavaScript safe integer.
      */
     private final List<Long> fiboLikeSequence;
